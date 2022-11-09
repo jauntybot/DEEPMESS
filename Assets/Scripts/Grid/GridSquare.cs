@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class GridSquare : MonoBehaviour {
+public class GridSquare : MonoBehaviour, GridElement {
 
     [SerializeField] Sprite[] sprites;
     
