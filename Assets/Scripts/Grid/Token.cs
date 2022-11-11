@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Token : MonoBehaviour {
+public class Token : GridElement {
 
-    public void Initialize(GameObject go, Vector3 p, Vector2 c) {
-        obj=go;
-        obj.transform.position=p;
-        coord=c;
+    public List<Vector2> validMoveCoords;
+
+    public override void UpdateElement(GameObject go, Vector2 c) {
+        base.UpdateElement(go, c);
     }
-    public GameObject obj;
-    public Vector2 coord;
+
+
+
 }

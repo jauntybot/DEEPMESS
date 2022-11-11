@@ -3,20 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class GridSquare : MonoBehaviour, GridElement {
+public class GridSquare : GridElement {
 
     [SerializeField] Sprite[] sprites;
-    
-    public void Initialize(GameObject go, Vector3 p, Vector2 c, bool w) {
-        obj=go;
-        obj.transform.position=p;
-        coord=c;
-        white=w;
-        if (!w) {
-            go.GetComponent<SpriteRenderer>().sprite = sprites[1];
-        }
-    }
-    public GameObject obj;
-    public Vector2 coord;
     public bool white;
+
+    public override void UpdateElement(GameObject go, Vector2 c)
+    {
+        base.UpdateElement(go, c);
+        if (white) go.GetComponent<SpriteRenderer>().sprite = sprites[1];
+    }
 }

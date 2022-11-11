@@ -2,19 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Grid : MonoBehaviour {
     
    
-
+//[SerializedFields] will be able to be refactored into level design classes
+//static fields stay with the grid script indefinetely
     [SerializeField] GameObject sqrPrefab;
-
     [SerializeField] int _gridSize;
     public static int gridSize;
     [SerializeField] float _sqrSize;
     public static float sqrSize;
-    public List<GridSquare> sqrs = new List<GridSquare>();
+    public static List<GridSquare> sqrs = new List<GridSquare>();
 
- #region Awake and Singleton
+ #region Singleton (and Awake)
     public static Grid instance;
     private void Awake() {
         if (Grid.instance) {
@@ -26,16 +27,18 @@ public class Grid : MonoBehaviour {
     }
     #endregion
 
+//loop through grid x,y, generate sqr grid elements, update them and add to list
     public void GenerateGrid() {
         for (int x = 0; x < gridSize; x++) {
             for (int y =0; y < gridSize; y++) {
+//store bool for white sqrs
                 bool _white=false;
                 if (x%2==0) { if (y%2==0) _white=true; } 
                 else { if (y%2!=0) _white=true; }
 
-                Vector3 pos = PosFromCoord(new Vector2(x,y));
-                GridSquare sqr = Instantiate(sqrPrefab, pos, Quaternion.identity, this.transform).GetComponent<GridSquare>();
-                sqr.Initialize(sqr.gameObject, pos, new Vector2(x,y), _white);
+                GridSquare sqr = Instantiate(sqrPrefab, this.transform).GetComponent<GridSquare>();
+                sqr.white = _white;
+                sqr.UpdateElement(sqr.gameObject, new Vector2(x,y));
 
                 sqrs.Add(sqr);
             }

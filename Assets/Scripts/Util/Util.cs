@@ -4,15 +4,9 @@ using UnityEngine;
 
 public class Util : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public static float cardSize=2.5f;
+    public static int fps = 60;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
+
 }

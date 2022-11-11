@@ -2,15 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface GridElement {
+public class GridElement : MonoBehaviour{
 
-    public static GameObject obj;
-    public static Vector2 coord;
+    Grid grid;
 
-     public virtual void Initialize(GameObject go, Vector3 p, Vector2 c, bool w) {
-        obj=go;
-        obj.transform.position=p;
-        coord=c;
+    protected GameObject obj;
+    protected Vector2 coord;
+
+    void Start() {
+        if (Grid.instance) grid=Grid.instance;
     }
-    
+
+    public virtual void UpdateElement(GameObject go, Vector2 c) {
+        obj=go;
+        obj.transform.position=Grid.PosFromCoord(c);
+        coord=c;
+    }  
 }

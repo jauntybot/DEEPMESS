@@ -12,9 +12,11 @@ public class Deck : MonoBehaviour {
 
     public virtual void InitializeDeck() {
         deck = new ShuffleBag<Card>();
-        foreach(CardData card in atlas) {
-            Card c = new Card(card,null);
-            deck.Add(c);
+        Debug.Log(atlas.Count);
+        for (int i=0; i<atlas.Count; i++) {
+            Card card = Instantiate(cardPrefab, this.transform).GetComponent<Card>();
+            card.Initialize(atlas[i]);            
+            deck.Add(card);
         }
     }
 
@@ -24,10 +26,6 @@ public class Deck : MonoBehaviour {
         if (deck.Count>0) {
             Card nextCard = deck.Next();
             deck.Remove(nextCard);
-
-            Card cardObj = Instantiate(cardPrefab).GetComponent<Card>();
-            nextCard.Initialize(cardObj.gameObject);
-            cardObj.GetComponent<SpriteRenderer>().sprite = nextCard.cardData.graphic;
 
             return nextCard;
         }
@@ -39,7 +37,6 @@ public class Deck : MonoBehaviour {
             discard.Remove(card);
             deck.Add(card);
         }
-
     }
 }
 
