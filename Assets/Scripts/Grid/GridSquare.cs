@@ -6,11 +6,29 @@ using UnityEngine;
 public class GridSquare : GridElement {
 
     [SerializeField] Sprite[] sprites;
-    public bool white;
+    [HideInInspector] public bool white;
+    [SerializeField] GameObject validMove;
 
-    public override void UpdateElement(GameObject go, Vector2 c)
-    {
-        base.UpdateElement(go, c);
-        if (white) go.GetComponent<SpriteRenderer>().sprite = sprites[1];
+    protected override void Start() {
+
+        if (Grid.instance) 
+            grid=Grid.instance;       
+        hitbox = GetComponent<BoxCollider2D>();
+        hitbox.enabled = false;
+        
     }
+
+    public override void UpdateElement(Vector2 c) {
+        base.UpdateElement(c);
+        if (white) GetComponent<SpriteRenderer>().sprite = sprites[1];
+    }
+
+    public void ToggleValidMove(bool state) {
+        selectable = state;
+        hitbox.enabled = state;
+
+        validMove.SetActive(state);
+    }
+
+
 }

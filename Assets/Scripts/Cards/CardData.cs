@@ -8,7 +8,7 @@ using UnityEngine;
 public class CardData : ScriptableObject {
 
     public Sprite graphic;
-    public List<Movement> paths;
+    public List<Path> paths;
 
     public CardData(CardData c) {
         this.graphic=c.graphic;
@@ -17,6 +17,6 @@ public class CardData : ScriptableObject {
 }
 
 [System.Serializable]
-public class Movement {
+public class Path {
     public List<Vector2> moveTo;
 }

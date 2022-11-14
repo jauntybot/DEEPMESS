@@ -31,10 +31,11 @@ public class OffsetOnHover : MonoBehaviour {
 			if (!raised && !raising) { 
 				StopAllCoroutines();
 				StartCoroutine(Activate());
-			} else if (raised && !raising) {
-				StopAllCoroutines();
-				StartCoroutine(SinWaveBob());
 			}
+			// } else if (raised && !raising) {
+			// 	StopAllCoroutines();
+			// 	StartCoroutine(SinWaveBob());
+			// }
         } else {
 			if ((raising || raised) && !lowering) { 
 				StopAllCoroutines();

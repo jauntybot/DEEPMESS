@@ -6,13 +6,19 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider2D))]
 public class Card : MonoBehaviour {
     
-    OffsetOnHover hover;
+    [HideInInspector] public OffsetOnHover hover;
+    public bool selectable;
     public CardData data;
-    public BoxCollider2D hitbox;
+    [HideInInspector] public BoxCollider2D hitbox;
+    [SerializeField] GameObject selectedBox;
 
     protected virtual void Start() {
         hover = GetComponent<OffsetOnHover>();
         hitbox = GetComponent<BoxCollider2D>();
+        hitbox.enabled = false;
+
+        selectedBox.SetActive(false);
+        gameObject.SetActive(false);
     }
 
     public void Initialize(CardData cd) {
@@ -21,10 +27,24 @@ public class Card : MonoBehaviour {
     }
 
     public void OnMouseOver() {
-        hover.active=true;
+        if (selectable)
+            hover.active=true;
     }
 
     public void OnMouseExit() {
-        hover.active=false;
+        if (selectable)
+            hover.active=false;
+    }
+
+    public void EnableInput(bool state, bool slctd = false) {
+        hover.active = !state;
+
+        selectable = state;
+        hitbox.enabled = state;
+        
+        if (slctd)
+            selectedBox.SetActive(true);
+        else
+            selectedBox.SetActive(false);
     }
 }

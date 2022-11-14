@@ -22,7 +22,7 @@ public class Deck : MonoBehaviour {
 
     
     public Card DrawCard() {
-        if (deck.Count>=0) ShuffleDeck();
+        if (deck.Count<=0) ShuffleDeck();
         if (deck.Count>0) {
             Card nextCard = deck.Next();
             deck.Remove(nextCard);
@@ -33,10 +33,11 @@ public class Deck : MonoBehaviour {
     }
 
     public void ShuffleDeck() {
-        foreach(Card card in discard) {
-            discard.Remove(card);
-            deck.Add(card);
+        int toShuffle = discard.Count - 1;
+        for (int i = toShuffle; i >= 0; i--) {
+            deck.Add(discard[i]);
         }
+        discard = new List<Card>();
     }
 }
 

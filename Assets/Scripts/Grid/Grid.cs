@@ -13,7 +13,8 @@ public class Grid : MonoBehaviour {
     public static int gridSize;
     [SerializeField] float _sqrSize;
     public static float sqrSize;
-    public static List<GridSquare> sqrs = new List<GridSquare>();
+    public List<GridSquare> sqrs = new List<GridSquare>();
+    public List<GridElement> gridElements = new List<GridElement>();
 
  #region Singleton (and Awake)
     public static Grid instance;
@@ -28,9 +29,10 @@ public class Grid : MonoBehaviour {
     #endregion
 
 //loop through grid x,y, generate sqr grid elements, update them and add to list
-    public void GenerateGrid() {
-        for (int x = 0; x < gridSize; x++) {
-            for (int y =0; y < gridSize; y++) {
+    public IEnumerator GenerateGrid() {
+        for (int y = 0; y < gridSize; y++) {
+            for (int x = 0; x < gridSize; x++) {
+                yield return new WaitForSecondsRealtime(Util.initD/2);
 //store bool for white sqrs
                 bool _white=false;
                 if (x%2==0) { if (y%2==0) _white=true; } 
@@ -38,9 +40,20 @@ public class Grid : MonoBehaviour {
 
                 GridSquare sqr = Instantiate(sqrPrefab, this.transform).GetComponent<GridSquare>();
                 sqr.white = _white;
-                sqr.UpdateElement(sqr.gameObject, new Vector2(x,y));
+                sqr.UpdateElement(new Vector2(x,y));
 
                 sqrs.Add(sqr);
+            }
+        }
+    }
+
+    public void DisplayValidMoves(List<Vector2> coords) {
+        foreach(GridSquare sqr in sqrs)
+            sqr.ToggleValidMove(false);
+        if (coords != null) {
+            foreach (Vector2 coord in coords) {
+                if (sqrs.Find(sqr => sqr.coord == coord))
+                    sqrs.Find(sqr => sqr.coord == coord).ToggleValidMove(true);
             }
         }
     }
