@@ -2,21 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class PlayerToken : Token {
+    
 
-public class Token : GridElement {
 
-    public enum Owner { Red, Blue }
-    public Owner owner;
-
-    [SerializeField] float animDur = 1f;
-
-    public List<Vector2> validMoveCoords;
-
-    public override void UpdateElement(Vector2 c) {
-        base.UpdateElement(c);
-    }
-
-    public virtual void UpdateValidMoves(Card card) {
+    public override void UpdateValidMoves(Card card = null) {
         validMoveCoords = new List<Vector2>();
 
 
@@ -36,25 +26,9 @@ public class Token : GridElement {
     }
 
 
-    public void EnableSelection(bool state) {
+    public override void EnableSelection(bool state) {
         selectable = state;
         hitbox.enabled = state;
     }
 
-    public IEnumerator JumpToCoord(Vector2 moveTo) {
-        float timer = 0;
-        coord = moveTo;
-        transform.position = Grid.PosFromCoord(coord);
-        Debug.Log("Pos changed");
-        while (timer < animDur) {
-            yield return new WaitForEndOfFrame();
-
-
-            timer += Time.deltaTime;
-
-        }
-
-        
-
-    }
 }

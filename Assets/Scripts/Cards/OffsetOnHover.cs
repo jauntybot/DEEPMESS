@@ -7,6 +7,7 @@ using UnityEngine;
 public class OffsetOnHover : MonoBehaviour {
 //Variables for offset calculation
 	
+	[SerializeField] SpriteRenderer sr;
 	[SerializeField] float yOffset = 0.25f;
 	[SerializeField] float duration = 0.125f;
 
@@ -15,13 +16,13 @@ public class OffsetOnHover : MonoBehaviour {
 	public bool active;
 	[SerializeField] bool raising, raised, lowering;
 
-	float yOrigin;
+	float yOrigin, scaleOrigin;
 
 
 
-	void Start() {
+	public void UpdateOrigins() {
 		yOrigin = transform.position.y;
-
+		scaleOrigin = transform.localScale.x;
 	}
 
 	//Psuedo state machine, toggles coroutines for animations
@@ -31,15 +32,18 @@ public class OffsetOnHover : MonoBehaviour {
 			if (!raised && !raising) { 
 				StopAllCoroutines();
 				StartCoroutine(Activate());
+				sr.sortingOrder = 2;
 			}
-			// } else if (raised && !raising) {
+			else if (raised && !raising) {
 			// 	StopAllCoroutines();
 			// 	StartCoroutine(SinWaveBob());
-			// }
+			sr.sortingOrder = 1;
+			}
         } else {
 			if ((raising || raised) && !lowering) { 
 				StopAllCoroutines();
 				StartCoroutine(Deactivate());
+				sr.sortingOrder = 0;
 			}
         }
 
@@ -56,7 +60,9 @@ public class OffsetOnHover : MonoBehaviour {
 				new Vector3(
 				transform.position.x, 
 				Mathf.Lerp(yOrigin, yOrigin + yOffset, time/duration), 
-				transform.position.z);
+				transform.position.z);			
+			transform.localScale = Vector3.one * Mathf.Lerp(scaleOrigin, 1, time/duration);
+			
 			time += Time.deltaTime;
 			yield return null;
 		}
@@ -95,6 +101,9 @@ public class OffsetOnHover : MonoBehaviour {
 				transform.position.x, 
 				Mathf.Lerp(transform.position.y, yOrigin, time/duration), 
 				transform.position.z);
+			transform.localScale = Vector3.one * Mathf.Lerp(transform.localScale.x, scaleOrigin, time/duration);
+
+
 			time += Time.deltaTime;
 			yield return null;
 		}

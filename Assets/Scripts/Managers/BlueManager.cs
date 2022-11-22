@@ -7,11 +7,25 @@ using UnityEngine;
 public class BlueManager : TokenManager {
     
     PlayerController pc;
+    [HideInInspector] public Deck deck;
     public GameObject gridCursor;
+
+// Card vars
+    public List<Card> hand;
+    public Card playedCard, selectedCard;
+    [SerializeField] protected int handLimit;
+
 
     protected override void Start() {
         base.Start();
         pc = GetComponent<PlayerController>();
+        deck=GetComponent<Deck>();
+    }
+
+    public override IEnumerator Initialize()
+    {
+        deck.InitializeDeck();
+        yield return base.Initialize();
     }
 
     public void StartEndTurn(bool start) {
@@ -21,7 +35,6 @@ public class BlueManager : TokenManager {
         ToggleHandSelect(start);
 
         if (start) {
-            StartCoroutine(StateMachine(State.Hand));
             DrawToHandLimit();
 
             StartCoroutine(pc.GridInput());
@@ -61,18 +74,29 @@ public class BlueManager : TokenManager {
             card.gameObject.SetActive(true);
             card.EnableInput(true);
 
-            float w = Util.cardSize*hand.Count;
-            card.transform.position = new Vector2(-w/2+Util.cardSize*i-Util.cardSize/2, -8);
+            card.transform.localScale = Vector3.one * width/hand.Count/3f;
+            
+            float w = Util.cardSize*card.transform.localScale.x*hand.Count;
+            card.transform.position = new Vector2(-w/2+Util.cardSize*card.transform.localScale.x*i-Util.cardSize*card.transform.localScale.x/2, -8);
+            card.hover.UpdateOrigins();
+
             i++;
         }
     }
 
-    public override void UpdatePlayedCardDisplay() {
+    protected virtual void DrawToHandLimit() {
+        int toDraw = handLimit - hand.Count;
+        for (int i = 0; i < toDraw; i++) {
+            hand.Add(deck.DrawCard());
+        }
+    }
+
+    public virtual void UpdatePlayedCardDisplay() {
         playedCard.EnableInput(false);
         playedCard.transform.position = new Vector2(-1.5f, -4.75f);
     }
 
-    public override void SelectCard(Card c) {
+    public virtual void SelectCard(Card c) {
         if (selectedCard) 
             DeselectCard();
 
@@ -83,7 +107,7 @@ public class BlueManager : TokenManager {
         c.EnableInput(false, true);
     }
 
-    public override void DeselectCard() {
+    public virtual void DeselectCard() {
         if (selectedCard) {
             selectedCard.EnableInput(true);
             selectedCard = null;

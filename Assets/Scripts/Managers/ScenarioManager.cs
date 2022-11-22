@@ -35,6 +35,7 @@ public class ScenarioManager : MonoBehaviour
         SwitchTurns(Turn.Opponent);
     }
 
+// Overload allows you to specify which turn to switch to, otherwise inverts the binary
     public void SwitchTurns(Turn fromTurn = Turn.Null) {
         turnActions = 0;
         switch(fromTurn == Turn.Null ? currentTurn : fromTurn) {
