@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3908257913917299124}
   - component: {fileID: 3908257913917299125}
-  - component: {fileID: 5128721311085501241}
-  - component: {fileID: 8110231776610591983}
+  - component: {fileID: 125915573521978910}
+  - component: {fileID: 2630519130368882299}
   m_Layer: 6
   m_Name: pawnRed
   m_TagString: Untagged
@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 3908257913917299126}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -75,8 +75,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 88ebdeead8b2b5547ad8337aab2b544b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 86376434d63ba9547895f3956fa21fad, type: 3}
+  m_Color: {r: 1, g: 0.390566, b: 0.390566, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -86,33 +86,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &5128721311085501241
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3908257913917299126}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.28, y: 1.29}
-    newSize: {x: 1.28, y: 1.29}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1.28, y: 1.29}
-  m_EdgeRadius: 0
---- !u!114 &8110231776610591983
+--- !u!114 &125915573521978910
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -126,8 +100,54 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coord: {x: 0, y: 0}
   selectable: 0
-  hitbox: {fileID: 5128721311085501241}
+  hitbox: {fileID: 0}
   owner: 0
+  moveRange: 0
+  attackRange: 0
+  defense: 0
   animDur: 1
   validMoveCoords: []
-  moveRange: 0
+--- !u!60 &2630519130368882299
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3908257913917299126}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.51, y: 1.51}
+    newSize: {x: 1.28, y: 1.29}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.24499999, y: -0.065}
+      - {x: 0.175, y: 0.085}
+      - {x: 0.325, y: 0.225}
+      - {x: 0.305, y: 0.475}
+      - {x: 0.255, y: 0.545}
+      - {x: 0.145, y: 0.645}
+      - {x: -0.145, y: 0.645}
+      - {x: -0.205, y: 0.60499996}
+      - {x: -0.325, y: 0.435}
+      - {x: -0.325, y: 0.315}
+      - {x: -0.275, y: 0.16499999}
+      - {x: -0.255, y: -0.065}
+      - {x: -0.415, y: -0.155}
+      - {x: -0.415, y: -0.325}
+      - {x: -0.39499998, y: -0.385}
+      - {x: 0.345, y: -0.385}
+      - {x: 0.415, y: -0.325}
+      - {x: 0.415, y: -0.185}
+      - {x: 0.385, y: -0.114999995}

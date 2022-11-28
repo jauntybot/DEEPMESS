@@ -2,19 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Script that generates and maintains the grid
+// Stores all Grid Elements that are created
 
 public class Grid : MonoBehaviour {
     
    
 //[SerializedFields] will be able to be refactored into level design classes
 //static fields stay with the grid script indefinetely
-    [SerializeField] GameObject sqrPrefab;
+
+    static Vector2 ORTHO_OFFSET = new Vector2(0.75f, 0.5f);
+    [SerializeField] GameObject sqrPrefab, gridCursor;
+    
+
     [SerializeField] int _gridSize;
     public static int gridSize;
     [SerializeField] float _sqrSize;
     public static float sqrSize;
     public List<GridSquare> sqrs = new List<GridSquare>();
     public List<GridElement> gridElements = new List<GridElement>();
+
+    public Color moveColor, attackColor, defendColor;
 
  #region Singleton (and Awake)
     public static Grid instance;
@@ -28,7 +36,7 @@ public class Grid : MonoBehaviour {
     }
     #endregion
 
-//loop through grid x,y, generate sqr grid elements, update them and add to list
+// loop through grid x,y, generate sqr grid elements, update them and add to list
     public IEnumerator GenerateGrid() {
         for (int y = 0; y < gridSize; y++) {
             for (int x = 0; x < gridSize; x++) {
@@ -45,23 +53,47 @@ public class Grid : MonoBehaviour {
                 sqrs.Add(sqr);
             }
         }
+        gridCursor.transform.localScale = Vector3.one * sqrSize;
     }
 
-    public void DisplayValidMoves(List<Vector2> coords) {
-        foreach(GridSquare sqr in sqrs)
-            sqr.ToggleValidMove(false);
+// Toggle GridSquare highlights, apply color by index
+    public void DisplayValidCoords(List<Vector2> coords, int? index = null) {
+        DisableGridHighlight();
+
+        Color c = moveColor;
+        if (index is int i) {
+            switch (i) {
+             case 0:
+                c = moveColor;
+             break;
+             case 1:
+                c = attackColor;
+             break;
+             case 2:
+                c = defendColor;
+             break;
+            }
+        }
+
         if (coords != null) {
             foreach (Vector2 coord in coords) {
                 if (sqrs.Find(sqr => sqr.coord == coord))
-                    sqrs.Find(sqr => sqr.coord == coord).ToggleValidMove(true);
+                    sqrs.Find(sqr => sqr.coord == coord).ToggleValidCoord(true, c);
             }
         }
     }
 
-    public static Vector2 CoordFromPos(Vector3 pos) {
-        return new Vector2((pos.x - sqrSize/2 + sqrSize*gridSize/2)/sqrSize, (pos.y - sqrSize/2 + sqrSize*gridSize/2)/sqrSize);
+// Disable GridSquare highlights
+    public void DisableGridHighlight() {
+        foreach(GridSquare sqr in sqrs)
+            sqr.ToggleValidCoord(false);
     }
+
      public static Vector3 PosFromCoord(Vector2 coord) {
-        return new Vector3(coord.x*sqrSize + sqrSize/2 - sqrSize*gridSize/2, coord.y*sqrSize + sqrSize/2 - sqrSize*gridSize/2, 0);
+        return new Vector3(
+// offset from scene origing + coord to pos conversion + ortho offset + center measure
+            -(sqrSize * gridSize * ORTHO_OFFSET.x) + (coord.x * sqrSize * ORTHO_OFFSET.x) + (ORTHO_OFFSET.x * sqrSize * coord.y) + (sqrSize * ORTHO_OFFSET.x), 
+            (coord.y * sqrSize * ORTHO_OFFSET.y) - (ORTHO_OFFSET.y * sqrSize * coord.x), 
+            0);
     }
 }

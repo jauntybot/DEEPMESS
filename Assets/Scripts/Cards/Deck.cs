@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Container class of Cards, functions to shuffle and draw
+
 public class Deck : MonoBehaviour {
     
 
@@ -10,6 +12,7 @@ public class Deck : MonoBehaviour {
     public ShuffleBag<Card> deck;
     public List<Card> discard;
 
+// Instantiate and Initialize Card instances from atlas
     public virtual void InitializeDeck() {
         deck = new ShuffleBag<Card>();
         Debug.Log(atlas.Count);
@@ -20,7 +23,7 @@ public class Deck : MonoBehaviour {
         }
     }
 
-    
+// Remove and return random card from deck, shuffle if deck empty
     public Card DrawCard() {
         if (deck.Count<=0) ShuffleDeck();
         if (deck.Count>0) {
@@ -32,6 +35,7 @@ public class Deck : MonoBehaviour {
         return null;
     }
 
+// Return all cards from discard to deck
     public void ShuffleDeck() {
         int toShuffle = discard.Count - 1;
         for (int i = toShuffle; i >= 0; i--) {

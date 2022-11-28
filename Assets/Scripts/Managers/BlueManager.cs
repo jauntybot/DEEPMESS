@@ -2,16 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Class that controls the player's functionality, recieves input from PlayerController and ScenarioManager
+// tbh I'm not commenting this one bc it's the most heavily edited and refactors are incoming
+
 [RequireComponent(typeof(Deck))]
 [RequireComponent(typeof(PlayerController))]
 public class BlueManager : TokenManager {
     
     PlayerController pc;
-    [HideInInspector] public Deck deck;
     public GameObject gridCursor;
 
 // Card vars
     public List<Card> hand;
+    [HideInInspector] public Deck deck;
     public Card playedCard, selectedCard;
     [SerializeField] protected int handLimit;
 
@@ -45,9 +48,9 @@ public class BlueManager : TokenManager {
         }
     }
 
-    public override Token SpawnToken(Vector2 coord) {
-        Token t = base.SpawnToken(coord);
-        t.owner = Token.Owner.Blue;
+    public override Token SpawnToken(Vector2 coord, int index) {
+        Token t = base.SpawnToken(coord, index);
+        t.owner = Token.Owner.Player;
         return t;
     }
 
@@ -66,18 +69,21 @@ public class BlueManager : TokenManager {
 
     public IEnumerator UpdateHandDisplay() {
         var height = 2*Camera.main.orthographicSize;
-        var width = height*Camera.main.aspect;
-        int i=1;
+        var width = height*Camera.main.aspect/2;
+        int i=0;
         foreach (Card card in hand) {
             yield return new WaitForSeconds(Util.initD);
 
             card.gameObject.SetActive(true);
             card.EnableInput(true);
 
-            card.transform.localScale = Vector3.one * width/hand.Count/3f;
+            float scale = Mathf.Clamp(width/hand.Count/3f, 0.25f, 1.5f);
+            card.transform.localScale = Vector3.one * scale;
             
-            float w = Util.cardSize*card.transform.localScale.x*hand.Count;
-            card.transform.position = new Vector2(-w/2+Util.cardSize*card.transform.localScale.x*i-Util.cardSize*card.transform.localScale.x/2, -8);
+            float w = Util.cardSize * card.transform.localScale.x * hand.Count;
+            card.transform.position = new Vector2(
+                -w + (Util.cardSize * card.transform.localScale.x * i) - (Util.cardSize*card.transform.localScale.x/2), 
+                -8);
             card.hover.UpdateOrigins();
 
             i++;
@@ -101,14 +107,18 @@ public class BlueManager : TokenManager {
             DeselectCard();
 
         selectedCard = c;
+        selectedCard.SelectCard();
+
         if (selectedToken)
-            selectedToken.UpdateValidMoves(selectedCard);
+            selectedToken.UpdateAction(selectedCard);
 
         c.EnableInput(false, true);
     }
 
     public virtual void DeselectCard() {
-        if (selectedCard) {
+        if (selectedToken)
+            selectedToken.UpdateAction();
+        if (selectedCard) {        
             selectedCard.EnableInput(true);
             selectedCard = null;
         }
@@ -120,15 +130,18 @@ public class BlueManager : TokenManager {
 
         selectedToken = t;
         if (selectedCard) 
-            selectedToken.UpdateValidMoves(selectedCard);
+            selectedToken.UpdateAction(selectedCard);
               
         ToggleGridCursor(true, t.coord);
     }
  
     public override void DeselectToken() {
-        selectedToken = null;
-        grid.DisplayValidMoves(null);
-        ToggleGridCursor(false, Vector2.zero);
+        if (selectedToken) {
+            selectedToken.UpdateAction();
+            selectedToken = null;
+            grid.DisableGridHighlight();
+            ToggleGridCursor(false, Vector2.zero);
+        }
     }
 
     public override void PlayCard() {
@@ -144,7 +157,6 @@ public class BlueManager : TokenManager {
         DeselectCard();
         
         StartCoroutine(UpdateHandDisplay());
-        scenario.TurnAction();
     }
 
     public override void MoveToken(Vector2 moveTo) {

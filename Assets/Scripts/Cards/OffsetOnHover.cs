@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//Simple coroutine class for offsetting a tile's y pos
+//Simple coroutine class for offsetting y pos
 [System.Serializable]
 public class OffsetOnHover : MonoBehaviour {
 //Variables for offset calculation
 	
-	[SerializeField] SpriteRenderer sr;
+	[SerializeField] SpriteRenderer[] spriteRenderers;
 	[SerializeField] float yOffset = 0.25f;
 	[SerializeField] float duration = 0.125f;
 
@@ -32,21 +32,27 @@ public class OffsetOnHover : MonoBehaviour {
 			if (!raised && !raising) { 
 				StopAllCoroutines();
 				StartCoroutine(Activate());
-				sr.sortingOrder = 2;
+				foreach (SpriteRenderer sr in spriteRenderers) 
+					sr.sortingOrder = 2;
 			}
 			else if (raised && !raising) {
 			// 	StopAllCoroutines();
 			// 	StartCoroutine(SinWaveBob());
-			sr.sortingOrder = 1;
 			}
         } else {
 			if ((raising || raised) && !lowering) { 
 				StopAllCoroutines();
 				StartCoroutine(Deactivate());
-				sr.sortingOrder = 0;
+				foreach (SpriteRenderer sr in spriteRenderers) 
+					sr.sortingOrder = 0;
 			}
         }
 
+	}
+
+	public void Selected() {
+		foreach (SpriteRenderer sr in spriteRenderers) 
+			sr.sortingOrder = 1;
 	}
     
 //Offset y 
@@ -61,7 +67,7 @@ public class OffsetOnHover : MonoBehaviour {
 				transform.position.x, 
 				Mathf.Lerp(yOrigin, yOrigin + yOffset, time/duration), 
 				transform.position.z);			
-			transform.localScale = Vector3.one * Mathf.Lerp(scaleOrigin, 1, time/duration);
+			transform.localScale = Vector3.one * Mathf.Lerp(scaleOrigin, 1.5f, time/duration);
 			
 			time += Time.deltaTime;
 			yield return null;
