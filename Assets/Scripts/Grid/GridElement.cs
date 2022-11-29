@@ -13,15 +13,23 @@ public class GridElement : MonoBehaviour{
     public bool selectable;
     public PolygonCollider2D hitbox;
 
+    public delegate void OnElementUpdate(GridElement ge);
+    public event OnElementUpdate ElementDestroyed;
+
+    public int maxHP, hp;
+
 // Initialize references, scale to grid
     protected virtual void Start() {
         if (Grid.instance) {
             grid=Grid.instance;
             grid.gridElements.Add(this);
+            ElementDestroyed += grid.RemoveElement;
             transform.localScale = Vector3.one * Grid.sqrSize;
         }
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
+
+        hp = maxHP;
     }
 
 // Update grid position and coordinate
@@ -29,5 +37,17 @@ public class GridElement : MonoBehaviour{
         transform.position = Grid.PosFromCoord(c);
         coord=c;
     }  
+
+    
+    public virtual void TakeDamage(int dmg) {
+        hp -= dmg;
+        if (hp <= 0)
+            DestroyElement();
+    }
+
+    public virtual void DestroyElement() {
+        ElementDestroyed?.Invoke(this);
+        DestroyImmediate(this.gameObject);
+    }
 
 }

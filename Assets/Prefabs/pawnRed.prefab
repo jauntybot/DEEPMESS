@@ -74,7 +74,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 86376434d63ba9547895f3956fa21fad, type: 3}
   m_Color: {r: 1, g: 0.390566, b: 0.390566, a: 1}
   m_FlipX: 0
@@ -101,12 +101,19 @@ MonoBehaviour:
   coord: {x: 0, y: 0}
   selectable: 0
   hitbox: {fileID: 0}
-  owner: 0
-  moveRange: 0
-  attackRange: 0
+  maxHP: 1
+  hp: 0
+  owner: 1
+  moveAdjacency: 0
+  moveRange: 2
+  moveDirections: []
+  validMoveCoords: []
+  attackAdjacency: 0
+  attackRange: 2
+  attackDirections: []
+  validAttackCoords: []
   defense: 0
   animDur: 1
-  validMoveCoords: []
 --- !u!60 &2630519130368882299
 PolygonCollider2D:
   m_ObjectHideFlags: 0

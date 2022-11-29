@@ -188,7 +188,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 8858c2d25b154f74cb62ea8db5518cf3, type: 3}
   m_Color: {r: 0.37992162, g: 0.6245565, b: 0.8679245, a: 1}
   m_FlipX: 0
@@ -215,7 +215,9 @@ MonoBehaviour:
   coord: {x: 0, y: 0}
   selectable: 0
   hitbox: {fileID: 0}
-  owner: 1
+  maxHP: 1
+  hp: 0
+  owner: 0
   moveAdjacency: 1
   moveRange: 1
   moveDirections:

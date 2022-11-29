@@ -56,6 +56,11 @@ public class Grid : MonoBehaviour {
         gridCursor.transform.localScale = Vector3.one * sqrSize;
     }
 
+    public void RemoveElement(GridElement ge) 
+    {
+        gridElements.Remove(ge);
+    }
+
 // Toggle GridSquare highlights, apply color by index
     public void DisplayValidCoords(List<Vector2> coords, int? index = null) {
         DisableGridHighlight();
@@ -87,6 +92,10 @@ public class Grid : MonoBehaviour {
     public void DisableGridHighlight() {
         foreach(GridSquare sqr in sqrs)
             sqr.ToggleValidCoord(false);
+    }
+
+    public GridElement CoordContents(Vector2 coord) {
+        return gridElements.Find(ge => ge.coord == coord);
     }
 
      public static Vector3 PosFromCoord(Vector2 coord) {

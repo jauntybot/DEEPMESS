@@ -24,7 +24,6 @@ public class GridSquare : GridElement {
         }
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
-        
 // Temporary checkerboard, color sprite renderers
         if (!white) 
         {

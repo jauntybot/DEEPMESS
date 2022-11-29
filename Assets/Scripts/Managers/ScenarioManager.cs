@@ -20,17 +20,19 @@ public class ScenarioManager : MonoBehaviour
 
 // Instanced refs
     Grid grid;
-    [SerializeField] RedManager enemy;
-    [SerializeField] BlueManager player;
+    public RedManager enemy;
+    public BlueManager player;
 
 // State machines
-    public enum GameState { Setup, PlayerPlace, Battle, End }
+    public enum GameState { Null, Setup, PlayerPlace, Battle, End }
     public GameState gameState;
-    public enum Turn { Null, Player, Opponent, Environment }
+    public enum Turn { Null, Player, Enemy, Environment }
     public Turn currentTurn;
 
-    public IEnumerator Start() {
-        if (Grid.instance) {
+    public IEnumerator Start() 
+    {
+        if (Grid.instance) 
+        {
             grid=Grid.instance;
             yield return StartCoroutine(grid.GenerateGrid());
         }
@@ -39,18 +41,25 @@ public class ScenarioManager : MonoBehaviour
         yield return StartCoroutine(player.Initialize());
         
         yield return new WaitForSeconds(1/Util.fps);
-        SwitchTurns(Turn.Opponent);
+        SwitchTurns(Turn.Enemy);
+    }
+
+    public void SwitchStates(GameState fromState = GameState.Null) 
+    {
+
     }
 
 // Overload allows you to specify which turn to switch to, otherwise inverts the binary
-    public void SwitchTurns(Turn fromTurn = Turn.Null) {
-        switch(fromTurn == Turn.Null ? currentTurn : fromTurn) {
+    public void SwitchTurns(Turn fromTurn = Turn.Null) 
+    {
+        switch(fromTurn == Turn.Null ? currentTurn : fromTurn) 
+        {
             case Turn.Player:
                 player.StartEndTurn(false);
-                currentTurn = Turn.Opponent;
+                currentTurn = Turn.Enemy;
                 StartCoroutine(enemy.TakeTurn());
             break;
-            case Turn.Opponent:
+            case Turn.Enemy:
                 currentTurn = Turn.Player;
                 player.StartEndTurn(true);
             break;
@@ -61,5 +70,15 @@ public class ScenarioManager : MonoBehaviour
     public void EndTurn() 
     {
         SwitchTurns();
+    }
+
+    public void Win() 
+    {
+
+    }
+
+    public void Lose() 
+    {
+
     }
 }

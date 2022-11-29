@@ -15,7 +15,7 @@ public class BlueManager : TokenManager {
 // Card vars
     public List<Card> hand;
     [HideInInspector] public Deck deck;
-    public Card playedCard, selectedCard;
+    public Card selectedCard;
     [SerializeField] protected int handLimit;
 
 
@@ -45,13 +45,47 @@ public class BlueManager : TokenManager {
         } else {
             DeselectCard();
             DeselectToken();
+            DiscardHand();
         }
     }
 
+// Overriden functionality
     public override Token SpawnToken(Vector2 coord, int index) {
         Token t = base.SpawnToken(coord, index);
         t.owner = Token.Owner.Player;
         return t;
+    }
+
+    public override void SelectToken(Token t) {
+        if (selectedToken)
+            DeselectToken();
+
+        selectedToken = t;
+        if (selectedCard) 
+            selectedToken.UpdateAction(selectedCard);
+              
+        ToggleGridCursor(true, t.coord);
+    }
+ 
+    public override void DeselectToken() {
+        if (selectedToken) {
+            selectedToken.UpdateAction();
+            selectedToken = null;
+            grid.DisableGridHighlight();
+            ToggleGridCursor(false, Vector2.zero);
+        }
+    }
+    
+    public override IEnumerator MoveToken(Vector2 moveTo) 
+    {
+        PlayCard();
+        yield return base.MoveToken(moveTo);
+    }
+
+    public override IEnumerator AttackWithToken(Vector2 attackAt) 
+    {
+        PlayCard();
+        yield return base.AttackWithToken(attackAt);
     }
 
     public void ToggleHandSelect(bool state) {
@@ -67,6 +101,7 @@ public class BlueManager : TokenManager {
             DeselectCard();
     }
 
+// Hand mgmt
     public IEnumerator UpdateHandDisplay() {
         var height = 2*Camera.main.orthographicSize;
         var width = height*Camera.main.aspect/2;
@@ -82,8 +117,8 @@ public class BlueManager : TokenManager {
             
             float w = Util.cardSize * card.transform.localScale.x * hand.Count;
             card.transform.position = new Vector2(
-                -w + (Util.cardSize * card.transform.localScale.x * i) - (Util.cardSize*card.transform.localScale.x/2), 
-                -8);
+                -w + Camera.main.transform.position.x + (Util.cardSize * card.transform.localScale.x * i) , 
+                -9);
             card.hover.UpdateOrigins();
 
             i++;
@@ -97,9 +132,13 @@ public class BlueManager : TokenManager {
         }
     }
 
-    public virtual void UpdatePlayedCardDisplay() {
-        playedCard.EnableInput(false);
-        playedCard.transform.position = new Vector2(-1.5f, -4.75f);
+    protected virtual void DiscardHand() {
+        for (int i = hand.Count - 1; i >= 0; i--) {
+            hand[i].gameObject.SetActive(false);
+            hand[i].EnableInput(false);
+            deck.discard.Add(hand[i]);
+            hand.Remove(hand[i]);
+        }
     }
 
     public virtual void SelectCard(Card c) {
@@ -124,52 +163,67 @@ public class BlueManager : TokenManager {
         }
     }
 
-    public override void SelectToken(Token t) {
-        if (selectedToken)
-            DeselectToken();
-
-        selectedToken = t;
-        if (selectedCard) 
-            selectedToken.UpdateAction(selectedCard);
-              
-        ToggleGridCursor(true, t.coord);
-    }
- 
-    public override void DeselectToken() {
-        if (selectedToken) {
-            selectedToken.UpdateAction();
-            selectedToken = null;
-            grid.DisableGridHighlight();
-            ToggleGridCursor(false, Vector2.zero);
-        }
-    }
-
-    public override void PlayCard() {
+    public void PlayCard() {
         hand.Remove(selectedCard);
         deck.discard.Add(selectedCard);
 
         selectedCard.gameObject.SetActive(false);
         selectedCard.EnableInput(false);
         
-        playedCard = selectedCard;
-        UpdatePlayedCardDisplay();
-        
         DeselectCard();
         
         StartCoroutine(UpdateHandDisplay());
     }
 
-    public override void MoveToken(Vector2 moveTo) {
-        StartCoroutine(selectedToken.JumpToCoord(moveTo));
-        PlayCard();
-        DeselectToken();
+// Get grid input from player controller, translate it to functionality
+    public void GridInput(GridElement input) {
+        if (input is Token t) {
+            if (t.owner == Token.Owner.Player)
+                SelectToken(t);
+            else if (t.owner == Token.Owner.Enemy) {
+                if (selectedCard && selectedToken) {
+                    if (selectedCard.data.action == CardData.Action.Attack) {
+                        StartCoroutine(AttackWithToken(t.coord));
+                    }
+                }
+            }
+        }
+
+        else if (input is GridSquare sqr) 
+        {
+            GridElement contents = grid.CoordContents(sqr.coord);
+            if (contents)
+                GridInput(contents);
+            else {
+                if (selectedCard && selectedToken) {
+                    switch (selectedCard.data.action) {
+                        case CardData.Action.Move:
+                            if (selectedToken.validMoveCoords.Find(coord => coord == sqr.coord) != null)
+                                StartCoroutine(MoveToken(sqr.coord));
+                        break;
+                        case CardData.Action.Attack:
+
+                        break;
+                    }
+                }
+            }            
+        }
+
+
     }
 
-    void ToggleGridCursor(bool state, Vector2 coord) {
+    void ToggleGridCursor(bool state, Vector2 coord) 
+    {
         gridCursor.SetActive(state);
         gridCursor.transform.position = Grid.PosFromCoord(coord);
 
     }
 
-
+    protected override void RemoveToken(GridElement ge)
+    {
+        base.RemoveToken(ge);
+        if (tokens.Count <= 0) {
+            scenario.Lose();            
+        }
+    }
 }

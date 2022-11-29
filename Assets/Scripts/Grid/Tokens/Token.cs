@@ -36,24 +36,57 @@ public class Token : GridElement {
     }
     public virtual void EnableSelection(bool state) {}
     public virtual void UpdateAction(Card card = null) {}
-    public virtual void UpdateValidMovement() {}
-    public virtual void UpdateValidAttack() {}
+    public virtual void UpdateValidMovement() 
+    {
+        List<Vector2> tempCoords = GetAdjacent(moveAdjacency, coord, moveRange, moveDirections);
+// loop through complete coord list to remove invalid moves
+        for (int i = tempCoords.Count - 1; i >= 0; i--) {
+            bool valid = true;
+
+// check if another grid element occupies this space
+            foreach (GridElement ge in grid.gridElements) {
+                if (tempCoords[i] == ge.coord) valid = false;
+            }
+// remove from list if invalid
+            if (!valid) tempCoords.Remove(tempCoords[i]);
+        }
+        validMoveCoords = tempCoords;
+    }
+    public virtual void UpdateValidAttack() 
+    {
+        List<Vector2> tempCoords = GetAdjacent(attackAdjacency, coord, attackRange, attackDirections);
+// loop through complete coord list to remove invalid moves
+        for (int i = tempCoords.Count - 1; i >= 0; i--) {
+            bool valid = true;
+
+// check if a friendly grid element occupies this space
+            foreach (GridElement ge in grid.gridElements) {
+                if (ge is Token t) {
+                    if (t.owner == owner && tempCoords[i] == ge.coord) 
+                        valid = false;
+                }
+            }
+
+// remove from list if invalid
+            if (!valid) tempCoords.Remove(tempCoords[i]);
+        }
+        validAttackCoords = tempCoords;
+    }
 #endregion
 
 // The basics of being a token; movement, HP, attacking
 #region Token Functionality
     public IEnumerator JumpToCoord(Vector2 moveTo) 
     {
-        coord = moveTo;
-        transform.position = Grid.PosFromCoord(coord);
-
         float timer = 0;
         while (timer < animDur) {
             yield return new WaitForEndOfFrame();
-
+            transform.position = Vector3.Lerp(transform.position, Grid.PosFromCoord(moveTo), timer/animDur);
 
             timer += Time.deltaTime;
         }
+
+        UpdateElement(moveTo);
     }
 
     public IEnumerator AttackCoord(Vector2 attackAt) 
@@ -65,11 +98,11 @@ public class Token : GridElement {
 
             timer += Time.deltaTime;
         }
+
+        GridElement recipient = grid.CoordContents(attackAt);
+        recipient.TakeDamage(1);
     }
 
-    public void TakeDamage(int dmg) {
-        
-    }
 
 #endregion
 

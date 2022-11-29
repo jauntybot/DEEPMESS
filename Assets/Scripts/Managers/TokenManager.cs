@@ -42,13 +42,28 @@ public class TokenManager : MonoBehaviour {
         token.UpdateElement(coord);
 
         tokens.Add(token);
+        token.ElementDestroyed += RemoveToken;
         return token;
     }
 
 // Inherited functionality dependent on inherited classes
     public virtual void SelectToken(Token t) {}
     public virtual void DeselectToken() {}
-    public virtual void PlayCard() {}
-    public virtual void MoveToken(Vector2 moveTo) {}
+    public virtual IEnumerator MoveToken(Vector2 moveTo) {
+        yield return new WaitForSecondsRealtime(1/Util.fps);
+        Token token = selectedToken;
+        DeselectToken();
+        yield return StartCoroutine(token.JumpToCoord(moveTo));
+    }
+    public virtual IEnumerator AttackWithToken(Vector2 attackAt) {
+        yield return new WaitForSecondsRealtime(1/Util.fps);
+        Token token = selectedToken;
+        DeselectToken();
+        yield return StartCoroutine(token.AttackCoord(attackAt));
+    }
+
+    protected virtual void RemoveToken(GridElement ge) {
+        tokens.Remove(ge as Token);
+    }
 }
 

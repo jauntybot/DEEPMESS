@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour {
                 if (hit != default(RaycastHit2D) && 
                     hit.transform.GetComponent<Card>()) {
 // Select card
-                        if (hit.transform.GetComponent<Card>() == manager.selectedCard) 
+                        if (hit.transform.GetComponent<Card>() == manager.selectedCard)
                             manager.DeselectCard();                       
                         else manager.SelectCard(hit.transform.GetComponent<Card>());                     
                 }
@@ -42,14 +42,12 @@ public class PlayerController : MonoBehaviour {
                 RaycastHit2D hit = ClickInput();
                 if (hit != default(RaycastHit2D)) {
 // If clicked a grid element                           
-                    if (hit.transform.GetComponent<Token>()) {
+                    if (hit.transform.GetComponent<GridElement>()) {
+// If selected token deselect
                         if (hit.transform.GetComponent<Token>() == manager.selectedToken)
                             manager.DeselectToken();
-                        else manager.SelectToken(hit.transform.GetComponent<Token>());
-                    }
-                    if (hit.transform.GetComponent<GridSquare>()) {
-                        if (manager.selectedToken)
-                            manager.MoveToken(hit.transform.GetComponent<GridSquare>().coord);
+// Pass call to contextualize click to manager
+                        else manager.GridInput(hit.transform.GetComponent<GridElement>());
                     }
                 }
             }
