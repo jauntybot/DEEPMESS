@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 // Container class for card data, serialized and instanced in Unity scenes
@@ -9,9 +10,14 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider2D))]
 public class Card : MonoBehaviour {
 
-// Instanced refs
-    [SerializeField] SpriteRenderer cardGFX;
+// Serialized refs
+    [SerializeField] SpriteRenderer cardBG;
     [SerializeField] GameObject selectedBox;
+    [SerializeField] Image actionIcon;
+    [SerializeField] List<Sprite> actionSprites;
+
+    [SerializeField] TMPro.TMP_Text valueText;
+    [SerializeField] TMPro.TMP_Text costText;
 
 // Animation
     [HideInInspector] public OffsetOnHover hover;
@@ -34,7 +40,34 @@ public class Card : MonoBehaviour {
 // Update card data
     public void Initialize(CardData cd) {
         this.data = cd;
-        cardGFX.sprite = data.graphic;
+        cardBG.sprite = data.graphic;
+        switch (data.action) 
+        {
+            case CardData.Action.Move:
+            case CardData.Action.Attack:
+                switch (data.adjacency) 
+                {
+                    case CardData.AdjacencyType.Orthogonal:
+                        actionIcon.sprite = actionSprites[0];
+                    break;
+                    case CardData.AdjacencyType.Diagonal:
+                        actionIcon.sprite = actionSprites[1];
+                    break;
+                    case CardData.AdjacencyType.Diamond:
+                        actionIcon.sprite = actionSprites[2];
+                    break;
+                    case CardData.AdjacencyType.Box:
+                        actionIcon.sprite = actionSprites[3];
+                    break;
+
+                }
+                valueText.text = data.range.ToString();
+            break;
+            case CardData.Action.Defend:
+                actionIcon.sprite = actionSprites[4];
+                valueText.text = data.shield.ToString();
+            break;
+        }
     }
 
 // Hover animation

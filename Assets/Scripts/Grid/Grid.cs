@@ -61,6 +61,11 @@ public class Grid : MonoBehaviour {
         gridElements.Remove(ge);
     }
 
+    public void DisplayGridCursor(bool state, Vector2 coord) {
+        gridCursor.SetActive(state);
+        gridCursor.transform.position = Grid.PosFromCoord(coord);
+    }
+
 // Toggle GridSquare highlights, apply color by index
     public void DisplayValidCoords(List<Vector2> coords, int? index = null) {
         DisableGridHighlight();

@@ -7,7 +7,7 @@ using UnityEngine;
 public class OffsetOnHover : MonoBehaviour {
 //Variables for offset calculation
 	
-	[SerializeField] SpriteRenderer[] spriteRenderers;
+	[SerializeField] Component[] sortOrders;
 	[SerializeField] float yOffset = 0.25f;
 	[SerializeField] float duration = 0.125f;
 
@@ -32,8 +32,7 @@ public class OffsetOnHover : MonoBehaviour {
 			if (!raised && !raising) { 
 				StopAllCoroutines();
 				StartCoroutine(Activate());
-				foreach (SpriteRenderer sr in spriteRenderers) 
-					sr.sortingOrder = 2;
+				ChangeSortOrder(2);
 			}
 			else if (raised && !raising) {
 			// 	StopAllCoroutines();
@@ -43,16 +42,14 @@ public class OffsetOnHover : MonoBehaviour {
 			if ((raising || raised) && !lowering) { 
 				StopAllCoroutines();
 				StartCoroutine(Deactivate());
-				foreach (SpriteRenderer sr in spriteRenderers) 
-					sr.sortingOrder = 0;
+				ChangeSortOrder(0);
 			}
         }
 
 	}
 
 	public void Selected() {
-		foreach (SpriteRenderer sr in spriteRenderers) 
-			sr.sortingOrder = 1;
+		ChangeSortOrder(1);
 	}
     
 //Offset y 
@@ -70,7 +67,7 @@ public class OffsetOnHover : MonoBehaviour {
 			transform.localScale = Vector3.one * Mathf.Lerp(scaleOrigin, 1.5f, time/duration);
 			
 			time += Time.deltaTime;
-			yield return null;
+			yield return new WaitForSecondsRealtime(1/Util.fps);
 		}
 
 		raised = true;
@@ -90,7 +87,7 @@ public class OffsetOnHover : MonoBehaviour {
 				yOrigin + yOffset + Mathf.Sin(time * sinFrequency) * yOffset / sinAmplitude, 
 				transform.position.z);
 			time += Time.deltaTime;
-			yield return null;
+			yield return new WaitForSecondsRealtime(1/Util.fps);;
 		}
 	}
 
@@ -111,11 +108,20 @@ public class OffsetOnHover : MonoBehaviour {
 
 
 			time += Time.deltaTime;
-			yield return null;
+			yield return new WaitForSecondsRealtime(1/Util.fps);;
 		}
 
 		lowering = false;
 		raised = false;
 	}
 //
+
+	void ChangeSortOrder(int order) {
+		foreach (Component c in sortOrders) {
+			if (c is SpriteRenderer sr)
+				sr.sortingOrder = order;
+			if (c is Canvas canvas)
+				canvas.sortingOrder = order;
+		}		
+	}
 }

@@ -20,8 +20,8 @@ public class ScenarioManager : MonoBehaviour
 
 // Instanced refs
     Grid grid;
-    public RedManager enemy;
-    public BlueManager player;
+    public EnemyManager enemy;
+    public PlayerManager player;
 
 // State machines
     public enum GameState { Null, Setup, PlayerPlace, Battle, End }

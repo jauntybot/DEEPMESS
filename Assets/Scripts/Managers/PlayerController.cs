@@ -6,11 +6,11 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-    BlueManager manager;
+    PlayerManager manager;
 
     void Start() 
     {
-        manager = GetComponent<BlueManager>();
+        manager = GetComponent<PlayerManager>();
     }
 
 
@@ -43,11 +43,8 @@ public class PlayerController : MonoBehaviour {
                 if (hit != default(RaycastHit2D)) {
 // If clicked a grid element                           
                     if (hit.transform.GetComponent<GridElement>()) {
-// If selected token deselect
-                        if (hit.transform.GetComponent<Token>() == manager.selectedToken)
-                            manager.DeselectToken();
 // Pass call to contextualize click to manager
-                        else manager.GridInput(hit.transform.GetComponent<GridElement>());
+                        manager.GridInput(hit.transform.GetComponent<GridElement>());
                     }
                 }
             }
