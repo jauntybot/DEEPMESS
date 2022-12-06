@@ -30,64 +30,84 @@ public class UnitManager : MonoBehaviour {
     public virtual IEnumerator Initialize() 
     {
         for (int i = 0; i <= startingCoords.Count - 1; i++) {
-            SpawnUnit(startingCoords[i], i);
+            SpawnUnit(startingCoords[i], unitPrefabs[i].GetComponent<Unit>());
             yield return new WaitForSeconds(Util.initD);
         }
     }
 
 // Create a new unit from prefab index, update its GridElement
-    public virtual Unit SpawnUnit(Vector2 coord, int index) 
+    public virtual Unit SpawnUnit(Vector2 coord, Unit unit) 
     {
-        Unit unit = Instantiate(unitPrefabs[index], this.transform).GetComponent<Unit>();
-        unit.UpdateElement(coord);
+        Unit u = Instantiate(unit.gameObject, this.transform).GetComponent<Unit>();
+        u.UpdateElement(coord);
 
-        units.Add(unit);
-        unit.ElementDestroyed += RemoveUnit;
+        units.Add(u);
+        u.ElementDestroyed += RemoveUnit;
         return unit;
     }
 
 // Inherited functionality dependent on inherited classes
     public virtual void SelectUnit(Unit t) {
         if (selectedUnit)
-            DeselectUnit();
+            DeselectUnit(true);
 
-        t.hpDisplay.ToggleHPDisplay(true);
+        t.TargetElement(true);
         selectedUnit = t;
 
         grid.DisplayGridCursor(true, t.coord);
     }
-    public virtual void DeselectUnit() {
-        selectedUnit.hpDisplay.ToggleHPDisplay(false);
-        selectedUnit = null;
+    public virtual void DeselectUnit(bool untarget) {
+        if (selectedUnit) {
+// Clear action data
+            if (untarget)
+                selectedUnit.TargetElement(false);
 
-        grid.DisplayGridCursor(true, Vector2.one * -32);
-        grid.DisableGridHighlight();
+            selectedUnit = null;
+
+            grid.DisplayGridCursor(true, Vector2.one * -32);
+            grid.DisableGridHighlight();
+        }            
     }
     public virtual IEnumerator MoveUnit(Vector2 moveTo) {
-        yield return new WaitForSecondsRealtime(1/Util.fps);
         Unit unit = selectedUnit; 
+        DeselectUnit(false);
+
         yield return StartCoroutine(unit.JumpToCoord(moveTo));
-        yield return new WaitForSecondsRealtime(.2f);
-        DeselectUnit();
+        unit.UpdateAction();
+
+        yield return new WaitForSecondsRealtime(.5f);
+        unit.TargetElement(false);
     }
+
     public virtual IEnumerator AttackWithUnit(Vector2 attackAt) {
-        yield return new WaitForSecondsRealtime(1/Util.fps);
         Unit unit = selectedUnit;
        
         Unit recipient = grid.CoordContents(attackAt) as Unit;
+        foreach(Vector2 coord in selectedUnit.validAttackCoords) {
+            if (grid.CoordContents(coord) is Unit u) {
+                u.TargetElement(u == recipient);
+            }
+        }
+
+        DeselectUnit(false);    
+
         yield return StartCoroutine(unit.AttackUnit(recipient));
-        yield return new WaitForSecondsRealtime(.2f);
-        recipient.hpDisplay.ToggleHPDisplay(false);
-        DeselectUnit();
+        unit.UpdateAction();
+
+        yield return new WaitForSecondsRealtime(.5f);
+        recipient.TargetElement(false);
+        unit.TargetElement(false);
     }
 
     public virtual IEnumerator DefendUnit(int value) {
-        yield return new WaitForSecondsRealtime(1/Util.fps);
         Unit unit = selectedUnit;
+        DeselectUnit(false);
 
         yield return StartCoroutine(unit.Defend(value));
-        yield return new WaitForSecondsRealtime(.2f);
-        DeselectUnit();
+        unit.UpdateAction();
+
+        yield return new WaitForSecondsRealtime(.5f);
+        unit.TargetElement(false);
     }
 
     protected virtual void RemoveUnit(GridElement ge) {

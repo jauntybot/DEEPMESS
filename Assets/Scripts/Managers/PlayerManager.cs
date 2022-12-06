@@ -10,19 +10,13 @@ using UnityEngine.UI;
 [RequireComponent(typeof(PlayerController))]
 public class PlayerManager : UnitManager {
     
-    PlayerController pc;
-
+    [HideInInspector] public PlayerController pc;
+    Deck deck;
 
 // Turn vars
     public int currentEnergy, maxEnergy;
     public TMPro.TMP_Text energyText;
     public GameObject energyWarning;
-
-// Card vars
-    public List<Card> hand;
-    [HideInInspector] public Deck deck;
-    public Card selectedCard;
-    [SerializeField] protected int handLimit;
 
 
     protected override void Start() {
@@ -41,100 +35,82 @@ public class PlayerManager : UnitManager {
         for (int i = 0; i <= units.Count - 1; i++) 
             units[i].EnableSelection(start);
         
-        ToggleHandSelect(start);
+        deck.ToggleHandSelect(start);
 
         if (start) {
-            DrawToHandLimit();
+            deck.DrawToHandLimit();
             currentEnergy = maxEnergy;
             UpdateEnergyDisplay();
 
             StartCoroutine(pc.GridInput());
-            StartCoroutine(UpdateHandDisplay());
+            StartCoroutine(deck.UpdateHandDisplay());
         } else {
-            DeselectCard();
-            DeselectUnit();
-            DiscardHand();
+            deck.DeselectCard();
+            DeselectUnit(true);
+            deck.DiscardHand();
         }
     }
 
 // Overriden functionality
-    public override Unit SpawnUnit(Vector2 coord, int index) {
-        Unit t = base.SpawnUnit(coord, index);
-        t.owner = Unit.Owner.Player;
-        return t;
+    public override Unit SpawnUnit(Vector2 coord, Unit unit) {
+        Unit u = base.SpawnUnit(coord, unit);
+        u.owner = Unit.Owner.Player;
+        return u;
     }
 
-    public override void SelectUnit(Unit t) {
-        base.SelectUnit(t); 
+    public override void SelectUnit(Unit u) {
+        base.SelectUnit(u); 
         
-        if (selectedCard) 
-            selectedUnit.UpdateAction(selectedCard);
-              
-
-    }
- 
-    public override void DeselectUnit() {
-        if (selectedUnit) {
-            selectedUnit.UpdateAction();
-
-            base.DeselectUnit(); 
-        }
+        if (deck.selectedCard) 
+            selectedUnit.UpdateAction(deck.selectedCard);    
     }
     
     public override IEnumerator MoveUnit(Vector2 moveTo) 
     {
-        if (PlayCard())
-            yield return base.MoveUnit(moveTo);
+        if (PlayCard()) {
+            Coroutine co = StartCoroutine(base.MoveUnit(moveTo));
+            deck.DeselectCard();            
+            yield return co;
+        }
     }
 
     public override IEnumerator AttackWithUnit(Vector2 attackAt) 
     {
-        if (PlayCard())
-            yield return base.AttackWithUnit(attackAt);
+        if (PlayCard()) {
+            Coroutine co = StartCoroutine(base.AttackWithUnit(attackAt));
+            deck.DeselectCard();      
+            yield return co;      
+        }
     }
 
     public override IEnumerator DefendUnit(int value)
     {
-        if (PlayCard())
-            yield return base.DefendUnit(value);
-    }
-
-
-
-    public void ToggleHandSelect(bool state) {
-        foreach (Card card in hand) {
-            card.hover.active = false;
-            card.selectable = state;
+        if (PlayCard()) {
+            Coroutine co = StartCoroutine(base.DefendUnit(value));
+            deck.DeselectCard();
+            yield return co;            
         }
-        if (selectedCard) selectedCard.hover.active = true;
-        
-        if (state) {
-            StartCoroutine(pc.HandInput());
-        } else 
-            DeselectCard();
     }
 
-// Hand mgmt
-    public IEnumerator UpdateHandDisplay() {
-        var height = 2*Camera.main.orthographicSize;
-        var width = height*Camera.main.aspect/2;
-        int i=0;
-        foreach (Card card in hand) {
-            yield return new WaitForSeconds(Util.initD);
+    public bool PlayCard() {
+        if (currentEnergy >= deck.selectedCard.data.energyCost)
+        {
+            currentEnergy -= deck.selectedCard.data.energyCost;
+            UpdateEnergyDisplay();
 
-            card.gameObject.SetActive(true);
-            card.EnableInput(true);
+            deck.hand.Remove(deck.selectedCard);
+            deck.discard.Add(deck.selectedCard);
 
-            float scale = Mathf.Clamp(width/hand.Count/3f, 0.25f, 1.5f);
-            card.transform.localScale = Vector3.one * scale;
-            
-            float w = Util.cardSize * card.transform.localScale.x * hand.Count;
-            card.transform.position = new Vector2(
-                -w + Camera.main.transform.position.x + (Util.cardSize * card.transform.localScale.x * i) , 
-                -9);
-            card.hover.UpdateOrigins();
-
-            i++;
+            deck.selectedCard.gameObject.SetActive(false);
+            deck.selectedCard.EnableInput(false);
+                      
+            StartCoroutine(deck.UpdateHandDisplay());
+            return true;
+        }
+        else 
+        {
+            StartCoroutine(EnergyWarning());
+            return false;
         }
     }
 
@@ -146,97 +122,44 @@ public class PlayerManager : UnitManager {
             energyWarning.SetActive(false);
     }
 
-    protected virtual void DrawToHandLimit() {
-        int toDraw = handLimit - hand.Count;
-        for (int i = 0; i < toDraw; i++) {
-            hand.Add(deck.DrawCard());
-        }
-    }
-
-    protected virtual void DiscardHand() {
-        for (int i = hand.Count - 1; i >= 0; i--) {
-            hand[i].gameObject.SetActive(false);
-            hand[i].EnableInput(false);
-            deck.discard.Add(hand[i]);
-            hand.Remove(hand[i]);
-        }
-    }
-
-    public virtual void SelectCard(Card c) {
-        if (selectedCard) 
-            DeselectCard();
-
-        selectedCard = c;
-        selectedCard.SelectCard();
-
-        if (selectedUnit)
-            selectedUnit.UpdateAction(selectedCard);
-
-        c.EnableInput(false, true);
-    }
-
-    public virtual void DeselectCard() {
-        if (selectedUnit)
-            selectedUnit.UpdateAction();
-        if (selectedCard) {        
-            selectedCard.EnableInput(true);
-            selectedCard = null;
-        }
-    }
-
-    public bool PlayCard() {
-        if (currentEnergy >= selectedCard.data.energyCost)
-        {
-            currentEnergy -= selectedCard.data.energyCost;
-            UpdateEnergyDisplay();
-
-            hand.Remove(selectedCard);
-            deck.discard.Add(selectedCard);
-
-            selectedCard.gameObject.SetActive(false);
-            selectedCard.EnableInput(false);
-            
-            DeselectCard();
-            
-            StartCoroutine(UpdateHandDisplay());
-            return true;
-        }
-        else 
-        {
-            StartCoroutine(EnergyWarning());
-            return false;
+    protected virtual IEnumerator EnergyWarning() {
+        for (int i = 0; i < 3; i++) {
+            energyWarning.SetActive(false);
+            yield return new WaitForSecondsRealtime(.2f);
+            energyWarning.SetActive(true);
+            yield return new WaitForSecondsRealtime(.2f);
         }
     }
 
 // Get grid input from player controller, translate it to functionality
     public void GridInput(GridElement input) {
-        if (input is Unit t) 
+        if (input is Unit u) 
         {
-            if (t.owner == Unit.Owner.Player) 
+            if (u.owner == Unit.Owner.Player) 
             {
-                Debug.Log(t.name);
-                if (selectedUnit)
-                    Debug.Log(selectedUnit.name);
-                if (t == selectedUnit) 
-                {
-                    if (selectedCard) 
+                if (selectedUnit) {
+                    if (u == selectedUnit) 
                     {
-                        if (selectedCard.data.action == CardData.Action.Defend) 
+                        if (deck.selectedCard) 
                         {
-                            StartCoroutine(DefendUnit(selectedCard.data.shield));
-                        } else
-                            DeselectUnit();
-                    } else                    
-                        DeselectUnit();                 
-                } else 
-                    SelectUnit(t);
+                            if (deck.selectedCard.data.action == CardData.Action.Defend) 
+                            {
+                                StartCoroutine(DefendUnit(deck.selectedCard.data.shield));
+                            } else
+                                DeselectUnit(true);
+                        } else                    
+                            DeselectUnit(true);                 
+                    } else 
+                        SelectUnit(u);
+                } else
+                    SelectUnit(u);
             }
-            else if (t.owner == Unit.Owner.Enemy) 
+            else if (u.owner == Unit.Owner.Enemy) 
             {
-                if (selectedCard && selectedUnit) 
+                if (deck.selectedCard && selectedUnit) 
                 {
-                    if (selectedCard.data.action == CardData.Action.Attack) 
-                        StartCoroutine(AttackWithUnit(t.coord));                    
+                    if (deck.selectedCard.data.action == CardData.Action.Attack) 
+                        StartCoroutine(AttackWithUnit(u.coord));                    
                 }
             }
         }
@@ -247,8 +170,8 @@ public class PlayerManager : UnitManager {
             if (contents)
                 GridInput(contents);
             else {
-                if (selectedCard && selectedUnit) {
-                    switch (selectedCard.data.action) {
+                if (deck.selectedCard && selectedUnit) {
+                    switch (deck.selectedCard.data.action) {
                         case CardData.Action.Move:
                             if (selectedUnit.validMoveCoords.Find(coord => coord == sqr.coord) != null)
                                 StartCoroutine(MoveUnit(sqr.coord));
@@ -269,15 +192,6 @@ public class PlayerManager : UnitManager {
         base.RemoveUnit(ge);
         if (units.Count <= 0) {
             scenario.Lose();            
-        }
-    }
-
-    protected virtual IEnumerator EnergyWarning() {
-        for (int i = 0; i < 3; i++) {
-            energyWarning.SetActive(false);
-            yield return new WaitForSecondsRealtime(.2f);
-            energyWarning.SetActive(true);
-            yield return new WaitForSecondsRealtime(.2f);
         }
     }
 }

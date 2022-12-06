@@ -12,6 +12,7 @@ public class Card : MonoBehaviour {
 
 // Serialized refs
     [SerializeField] SpriteRenderer cardBG;
+    [SerializeField] Sprite[] bgSprites;
     [SerializeField] GameObject selectedBox;
     [SerializeField] Image actionIcon;
     [SerializeField] List<Sprite> actionSprites;
@@ -40,33 +41,45 @@ public class Card : MonoBehaviour {
 // Update card data
     public void Initialize(CardData cd) {
         this.data = cd;
-        cardBG.sprite = data.graphic;
         switch (data.action) 
         {
             case CardData.Action.Move:
-            case CardData.Action.Attack:
-                switch (data.adjacency) 
-                {
-                    case CardData.AdjacencyType.Orthogonal:
-                        actionIcon.sprite = actionSprites[0];
-                    break;
-                    case CardData.AdjacencyType.Diagonal:
-                        actionIcon.sprite = actionSprites[1];
-                    break;
-                    case CardData.AdjacencyType.Diamond:
-                        actionIcon.sprite = actionSprites[2];
-                    break;
-                    case CardData.AdjacencyType.Box:
-                        actionIcon.sprite = actionSprites[3];
-                    break;
-
-                }
+                cardBG.sprite = bgSprites[0];
+                SwitchIcon();
                 valueText.text = data.range.ToString();
             break;
+            case CardData.Action.Attack:
+                cardBG.sprite = bgSprites[1];
+                SwitchIcon();
+                valueText.text = data.range.ToString();
+
+            break;
             case CardData.Action.Defend:
+                cardBG.sprite = bgSprites[2];
                 actionIcon.sprite = actionSprites[4];
                 valueText.text = data.shield.ToString();
             break;
+        }
+        costText.text = data.energyCost.ToString();
+    }
+
+    void SwitchIcon() 
+    {
+        switch (data.adjacency) 
+        {
+            case CardData.AdjacencyType.Orthogonal:
+                actionIcon.sprite = actionSprites[0];
+            break;
+            case CardData.AdjacencyType.Diagonal:
+                actionIcon.sprite = actionSprites[1];
+            break;
+            case CardData.AdjacencyType.Diamond:
+                actionIcon.sprite = actionSprites[2];
+            break;
+            case CardData.AdjacencyType.Box:
+                actionIcon.sprite = actionSprites[3];
+            break;
+
         }
     }
 

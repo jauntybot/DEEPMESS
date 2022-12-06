@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class HPDisplay : MonoBehaviour 
 {
-    [SerializeField] GridElement element;
+    GridElement element;
     public GameObject hpDisplay;
     public Slider hpSlider, defenseSlider;
     public GameObject defenseShield;

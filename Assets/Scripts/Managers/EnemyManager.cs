@@ -5,21 +5,27 @@ using UnityEngine;
 public class EnemyManager : UnitManager {
 
     
+    public delegate void OnEnemyCondition(GridElement ge);
+    public event OnEnemyCondition WipedOutCallback;
+
+    public override IEnumerator Initialize()
+    {
+        yield return null;
+    }
+
     public IEnumerator TakeTurn() {
 
         yield return new WaitForSecondsRealtime(1/Util.fps);
-        while (scenario.currentTurn == ScenarioManager.Turn.Enemy) {
-            for (int i = units.Count - 1; i >= 0; i--) 
+        for (int i = units.Count - 1; i >= 0; i--) 
+        {
+            EnemyUnit enemy = units[i] as EnemyUnit;
+            for (int e = 1; e <= enemy.maxEnergy; e++) 
             {
-                EnemyUnit enemy = units[i] as EnemyUnit;
-                for (int e = 1; e <= enemy.maxEnergy; e++) 
-                {
-                    yield return new WaitForSecondsRealtime(0.1f);
-                    yield return StartCoroutine(CalculateAction(enemy));
-                }
+                yield return new WaitForSecondsRealtime(0.05f);
+                yield return StartCoroutine(CalculateAction(enemy));
             }
-            EndTurn();
         }
+        EndTurn();
     }
 
     public IEnumerator CalculateAction(EnemyUnit input) {
@@ -33,7 +39,12 @@ public class EnemyManager : UnitManager {
                 if (t.owner == Unit.Owner.Player) {
                     SelectUnit(input);
                     grid.DisplayValidCoords(input.validAttackCoords, 1);
-                    yield return new WaitForSecondsRealtime(0.4f);
+                    foreach(Vector2 c in input.validAttackCoords) {
+                        if (grid.CoordContents(c) is Unit u) {
+                            u.TargetElement(true);
+                        }
+                    }
+                    yield return new WaitForSecondsRealtime(0.75f);
                     yield return StartCoroutine(AttackWithUnit(coord));
                     yield break;
                 }
@@ -57,7 +68,7 @@ public class EnemyManager : UnitManager {
             if (Mathf.Sign(closestCoord.x) == 1) {
                 SelectUnit(input);
                 grid.DisplayValidCoords(input.validMoveCoords, 0);
-                yield return new WaitForSecondsRealtime(0.4f);
+                yield return new WaitForSecondsRealtime(0.75f);
                 yield return StartCoroutine(MoveUnit(closestCoord));
                 yield break;
             }
@@ -66,12 +77,12 @@ public class EnemyManager : UnitManager {
 
     public void EndTurn() {
         if (selectedUnit)
-           DeselectUnit();
+           DeselectUnit(true);
         foreach (Unit unit in units) {
             unit.UpdateAction();
         }
 
-        scenario.SwitchTurns();
+        StartCoroutine(scenario.SwitchTurns());
     }
 
     public override IEnumerator AttackWithUnit(Vector2 attackAt)

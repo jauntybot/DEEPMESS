@@ -7,10 +7,12 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
     PlayerManager manager;
+    Deck deck;
 
     void Start() 
     {
         manager = GetComponent<PlayerManager>();
+        deck = GetComponent<Deck>();
     }
 
 
@@ -25,9 +27,9 @@ public class PlayerController : MonoBehaviour {
                 if (hit != default(RaycastHit2D) && 
                     hit.transform.GetComponent<Card>()) {
 // Select card
-                        if (hit.transform.GetComponent<Card>() == manager.selectedCard)
-                            manager.DeselectCard();                       
-                        else manager.SelectCard(hit.transform.GetComponent<Card>());                     
+                        if (hit.transform.GetComponent<Card>() == deck.selectedCard)
+                            deck.DeselectCard();                       
+                        else deck.SelectCard(hit.transform.GetComponent<Card>());                     
                 }
             }
         }

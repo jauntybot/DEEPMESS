@@ -10,6 +10,10 @@ public class PlayerUnit : Unit {
     public override void UpdateAction(Card card = null) 
     {
 // Clear data
+        foreach(GridElement ge in grid.gridElements) {
+            ge.TargetElement(ge == this);
+        }
+
         base.UpdateAction(card);
 // Update action data by card
         if (card) {
@@ -47,5 +51,10 @@ public class PlayerUnit : Unit {
     {
         base.UpdateValidAttack(card);
         grid.DisplayValidCoords(validAttackCoords, 1);
+        foreach(Vector2 coord in validAttackCoords) {
+            if (grid.CoordContents(coord) is Unit u) {
+                u.TargetElement(true);
+            }
+        }
     }
 }

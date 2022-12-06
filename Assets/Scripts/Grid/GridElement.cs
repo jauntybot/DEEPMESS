@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Universal data class for any instance that occupies grid space
+// Universal data class derrived by any instance that occupies grid space
 
 [RequireComponent(typeof(PolygonCollider2D))]
 [RequireComponent(typeof(HPDisplay))]
@@ -13,7 +13,7 @@ public class GridElement : MonoBehaviour{
 
     [Header("Grid Element")]
     public Vector2 coord;
-    public bool selectable;
+    public bool selectable, targeted;
     public PolygonCollider2D hitbox;
     [HideInInspector] public HPDisplay hpDisplay;
 
@@ -24,7 +24,8 @@ public class GridElement : MonoBehaviour{
     public int hpMax, hpCurrent, defense;
 
 // Initialize references, scale to grid, subscribe onDeath event
-    protected virtual void Start() {
+    protected virtual void Start() 
+    {
         if (Grid.instance) {
             grid=Grid.instance;
             grid.gridElements.Add(this);
@@ -35,25 +36,28 @@ public class GridElement : MonoBehaviour{
         hitbox.enabled = false;
 
         hpCurrent = hpMax;
-
         hpDisplay = GetComponent<HPDisplay>();
     }
 
 // Update grid position and coordinate
-    public virtual void UpdateElement(Vector2 c) {
+    public virtual void UpdateElement(Vector2 c) 
+    {
         transform.position = Grid.PosFromCoord(c);
         coord=c;
     }  
 
+    public virtual void EnableSelection(bool state) {}
+
 // Apply shield to this element
     public virtual IEnumerator Defend(int value) 
     {
-        yield return new WaitForEndOfFrame();
+        yield return null;
         defense += value;
         hpDisplay.UpdateHPDisplay();
     }
     
-    public virtual void TakeDamage(int dmg) {
+    public virtual void TakeDamage(int dmg) 
+    {
         defense -= dmg;
         if (Mathf.Sign(defense) == -1) {
             hpCurrent += defense;
@@ -64,12 +68,18 @@ public class GridElement : MonoBehaviour{
         hpDisplay.UpdateHPDisplay();
     }
 
-    public virtual IEnumerator DestroyElement() {
+    public virtual IEnumerator DestroyElement() 
+    {
         ElementDestroyed?.Invoke(this);
         yield return new WaitForSecondsRealtime(.5f);
         DestroyImmediate(this.gameObject);
     }
 
+    public virtual void TargetElement(bool state) 
+    {
+        targeted = state;
+        hpDisplay.ToggleHPDisplay(state);
+    }
     
 }
 

@@ -19,7 +19,6 @@ public class Unit : GridElement {
     public override void UpdateElement(Vector2 c) {
         base.UpdateElement(c);
     }
-    public virtual void EnableSelection(bool state) {}
     public virtual void UpdateAction(Card card = null) {
 // Clear data
         validAttackCoords = null;
@@ -72,26 +71,28 @@ public class Unit : GridElement {
 
 // The basics of being a unit; movement, HP, attacking
 #region Unit Functionality
+
     public IEnumerator JumpToCoord(Vector2 moveTo) 
     {
         float timer = 0;
+
         while (timer < animDur) {
-            yield return new WaitForEndOfFrame();
+            yield return null;
             transform.position = Vector3.Lerp(transform.position, Grid.PosFromCoord(moveTo), timer/animDur);
 
             timer += Time.deltaTime;
         }
-
+        
         UpdateElement(moveTo);
+
 
     }
 
     public IEnumerator AttackUnit(Unit unit) 
     {
-        unit.hpDisplay.ToggleHPDisplay(true);
         float timer = 0;
         while (timer < animDur) {
-            yield return new WaitForEndOfFrame();
+            yield return null;
 
 
             timer += Time.deltaTime;
@@ -105,10 +106,11 @@ public class Unit : GridElement {
         hpDisplay.defenseSlider.gameObject.SetActive(true);
         float timer = 0;
         while (timer < animDur) {
-            yield return new WaitForEndOfFrame();
+            yield return null;
 
             timer += Time.deltaTime;
         }
+        
         yield return base.Defend(value);
 
     }

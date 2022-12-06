@@ -12,19 +12,20 @@ public class CardDataEditor : Editor
         CardData arg = target as CardData;
 
 
-        if (arg.action == CardData.Action.Move) {
-            arg.adjacency = (CardData.AdjacencyType)EditorGUILayout.EnumPopup("Adjacency Type", arg.adjacency);
-            arg.range = EditorGUILayout.IntField("Move Range", arg.range);
-        }
-
-        if (arg.action == CardData.Action.Attack) {
-            arg.adjacency = (CardData.AdjacencyType)EditorGUILayout.EnumPopup("Adjacency Type", arg.adjacency);
-            arg.range = EditorGUILayout.IntField("Attack Range", arg.range);
-            arg.dmg = EditorGUILayout.IntField("Damage", arg.dmg);
-        }        
-
-        if (arg.action == CardData.Action.Defend) {
-            arg.shield = EditorGUILayout.IntField("Shield Value", arg.shield);
+        switch(arg.action) 
+        {
+            case CardData.Action.Move:
+                arg.adjacency = (CardData.AdjacencyType)EditorGUILayout.EnumPopup("Adjacency Type", arg.adjacency);
+                arg.range = EditorGUILayout.IntField("Move Range", arg.range);
+            break;
+            case CardData.Action.Attack:
+                arg.adjacency = (CardData.AdjacencyType)EditorGUILayout.EnumPopup("Adjacency Type", arg.adjacency);
+                arg.range = EditorGUILayout.IntField("Attack Range", arg.range);
+                arg.dmg = EditorGUILayout.IntField("Damage", arg.dmg);
+            break;   
+            case CardData.Action.Defend:
+                arg.shield = EditorGUILayout.IntField("Shield Value", arg.shield);
+            break;
         }
     }
 }

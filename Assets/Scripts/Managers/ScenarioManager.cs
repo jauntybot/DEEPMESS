@@ -22,6 +22,9 @@ public class ScenarioManager : MonoBehaviour
     Grid grid;
     public EnemyManager enemy;
     public PlayerManager player;
+    public LevelDefinition lvlDef;
+
+    [SerializeField] MessagePanel messagePanel;
 
 // State machines
     public enum GameState { Null, Setup, PlayerPlace, Battle, End }
@@ -29,6 +32,7 @@ public class ScenarioManager : MonoBehaviour
     public enum Turn { Null, Player, Enemy, Environment }
     public Turn currentTurn;
 
+#region Initialization
     public IEnumerator Start() 
     {
         if (Grid.instance) 
@@ -37,12 +41,34 @@ public class ScenarioManager : MonoBehaviour
             yield return StartCoroutine(grid.GenerateGrid());
         }
 
-        yield return StartCoroutine(enemy.Initialize());
+        yield return StartCoroutine(SpawnLevelDefinition());
         yield return StartCoroutine(player.Initialize());
         
         yield return new WaitForSeconds(1/Util.fps);
-        SwitchTurns(Turn.Enemy);
+        StartCoroutine(SwitchTurns(Turn.Enemy));
     }
+
+    IEnumerator SpawnLevelDefinition() 
+    {
+        foreach (Content c in lvlDef.initSpawns) 
+        {
+            if (c.gridElement is Unit u) 
+            {
+                enemy.SpawnUnit(c.coord, u);
+            } else 
+            {
+                yield return new WaitForSecondsRealtime(Util.initD/2);
+                GridElement ge = Instantiate(c.gridElement.gameObject).GetComponent<GridElement>();
+                grid.gridElements.Add(ge);
+                ge.ElementDestroyed += grid.RemoveElement;
+                ge.UpdateElement(c.coord);
+            }
+        }
+
+
+    }
+
+#endregion
 
     public void SwitchStates(GameState fromState = GameState.Null) 
     {
@@ -50,16 +76,18 @@ public class ScenarioManager : MonoBehaviour
     }
 
 // Overload allows you to specify which turn to switch to, otherwise inverts the binary
-    public void SwitchTurns(Turn fromTurn = Turn.Null) 
+    public IEnumerator SwitchTurns(Turn fromTurn = Turn.Null) 
     {
         switch(fromTurn == Turn.Null ? currentTurn : fromTurn) 
         {
             case Turn.Player:
+                yield return StartCoroutine(messagePanel.DisplayMessage("ENEMY TURN"));
                 player.StartEndTurn(false);
                 currentTurn = Turn.Enemy;
                 StartCoroutine(enemy.TakeTurn());
             break;
             case Turn.Enemy:
+                yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN"));
                 currentTurn = Turn.Player;
                 player.StartEndTurn(true);
             break;
@@ -69,7 +97,7 @@ public class ScenarioManager : MonoBehaviour
 // public function for UI buttons
     public void EndTurn() 
     {
-        SwitchTurns();
+        StartCoroutine(SwitchTurns());
     }
 
     public void Win() 

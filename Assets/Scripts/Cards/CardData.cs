@@ -7,8 +7,6 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Card")]
 [System.Serializable]
 public class CardData : ScriptableObject {
-
-    public Sprite graphic;
     public int energyCost;
     public enum Action { Move, Attack, Defend };
     public Action action;

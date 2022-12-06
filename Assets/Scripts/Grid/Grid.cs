@@ -19,6 +19,9 @@ public class Grid : MonoBehaviour {
     public static int gridSize;
     [SerializeField] float _sqrSize;
     public static float sqrSize;
+
+    public LevelDefinition lvlDef;
+
     public List<GridSquare> sqrs = new List<GridSquare>();
     public List<GridElement> gridElements = new List<GridElement>();
 
@@ -105,7 +108,7 @@ public class Grid : MonoBehaviour {
 
      public static Vector3 PosFromCoord(Vector2 coord) {
         return new Vector3(
-// offset from scene origing + coord to pos conversion + ortho offset + center measure
+// offset from scene origin + coord to pos conversion + ortho offset + center measure
             -(sqrSize * gridSize * ORTHO_OFFSET.x) + (coord.x * sqrSize * ORTHO_OFFSET.x) + (ORTHO_OFFSET.x * sqrSize * coord.y) + (sqrSize * ORTHO_OFFSET.x), 
             (coord.y * sqrSize * ORTHO_OFFSET.y) - (ORTHO_OFFSET.y * sqrSize * coord.x), 
             0);
