@@ -10,10 +10,15 @@ using UnityEngine.UI;
 [RequireComponent(typeof(BoxCollider2D))]
 public class Card : MonoBehaviour {
 
+
+// Card data
+    public CardData data;    
+    public bool selectable;
+
 // Serialized refs
     [SerializeField] SpriteRenderer cardBG;
     [SerializeField] Sprite[] bgSprites;
-    [SerializeField] GameObject selectedBox;
+    [SerializeField] protected GameObject selectedBox;
     [SerializeField] Image actionIcon;
     [SerializeField] List<Sprite> actionSprites;
 
@@ -23,9 +28,6 @@ public class Card : MonoBehaviour {
 // Animation
     [HideInInspector] public OffsetOnHover hover;
 
-// Card data
-    public bool selectable;
-    public CardData data;
     [HideInInspector] public BoxCollider2D hitbox;
 
 // Initialize references, set default state

@@ -9,6 +9,7 @@ public class Deck : MonoBehaviour {
     PlayerManager manager;
 
     [SerializeField] GameObject cardPrefab;
+    public Card freeMove;
     public List<CardData> atlas;
     public ShuffleBag<Card> deck;
     public List<Card> discard;
@@ -29,6 +30,7 @@ public class Deck : MonoBehaviour {
             card.Initialize(atlas[i]);            
             deck.Add(card);
         }
+        freeMove.Initialize(freeMove.data);
     }
 
 // Remove and return random card from deck, shuffle if deck empty
@@ -96,6 +98,11 @@ public class Deck : MonoBehaviour {
         for (int i = 0; i < toDraw; i++) {
             hand.Add(DrawCard());
         }
+        freeMove.gameObject.SetActive(true);
+        freeMove.EnableInput(true);
+        freeMove.transform.localScale = Vector3.one;
+        freeMove.transform.position = new Vector2 (freeMove.transform.position.x, -9);
+        freeMove.hover.UpdateOrigins();
     }
 
     public virtual void DiscardHand() {

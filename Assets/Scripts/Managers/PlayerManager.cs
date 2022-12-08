@@ -39,11 +39,17 @@ public class PlayerManager : UnitManager {
 
         if (start) {
             deck.DrawToHandLimit();
+
             currentEnergy = maxEnergy;
             UpdateEnergyDisplay();
 
             StartCoroutine(pc.GridInput());
             StartCoroutine(deck.UpdateHandDisplay());
+
+            foreach(Unit u in units) {
+                if (u.defense > 0)
+                    u.TakeDamage(1);
+            }
         } else {
             deck.DeselectCard();
             DeselectUnit(true);
@@ -93,6 +99,12 @@ public class PlayerManager : UnitManager {
     }
 
     public bool PlayCard() {
+        if (deck.selectedCard == deck.freeMove) {
+            deck.selectedCard.gameObject.SetActive(false);
+            deck.selectedCard.EnableInput(false);
+
+            return true;
+        }
         if (currentEnergy >= deck.selectedCard.data.energyCost)
         {
             currentEnergy -= deck.selectedCard.data.energyCost;

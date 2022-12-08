@@ -60,6 +60,10 @@ public class Unit : GridElement {
                     if (t.owner == owner && tempCoords[i] == ge.coord) 
                         valid = false;
                 }
+                if (ge is Wall w) {
+                    if (tempCoords[i] == w.coord)
+                       valid = false;
+                }
             }
 
 // remove from list if invalid
@@ -163,6 +167,24 @@ public class Unit : GridElement {
         }
         _coords = RemoveOffGridCoords(_coords);
 
+        Vector2 sign = Vector2.zero;
+/*
+        for (int d = 0; d < 4; d++) {
+            switch (d) {
+                case 0: sign = new Vector2(1, 0); break;
+                case 1: sign = new Vector2(-1, 0); break;
+                case 2: sign = new Vector2(0, 1); break;
+                case 3: sign = new Vector2(0, -1); break;
+            }
+            for (int i = 1; i <= range; i++) {
+                _coords.Add(new Vector2(origin.x + i * sign.x, origin.y + i * sign.y));
+                for (int r = 1; r < i; r++) {
+                    _coords.Add(new Vector2(origin.x + , origin.y))
+
+                }
+            }
+        }
+*/
         return _coords;
     }
 
