@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-
+/*
 [CustomEditor(typeof(LevelDefinition))]
 public class LevelDefinitionEditor : Editor
 {
@@ -18,3 +18,4 @@ public class LevelDefinitionEditor : Editor
     }
 
 }
+*/

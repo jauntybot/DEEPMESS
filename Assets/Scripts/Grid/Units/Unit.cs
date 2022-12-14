@@ -102,12 +102,11 @@ public class Unit : GridElement {
             timer += Time.deltaTime;
         }
 
-        unit.TakeDamage(1);
+        StartCoroutine(unit.TakeDamage(1));
     }
 
     public override IEnumerator Defend(int value) 
     {
-        hpDisplay.defenseSlider.gameObject.SetActive(true);
         float timer = 0;
         while (timer < animDur) {
             yield return null;

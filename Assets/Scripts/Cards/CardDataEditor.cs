@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+/*
 [CustomEditor(typeof(CardData))]
 public class CardDataEditor : Editor
 {
@@ -29,3 +30,4 @@ public class CardDataEditor : Editor
         }
     }
 }
+*/

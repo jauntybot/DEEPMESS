@@ -46,9 +46,10 @@ public class PlayerManager : UnitManager {
             StartCoroutine(pc.GridInput());
             StartCoroutine(deck.UpdateHandDisplay());
 
+// Defense decay
             foreach(Unit u in units) {
                 if (u.defense > 0)
-                    u.TakeDamage(1);
+                    StartCoroutine(u.TakeDamage(1));
             }
         } else {
             deck.DeselectCard();

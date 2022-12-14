@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5351843091842969187
 Transform:
   m_ObjectHideFlags: 0
@@ -167,7 +167,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.28, y: 1.29}
+  m_Size: {x: 1.51, y: 1.51}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -187,6 +187,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coord: {x: 0, y: 0}
   selectable: 0
+  targeted: 0
   hitbox: {fileID: 0}
   hpDisplay: {fileID: 2661317000073948948}
   hpMax: 3
@@ -208,9 +209,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f4f387d8b65d8e4fa2ba01429ec86e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  disable: 0
   hpDisplay: {fileID: 2661317000073948948}
-  hpSlider: {fileID: 861256986389356399}
-  defenseSlider: {fileID: 3453951512688201986}
+  hpPipColor: {r: 0.3803922, g: 0.62352943, b: 0.86666673, a: 1}
+  hpPipContainer: {fileID: 8538261191440653152}
+  defensePipColor: {r: 0.34901962, g: 0.73333335, b: 0, a: 1}
+  defensePipContainer: {fileID: 7931177410557531513}
+  pipPrefab: {fileID: 883393798405621554, guid: ed401e466c374ab4a9fe1b48c5b73713, type: 3}
   defenseShield: {fileID: 106700115495399791}
 --- !u!60 &382002177066499558
 PolygonCollider2D:
@@ -230,7 +235,7 @@ PolygonCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1.51, y: 1.51}
-    newSize: {x: 1.28, y: 1.29}
+    newSize: {x: 1.51, y: 1.51}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -262,14 +267,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3908257913917299124}
     m_Modifications:
-    - target: {fileID: 1002462516127406805, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1002462516127406805, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1003956329267171811, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -360,17 +357,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
---- !u!114 &861256986389356399 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1176734026964912058, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-  m_PrefabInstance: {fileID: 1992655877707159765}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &1605974174569711926 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1003956329267171811, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
@@ -381,14 +367,13 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4560369889000945601, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
   m_PrefabInstance: {fileID: 1992655877707159765}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3453951512688201986 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3767739853926582743, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
+--- !u!1 &7931177410557531513 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8482079252881477036, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
   m_PrefabInstance: {fileID: 1992655877707159765}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+--- !u!1 &8538261191440653152 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7915826926961722293, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
+  m_PrefabInstance: {fileID: 1992655877707159765}
+  m_PrefabAsset: {fileID: 0}

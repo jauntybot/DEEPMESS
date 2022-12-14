@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-
+/*
 public class LevelEditor : EditorWindow {
 
 
@@ -39,3 +39,4 @@ public class LevelEditor : EditorWindow {
 
 }
 
+*/

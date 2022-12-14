@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+/*
 public class SquareContentsEditor : EditorWindow
 {
 
     public static void Init(Vector2 pos)
     {
-        ShowPopupExample window = ScriptableObject.CreateInstance<ShowPopupExample>();
-        window.position = new Rect(pos.x, pos.y, 250, 150);
-        window.ShowPopup();
+        //ShowPopupExample window = ScriptableObject.CreateInstance<ShowPopupExample>();
+        //window.position = new Rect(pos.x, pos.y, 250, 150);
+        //window.ShowPopup();
     }
 
     void OnGUI()
@@ -21,3 +22,4 @@ public class SquareContentsEditor : EditorWindow
     }
 }
 
+*/

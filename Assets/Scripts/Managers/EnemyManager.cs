@@ -80,6 +80,7 @@ public class EnemyManager : UnitManager {
            DeselectUnit(true);
         foreach (Unit unit in units) {
             unit.UpdateAction();
+            unit.TargetElement(false);
         }
 
         StartCoroutine(scenario.SwitchTurns());

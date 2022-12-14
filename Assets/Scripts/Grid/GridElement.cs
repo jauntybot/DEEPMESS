@@ -56,16 +56,20 @@ public class GridElement : MonoBehaviour{
         hpDisplay.UpdateHPDisplay();
     }
     
-    public virtual void TakeDamage(int dmg) 
+    public virtual IEnumerator TakeDamage(int dmg) 
     {
         defense -= dmg;
         if (Mathf.Sign(defense) == -1) {
             hpCurrent += defense;
-            if (hpCurrent <= 0)
+            if (hpCurrent <= 0) {
                 StartCoroutine(DestroyElement());
+                yield break;
+            }
             defense = 0;
         }
         hpDisplay.UpdateHPDisplay();
+        yield return new WaitForSecondsRealtime(.5f);
+        TargetElement(false);
     }
 
     public virtual IEnumerator DestroyElement() 

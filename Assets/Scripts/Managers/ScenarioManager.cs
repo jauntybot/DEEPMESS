@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 // Class that manages the game state during battles
 
@@ -23,6 +25,7 @@ public class ScenarioManager : MonoBehaviour
     public EnemyManager enemy;
     public PlayerManager player;
     public LevelDefinition lvlDef;
+    public Button endTurnButton;
 
     [SerializeField] MessagePanel messagePanel;
 
@@ -81,15 +84,29 @@ public class ScenarioManager : MonoBehaviour
         switch(fromTurn == Turn.Null ? currentTurn : fromTurn) 
         {
             case Turn.Player:
-                yield return StartCoroutine(messagePanel.DisplayMessage("ENEMY TURN"));
                 player.StartEndTurn(false);
-                currentTurn = Turn.Enemy;
-                StartCoroutine(enemy.TakeTurn());
+                if (enemy.units.Count > 0) {
+                    yield return StartCoroutine(messagePanel.DisplayMessage("ENEMY TURN"));
+                    currentTurn = Turn.Enemy;
+                    endTurnButton.enabled = false;
+                    StartCoroutine(enemy.TakeTurn());
+                } else {
+                    yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER WINS"));
+                    yield return new WaitForSecondsRealtime(1.5f);
+                    SceneManager.LoadScene("Game Scene");
+                }
             break;
             case Turn.Enemy:
-                yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN"));
-                currentTurn = Turn.Player;
-                player.StartEndTurn(true);
+                if (player.units.Count > 0) {
+                    yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN"));
+                    currentTurn = Turn.Player;
+                    endTurnButton.enabled = true;
+                    player.StartEndTurn(true);
+                } else {
+                    yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER LOSES"));
+                    yield return new WaitForSecondsRealtime(1.5f);
+                    SceneManager.LoadScene("Game Scene");
+                }
             break;
         }
     }

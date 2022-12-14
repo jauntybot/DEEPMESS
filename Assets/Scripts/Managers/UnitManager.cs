@@ -93,10 +93,6 @@ public class UnitManager : MonoBehaviour {
 
         yield return StartCoroutine(unit.AttackUnit(recipient));
         unit.UpdateAction();
-
-        yield return new WaitForSecondsRealtime(.5f);
-        recipient.TargetElement(false);
-        unit.TargetElement(false);
     }
 
     public virtual IEnumerator DefendUnit(int value) {

@@ -15,9 +15,8 @@ public class CardData : ScriptableObject {
 // The following variables are dependent on the card Action
 
     public enum AdjacencyType { Diamond, Orthogonal, Diagonal, Star, Box };
-    [HideInInspector] public AdjacencyType adjacency;
-
-    [HideInInspector] public int range; 
-    [HideInInspector] public int shield;
-    [HideInInspector] public int dmg;
+    public AdjacencyType adjacency;
+    public int range; 
+    public int shield;
+    public int dmg;
 }
