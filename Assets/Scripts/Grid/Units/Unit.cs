@@ -130,13 +130,13 @@ public class Unit : GridElement {
 
         switch(card.adjacency) {
          case CardData.AdjacencyType.Diamond:
-            _coords = DiamondAdjacency(origin, card.range);
+            _coords = DiamondAdjacency(origin, card);
          break;
          case CardData.AdjacencyType.Orthogonal:
-            _coords = OrthagonalAdjacency(origin, card.range);   
+            _coords = OrthagonalAdjacency(origin, card);   
          break;
          case CardData.AdjacencyType.Diagonal:
-            _coords = DiagonalAdjacency(origin, card.range);   
+            _coords = DiagonalAdjacency(origin, card);   
          break;
          case CardData.AdjacencyType.Box:
             _coords = BoxAdjacency(origin, card.range);
@@ -146,76 +146,170 @@ public class Unit : GridElement {
         return _coords;
     }
 
-    protected virtual List<Vector2> DiamondAdjacency(Vector2 origin, int range) 
+    protected virtual List<Vector2> DiamondAdjacency(Vector2 origin, CardData card) 
     {
         List<Vector2> _coords = new List<Vector2>();
+        List<Vector2> e_coords = new List<Vector2>();
+        e_coords.Add(origin);
 
-        for (int i = 1; i <= range; i++) 
-        {
-            _coords.Add(new Vector2 (origin.x + i, origin.y));
-            _coords.Add(new Vector2 (origin.x - i, origin.y)); 
-            _coords.Add(new Vector2 (origin.x, origin.y + i)); 
-            _coords.Add(new Vector2 (origin.x, origin.y - i));
-            for (int r = 1; r < i; r++) 
-            {
-                _coords.Add(new Vector2 (origin.x + r, origin.y + i - r));
-                _coords.Add(new Vector2 (origin.x + i - r, origin.y - r)); 
-                _coords.Add(new Vector2 (origin.x - r, origin.y - i + r)); 
-                _coords.Add(new Vector2 (origin.x - i + r, origin.y + r));
-            }
-        }
-        _coords = RemoveOffGridCoords(_coords);
+        for (int r = 1; r <= card.range; r++) {
+            for (int e = e_coords.Count - 1; e >= 0; e--) {
+                Vector2 current = e_coords[e];
+                e_coords.Remove(e_coords[e]);
 
-        Vector2 sign = Vector2.zero;
-/*
-        for (int d = 0; d < 4; d++) {
-            switch (d) {
-                case 0: sign = new Vector2(1, 0); break;
-                case 1: sign = new Vector2(-1, 0); break;
-                case 2: sign = new Vector2(0, 1); break;
-                case 3: sign = new Vector2(0, -1); break;
-            }
-            for (int i = 1; i <= range; i++) {
-                _coords.Add(new Vector2(origin.x + i * sign.x, origin.y + i * sign.y));
-                for (int r = 1; r < i; r++) {
-                    _coords.Add(new Vector2(origin.x + , origin.y))
-
+                for (int x = -1; x < 2; x+=2) {
+                    Vector2 coord = new Vector2(current.x + x, current.y);
+                    if (!_coords.Contains(coord)) {
+                        if (grid.CoordContents(coord) is GridElement ge) {
+                            switch (card.action) {
+                                case CardData.Action.Move:
+                                    if (ge is Unit u) {
+                                        if (u.owner != owner) break;
+                                        else {
+                                            e_coords.Add(new Vector2(current.x + x, current.y));
+                                            _coords.Add(new Vector2(current.x + x, current.y));
+                                        }
+                                    }
+                                break;
+                                case CardData.Action.Attack:
+                                    if (ge is Unit u2) {
+                                        if (u2.owner == owner) break;
+                                        else 
+                                            _coords.Add(new Vector2(current.x + x, current.y));                                      
+                                    }
+                                break;
+                            }
+                        }
+                        else {
+                            e_coords.Add(new Vector2(current.x + x, current.y));
+                            _coords.Add(new Vector2(current.x + x, current.y));
+                        }
+                    }
                 }
+                for (int y = -1; y < 2; y+=2) {    
+                    Vector2 coord = new Vector2(current.x, current.y + y);
+                    if (!_coords.Contains(coord)) {
+                        if (grid.CoordContents(coord) is GridElement ge) {
+                            switch (card.action) {
+                                case CardData.Action.Move:
+                                    if (ge is Unit u) {
+                                        if (u.owner != owner) break;
+                                        else {
+                                            e_coords.Add(new Vector2(current.x, current.y + y));
+                                            _coords.Add(new Vector2(current.x, current.y + y));
+                                        }
+                                    }
+                                break;
+                                case CardData.Action.Attack:
+                                    if (ge is Unit u2) {
+                                        if (u2.owner == owner) break;
+                                        else 
+                                            _coords.Add(new Vector2(current.x, current.y + y));                            
+                                    }
+                                break;
+                            }
+                        }
+                        else {
+                            e_coords.Add(new Vector2(current.x, current.y + y));
+                            _coords.Add(new Vector2(current.x, current.y + y));
+                        }
+                    }
+                }
+            }            
+        }
+        _coords = RemoveOffGridCoords(_coords);
+        return _coords;
+    }
+
+    protected virtual List<Vector2> OrthagonalAdjacency(Vector2 origin, CardData card) 
+    {
+        List<Vector2> _coords = new List<Vector2>();
+        Vector2 dir = Vector2.zero;
+        for (int d = 0; d < 4; d++) 
+        {
+            switch (d) {
+                case 0: dir = Vector2.up; break;
+                case 1: dir = Vector2.right; break;
+                case 2: dir = Vector2.down; break;
+                case 3: dir = Vector2.left; break;
             }
+            bool blocked = false;
+            for (int r = 1; r <= card.range; r++) 
+            {
+                if (blocked) break;
+                Vector2 coord = origin + dir * r;
+                if (grid.CoordContents(coord) is GridElement ge) {
+                    switch (card.action) {
+                        case CardData.Action.Move:
+                            if (ge is Unit u) {
+                                if (u.owner != owner) blocked = true;
+                                else 
+                                    _coords.Add(coord);                                       
+                            } else
+                                blocked = true;
+                        break;
+                        case CardData.Action.Attack:
+                            if (ge is Unit u2) {
+                                if (u2.owner == owner) blocked = true;
+                                else 
+                                    _coords.Add(coord);
+                                    blocked = true;                                       
+                            } else
+                                blocked = true;
+                        break;
+                    }
+                }
+                else 
+                    _coords.Add(coord);
+            }
+            _coords = RemoveOffGridCoords(_coords);
         }
-*/
         return _coords;
     }
 
-    protected virtual List<Vector2> OrthagonalAdjacency(Vector2 origin, int range) 
+    protected virtual List<Vector2> DiagonalAdjacency(Vector2 origin, CardData card) 
     {
         List<Vector2> _coords = new List<Vector2>();
-        
-        for (int i = 0; i <= range; i++) 
+        Vector2 dir = Vector2.zero;
+        for (int d = 0; d < 4; d++) 
         {
-            _coords.Add(new Vector2 (origin.x + i, origin.y));
-            _coords.Add(new Vector2 (origin.x - i, origin.y));
-            _coords.Add(new Vector2 (origin.x, origin.y + i));
-            _coords.Add(new Vector2 (origin.x, origin.y - i));
+            switch (d) {
+                case 0: dir = new Vector2(1,1); break;
+                case 1: dir = new Vector2(-1,1); break;
+                case 2: dir = new Vector2(1,-1); break;
+                case 3: dir = new Vector2(-1,-1); break;
+            }
+            bool blocked = false;
+            for (int r = 1; r <= card.range; r++) 
+            {
+                if (blocked) break;
+                Vector2 coord = origin + dir * r;
+                if (grid.CoordContents(coord) is GridElement ge) {
+                    switch (card.action) {
+                        case CardData.Action.Move:
+                            if (ge is Unit u) {
+                                if (u.owner != owner) blocked = true;
+                                else 
+                                    _coords.Add(coord);                                       
+                            } else
+                                blocked = true;
+                        break;
+                        case CardData.Action.Attack:
+                            if (ge is Unit u2) {
+                                if (u2.owner == owner) blocked = true;
+                                else 
+                                    _coords.Add(coord);
+                                    blocked = true;                                       
+                            } else
+                                blocked = true;
+                        break;
+                    }
+                }
+                else 
+                    _coords.Add(coord);
+            }
+            _coords = RemoveOffGridCoords(_coords);
         }
-        _coords = RemoveOffGridCoords(_coords);
-
-        return _coords;
-    }
-
-    protected virtual List<Vector2> DiagonalAdjacency(Vector2 origin, int range) 
-    {
-        List<Vector2> _coords = new List<Vector2>();
-        
-        for (int i = 0; i <= range; i++) 
-        {
-            _coords.Add(new Vector2 (origin.x + i, origin.y + i));
-            _coords.Add(new Vector2 (origin.x - i, origin.y + i));
-            _coords.Add(new Vector2 (origin.x + i, origin.y - i));
-            _coords.Add(new Vector2 (origin.x - i, origin.y - i));
-        }
-        _coords = RemoveOffGridCoords(_coords);
-
         return _coords;
     }
 

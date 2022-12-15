@@ -61,7 +61,7 @@ public class ScenarioManager : MonoBehaviour
             } else 
             {
                 yield return new WaitForSecondsRealtime(Util.initD/2);
-                GridElement ge = Instantiate(c.gridElement.gameObject).GetComponent<GridElement>();
+                GridElement ge = Instantiate(c.gridElement.gameObject, grid.gameObject.transform).GetComponent<GridElement>();
                 grid.gridElements.Add(ge);
                 ge.ElementDestroyed += grid.RemoveElement;
                 ge.UpdateElement(c.coord);

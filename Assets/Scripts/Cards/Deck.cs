@@ -9,6 +9,7 @@ public class Deck : MonoBehaviour {
     PlayerManager manager;
 
     [SerializeField] GameObject cardPrefab;
+    [SerializeField] GameObject cardParent;
     public Card freeMove;
     public List<CardData> atlas;
     public ShuffleBag<Card> deck;
@@ -26,7 +27,7 @@ public class Deck : MonoBehaviour {
     public virtual void InitializeDeck() {
         deck = new ShuffleBag<Card>();
         for (int i=0; i<atlas.Count; i++) {
-            Card card = Instantiate(cardPrefab, this.transform).GetComponent<Card>();
+            Card card = Instantiate(cardPrefab, cardParent.transform).GetComponent<Card>();
             card.Initialize(atlas[i]);            
             deck.Add(card);
         }
@@ -112,6 +113,8 @@ public class Deck : MonoBehaviour {
             discard.Add(hand[i]);
             hand.Remove(hand[i]);
         }
+        freeMove.gameObject.SetActive(false);
+        freeMove.EnableInput(false);
     }
 
     public virtual void SelectCard(Card c) {

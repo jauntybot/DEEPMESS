@@ -10,8 +10,10 @@ public class UnitManager : MonoBehaviour {
     protected Grid grid;
     [HideInInspector] public ScenarioManager scenario;
 
+    [Header("UNIT MANAGER")]
 // Unit vars
     [SerializeField] GameObject[] unitPrefabs;
+    [SerializeField] GameObject unitParent;
     public List<Unit> units = new List<Unit>();    
     public Unit selectedUnit;
     public List<Vector2> startingCoords;
@@ -38,7 +40,7 @@ public class UnitManager : MonoBehaviour {
 // Create a new unit from prefab index, update its GridElement
     public virtual Unit SpawnUnit(Vector2 coord, Unit unit) 
     {
-        Unit u = Instantiate(unit.gameObject, this.transform).GetComponent<Unit>();
+        Unit u = Instantiate(unit.gameObject, unitParent.transform).GetComponent<Unit>();
         u.UpdateElement(coord);
 
         units.Add(u);

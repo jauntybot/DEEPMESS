@@ -10,13 +10,16 @@ using UnityEngine.UI;
 [RequireComponent(typeof(PlayerController))]
 public class PlayerManager : UnitManager {
     
+
     [HideInInspector] public PlayerController pc;
     Deck deck;
 
+    [Header("PLAYER MANAGER")]
 // Turn vars
-    public int currentEnergy, maxEnergy;
     public TMPro.TMP_Text energyText;
     public GameObject energyWarning;
+    public int currentEnergy, maxEnergy;
+
 
 
     protected override void Start() {
