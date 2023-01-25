@@ -12,7 +12,6 @@ public class PlayerManager : UnitManager {
     
 
     [HideInInspector] public PlayerController pc;
-    Deck deck;
 
     [Header("PLAYER MANAGER")]
 // Turn vars
@@ -25,12 +24,10 @@ public class PlayerManager : UnitManager {
     protected override void Start() {
         base.Start();
         pc = GetComponent<PlayerController>();
-        deck=GetComponent<Deck>();
     }
 
     public override IEnumerator Initialize()
     {
-        deck.InitializeDeck();
         yield return base.Initialize();
     }
 
@@ -38,16 +35,13 @@ public class PlayerManager : UnitManager {
         for (int i = 0; i <= units.Count - 1; i++) 
             units[i].EnableSelection(start);
         
-        deck.ToggleHandSelect(start);
 
         if (start) {
-            deck.DrawToHandLimit();
 
             currentEnergy = maxEnergy;
             UpdateEnergyDisplay();
 
             StartCoroutine(pc.GridInput());
-            StartCoroutine(deck.UpdateHandDisplay());
 
 // Defense decay
             foreach(Unit u in units) {
@@ -55,9 +49,7 @@ public class PlayerManager : UnitManager {
                     StartCoroutine(u.TakeDamage(1));
             }
         } else {
-            deck.DeselectCard();
             DeselectUnit(true);
-            deck.DiscardHand();
         }
     }
 
@@ -71,15 +63,13 @@ public class PlayerManager : UnitManager {
     public override void SelectUnit(Unit u) {
         base.SelectUnit(u); 
         
-        if (deck.selectedCard) 
-            selectedUnit.UpdateAction(deck.selectedCard);    
     }
     
     public override IEnumerator MoveUnit(Vector2 moveTo) 
     {
         if (PlayCard()) {
             Coroutine co = StartCoroutine(base.MoveUnit(moveTo));
-            deck.DeselectCard();            
+
             yield return co;
         }
     }
@@ -88,7 +78,6 @@ public class PlayerManager : UnitManager {
     {
         if (PlayCard()) {
             Coroutine co = StartCoroutine(base.AttackWithUnit(attackAt));
-            deck.DeselectCard();      
             yield return co;      
         }
     }
@@ -97,37 +86,18 @@ public class PlayerManager : UnitManager {
     {
         if (PlayCard()) {
             Coroutine co = StartCoroutine(base.DefendUnit(value));
-            deck.DeselectCard();
+
             yield return co;            
         }
     }
 
     public bool PlayCard() {
-        if (deck.selectedCard == deck.freeMove) {
-            deck.selectedCard.gameObject.SetActive(false);
-            deck.selectedCard.EnableInput(false);
 
-            return true;
-        }
-        if (currentEnergy >= deck.selectedCard.data.energyCost)
-        {
-            currentEnergy -= deck.selectedCard.data.energyCost;
-            UpdateEnergyDisplay();
 
-            deck.hand.Remove(deck.selectedCard);
-            deck.discard.Add(deck.selectedCard);
 
-            deck.selectedCard.gameObject.SetActive(false);
-            deck.selectedCard.EnableInput(false);
-                      
-            StartCoroutine(deck.UpdateHandDisplay());
-            return true;
-        }
-        else 
-        {
             StartCoroutine(EnergyWarning());
             return false;
-        }
+        
     }
 
     public void UpdateEnergyDisplay() {
@@ -155,16 +125,8 @@ public class PlayerManager : UnitManager {
             {
                 if (selectedUnit) {
                     if (u == selectedUnit) 
-                    {
-                        if (deck.selectedCard) 
-                        {
-                            if (deck.selectedCard.data.action == CardData.Action.Defend) 
-                            {
-                                StartCoroutine(DefendUnit(deck.selectedCard.data.shield));
-                            } else
-                                DeselectUnit(true);
-                        } else                    
-                            DeselectUnit(true);                 
+                    {  
+                        DeselectUnit(true);                 
                     } else 
                         SelectUnit(u);
                 } else
@@ -172,10 +134,9 @@ public class PlayerManager : UnitManager {
             }
             else if (u.owner == Unit.Owner.Enemy) 
             {
-                if (deck.selectedCard && selectedUnit) 
+                if (selectedUnit) 
                 {
-                    if (deck.selectedCard.data.action == CardData.Action.Attack) 
-                        StartCoroutine(AttackWithUnit(u.coord));                    
+                                    
                 }
             }
         }
@@ -186,16 +147,16 @@ public class PlayerManager : UnitManager {
             if (contents)
                 GridInput(contents);
             else {
-                if (deck.selectedCard && selectedUnit) {
-                    switch (deck.selectedCard.data.action) {
-                        case CardData.Action.Move:
-                            if (selectedUnit.validMoveCoords.Find(coord => coord == sqr.coord) != null)
-                                StartCoroutine(MoveUnit(sqr.coord));
-                        break;
-                        case CardData.Action.Attack:
+                if (selectedUnit) {
+                    // switch () {
+                    //     case CardData.Action.Move:
+                    //         if (selectedUnit.validMoveCoords.Find(coord => coord == sqr.coord) != null)
+                    //             StartCoroutine(MoveUnit(sqr.coord));
+                    //     break;
+                    //     case CardData.Action.Attack:
 
-                        break;
-                    }
+                    //     break;
+                    // }
                 }
             }            
         }
