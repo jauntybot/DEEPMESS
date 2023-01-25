@@ -9,6 +9,8 @@ public class Unit : GridElement {
     [Header("Unit")]
     public Owner owner;
 
+    public CardData attackCard, moveCard;
+
     public List<Vector2> validMoveCoords;
     public List<Vector2> validAttackCoords;
 
@@ -19,7 +21,7 @@ public class Unit : GridElement {
     public override void UpdateElement(Vector2 c) {
         base.UpdateElement(c);
     }
-    public virtual void UpdateAction(Card card = null) {
+    public virtual void UpdateAction(int index = 0) {
 // Clear data
         validAttackCoords = null;
         validMoveCoords = null;
@@ -121,6 +123,7 @@ public class Unit : GridElement {
 #endregion
 
 // Equations used for calculating adjacent coordinates
+// Should be refactored into it's own utility class - each instanced unit does not need these
 #region Coordinate Adjacency
 
 // Accessor function, pass all params here and it will use the appropriate equation

@@ -7,28 +7,26 @@ using UnityEngine;
 public class PlayerUnit : Unit {
     
 // Called when an action is applied to a unit or to clear it's actions
-    public override void UpdateAction(Card card = null) 
+    public override void UpdateAction(int index) 
     {
 // Clear data
         foreach(GridElement ge in grid.gridElements) {
             ge.TargetElement(ge == this);
         }
 
-        base.UpdateAction(card);
+        base.UpdateAction(index);
 // Update action data by card
-        if (card) {
-            switch (card.data.action) {
-                default: break;
-                case CardData.Action.Move:
-                    UpdateValidMovement(card.data);
-                break;
-                case CardData.Action.Attack:
-                    UpdateValidAttack(card.data);
-                break;
-                case CardData.Action.Defend:
+        switch (index) {
+            default: break;
+            case 1:
+                UpdateValidMovement(moveCard);
+            break;
+            case 2:
+                UpdateValidAttack(attackCard);
+            break;
+            case 3:
 
-                break;
-            }
+            break;
         }
     }
 

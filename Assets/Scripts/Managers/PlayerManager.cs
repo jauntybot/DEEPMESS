@@ -6,7 +6,6 @@ using UnityEngine.UI;
 // Class that controls the player's functionality, recieves input from PlayerController and ScenarioManager
 // tbh I'm not commenting this one bc it's the most heavily edited and refactors are incoming
 
-[RequireComponent(typeof(Deck))]
 [RequireComponent(typeof(PlayerController))]
 public class PlayerManager : UnitManager {
     
@@ -18,6 +17,9 @@ public class PlayerManager : UnitManager {
     public TMPro.TMP_Text energyText;
     public GameObject energyWarning;
     public int currentEnergy, maxEnergy;
+
+    public enum Action { None, Move, Attack }
+    public Action currentAction;
 
 
 
@@ -60,6 +62,61 @@ public class PlayerManager : UnitManager {
         return u;
     }
 
+// Get grid input from player controller, translate it to functionality
+    public void GridInput(GridElement input) {
+// Player clicks on unit
+        if (input is Unit u) 
+        {
+// Player clicks on their own unit
+            if (u.owner == Unit.Owner.Player) 
+            {
+                if (selectedUnit) {
+                    if (u == selectedUnit) 
+                    {  
+                        DeselectUnit(true);                 
+                    } else 
+                        SelectUnit(u);
+                } else
+                    SelectUnit(u);
+            }
+// Player clicks on enemy unit
+            else if (u.owner == Unit.Owner.Enemy) 
+            {
+                if (selectedUnit && currentAction == Action.Attack) 
+                {
+                                    
+                }
+            }
+        }
+// Player clicks on square
+        else if (input is GridSquare sqr) 
+        {
+// Check if square is empty
+            GridElement contents = grid.CoordContents(sqr.coord);
+// Square not empty, recurse this function with reference to square contents
+            if (contents)
+                GridInput(contents);
+// Square empty
+            else {
+                if (selectedUnit) {
+                    // switch () {
+                    //     case CardData.Action.Move:
+                    //         if (selectedUnit.validMoveCoords.Find(coord => coord == sqr.coord) != null)
+                    //             StartCoroutine(MoveUnit(sqr.coord));
+                    //     break;
+                    //     case CardData.Action.Attack:
+
+                    //     break;
+                    // }
+                }
+            }            
+        }
+    }
+
+    public void ChangeAction(int index) {
+        currentAction = (Action)index;
+    }
+
     public override void SelectUnit(Unit u) {
         base.SelectUnit(u); 
         
@@ -67,11 +124,10 @@ public class PlayerManager : UnitManager {
     
     public override IEnumerator MoveUnit(Vector2 moveTo) 
     {
-        if (PlayCard()) {
             Coroutine co = StartCoroutine(base.MoveUnit(moveTo));
 
             yield return co;
-        }
+        
     }
 
     public override IEnumerator AttackWithUnit(Vector2 attackAt) 
@@ -117,52 +173,6 @@ public class PlayerManager : UnitManager {
         }
     }
 
-// Get grid input from player controller, translate it to functionality
-    public void GridInput(GridElement input) {
-        if (input is Unit u) 
-        {
-            if (u.owner == Unit.Owner.Player) 
-            {
-                if (selectedUnit) {
-                    if (u == selectedUnit) 
-                    {  
-                        DeselectUnit(true);                 
-                    } else 
-                        SelectUnit(u);
-                } else
-                    SelectUnit(u);
-            }
-            else if (u.owner == Unit.Owner.Enemy) 
-            {
-                if (selectedUnit) 
-                {
-                                    
-                }
-            }
-        }
-        else if (input is GridSquare sqr) 
-        {
-// Recurse this function with reference to square contents if found
-            GridElement contents = grid.CoordContents(sqr.coord);
-            if (contents)
-                GridInput(contents);
-            else {
-                if (selectedUnit) {
-                    // switch () {
-                    //     case CardData.Action.Move:
-                    //         if (selectedUnit.validMoveCoords.Find(coord => coord == sqr.coord) != null)
-                    //             StartCoroutine(MoveUnit(sqr.coord));
-                    //     break;
-                    //     case CardData.Action.Attack:
-
-                    //     break;
-                    // }
-                }
-            }            
-        }
-
-
-    }
 
     protected override void RemoveUnit(GridElement ge)
     {

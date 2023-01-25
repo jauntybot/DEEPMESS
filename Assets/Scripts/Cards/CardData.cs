@@ -8,7 +8,7 @@ using UnityEngine;
 [System.Serializable]
 public class CardData : ScriptableObject {
     public int energyCost;
-    public enum Action { Move, Attack, Defend };
+    public enum Action { Move, Attack, Defend, None };
     public Action action;
 
 
