@@ -16,12 +16,6 @@ public class GridSquare : GridElement {
 // Initialize refs
     protected override void Start()
     {
-// Don't inherit base class initialization to avoid adding GridElement to wrong list
-        if (Grid.instance) 
-        {
-            grid = Grid.instance;
-            transform.localScale = Vector3.one * Grid.sqrSize;
-        }
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
 // Temporary checkerboard, color sprite renderers
@@ -30,6 +24,12 @@ public class GridSquare : GridElement {
             foreach (SpriteRenderer sr in spriteRenderers) 
                 sr.color = blackColor;
         }
+    }
+
+// Don't inherit base class initialization to avoid adding GridElement to wrong list
+    public override void StoreInGrid(Grid owner) {
+            grid = owner;
+            transform.localScale = Vector3.one * FloorManager.sqrSize;
     }
 
 // Toggle highlight gameobject active and update it's color

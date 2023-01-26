@@ -11,6 +11,7 @@ public class PlayerManager : UnitManager {
     
 
     [HideInInspector] public PlayerController pc;
+    FloorManager floorManager;
 
     [Header("PLAYER MANAGER")]
 // Turn vars
@@ -26,6 +27,7 @@ public class PlayerManager : UnitManager {
     protected override void Start() {
         base.Start();
         pc = GetComponent<PlayerController>();
+        if (FloorManager.instance) floorManager = FloorManager.instance;
     }
 
     public override IEnumerator Initialize()
@@ -84,7 +86,9 @@ public class PlayerManager : UnitManager {
             {
                 if (selectedUnit && currentAction == Action.Attack) 
                 {
-                                    
+                    if (selectedUnit.validAttackCoords.Find(coord => coord == u.coord) != null) {
+                        StartCoroutine(AttackWithUnit(u.coord));
+                    } 
                 }
             }
         }
@@ -92,22 +96,25 @@ public class PlayerManager : UnitManager {
         else if (input is GridSquare sqr) 
         {
 // Check if square is empty
-            GridElement contents = grid.CoordContents(sqr.coord);
+            GridElement contents = FloorManager.currentFloor.CoordContents(sqr.coord);
 // Square not empty, recurse this function with reference to square contents
             if (contents)
                 GridInput(contents);
 // Square empty
             else {
                 if (selectedUnit) {
-                    // switch () {
-                    //     case CardData.Action.Move:
-                    //         if (selectedUnit.validMoveCoords.Find(coord => coord == sqr.coord) != null)
-                    //             StartCoroutine(MoveUnit(sqr.coord));
-                    //     break;
-                    //     case CardData.Action.Attack:
+                    switch (currentAction) {
+                        case Action.None:
+                            DeselectUnit(true);
+                        break;
+                        case Action.Move:
+                            if (selectedUnit.validMoveCoords.Find(coord => coord == sqr.coord) != null)
+                                StartCoroutine(MoveUnit(sqr.coord));
+                        break;
+                        case Action.Attack:
 
-                    //     break;
-                    // }
+                        break;
+                    }
                 }
             }            
         }
@@ -115,11 +122,16 @@ public class PlayerManager : UnitManager {
 
     public void ChangeAction(int index) {
         currentAction = (Action)index;
+        if (selectedUnit) {
+            selectedUnit.UpdateAction((int)currentAction);
+        }
     }
 
     public override void SelectUnit(Unit u) {
         base.SelectUnit(u); 
-        
+        if (currentAction != Action.None) {
+            selectedUnit.UpdateAction((int)currentAction);
+        }
     }
     
     public override IEnumerator MoveUnit(Vector2 moveTo) 
@@ -132,29 +144,17 @@ public class PlayerManager : UnitManager {
 
     public override IEnumerator AttackWithUnit(Vector2 attackAt) 
     {
-        if (PlayCard()) {
             Coroutine co = StartCoroutine(base.AttackWithUnit(attackAt));
             yield return co;      
-        }
     }
 
     public override IEnumerator DefendUnit(int value)
     {
-        if (PlayCard()) {
             Coroutine co = StartCoroutine(base.DefendUnit(value));
 
             yield return co;            
-        }
     }
 
-    public bool PlayCard() {
-
-
-
-            StartCoroutine(EnergyWarning());
-            return false;
-        
-    }
 
     public void UpdateEnergyDisplay() {
         energyText.text = currentEnergy.ToString();

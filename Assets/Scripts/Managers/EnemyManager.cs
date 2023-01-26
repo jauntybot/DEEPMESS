@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class EnemyManager : UnitManager {
 
-    
+    public Grid grid;
     public delegate void OnEnemyCondition(GridElement ge);
     public event OnEnemyCondition WipedOutCallback;
 
     public override IEnumerator Initialize()
     {
+        grid = FloorManager.currentFloor;
         yield return null;
     }
 

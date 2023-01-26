@@ -125,7 +125,7 @@ public class Deck : MonoBehaviour {
         selectedCard.SelectCard();
 
         if (manager.selectedUnit)
-            manager.selectedUnit.UpdateAction(selectedCard);
+           // manager.selectedUnit.UpdateAction(selectedCard);
 
         c.EnableInput(false, true);
     }

@@ -21,7 +21,7 @@ public class ScenarioManager : MonoBehaviour
 #endregion
 
 // Instanced refs
-    Grid grid;
+    FloorManager floorManager;
     public EnemyManager enemy;
     public PlayerManager player;
     public LevelDefinition lvlDef;
@@ -38,10 +38,11 @@ public class ScenarioManager : MonoBehaviour
 #region Initialization
     public IEnumerator Start() 
     {
-        if (Grid.instance) 
+        if (FloorManager.instance) 
         {
-            grid=Grid.instance;
-            yield return StartCoroutine(grid.GenerateGrid());
+            floorManager=FloorManager.instance;
+            Coroutine co = StartCoroutine(floorManager.GenerateFloor(true));
+            yield return co; 
         }
 
         yield return StartCoroutine(SpawnLevelDefinition());
@@ -61,9 +62,9 @@ public class ScenarioManager : MonoBehaviour
             } else 
             {
                 yield return new WaitForSecondsRealtime(Util.initD/2);
-                GridElement ge = Instantiate(c.gridElement.gameObject, grid.gameObject.transform).GetComponent<GridElement>();
-                grid.gridElements.Add(ge);
-                ge.ElementDestroyed += grid.RemoveElement;
+                GridElement ge = Instantiate(c.gridElement.gameObject, FloorManager.currentFloor.gameObject.transform).GetComponent<GridElement>();
+                FloorManager.currentFloor.gridElements.Add(ge);
+                ge.ElementDestroyed += FloorManager.currentFloor.RemoveElement;
                 ge.UpdateElement(c.coord);
             }
         }

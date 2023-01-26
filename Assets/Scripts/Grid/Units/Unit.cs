@@ -339,7 +339,7 @@ public class Unit : GridElement {
         // check if coords are off the board
         for (int i = list.Count - 1; i >= 0; i--) 
         {
-            if (list[i].x > Grid.gridSize - 1 || list[i].x < 0 || list[i].y > Grid.gridSize - 1 || list[i].y < 0)
+            if (list[i].x > FloorManager.gridSize - 1 || list[i].x < 0 || list[i].y > FloorManager.gridSize - 1 || list[i].y < 0)
                 list.Remove(list[i]);
         }
         return list;

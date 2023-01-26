@@ -7,19 +7,11 @@ using UnityEngine;
 
 public class Grid : MonoBehaviour {
     
-   
-//[SerializedFields] will be able to be refactored into level design classes
-//static fields stay with the grid script indefinetely
+    FloorManager floorManager;
 
     static Vector2 ORTHO_OFFSET = new Vector2(0.75f, 0.5f);
     [SerializeField] GameObject sqrPrefab, gridCursor;
-    
-
-    [SerializeField] int _gridSize;
-    public static int gridSize;
-    [SerializeField] float _sqrSize;
-    public static float sqrSize;
-
+    public static float spawnDur;
     public LevelDefinition lvlDef;
 
     public List<GridSquare> sqrs = new List<GridSquare>();
@@ -27,22 +19,14 @@ public class Grid : MonoBehaviour {
 
     public Color moveColor, attackColor, defendColor;
 
- #region Singleton (and Awake)
-    public static Grid instance;
-    private void Awake() {
-        if (Grid.instance) {
-            Debug.Log("Warning! More than one instance of Grid found!");
-            return;
-        }
-        Grid.instance = this;
-        gridSize=_gridSize; sqrSize = _sqrSize;
+    void Start() {
+        if (FloorManager.instance) floorManager = FloorManager.instance;
     }
-    #endregion
 
 // loop through grid x,y, generate sqr grid elements, update them and add to list
     public IEnumerator GenerateGrid() {
-        for (int y = 0; y < gridSize; y++) {
-            for (int x = 0; x < gridSize; x++) {
+        for (int y = 0; y < FloorManager.gridSize; y++) {
+            for (int x = 0; x < FloorManager.gridSize; x++) {
                 yield return new WaitForSecondsRealtime(Util.initD/2);
 //store bool for white sqrs
                 bool _white=false;
@@ -56,7 +40,7 @@ public class Grid : MonoBehaviour {
                 sqrs.Add(sqr);
             }
         }
-        gridCursor.transform.localScale = Vector3.one * sqrSize;
+        gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
     }
 
     public void RemoveElement(GridElement ge) 
@@ -109,8 +93,8 @@ public class Grid : MonoBehaviour {
      public static Vector3 PosFromCoord(Vector2 coord) {
         return new Vector3(
 // offset from scene origin + coord to pos conversion + ortho offset + center measure
-            -(sqrSize * gridSize * ORTHO_OFFSET.x) + (coord.x * sqrSize * ORTHO_OFFSET.x) + (ORTHO_OFFSET.x * sqrSize * coord.y) + (sqrSize * ORTHO_OFFSET.x), 
-            (coord.y * sqrSize * ORTHO_OFFSET.y) - (ORTHO_OFFSET.y * sqrSize * coord.x), 
+            -(FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x) + (ORTHO_OFFSET.x * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 
+            (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y) - (ORTHO_OFFSET.y * FloorManager.sqrSize * coord.x), 
             0);
     }
 }

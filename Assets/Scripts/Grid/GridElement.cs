@@ -26,17 +26,32 @@ public class GridElement : MonoBehaviour{
 // Initialize references, scale to grid, subscribe onDeath event
     protected virtual void Start() 
     {
-        if (Grid.instance) {
-            grid=Grid.instance;
-            grid.gridElements.Add(this);
-            ElementDestroyed += grid.RemoveElement;
-            transform.localScale = Vector3.one * Grid.sqrSize;
-        }
+        
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
 
         hpCurrent = hpMax;
         hpDisplay = GetComponent<HPDisplay>();
+    }
+
+    public virtual void StoreInGrid(Grid owner) {
+            grid = owner;
+            grid.gridElements.Add(this);
+            ElementDestroyed += grid.RemoveElement;
+            transform.localScale = Vector3.one * FloorManager.sqrSize;
+    }
+
+    protected virtual IEnumerator SpawnElement() {
+       float timer = 0;
+
+       while (timer < Grid.spawnDur) {
+        transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one * FloorManager.sqrSize, timer/Grid.spawnDur);
+
+        yield return null;
+        timer += Time.deltaTime;
+       }
+
+       yield return null;
     }
 
 // Update grid position and coordinate

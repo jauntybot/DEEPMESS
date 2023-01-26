@@ -7,7 +7,7 @@ using UnityEngine;
 public class UnitManager : MonoBehaviour {
 
 // Global refs
-    protected Grid grid;
+    protected Grid currentGrid;
     [HideInInspector] public ScenarioManager scenario;
 
     [Header("UNIT MANAGER")]
@@ -24,7 +24,8 @@ public class UnitManager : MonoBehaviour {
     {
 // Grab global refs
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
-        if (Grid.instance) grid = Grid.instance;
+// -----------------FIX
+        // if (Grid.instance) currentGrid = Grid.instance;
 
     }
 
@@ -56,7 +57,7 @@ public class UnitManager : MonoBehaviour {
         t.TargetElement(true);
         selectedUnit = t;
 
-        grid.DisplayGridCursor(true, t.coord);
+        currentGrid.DisplayGridCursor(true, t.coord);
     }
     public virtual void DeselectUnit(bool untarget) {
         if (selectedUnit) {
@@ -66,8 +67,8 @@ public class UnitManager : MonoBehaviour {
 
             selectedUnit = null;
 
-            grid.DisplayGridCursor(true, Vector2.one * -32);
-            grid.DisableGridHighlight();
+            currentGrid.DisplayGridCursor(true, Vector2.one * -32);
+            currentGrid.DisableGridHighlight();
         }            
     }
     public virtual IEnumerator MoveUnit(Vector2 moveTo) {
@@ -84,9 +85,9 @@ public class UnitManager : MonoBehaviour {
     public virtual IEnumerator AttackWithUnit(Vector2 attackAt) {
         Unit unit = selectedUnit;
        
-        Unit recipient = grid.CoordContents(attackAt) as Unit;
+        Unit recipient = currentGrid.CoordContents(attackAt) as Unit;
         foreach(Vector2 coord in selectedUnit.validAttackCoords) {
-            if (grid.CoordContents(coord) is Unit u) {
+            if (currentGrid.CoordContents(coord) is Unit u) {
                 u.TargetElement(u == recipient);
             }
         }
