@@ -22,7 +22,8 @@ public class ScenarioManager : MonoBehaviour
 
 // Instanced refs
     FloorManager floorManager;
-    public EnemyManager enemy;
+    [SerializeField] GameObject enemyPrefab;
+    public EnemyManager currentEnemy;
     public PlayerManager player;
     public LevelDefinition lvlDef;
     public Button endTurnButton;
@@ -40,36 +41,24 @@ public class ScenarioManager : MonoBehaviour
     {
         if (FloorManager.instance) 
         {
-            floorManager=FloorManager.instance;
-            Coroutine co = StartCoroutine(floorManager.GenerateFloor(true));
-            yield return co; 
+            floorManager = FloorManager.instance;
+            UnitManager enemy = Instantiate(enemyPrefab).GetComponent<EnemyManager>();
+            yield return StartCoroutine(floorManager.GenerateFloor(true, enemy)); 
+            currentEnemy = (EnemyManager)enemy;
         }
-
-        yield return StartCoroutine(SpawnLevelDefinition());
         yield return StartCoroutine(player.Initialize());
         
-        yield return new WaitForSeconds(1/Util.fps);
+        yield return new WaitForSeconds(0.75f);
+        yield return StartCoroutine(floorManager.TransitionFloors(floorManager.currentFloor.gameObject));
+
+        UnitManager newEnemy = Instantiate(enemyPrefab).GetComponent<EnemyManager>();
+        if (floorManager) yield return StartCoroutine(floorManager.GenerateFloor(true, newEnemy));
+
+        yield return new WaitForSeconds(0.75f);
+        floorManager.SwitchFloors(true);
+        yield return new WaitForSeconds(1);
+
         StartCoroutine(SwitchTurns(Turn.Enemy));
-    }
-
-    IEnumerator SpawnLevelDefinition() 
-    {
-        foreach (Content c in lvlDef.initSpawns) 
-        {
-            if (c.gridElement is Unit u) 
-            {
-                enemy.SpawnUnit(c.coord, u);
-            } else 
-            {
-                yield return new WaitForSecondsRealtime(Util.initD/2);
-                GridElement ge = Instantiate(c.gridElement.gameObject, FloorManager.currentFloor.gameObject.transform).GetComponent<GridElement>();
-                FloorManager.currentFloor.gridElements.Add(ge);
-                ge.ElementDestroyed += FloorManager.currentFloor.RemoveElement;
-                ge.UpdateElement(c.coord);
-            }
-        }
-
-
     }
 
 #endregion
@@ -86,11 +75,11 @@ public class ScenarioManager : MonoBehaviour
         {
             case Turn.Player:
                 player.StartEndTurn(false);
-                if (enemy.units.Count > 0) {
+                if (currentEnemy.units.Count > 0) {
                     yield return StartCoroutine(messagePanel.DisplayMessage("ENEMY TURN"));
                     currentTurn = Turn.Enemy;
                     endTurnButton.enabled = false;
-                    StartCoroutine(enemy.TakeTurn());
+                    StartCoroutine(currentEnemy.TakeTurn());
                 } else {
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER WINS"));
                     yield return new WaitForSecondsRealtime(1.5f);

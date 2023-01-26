@@ -8,6 +8,7 @@ public class UnitManager : MonoBehaviour {
 
 // Global refs
     protected Grid currentGrid;
+    protected FloorManager floorManager;
     [HideInInspector] public ScenarioManager scenario;
 
     [Header("UNIT MANAGER")]
@@ -22,16 +23,17 @@ public class UnitManager : MonoBehaviour {
 
     protected virtual void Start() 
     {
-// Grab global refs
-        if (ScenarioManager.instance) scenario = ScenarioManager.instance;
-// -----------------FIX
-        // if (Grid.instance) currentGrid = Grid.instance;
 
     }
 
 // Called from scenario manager when game starts
     public virtual IEnumerator Initialize() 
     {
+// Grab global refs
+        if (ScenarioManager.instance) scenario = ScenarioManager.instance;
+        if (FloorManager.instance) floorManager = FloorManager.instance;
+        currentGrid = floorManager.currentFloor;
+
         for (int i = 0; i <= startingCoords.Count - 1; i++) {
             SpawnUnit(startingCoords[i], unitPrefabs[i].GetComponent<Unit>());
             yield return new WaitForSeconds(Util.initD);
@@ -43,6 +45,7 @@ public class UnitManager : MonoBehaviour {
     {
         Unit u = Instantiate(unit.gameObject, unitParent.transform).GetComponent<Unit>();
         u.UpdateElement(coord);
+        u.StoreInGrid(currentGrid);
 
         units.Add(u);
         u.ElementDestroyed += RemoveUnit;

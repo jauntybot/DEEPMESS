@@ -8,10 +8,11 @@ using UnityEngine;
 public class Grid : MonoBehaviour {
     
     FloorManager floorManager;
+    public int index;
 
     static Vector2 ORTHO_OFFSET = new Vector2(0.75f, 0.5f);
     [SerializeField] GameObject sqrPrefab, gridCursor;
-    public static float spawnDur;
+    public static float spawnDur = 10;
     public LevelDefinition lvlDef;
 
     public List<GridSquare> sqrs = new List<GridSquare>();
@@ -24,7 +25,7 @@ public class Grid : MonoBehaviour {
     }
 
 // loop through grid x,y, generate sqr grid elements, update them and add to list
-    public IEnumerator GenerateGrid() {
+    public IEnumerator GenerateGrid(int i, UnitManager enemy) {
         for (int y = 0; y < FloorManager.gridSize; y++) {
             for (int x = 0; x < FloorManager.gridSize; x++) {
                 yield return new WaitForSecondsRealtime(Util.initD/2);
@@ -36,11 +37,34 @@ public class Grid : MonoBehaviour {
                 GridSquare sqr = Instantiate(sqrPrefab, this.transform).GetComponent<GridSquare>();
                 sqr.white = _white;
                 sqr.UpdateElement(new Vector2(x,y));
+                sqr.StoreInGrid(this);
 
                 sqrs.Add(sqr);
             }
         }
         gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
+        index = i;
+        yield return StartCoroutine(SpawnLevelDefinition(enemy));
+    }
+
+    IEnumerator SpawnLevelDefinition(UnitManager enemy) 
+    {
+        yield return StartCoroutine(enemy.Initialize());
+        foreach (Content c in lvlDef.initSpawns) 
+        {
+            if (c.gridElement is Unit u) 
+            {
+                enemy.SpawnUnit(c.coord, u);
+            } else 
+            {
+                yield return new WaitForSecondsRealtime(Util.initD/2);
+                GridElement ge = Instantiate(c.gridElement.gameObject, this.transform).GetComponent<GridElement>();
+                gridElements.Add(ge);
+                ge.ElementDestroyed += RemoveElement;
+                ge.UpdateElement(c.coord);
+                ge.StoreInGrid(this);
+            }
+        }
     }
 
     public void RemoveElement(GridElement ge) 

@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class EnemyManager : UnitManager {
 
-    public Grid grid;
     public delegate void OnEnemyCondition(GridElement ge);
     public event OnEnemyCondition WipedOutCallback;
 
     public override IEnumerator Initialize()
     {
-        grid = FloorManager.currentFloor;
+        if (ScenarioManager.instance) scenario = ScenarioManager.instance;
+        if (FloorManager.instance) floorManager = FloorManager.instance;
+        currentGrid = floorManager.currentFloor;
         yield return null;
     }
 
@@ -36,12 +37,12 @@ public class EnemyManager : UnitManager {
 // Attack scan
         foreach (Vector2 coord in input.validAttackCoords) 
         {
-            if (grid.CoordContents(coord) is Unit t) {
+            if (currentGrid.CoordContents(coord) is Unit t) {
                 if (t.owner == Unit.Owner.Player) {
                     SelectUnit(input);
-                    grid.DisplayValidCoords(input.validAttackCoords, 1);
+                    currentGrid.DisplayValidCoords(input.validAttackCoords, 1);
                     foreach(Vector2 c in input.validAttackCoords) {
-                        if (grid.CoordContents(c) is Unit u) {
+                        if (currentGrid.CoordContents(c) is Unit u) {
                             u.TargetElement(true);
                         }
                     }
@@ -68,7 +69,7 @@ public class EnemyManager : UnitManager {
 // If there is a valid closest coord
             if (Mathf.Sign(closestCoord.x) == 1) {
                 SelectUnit(input);
-                grid.DisplayValidCoords(input.validMoveCoords, 0);
+                currentGrid.DisplayValidCoords(input.validMoveCoords, 0);
                 yield return new WaitForSecondsRealtime(0.75f);
                 yield return StartCoroutine(MoveUnit(closestCoord));
                 yield break;
@@ -89,14 +90,14 @@ public class EnemyManager : UnitManager {
 
     public override IEnumerator AttackWithUnit(Vector2 attackAt)
     {
-        grid.DisableGridHighlight();
+        currentGrid.DisableGridHighlight();
         yield return base.AttackWithUnit(attackAt);
         
     }
 
     public override IEnumerator MoveUnit(Vector2 moveTo)
     {
-        grid.DisableGridHighlight();
+        currentGrid.DisableGridHighlight();
         yield return base.MoveUnit(moveTo);
     }
 }

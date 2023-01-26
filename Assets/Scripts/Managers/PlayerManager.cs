@@ -26,13 +26,14 @@ public class PlayerManager : UnitManager {
 
     protected override void Start() {
         base.Start();
-        pc = GetComponent<PlayerController>();
-        if (FloorManager.instance) floorManager = FloorManager.instance;
+
     }
 
     public override IEnumerator Initialize()
     {
         yield return base.Initialize();
+        pc = GetComponent<PlayerController>();
+        if (FloorManager.instance) floorManager = FloorManager.instance;
     }
 
     public void StartEndTurn(bool start) {
@@ -96,7 +97,7 @@ public class PlayerManager : UnitManager {
         else if (input is GridSquare sqr) 
         {
 // Check if square is empty
-            GridElement contents = FloorManager.currentFloor.CoordContents(sqr.coord);
+            GridElement contents = floorManager.currentFloor.CoordContents(sqr.coord);
 // Square not empty, recurse this function with reference to square contents
             if (contents)
                 GridInput(contents);

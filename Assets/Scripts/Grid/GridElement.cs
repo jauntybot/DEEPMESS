@@ -35,10 +35,10 @@ public class GridElement : MonoBehaviour{
     }
 
     public virtual void StoreInGrid(Grid owner) {
-            grid = owner;
-            grid.gridElements.Add(this);
-            ElementDestroyed += grid.RemoveElement;
-            transform.localScale = Vector3.one * FloorManager.sqrSize;
+        grid = owner;
+        grid.gridElements.Add(this);
+        ElementDestroyed += grid.RemoveElement;
+        transform.localScale = Vector3.one * FloorManager.sqrSize;
     }
 
     protected virtual IEnumerator SpawnElement() {
