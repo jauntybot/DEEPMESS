@@ -5,6 +5,7 @@ using UnityEngine;
 public class FloorManager : MonoBehaviour
 {
 
+    ScenarioManager scenario;
     [SerializeField] GameObject floorPrefab;
     [SerializeField] List<LevelDefinition> floorDefinitions;
 
@@ -17,6 +18,7 @@ public class FloorManager : MonoBehaviour
     public static float sqrSize;
 
     public float floorOffset, transitionDur;
+    Coroutine currentTransition;
     [SerializeField] GameObject upButton, downButton;
 
      #region Singleton (and Awake)
@@ -31,13 +33,17 @@ public class FloorManager : MonoBehaviour
     }
     #endregion
 
-    public IEnumerator GenerateFloor(bool topFloor, UnitManager enemy) {
+    void Start() {
+        if (ScenarioManager.instance) scenario = ScenarioManager.instance;
+    }
+
+    public IEnumerator GenerateFloor(bool topFloor) {
         
         Grid newFloor = Instantiate(floorPrefab, this.transform).GetComponent<Grid>();
         if (topFloor) currentFloor = newFloor;
-        newFloor.lvlDef = floorDefinitions[Random.Range(0, floorDefinitions.Count - 1)];
+        newFloor.lvlDef = floorDefinitions[Random.Range(0, floorDefinitions.Count)];
 
-        Coroutine co = StartCoroutine(newFloor.GenerateGrid(floors.Count, enemy));
+        Coroutine co = StartCoroutine(newFloor.GenerateGrid(floors.Count));
         yield return co;
         newFloor.gameObject.name = "Floor" + newFloor.index;
         floors.Add(newFloor);
@@ -45,13 +51,13 @@ public class FloorManager : MonoBehaviour
 
     public void SwitchFloors(bool up) {
         if (!up) {
-            StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index+1].gameObject));
-            SetButtonActive(upButton, floors[currentFloor.index+1]);
-            SetButtonActive(downButton, floors[currentFloor.index+1]);
+            currentTransition = StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index+1].gameObject));
+            SetButtonActive(upButton, floors[currentFloor.index+1] != null);
+            SetButtonActive(downButton, floors[currentFloor.index+1] != null);
         } else {
             StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index-1].gameObject));
-            SetButtonActive(upButton, floors[currentFloor.index-1]);
-            SetButtonActive(downButton, floors[currentFloor.index-1]);
+            SetButtonActive(upButton, floors[currentFloor.index-1] != null);
+            SetButtonActive(downButton, floors[currentFloor.index-1] != null);
         }
     }
 
@@ -81,6 +87,28 @@ public class FloorManager : MonoBehaviour
             timer += Time.deltaTime;
         }
         if (floor2) currentFloor = floor2.GetComponent<Grid>();
+    }
+
+    public void Descend() {
+        StartCoroutine(DescendFloors());
+    }
+
+    public IEnumerator DescendFloors() {
+        UnitManager enemy = currentFloor.enemy;
+        enemy.transform.parent = null;
+        scenario.player.transform.parent = null;
+        yield return StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index+1].gameObject));
+        enemy.transform.parent = currentFloor.transform;
+        scenario.player.transform.parent = currentFloor.transform;
+        yield return new WaitForSecondsRealtime(1);
+
+        yield return StartCoroutine(TransitionFloors(currentFloor.gameObject));
+
+        yield return StartCoroutine(GenerateFloor(true));
+
+        yield return new WaitForSeconds(0.75f);
+        SwitchFloors(true);
+        yield return new WaitForSeconds(1);
     }
 
 }

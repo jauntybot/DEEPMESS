@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6704683991807647183}
   - component: {fileID: 6704683991807647168}
   m_Layer: 0
-  m_Name: Grid
+  m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50,6 +50,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9872673b7ffca7246a19b5fb28103deb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  index: 0
+  enemy: {fileID: 0}
+  enemyPrefab: {fileID: 8294248095137744425, guid: 317783b74d19859469fed42b0fab219b, type: 3}
   sqrPrefab: {fileID: 8989576065795441841, guid: 04fbdc7b25bb91c4fbdcffaeecaee97b, type: 3}
   gridCursor: {fileID: 3587223527213720723}
   lvlDef: {fileID: 0}

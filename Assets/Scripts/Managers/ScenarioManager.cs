@@ -22,7 +22,6 @@ public class ScenarioManager : MonoBehaviour
 
 // Instanced refs
     FloorManager floorManager;
-    [SerializeField] GameObject enemyPrefab;
     public EnemyManager currentEnemy;
     public PlayerManager player;
     public LevelDefinition lvlDef;
@@ -42,17 +41,17 @@ public class ScenarioManager : MonoBehaviour
         if (FloorManager.instance) 
         {
             floorManager = FloorManager.instance;
-            UnitManager enemy = Instantiate(enemyPrefab).GetComponent<EnemyManager>();
-            yield return StartCoroutine(floorManager.GenerateFloor(true, enemy)); 
-            currentEnemy = (EnemyManager)enemy;
+            
+            yield return StartCoroutine(floorManager.GenerateFloor(true)); 
+            currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
+            player.transform.parent = floorManager.currentFloor.transform;
         }
         yield return StartCoroutine(player.Initialize());
         
         yield return new WaitForSeconds(0.75f);
         yield return StartCoroutine(floorManager.TransitionFloors(floorManager.currentFloor.gameObject));
 
-        UnitManager newEnemy = Instantiate(enemyPrefab).GetComponent<EnemyManager>();
-        if (floorManager) yield return StartCoroutine(floorManager.GenerateFloor(true, newEnemy));
+        if (floorManager) yield return StartCoroutine(floorManager.GenerateFloor(true));
 
         yield return new WaitForSeconds(0.75f);
         floorManager.SwitchFloors(true);

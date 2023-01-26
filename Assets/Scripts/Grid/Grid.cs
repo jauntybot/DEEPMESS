@@ -10,6 +10,9 @@ public class Grid : MonoBehaviour {
     FloorManager floorManager;
     public int index;
 
+    public UnitManager enemy;
+    [SerializeField] GameObject enemyPrefab;
+
     static Vector2 ORTHO_OFFSET = new Vector2(0.75f, 0.5f);
     [SerializeField] GameObject sqrPrefab, gridCursor;
     public static float spawnDur = 10;
@@ -25,7 +28,9 @@ public class Grid : MonoBehaviour {
     }
 
 // loop through grid x,y, generate sqr grid elements, update them and add to list
-    public IEnumerator GenerateGrid(int i, UnitManager enemy) {
+    public IEnumerator GenerateGrid(int i) {
+        GameObject grid = Instantiate(new GameObject("Grid"));
+        grid.transform.parent = this.transform;
         for (int y = 0; y < FloorManager.gridSize; y++) {
             for (int x = 0; x < FloorManager.gridSize; x++) {
                 yield return new WaitForSecondsRealtime(Util.initD/2);
@@ -40,16 +45,19 @@ public class Grid : MonoBehaviour {
                 sqr.StoreInGrid(this);
 
                 sqrs.Add(sqr);
+                sqr.transform.parent = grid.transform;
             }
         }
         gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
         index = i;
-        yield return StartCoroutine(SpawnLevelDefinition(enemy));
+        yield return StartCoroutine(SpawnLevelDefinition());
     }
 
-    IEnumerator SpawnLevelDefinition(UnitManager enemy) 
+    IEnumerator SpawnLevelDefinition() 
     {
+        enemy = Instantiate(enemyPrefab, this.transform).GetComponent<EnemyManager>(); 
         yield return StartCoroutine(enemy.Initialize());
+
         foreach (Content c in lvlDef.initSpawns) 
         {
             if (c.gridElement is Unit u) 

@@ -11,7 +11,7 @@ public class PlayerManager : UnitManager {
     
 
     [HideInInspector] public PlayerController pc;
-    FloorManager floorManager;
+
 
     [Header("PLAYER MANAGER")]
 // Turn vars
