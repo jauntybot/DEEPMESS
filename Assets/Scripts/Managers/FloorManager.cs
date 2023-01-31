@@ -52,7 +52,6 @@ public class FloorManager : MonoBehaviour
     public void SwitchFloors(bool up) {
         if (!up) {
             currentTransition = StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index+1].gameObject));
-            print (currentFloor.index+1 + " " + floors[currentFloor.index+1] != null);
             SetButtonActive(upButton, floors[currentFloor.index+1] != null);
             SetButtonActive(downButton, floors[currentFloor.index+1] != null);
         } else {
@@ -64,7 +63,6 @@ public class FloorManager : MonoBehaviour
     }
 
     void SetButtonActive(GameObject button, bool state) {
-        //print (state);
         button.SetActive(state);
     }
 
@@ -100,6 +98,8 @@ public class FloorManager : MonoBehaviour
 
     public IEnumerator DescendFloors() {
 
+        DescentCollisionSolver();
+
         EnemyManager enemy = (EnemyManager)currentFloor.enemy;
         enemy.transform.parent = null;
         scenario.player.transform.parent = null;
@@ -122,6 +122,17 @@ public class FloorManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
+    }
+
+    public void DescentCollisionSolver() {
+        foreach (GridElement ge in currentFloor.gridElements) {
+            if (ge is Unit u) {
+                GridElement subGE = floors[currentFloor.index+1].gridElements.Find(g => g.coord == u.coord);
+                if (subGE) {
+                    print (u.transform.name + " collides");
+                }
+            }
+        }
     }
 
 }

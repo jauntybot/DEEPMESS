@@ -55,7 +55,6 @@ public class PlayerManager : UnitManager {
             }
         } else {
             DeselectUnit(true);
-            print ("unit deselected from StartEndTurn");
         }
     }
 
@@ -77,7 +76,6 @@ public class PlayerManager : UnitManager {
                 if (selectedUnit) {
                     if (u == selectedUnit) 
                     {  
-                        print ("unit deselected from GridInput repeat click");
                         DeselectUnit(true);                 
                     } else 
                         SelectUnit(u);
@@ -108,7 +106,6 @@ public class PlayerManager : UnitManager {
                 if (selectedUnit) {
                     switch (currentAction) {
                         case Action.None:
-                        print ("unit deselected from SelectUnit empty sqr");
                             DeselectUnit(true);
                         break;
                         case Action.Move:
