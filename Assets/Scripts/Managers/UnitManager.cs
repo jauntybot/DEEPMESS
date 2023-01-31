@@ -7,6 +7,7 @@ using UnityEngine;
 public class UnitManager : MonoBehaviour {
 
 // Global refs
+    [SerializeField]
     protected Grid currentGrid;
     protected FloorManager floorManager;
     [HideInInspector] public ScenarioManager scenario;
@@ -44,23 +45,26 @@ public class UnitManager : MonoBehaviour {
     public virtual Unit SpawnUnit(Vector2 coord, Unit unit) 
     {
         Unit u = Instantiate(unit.gameObject, unitParent.transform).GetComponent<Unit>();
-        u.UpdateElement(coord);
         u.StoreInGrid(currentGrid);
+        u.UpdateElement(coord);
 
         units.Add(u);
-        u.ElementDestroyed += RemoveUnit;
+        SubscribeElement(u);
         return unit;
     }
 
 // Inherited functionality dependent on inherited classes
     public virtual void SelectUnit(Unit t) {
-        if (selectedUnit)
+        if (selectedUnit) {
+            print ("unit deselected from SelectUnit");
             DeselectUnit(true);
+        }
 
         t.TargetElement(true);
         selectedUnit = t;
 
         currentGrid.DisplayGridCursor(true, t.coord);
+        print ("unit selected");
     }
     public virtual void DeselectUnit(bool untarget) {
         if (selectedUnit) {
@@ -73,6 +77,7 @@ public class UnitManager : MonoBehaviour {
             currentGrid.DisplayGridCursor(true, Vector2.one * -32);
             currentGrid.DisableGridHighlight();
         }            
+        
     }
     public virtual IEnumerator MoveUnit(Vector2 moveTo) {
         Unit unit = selectedUnit; 
@@ -96,8 +101,10 @@ public class UnitManager : MonoBehaviour {
         }
 
         DeselectUnit(false);    
-
         yield return StartCoroutine(unit.AttackUnit(recipient));
+
+        unit.TargetElement(false);
+        print("clear hp");
         unit.UpdateAction();
     }
 
@@ -110,6 +117,10 @@ public class UnitManager : MonoBehaviour {
 
         yield return new WaitForSecondsRealtime(.5f);
         unit.TargetElement(false);
+    }
+
+    public virtual void SubscribeElement(GridElement ge) {
+        ge.ElementDestroyed += RemoveUnit;
     }
 
     protected virtual void RemoveUnit(GridElement ge) {

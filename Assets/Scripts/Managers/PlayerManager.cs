@@ -55,6 +55,7 @@ public class PlayerManager : UnitManager {
             }
         } else {
             DeselectUnit(true);
+            print ("unit deselected from StartEndTurn");
         }
     }
 
@@ -76,6 +77,7 @@ public class PlayerManager : UnitManager {
                 if (selectedUnit) {
                     if (u == selectedUnit) 
                     {  
+                        print ("unit deselected from GridInput repeat click");
                         DeselectUnit(true);                 
                     } else 
                         SelectUnit(u);
@@ -106,6 +108,7 @@ public class PlayerManager : UnitManager {
                 if (selectedUnit) {
                     switch (currentAction) {
                         case Action.None:
+                        print ("unit deselected from SelectUnit empty sqr");
                             DeselectUnit(true);
                         break;
                         case Action.Move:
@@ -130,30 +133,42 @@ public class PlayerManager : UnitManager {
 
     public override void SelectUnit(Unit u) {
         base.SelectUnit(u); 
+// Untarget every unit that isn't this one
+        foreach(GridElement ge in currentGrid.gridElements) {
+            ge.TargetElement(ge == u);
+        }
         if (currentAction != Action.None) {
             selectedUnit.UpdateAction((int)currentAction);
         }
     }
+
+    public override void DeselectUnit(bool untarget) {
+// Untarget every unit that isn't this one
+        foreach(GridElement ge in currentGrid.gridElements) {
+            ge.TargetElement(ge == selectedUnit);
+        }
+        base.DeselectUnit(untarget);
+    }
     
     public override IEnumerator MoveUnit(Vector2 moveTo) 
     {
-            Coroutine co = StartCoroutine(base.MoveUnit(moveTo));
+        Coroutine co = StartCoroutine(base.MoveUnit(moveTo));
 
-            yield return co;
+        yield return co;
         
     }
 
     public override IEnumerator AttackWithUnit(Vector2 attackAt) 
     {
-            Coroutine co = StartCoroutine(base.AttackWithUnit(attackAt));
-            yield return co;      
+        Coroutine co = StartCoroutine(base.AttackWithUnit(attackAt));
+        yield return co;      
     }
 
     public override IEnumerator DefendUnit(int value)
     {
-            Coroutine co = StartCoroutine(base.DefendUnit(value));
+        Coroutine co = StartCoroutine(base.DefendUnit(value));
 
-            yield return co;            
+        yield return co;            
     }
 
 
@@ -181,5 +196,14 @@ public class PlayerManager : UnitManager {
         if (units.Count <= 0) {
             scenario.Lose();            
         }
+    }
+
+    public virtual void DescendGrids(Grid newGrid) {
+        foreach(Unit unit in units) {
+            currentGrid.RemoveElement(unit);
+            unit.StoreInGrid(newGrid);
+        }
+        currentGrid = newGrid;
+        transform.parent = newGrid.transform;
     }
 }

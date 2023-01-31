@@ -100,4 +100,17 @@ public class EnemyManager : UnitManager {
         currentGrid.DisableGridHighlight();
         yield return base.MoveUnit(moveTo);
     }
+
+    public virtual void SeedUnits(Grid newGrid) {
+        for (int i = units.Count - 1; i >= 0; i--) {
+            newGrid.enemy.units.Add(units[i]);
+            newGrid.enemy.SubscribeElement(units[i]);
+
+            units[i].transform.parent = newGrid.enemy.transform;
+            units[i].StoreInGrid(newGrid);
+
+            units.RemoveAt(i);
+        }
+        DestroyImmediate(this.gameObject);
+    }
 }

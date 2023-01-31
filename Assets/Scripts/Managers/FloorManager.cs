@@ -52,9 +52,11 @@ public class FloorManager : MonoBehaviour
     public void SwitchFloors(bool up) {
         if (!up) {
             currentTransition = StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index+1].gameObject));
+            print (currentFloor.index+1 + " " + floors[currentFloor.index+1] != null);
             SetButtonActive(upButton, floors[currentFloor.index+1] != null);
             SetButtonActive(downButton, floors[currentFloor.index+1] != null);
         } else {
+            print (currentFloor.index-1 + " " + floors[currentFloor.index-1] != null);
             StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index-1].gameObject));
             SetButtonActive(upButton, floors[currentFloor.index-1] != null);
             SetButtonActive(downButton, floors[currentFloor.index-1] != null);
@@ -62,6 +64,7 @@ public class FloorManager : MonoBehaviour
     }
 
     void SetButtonActive(GameObject button, bool state) {
+        //print (state);
         button.SetActive(state);
     }
 
@@ -87,28 +90,38 @@ public class FloorManager : MonoBehaviour
             timer += Time.deltaTime;
         }
         if (floor2) currentFloor = floor2.GetComponent<Grid>();
+        
     }
 
     public void Descend() {
         StartCoroutine(DescendFloors());
+        
     }
 
     public IEnumerator DescendFloors() {
-        UnitManager enemy = currentFloor.enemy;
+
+        EnemyManager enemy = (EnemyManager)currentFloor.enemy;
         enemy.transform.parent = null;
         scenario.player.transform.parent = null;
+
+        yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
         yield return StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index+1].gameObject));
-        enemy.transform.parent = currentFloor.transform;
-        scenario.player.transform.parent = currentFloor.transform;
-        yield return new WaitForSecondsRealtime(1);
+        
+        enemy.SeedUnits(currentFloor);
+        scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
+        scenario.player.DescendGrids(currentFloor);
+        
+        yield return new WaitForSecondsRealtime(0.725f);
 
         yield return StartCoroutine(TransitionFloors(currentFloor.gameObject));
 
         yield return StartCoroutine(GenerateFloor(true));
 
-        yield return new WaitForSeconds(0.75f);
+        yield return new WaitForSeconds(0.5f);
         SwitchFloors(true);
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.5f);
+
+        StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
     }
 
 }

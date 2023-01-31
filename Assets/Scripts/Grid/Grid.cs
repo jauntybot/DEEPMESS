@@ -41,8 +41,8 @@ public class Grid : MonoBehaviour {
 
                 GridSquare sqr = Instantiate(sqrPrefab, this.transform).GetComponent<GridSquare>();
                 sqr.white = _white;
-                sqr.UpdateElement(new Vector2(x,y));
                 sqr.StoreInGrid(this);
+                sqr.UpdateElement(new Vector2(x,y));
 
                 sqrs.Add(sqr);
                 sqr.transform.parent = grid.transform;
@@ -69,10 +69,15 @@ public class Grid : MonoBehaviour {
                 GridElement ge = Instantiate(c.gridElement.gameObject, this.transform).GetComponent<GridElement>();
                 gridElements.Add(ge);
                 ge.ElementDestroyed += RemoveElement;
-                ge.UpdateElement(c.coord);
                 ge.StoreInGrid(this);
+                ge.UpdateElement(c.coord);
+
             }
         }
+    }
+
+    public void AddElement(GridElement ge) {
+        gridElements.Add(ge);
     }
 
     public void RemoveElement(GridElement ge) 
@@ -82,7 +87,7 @@ public class Grid : MonoBehaviour {
 
     public void DisplayGridCursor(bool state, Vector2 coord) {
         gridCursor.SetActive(state);
-        gridCursor.transform.position = Grid.PosFromCoord(coord);
+        gridCursor.transform.position = PosFromCoord(coord);
     }
 
 // Toggle GridSquare highlights, apply color by index
@@ -122,7 +127,7 @@ public class Grid : MonoBehaviour {
         return gridElements.Find(ge => ge.coord == coord);
     }
 
-     public static Vector3 PosFromCoord(Vector2 coord) {
+     public Vector3 PosFromCoord(Vector2 coord) {
         return new Vector3(
 // offset from scene origin + coord to pos conversion + ortho offset + center measure
             -(FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x) + (ORTHO_OFFSET.x * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 

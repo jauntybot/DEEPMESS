@@ -63,7 +63,7 @@ public class Deck : MonoBehaviour {
         if (selectedCard) selectedCard.hover.active = true;
         
         if (state) {
-            StartCoroutine(manager.pc.HandInput());
+            //StartCoroutine(manager.pc.HandInput());
         } else {
             DeselectCard();
             manager.pc.StopAllCoroutines();

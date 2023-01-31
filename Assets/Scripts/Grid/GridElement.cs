@@ -9,6 +9,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(HPDisplay))]
 public class GridElement : MonoBehaviour{
 
+    [SerializeField]
     protected Grid grid;
 
     [Header("Grid Element")]
@@ -26,7 +27,6 @@ public class GridElement : MonoBehaviour{
 // Initialize references, scale to grid, subscribe onDeath event
     protected virtual void Start() 
     {
-        
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
 
@@ -57,7 +57,7 @@ public class GridElement : MonoBehaviour{
 // Update grid position and coordinate
     public virtual void UpdateElement(Vector2 c) 
     {
-        transform.position = Grid.PosFromCoord(c);
+        transform.position = grid.PosFromCoord(c);
         coord=c;
     }  
 
@@ -97,7 +97,7 @@ public class GridElement : MonoBehaviour{
     public virtual void TargetElement(bool state) 
     {
         targeted = state;
-        hpDisplay.ToggleHPDisplay(state);
+        if (hpDisplay) hpDisplay.ToggleHPDisplay(state);
     }
     
 }

@@ -9,11 +9,6 @@ public class PlayerUnit : Unit {
 // Called when an action is applied to a unit or to clear it's actions
     public override void UpdateAction(int index) 
     {
-// Clear data
-        foreach(GridElement ge in grid.gridElements) {
-            ge.TargetElement(ge == this);
-        }
-
         base.UpdateAction(index);
 // Update action data by card
         switch (index) {

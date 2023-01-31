@@ -1424,6 +1424,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04091ec7abeb93c47a277c4576991a5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentGrid: {fileID: 0}
   scenario: {fileID: 0}
   unitPrefabs:
   - {fileID: 3908257913917299126, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
@@ -2309,7 +2310,7 @@ MonoBehaviour:
   _gridSize: 8
   _sqrSize: 1.5
   floorOffset: 14
-  transitionDur: 1
+  transitionDur: 0.5
   upButton: {fileID: 1118866942}
   downButton: {fileID: 541095386}
 --- !u!1 &1330865684

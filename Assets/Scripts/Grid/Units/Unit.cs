@@ -84,7 +84,7 @@ public class Unit : GridElement {
 
         while (timer < animDur) {
             yield return null;
-            transform.position = Vector3.Lerp(transform.position, Grid.PosFromCoord(moveTo), timer/animDur);
+            transform.position = Vector3.Lerp(transform.position, grid.PosFromCoord(moveTo), timer/animDur);
 
             timer += Time.deltaTime;
         }
@@ -99,7 +99,6 @@ public class Unit : GridElement {
         float timer = 0;
         while (timer < animDur) {
             yield return null;
-
 
             timer += Time.deltaTime;
         }

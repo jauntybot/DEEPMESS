@@ -32,7 +32,7 @@ public class ScenarioManager : MonoBehaviour
 // State machines
     public enum GameState { Null, Setup, PlayerPlace, Battle, End }
     public GameState gameState;
-    public enum Turn { Null, Player, Enemy, Environment }
+    public enum Turn { Null, Player, Enemy, Descent }
     public Turn currentTurn;
 
 #region Initialization
@@ -96,6 +96,12 @@ public class ScenarioManager : MonoBehaviour
                     yield return new WaitForSecondsRealtime(1.5f);
                     SceneManager.LoadScene("Game Scene");
                 }
+            break;
+            case Turn.Descent:
+                player.StartEndTurn(false);
+                currentTurn = Turn.Descent;
+                endTurnButton.enabled = false;
+                yield return StartCoroutine(messagePanel.DisplayMessage("DESCENDING"));
             break;
         }
     }

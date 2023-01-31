@@ -7,33 +7,12 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
     PlayerManager manager;
-    Deck deck;
 
     void Start() 
     {
         manager = GetComponent<PlayerManager>();
-        deck = GetComponent<Deck>();
     }
 
-
-// Coroutine that runs while the player is allowed to select cards from their hand
-    public IEnumerator HandInput() {
-        while (manager.scenario.currentTurn == ScenarioManager.Turn.Player) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-// On click
-            if (Input.GetMouseButtonDown(0)) {
-                RaycastHit2D hit = ClickInput();
-// If clicked a card
-                if (hit != default(RaycastHit2D) && 
-                    hit.transform.GetComponent<Card>()) {
-// Select card
-                        if (hit.transform.GetComponent<Card>() == deck.selectedCard)
-                            deck.DeselectCard();                       
-                        else deck.SelectCard(hit.transform.GetComponent<Card>());                     
-                }
-            }
-        }
-    }
 
 // Coroutine that runs while the player is allowed to select elements on the grid
     public IEnumerator GridInput() {
