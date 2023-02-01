@@ -55,7 +55,6 @@ public class FloorManager : MonoBehaviour
             SetButtonActive(upButton, floors[currentFloor.index+1] != null);
             SetButtonActive(downButton, floors[currentFloor.index+1] != null);
         } else {
-            print (currentFloor.index-1 + " " + floors[currentFloor.index-1] != null);
             StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index-1].gameObject));
             SetButtonActive(upButton, floors[currentFloor.index-1] != null);
             SetButtonActive(downButton, floors[currentFloor.index-1] != null);
@@ -111,7 +110,7 @@ public class FloorManager : MonoBehaviour
         scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
         scenario.player.DescendGrids(currentFloor);
         
-        yield return new WaitForSecondsRealtime(0.725f);
+        yield return new WaitForSecondsRealtime(1.5f);
 
         yield return StartCoroutine(TransitionFloors(currentFloor.gameObject));
 
@@ -125,14 +124,47 @@ public class FloorManager : MonoBehaviour
     }
 
     public void DescentCollisionSolver() {
+        List<Unit> bumpedUnits = new List<Unit>();
+        List<Vector2> bumpOccupancy = new List<Vector2>();
         foreach (GridElement ge in currentFloor.gridElements) {
             if (ge is Unit u) {
                 GridElement subGE = floors[currentFloor.index+1].gridElements.Find(g => g.coord == u.coord);
-                if (subGE) {
-                    print (u.transform.name + " collides");
-                }
+                if (subGE) 
+                    bumpedUnits.Add(u);
+                else
+                    bumpOccupancy.Add(u.coord);
             }
         }
+        foreach (Unit u in bumpedUnits) {
+            List<Vector2> bumpCoords = new List<Vector2>();
+                    Vector2 dir = Vector2.zero;
+                    for (int i = 0; i <= 3; i++) {
+                        switch (i) {
+                            case 0: dir = Vector2.up; break;
+                            case 1: dir = Vector2.right; break;
+                            case 2: dir = Vector2.down; break;
+                            case 3: dir = Vector2.left; break;
+                        }
+                        Vector2 coord = u.coord + dir;
+                        foreach(Vector2 c in bumpOccupancy)
+                            print ("bumpCoords" + c);
+                        print (coord);
+                        if (!floors[currentFloor.index+1].CoordContents(coord) 
+                            && coord.x >= 0 && coord.x <= gridSize -1 && coord.y >= 0 && coord.y <= gridSize -1) {
+                                if (bumpOccupancy.Contains(coord)) print ("occupied");
+                                else bumpCoords.Add(coord);
+                            }
+                    }
+                    Vector2 target = bumpCoords[Random.Range(0, bumpCoords.Count - 1)];
+                    bumpOccupancy.Add(target);
+                    GridElement subGE = floors[currentFloor.index+1].gridElements.Find(ge => ge.coord == u.coord);
+                    if (subGE is Unit subU) {
+                        StartCoroutine(subU.TakeDamage(1));
+                    }
+                    StartCoroutine(u.CollideOnDescent(target));
+                    
+        }
+
     }
 
 }

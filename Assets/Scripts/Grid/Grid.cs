@@ -35,12 +35,8 @@ public class Grid : MonoBehaviour {
             for (int x = 0; x < FloorManager.gridSize; x++) {
                 yield return new WaitForSecondsRealtime(Util.initD/2);
 //store bool for white sqrs
-                bool _white=false;
-                if (x%2==0) { if (y%2==0) _white=true; } 
-                else { if (y%2!=0) _white=true; }
-
                 GridSquare sqr = Instantiate(sqrPrefab, this.transform).GetComponent<GridSquare>();
-                sqr.white = _white;
+                sqr.white = true;
                 sqr.StoreInGrid(this);
                 sqr.UpdateElement(new Vector2(x,y));
 

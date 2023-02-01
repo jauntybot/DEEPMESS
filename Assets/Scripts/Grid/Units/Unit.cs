@@ -116,8 +116,30 @@ public class Unit : GridElement {
         }
         
         yield return base.Defend(value);
-
     }
+
+    
+    public virtual IEnumerator CollideOnDescent(Vector2 moveTo) {
+        yield return new WaitForSecondsRealtime(1);
+        float timer = 0;
+        Vector3 bumpUp = transform.position + Vector3.up * 2;
+        while (timer<animDur) {
+            yield return null;
+            transform.position = Vector3.Lerp(transform.position, bumpUp, timer/animDur);
+            timer += Time.deltaTime;
+        }
+        timer = 0;
+        StartCoroutine(TakeDamage(1));
+        while (timer<animDur) {
+            yield return null;
+            transform.position = Vector3.Lerp(transform.position, grid.PosFromCoord(moveTo), timer/animDur);
+
+            timer += Time.deltaTime;
+        }   
+
+        UpdateElement(moveTo);
+    }
+
 
 #endregion
 

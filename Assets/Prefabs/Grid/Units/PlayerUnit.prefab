@@ -96,9 +96,9 @@ GameObject:
   - component: {fileID: 5038078834824349799}
   - component: {fileID: 7182560657884744695}
   - component: {fileID: 8036915059464567198}
-  - component: {fileID: 382002177066499558}
+  - component: {fileID: 3134466940168298887}
   m_Layer: 6
-  m_Name: Sniper
+  m_Name: PlayerUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -162,7 +162,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 976384ae21361dd4bb4775c29db16f57, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 906fcea0c9fd91c4faf3e1d9ba632e1d, type: 3}
   m_Color: {r: 0.37992162, g: 0.6245565, b: 0.8679245, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -220,7 +220,7 @@ MonoBehaviour:
   defensePipContainer: {fileID: 7931177410557531513}
   pipPrefab: {fileID: 883393798405621554, guid: ed401e466c374ab4a9fe1b48c5b73713, type: 3}
   defenseShield: {fileID: 106700115495399791}
---- !u!60 &382002177066499558
+--- !u!60 &3134466940168298887
 PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -245,24 +245,22 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.36499998, y: 0.065}
-      - {x: 0.275, y: 0.265}
-      - {x: 0.185, y: 0.405}
-      - {x: 0.205, y: 0.505}
-      - {x: 0.145, y: 0.645}
-      - {x: 0.074999996, y: 0.655}
-      - {x: -0.095, y: 0.655}
-      - {x: -0.185, y: 0.545}
-      - {x: -0.175, y: 0.375}
-      - {x: -0.315, y: 0.225}
-      - {x: -0.405, y: -0.055}
-      - {x: -0.405, y: -0.315}
-      - {x: -0.375, y: -0.36499998}
-      - {x: -0.295, y: -0.385}
-      - {x: 0.375, y: -0.385}
-      - {x: 0.405, y: -0.315}
-      - {x: 0.405, y: -0.145}
-      - {x: 0.355, y: -0.095}
+    - - {x: 0.515, y: 0.155}
+      - {x: 0.435, y: 0.325}
+      - {x: 0.255, y: 0.475}
+      - {x: 0.125, y: 0.515}
+      - {x: -0.125, y: 0.515}
+      - {x: -0.295, y: 0.45499998}
+      - {x: -0.435, y: 0.33499998}
+      - {x: -0.515, y: 0.13499999}
+      - {x: -0.515, y: -0.114999995}
+      - {x: -0.445, y: -0.305}
+      - {x: -0.345, y: -0.42499998}
+      - {x: -0.145, y: -0.515}
+      - {x: 0.145, y: -0.515}
+      - {x: 0.265, y: -0.475}
+      - {x: 0.465, y: -0.295}
+      - {x: 0.515, y: -0.185}
 --- !u!1001 &1992655877707159765
 PrefabInstance:
   m_ObjectHideFlags: 0
