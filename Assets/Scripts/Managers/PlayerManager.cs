@@ -17,7 +17,6 @@ public class PlayerManager : UnitManager {
 // Turn vars
     public TMPro.TMP_Text energyText;
     public GameObject energyWarning;
-    public int currentEnergy, maxEnergy;
 
     public enum Action { None, Move, Attack }
     public Action currentAction;
@@ -43,15 +42,10 @@ public class PlayerManager : UnitManager {
 
         if (start) {
 
-            currentEnergy = maxEnergy;
-            UpdateEnergyDisplay();
-
             StartCoroutine(pc.GridInput());
-
-// Defense decay
+// Reset unit energy
             foreach(Unit u in units) {
-                if (u.defense > 0)
-                    StartCoroutine(u.TakeDamage(1));
+                u.energyCurrent = u.energyMax;
             }
         } else {
             DeselectUnit(true);
@@ -149,43 +143,42 @@ public class PlayerManager : UnitManager {
     
     public override IEnumerator MoveUnit(Vector2 moveTo) 
     {
-        Coroutine co = StartCoroutine(base.MoveUnit(moveTo));
-
-        yield return co;
-        
+        if (selectedUnit.energyCurrent > 0) {
+            currentAction = Action.None;
+            selectedUnit.energyCurrent -= 1;
+            Coroutine co = StartCoroutine(base.MoveUnit(moveTo));
+            yield return co;
+        } else {
+            currentAction = Action.None;
+            //energy warning
+        }
     }
 
     public override IEnumerator AttackWithUnit(Vector2 attackAt) 
     {
-        Coroutine co = StartCoroutine(base.AttackWithUnit(attackAt));
-        yield return co;      
+        if (selectedUnit.energyCurrent > 0) {
+            currentAction = Action.None;
+            selectedUnit.energyCurrent -= 1;
+            Coroutine co = StartCoroutine(base.AttackWithUnit(attackAt));
+            yield return co;   
+        } else {
+            currentAction = Action.None;
+            //energy warning
+        }
     }
 
     public override IEnumerator DefendUnit(int value)
     {
-        Coroutine co = StartCoroutine(base.DefendUnit(value));
-
-        yield return co;            
-    }
-
-
-    public void UpdateEnergyDisplay() {
-        energyText.text = currentEnergy.ToString();
-        if (currentEnergy <= 0)
-            StartCoroutine(EnergyWarning());
-        else
-            energyWarning.SetActive(false);
-    }
-
-    protected virtual IEnumerator EnergyWarning() {
-        for (int i = 0; i < 3; i++) {
-            energyWarning.SetActive(false);
-            yield return new WaitForSecondsRealtime(.2f);
-            energyWarning.SetActive(true);
-            yield return new WaitForSecondsRealtime(.2f);
+        if (selectedUnit.energyCurrent > 0) {
+            currentAction = Action.None;
+            selectedUnit.energyCurrent -= 1;
+            Coroutine co = StartCoroutine(base.DefendUnit(value));
+            yield return co;        
+        } else {
+            currentAction = Action.None;
+            //energy warning
         }
     }
-
 
     protected override void RemoveUnit(GridElement ge)
     {

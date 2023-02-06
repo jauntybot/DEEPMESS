@@ -21,20 +21,20 @@ public class EnemyManager : UnitManager {
         for (int i = units.Count - 1; i >= 0; i--) 
         {
             EnemyUnit enemy = units[i] as EnemyUnit;
-            for (int e = 1; e <= enemy.maxEnergy; e++) 
-            {
-                yield return new WaitForSecondsRealtime(0.05f);
-                yield return StartCoroutine(CalculateAction(enemy));
-            }
+            yield return StartCoroutine(CalculateAction(enemy));
+            
+            // for (int e = 1; e <= enemy.maxEnergy; e++) 
+            // {
+            //     yield return new WaitForSecondsRealtime(0.05f);
+            //     yield return StartCoroutine(CalculateAction(enemy));
+            // }
         }
         EndTurn();
     }
 
     public IEnumerator CalculateAction(EnemyUnit input) {
+// First attack scan
         input.UpdateValidAttack(input.attackCard);
-        input.UpdateValidMovement(input.moveCard);
-    
-// Attack scan
         foreach (Vector2 coord in input.validAttackCoords) 
         {
             if (currentGrid.CoordContents(coord) is Unit t) {
@@ -46,14 +46,14 @@ public class EnemyManager : UnitManager {
                             u.TargetElement(true);
                         }
                     }
-                    yield return new WaitForSecondsRealtime(0.75f);
+                    yield return new WaitForSecondsRealtime(0.5f);
                     yield return StartCoroutine(AttackWithUnit(coord));
                     yield break;
                 }
             }
         }
-
 // Move scan
+        input.UpdateValidMovement(input.moveCard);
         Unit closestTkn = scenario.player.units[0];
         if (closestTkn) {
             foreach (Unit tkn in scenario.player.units) {
@@ -70,9 +70,27 @@ public class EnemyManager : UnitManager {
             if (Mathf.Sign(closestCoord.x) == 1) {
                 SelectUnit(input);
                 currentGrid.DisplayValidCoords(input.validMoveCoords, 0);
-                yield return new WaitForSecondsRealtime(0.75f);
+                yield return new WaitForSecondsRealtime(0.5f);
                 yield return StartCoroutine(MoveUnit(closestCoord));
-                yield break;
+            }
+        }
+// Second attack scan
+        input.UpdateValidAttack(input.attackCard);
+        foreach (Vector2 coord in input.validAttackCoords) 
+        {
+            if (currentGrid.CoordContents(coord) is Unit t) {
+                if (t.owner == Unit.Owner.Player) {
+                    SelectUnit(input);
+                    currentGrid.DisplayValidCoords(input.validAttackCoords, 1);
+                    foreach(Vector2 c in input.validAttackCoords) {
+                        if (currentGrid.CoordContents(c) is Unit u) {
+                            u.TargetElement(true);
+                        }
+                    }
+                    yield return new WaitForSecondsRealtime(0.5f);
+                    yield return StartCoroutine(AttackWithUnit(coord));
+                    yield break;
+                }
             }
         }
     }

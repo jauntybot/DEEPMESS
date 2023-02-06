@@ -33,7 +33,6 @@ public class Grid : MonoBehaviour {
         grid.transform.parent = this.transform;
         for (int y = 0; y < FloorManager.gridSize; y++) {
             for (int x = 0; x < FloorManager.gridSize; x++) {
-                yield return new WaitForSecondsRealtime(Util.initD/2);
 //store bool for white sqrs
                 GridSquare sqr = Instantiate(sqrPrefab, this.transform).GetComponent<GridSquare>();
                 sqr.white = true;
@@ -61,7 +60,6 @@ public class Grid : MonoBehaviour {
                 enemy.SpawnUnit(c.coord, u);
             } else 
             {
-                yield return new WaitForSecondsRealtime(Util.initD/2);
                 GridElement ge = Instantiate(c.gridElement.gameObject, this.transform).GetComponent<GridElement>();
                 gridElements.Add(ge);
                 ge.ElementDestroyed += RemoveElement;

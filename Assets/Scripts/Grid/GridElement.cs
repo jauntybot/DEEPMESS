@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 // Universal data class derrived by any instance that occupies grid space
 
-[RequireComponent(typeof(PolygonCollider2D))]
+//[RequireComponent(typeof(PolygonCollider2D))]
 [RequireComponent(typeof(HPDisplay))]
 public class GridElement : MonoBehaviour{
 
@@ -23,6 +23,7 @@ public class GridElement : MonoBehaviour{
     public event OnElementUpdate ElementDestroyed;
 
     public int hpMax, hpCurrent, defense;
+    public int energyCurrent, energyMax;
 
 // Initialize references, scale to grid, subscribe onDeath event
     protected virtual void Start() 
@@ -31,6 +32,7 @@ public class GridElement : MonoBehaviour{
         hitbox.enabled = false;
 
         hpCurrent = hpMax;
+        energyCurrent = energyMax;
         hpDisplay = GetComponent<HPDisplay>();
     }
 

@@ -8,7 +8,6 @@ public class Unit : GridElement {
 
     [Header("Unit")]
     public Owner owner;
-
     public CardData attackCard, moveCard;
 
     public List<Vector2> validMoveCoords;
@@ -81,7 +80,7 @@ public class Unit : GridElement {
     public IEnumerator JumpToCoord(Vector2 moveTo) 
     {
         float timer = 0;
-
+        hpDisplay.UpdateHPDisplay();
         while (timer < animDur) {
             yield return null;
             transform.position = Vector3.Lerp(transform.position, grid.PosFromCoord(moveTo), timer/animDur);
@@ -91,12 +90,12 @@ public class Unit : GridElement {
         
         UpdateElement(moveTo);
 
-
     }
 
     public IEnumerator AttackUnit(Unit unit) 
     {
         float timer = 0;
+        hpDisplay.UpdateHPDisplay();
         while (timer < animDur) {
             yield return null;
 
@@ -109,6 +108,7 @@ public class Unit : GridElement {
     public override IEnumerator Defend(int value) 
     {
         float timer = 0;
+        hpDisplay.UpdateHPDisplay();
         while (timer < animDur) {
             yield return null;
 
