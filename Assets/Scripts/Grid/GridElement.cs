@@ -6,7 +6,6 @@ using UnityEngine.UI;
 // Universal data class derrived by any instance that occupies grid space
 
 //[RequireComponent(typeof(PolygonCollider2D))]
-[RequireComponent(typeof(HPDisplay))]
 public class GridElement : MonoBehaviour{
 
     [SerializeField]
@@ -16,7 +15,7 @@ public class GridElement : MonoBehaviour{
     public Vector2 coord;
     public bool selectable, targeted;
     public PolygonCollider2D hitbox;
-    [HideInInspector] public HPDisplay hpDisplay;
+    public ElementCanvas elementCanvas;
 
 
     public delegate void OnElementUpdate(GridElement ge);
@@ -33,7 +32,8 @@ public class GridElement : MonoBehaviour{
 
         hpCurrent = hpMax;
         energyCurrent = energyMax;
-        hpDisplay = GetComponent<HPDisplay>();
+        elementCanvas = GetComponentInChildren<ElementCanvas>();
+        elementCanvas.Initialize(this);
     }
 
     public virtual void StoreInGrid(Grid owner) {
@@ -70,10 +70,10 @@ public class GridElement : MonoBehaviour{
     {
         yield return null;
         defense += value;
-        hpDisplay.UpdateHPDisplay();
+        elementCanvas.UpdateStatsDisplay();
     }
     
-    public virtual IEnumerator TakeDamage(int dmg) 
+    public virtual IEnumerator TakeDamage(int dmg, GridElement source = null) 
     {
         defense -= dmg;
         if (Mathf.Sign(defense) == -1) {
@@ -84,7 +84,7 @@ public class GridElement : MonoBehaviour{
             }
             defense = 0;
         }
-        hpDisplay.UpdateHPDisplay();
+        elementCanvas.UpdateStatsDisplay();
         yield return new WaitForSecondsRealtime(.5f);
         TargetElement(false);
     }
@@ -99,7 +99,7 @@ public class GridElement : MonoBehaviour{
     public virtual void TargetElement(bool state) 
     {
         targeted = state;
-        if (hpDisplay) hpDisplay.ToggleHPDisplay(state);
+        if (elementCanvas) elementCanvas.ToggleStatsDisplay(state);
     }
     
 }

@@ -4,28 +4,25 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // This component is required by all grid elements
-
-public class HPDisplay : MonoBehaviour 
+public class ElementCanvas : MonoBehaviour 
 {
-    [SerializeField] bool disable;
-    GridElement element;
+    [SerializeField] protected bool disable;
+    protected GridElement element;
     public GameObject statDisplay, hp, energy;
     [SerializeField] TMPro.TMP_Text hpText;
     [SerializeField] TMPro.TMP_Text energyText;
 
-    public GameObject defenseShield;
-
-    void Start() 
+    public virtual void Initialize(GridElement ge) 
     {
         if (!disable) {
-            element = GetComponent<GridElement>();
+            element = ge;
 
-            UpdateHPDisplay();
-            ToggleHPDisplay(false);
+            UpdateStatsDisplay();
+            ToggleStatsDisplay(false);
         }
     }
 
-    public virtual void UpdateHPDisplay() {
+    public virtual void UpdateStatsDisplay() {
         if (!disable) {
             if (element.energyMax == 0) energy.SetActive(false);
             hpText.text = element.hpCurrent + "/" + element.hpMax;
@@ -33,8 +30,10 @@ public class HPDisplay : MonoBehaviour
         }
     }
 
-    public void ToggleHPDisplay(bool state) {
+    public void ToggleStatsDisplay(bool state) {
         if (!disable)
             statDisplay.SetActive(state);
     }
+
+
 }

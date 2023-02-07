@@ -4,15 +4,16 @@ using UnityEngine;
 
 // Custom data class, stores card type enum, sprite, and other things to come
 
-[CreateAssetMenu(menuName = "Card")]
+[CreateAssetMenu(menuName = "Equipment")]
 [System.Serializable]
-public class CardData : ScriptableObject {
+public class EquipmentData : ScriptableObject {
+    new public string name;
     public int energyCost;
-    public enum Action { Move, Attack, Defend, None };
+    public enum Action { Move, Attack, PassHammer, StrikeHammer, None };
     public Action action;
 
 
-// The following variables are dependent on the card Action
+// The following variables are dependent on the card Action, hidden with custom editor
 
     public enum AdjacencyType { Diamond, Orthogonal, Diagonal, Star, Box };
     public AdjacencyType adjacency;

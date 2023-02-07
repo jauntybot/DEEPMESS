@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5176575663756676459}
   m_Layer: 6
-  m_Name: HP Display
+  m_Name: Stats Display
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,7 @@ RectTransform:
   - {fileID: 1373287246820861173}
   - {fileID: 8140192334948442432}
   m_Father: {fileID: 1003956329267171811}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -471,12 +471,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1003956329267171811}
-  - component: {fileID: 275242715233555640}
+  - component: {fileID: 4575493663936057203}
   - component: {fileID: 3064112740698965249}
   - component: {fileID: 8283279539787568028}
   - component: {fileID: 8738160444006610102}
   m_Layer: 6
-  m_Name: GridElementCanvas
+  m_Name: PlayerUnitCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -494,6 +494,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5732808273585090802}
   - {fileID: 5176575663756676459}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -503,7 +504,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0.25}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &275242715233555640
+--- !u!114 &4575493663936057203
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -512,7 +513,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8724893459348499538}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f4f387d8b65d8e4fa2ba01429ec86e8, type: 3}
+  m_Script: {fileID: 11500000, guid: e07e0688402819046a300084936df2ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   disable: 0
@@ -521,6 +522,8 @@ MonoBehaviour:
   energy: {fileID: 7676930748416365091}
   hpText: {fileID: 3333734579570481419}
   energyText: {fileID: 2834446699022368574}
+  equipmentDisplay: {fileID: 8920356598817709826}
+  equipmentButtonPrefab: {fileID: 7665423317416184923, guid: 85d6d13e9b053eb47809426e6ba30490, type: 3}
 --- !u!223 &3064112740698965249
 Canvas:
   m_ObjectHideFlags: 0
@@ -582,3 +585,75 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!1 &8920356598817709826
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5732808273585090802}
+  - component: {fileID: 7518270386837237330}
+  - component: {fileID: 3221071627288062105}
+  m_Layer: 6
+  m_Name: Equipment Display
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &5732808273585090802
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8920356598817709826}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1003956329267171811}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0.902}
+  m_SizeDelta: {x: 3.1947, y: 0.75}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &7518270386837237330
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8920356598817709826}
+  m_CullTransparentMesh: 1
+--- !u!114 &3221071627288062105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8920356598817709826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0

@@ -8,8 +8,9 @@ using UnityEngine;
 public class Grid : MonoBehaviour {
     
     FloorManager floorManager;
+    PlayerManager player;
     public int index;
-
+    [SerializeField] GameObject grid, neutralGridElements;
     public UnitManager enemy;
     [SerializeField] GameObject enemyPrefab;
 
@@ -25,12 +26,11 @@ public class Grid : MonoBehaviour {
 
     void Start() {
         if (FloorManager.instance) floorManager = FloorManager.instance;
+        if (PlayerManager.instance) player = PlayerManager.instance;
     }
 
 // loop through grid x,y, generate sqr grid elements, update them and add to list
     public IEnumerator GenerateGrid(int i) {
-        GameObject grid = Instantiate(new GameObject("Grid"));
-        grid.transform.parent = this.transform;
         for (int y = 0; y < FloorManager.gridSize; y++) {
             for (int x = 0; x < FloorManager.gridSize; x++) {
 //store bool for white sqrs
@@ -52,22 +52,29 @@ public class Grid : MonoBehaviour {
     {
         enemy = Instantiate(enemyPrefab, this.transform).GetComponent<EnemyManager>(); 
         yield return StartCoroutine(enemy.Initialize());
-
         foreach (Content c in lvlDef.initSpawns) 
         {
             if (c.gridElement is Unit u) 
             {
-                enemy.SpawnUnit(c.coord, u);
-            } else 
-            {
+                if (u is EnemyUnit e)
+                    enemy.SpawnUnit(c.coord, e);
+            } else {
                 GridElement ge = Instantiate(c.gridElement.gameObject, this.transform).GetComponent<GridElement>();
                 gridElements.Add(ge);
+                ge.transform.parent = neutralGridElements.transform;
+
                 ge.ElementDestroyed += RemoveElement;
                 ge.StoreInGrid(this);
                 ge.UpdateElement(c.coord);
-
             }
         }
+        
+    }
+
+    public IEnumerator DropDrill() {
+        yield return null;
+        Content drillSpawn = lvlDef.initSpawns.Find(ge => ge.gridElement is Drill);
+        player.UpdateDrill(drillSpawn.coord);
     }
 
     public void AddElement(GridElement ge) {

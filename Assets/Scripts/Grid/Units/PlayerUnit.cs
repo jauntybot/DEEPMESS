@@ -5,23 +5,30 @@ using UnityEngine;
 // Inherited Unit; unit functionality dependent on player input
 
 public class PlayerUnit : Unit {
-    
-// Called when an action is applied to a unit or to clear it's actions
-    public override void UpdateAction(int index) 
-    {
-        base.UpdateAction(index);
-// Update action data by card
-        switch (index) {
-            default: break;
-            case 1:
-                UpdateValidMovement(moveCard);
-            break;
-            case 2:
-                UpdateValidAttack(attackCard);
-            break;
-            case 3:
 
-            break;
+    [HideInInspector] public PlayerUnitCanvas canvas;
+    
+    protected override void Start() {
+        base.Start();
+        canvas = (PlayerUnitCanvas)elementCanvas;
+    }
+
+// Called when an action is applied to a unit or to clear it's actions
+    public override void UpdateAction(EquipmentData equipment) 
+    {
+        base.UpdateAction(equipment);
+// Update action data by card
+        if (equipment) {
+            canvas.ToggleEquipmentDisplay(false);
+            switch (equipment.action) {
+                default: break;
+                case EquipmentData.Action.Move:
+                    UpdateValidMovement(equipment);
+                break;
+                case EquipmentData.Action.Attack:
+                    UpdateValidAttack(equipment);
+                break;
+            }
         }
     }
 
@@ -33,21 +40,30 @@ public class PlayerUnit : Unit {
     }
 
 // Calculate and display valid move coordinates
-    public override void UpdateValidMovement(CardData card) 
+    public override void UpdateValidMovement(EquipmentData e) 
     {
-        base.UpdateValidMovement(card);
-        grid.DisplayValidCoords(validMoveCoords, 0);
+        base.UpdateValidMovement(e);
+        grid.DisplayValidCoords(validActionCoords, 0);
     }
 
 // Calculate and display valid attack coordinates
-    public override void UpdateValidAttack(CardData card) 
+    public override void UpdateValidAttack(EquipmentData e) 
     {
-        base.UpdateValidAttack(card);
-        grid.DisplayValidCoords(validAttackCoords, 1);
-        foreach(Vector2 coord in validAttackCoords) {
+        base.UpdateValidAttack(e);
+        grid.DisplayValidCoords(validActionCoords, 1);
+        foreach(Vector2 coord in validActionCoords) {
             if (grid.CoordContents(coord) is Unit u) {
                 u.TargetElement(true);
             }
+        }
+    }
+
+    public override void TargetElement(bool state)
+    {
+        base.TargetElement(state);
+        if (elementCanvas && energyCurrent > 0) {
+            PlayerUnitCanvas canvas = (PlayerUnitCanvas)elementCanvas;
+            canvas.ToggleEquipmentDisplay(state);
         }
     }
 }

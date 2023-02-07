@@ -35,19 +35,19 @@ public class EnemyManager : UnitManager {
     public IEnumerator CalculateAction(EnemyUnit input) {
 // First attack scan
         input.UpdateValidAttack(input.attackCard);
-        foreach (Vector2 coord in input.validAttackCoords) 
+        foreach (Vector2 coord in input.validActionCoords) 
         {
             if (currentGrid.CoordContents(coord) is Unit t) {
                 if (t.owner == Unit.Owner.Player) {
                     SelectUnit(input);
-                    currentGrid.DisplayValidCoords(input.validAttackCoords, 1);
-                    foreach(Vector2 c in input.validAttackCoords) {
+                    currentGrid.DisplayValidCoords(input.validActionCoords, 1);
+                    foreach(Vector2 c in input.validActionCoords) {
                         if (currentGrid.CoordContents(c) is Unit u) {
                             u.TargetElement(true);
                         }
                     }
                     yield return new WaitForSecondsRealtime(0.5f);
-                    yield return StartCoroutine(AttackWithUnit(coord));
+                    yield return StartCoroutine(AttackWithUnit(selectedUnit, coord));
                     yield break;
                 }
             }
@@ -62,33 +62,33 @@ public class EnemyManager : UnitManager {
                     Debug.Log(closestTkn.name);
             }
             Vector2 closestCoord = Vector2.one * -32;
-            foreach(Vector2 coord in input.validMoveCoords) {
+            foreach(Vector2 coord in input.validActionCoords) {
                 if (Vector2.Distance(coord, closestTkn.coord) < Vector2.Distance(closestCoord, closestTkn.coord)) 
                     closestCoord = coord;
             }
 // If there is a valid closest coord
             if (Mathf.Sign(closestCoord.x) == 1) {
                 SelectUnit(input);
-                currentGrid.DisplayValidCoords(input.validMoveCoords, 0);
+                currentGrid.DisplayValidCoords(input.validActionCoords, 0);
                 yield return new WaitForSecondsRealtime(0.5f);
-                yield return StartCoroutine(MoveUnit(closestCoord));
+                yield return StartCoroutine(MoveUnit(selectedUnit, closestCoord));
             }
         }
 // Second attack scan
         input.UpdateValidAttack(input.attackCard);
-        foreach (Vector2 coord in input.validAttackCoords) 
+        foreach (Vector2 coord in input.validActionCoords) 
         {
             if (currentGrid.CoordContents(coord) is Unit t) {
                 if (t.owner == Unit.Owner.Player) {
                     SelectUnit(input);
-                    currentGrid.DisplayValidCoords(input.validAttackCoords, 1);
-                    foreach(Vector2 c in input.validAttackCoords) {
+                    currentGrid.DisplayValidCoords(input.validActionCoords, 1);
+                    foreach(Vector2 c in input.validActionCoords) {
                         if (currentGrid.CoordContents(c) is Unit u) {
                             u.TargetElement(true);
                         }
                     }
                     yield return new WaitForSecondsRealtime(0.5f);
-                    yield return StartCoroutine(AttackWithUnit(coord));
+                    yield return StartCoroutine(AttackWithUnit(selectedUnit, coord));
                     yield break;
                 }
             }
@@ -106,17 +106,17 @@ public class EnemyManager : UnitManager {
         StartCoroutine(scenario.SwitchTurns());
     }
 
-    public override IEnumerator AttackWithUnit(Vector2 attackAt)
+    public override IEnumerator AttackWithUnit(Unit unit, Vector2 attackAt)
     {
         currentGrid.DisableGridHighlight();
-        yield return base.AttackWithUnit(attackAt);
+        yield return base.AttackWithUnit(unit, attackAt);
         
     }
 
-    public override IEnumerator MoveUnit(Vector2 moveTo)
+    public override IEnumerator MoveUnit(Unit unit, Vector2 moveTo, int cost = 0)
     {
         currentGrid.DisableGridHighlight();
-        yield return base.MoveUnit(moveTo);
+        yield return base.MoveUnit(unit, moveTo);
     }
 
     public virtual void SeedUnits(Grid newGrid) {

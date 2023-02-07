@@ -15,7 +15,7 @@ public class UnitManager : MonoBehaviour {
     [Header("UNIT MANAGER")]
 // Unit vars
     [SerializeField] GameObject[] unitPrefabs;
-    [SerializeField] GameObject unitParent;
+    [SerializeField] protected GameObject unitParent;
     public List<Unit> units = new List<Unit>();    
     public Unit selectedUnit;
     public List<Vector2> startingCoords;
@@ -56,7 +56,6 @@ public class UnitManager : MonoBehaviour {
 // Inherited functionality dependent on inherited classes
     public virtual void SelectUnit(Unit t) {
         if (selectedUnit) {
-            print ("unit deselected from SelectUnit");
             DeselectUnit(true);
         }
 
@@ -64,7 +63,6 @@ public class UnitManager : MonoBehaviour {
         selectedUnit = t;
 
         currentGrid.DisplayGridCursor(true, t.coord);
-        print ("unit selected");
     }
     public virtual void DeselectUnit(bool untarget) {
         if (selectedUnit) {
@@ -79,8 +77,8 @@ public class UnitManager : MonoBehaviour {
         }            
         
     }
-    public virtual IEnumerator MoveUnit(Vector2 moveTo) {
-        Unit unit = selectedUnit; 
+    public virtual IEnumerator MoveUnit(Unit unit, Vector2 moveTo, int cost = 0) {
+
         DeselectUnit(false);
 
         yield return StartCoroutine(unit.JumpToCoord(moveTo));
@@ -90,11 +88,10 @@ public class UnitManager : MonoBehaviour {
         unit.TargetElement(false);
     }
 
-    public virtual IEnumerator AttackWithUnit(Vector2 attackAt) {
-        Unit unit = selectedUnit;
-       
+    public virtual IEnumerator AttackWithUnit(Unit unit, Vector2 attackAt) {
+         
         Unit recipient = currentGrid.CoordContents(attackAt) as Unit;
-        foreach(Vector2 coord in selectedUnit.validAttackCoords) {
+        foreach(Vector2 coord in selectedUnit.validActionCoords) {
             if (currentGrid.CoordContents(coord) is Unit u) {
                 u.TargetElement(u == recipient);
             }
@@ -103,18 +100,7 @@ public class UnitManager : MonoBehaviour {
         DeselectUnit(false);    
         yield return StartCoroutine(unit.AttackUnit(recipient));
 
-        unit.TargetElement(false);
-        print("clear hp");
         unit.UpdateAction();
-    }
-
-    public virtual IEnumerator DefendUnit(int value) {
-        Unit unit = selectedUnit;
-        DeselectUnit(false);
-
-        yield return StartCoroutine(unit.Defend(value));
-        unit.UpdateAction();
-
         yield return new WaitForSecondsRealtime(.5f);
         unit.TargetElement(false);
     }

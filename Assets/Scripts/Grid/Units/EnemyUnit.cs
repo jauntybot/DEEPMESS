@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class EnemyUnit : Unit {
 
-    public int currentEnergy, maxEnergy;
+
     
 }

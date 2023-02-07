@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class FloorManager : MonoBehaviour
 {
@@ -21,7 +22,7 @@ public class FloorManager : MonoBehaviour
     Coroutine currentTransition;
     [SerializeField] GameObject upButton, downButton;
 
-     #region Singleton (and Awake)
+    #region Singleton (and Awake)
     public static FloorManager instance;
     private void Awake() {
         if (FloorManager.instance) {
@@ -66,7 +67,6 @@ public class FloorManager : MonoBehaviour
     }
 
     public IEnumerator TransitionFloors(GameObject floor1, GameObject floor2 = null) {
-
         float dir = 1;
         Vector3 from2 = Vector3.zero;
         Vector3 to2 = Vector3.zero;
@@ -74,10 +74,12 @@ public class FloorManager : MonoBehaviour
             dir = (floor1.transform.position.y > floor2.transform.position.y) ? 1 : -1;
             from2 = floor2.transform.position;
             to2 = new Vector3(floor2.transform.position.x, floor2.transform.position.y + floorOffset * dir, floor2.transform.position.z);
+            floor2.GetComponent<SortingGroup>().sortingOrder = 0;
         }
         Vector3 from1 = floor1.transform.position;
         Vector3 to1 = new Vector3(floor1.transform.position.x, floor1.transform.position.y + floorOffset * dir, floor1.transform.position.z);
-        
+        floor1.GetComponent<SortingGroup>().sortingOrder = -1;
+
         float timer = 0;
         while (timer < transitionDur) {
             floor1.transform.position = Vector3.Lerp(from1, to1, timer/transitionDur);

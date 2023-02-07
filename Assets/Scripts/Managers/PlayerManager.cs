@@ -14,18 +14,24 @@ public class PlayerManager : UnitManager {
 
 
     [Header("PLAYER MANAGER")]
-// Turn vars
-    public TMPro.TMP_Text energyText;
-    public GameObject energyWarning;
+    [SerializeField] GameObject drillPrefab;
+    public Drill drill;
 
-    public enum Action { None, Move, Attack }
-    public Action currentAction;
-
-
+    #region Singleton (and Awake)
+    public static PlayerManager instance;
+    private void Awake() {
+        if (PlayerManager.instance) {
+            Debug.Log("Warning! More than one instance of PlayerManager found!");
+            return;
+        }
+        PlayerManager.instance = this;
+    }
+    #endregion
 
     protected override void Start() {
         base.Start();
-
+        drill = SpawnUnit(Vector2.zero, drill).GetComponent<Drill>();
+        drill.gameObject.transform.position = new Vector3 (0,20,0);
     }
 
     public override IEnumerator Initialize()
@@ -36,16 +42,17 @@ public class PlayerManager : UnitManager {
     }
 
     public void StartEndTurn(bool start) {
-        for (int i = 0; i <= units.Count - 1; i++) 
+        for (int i = 0; i <= units.Count - 1; i++) {
             units[i].EnableSelection(start);
+        }
         
 
         if (start) {
-
             StartCoroutine(pc.GridInput());
 // Reset unit energy
             foreach(Unit u in units) {
                 u.energyCurrent = u.energyMax;
+                u.elementCanvas.UpdateStatsDisplay();
             }
         } else {
             DeselectUnit(true);
@@ -56,7 +63,13 @@ public class PlayerManager : UnitManager {
     public override Unit SpawnUnit(Vector2 coord, Unit unit) {
         Unit u = base.SpawnUnit(coord, unit);
         u.owner = Unit.Owner.Player;
+
         return u;
+    }
+
+    public void UpdateDrill(Vector2 coord) {
+        print ("move drill");
+        StartCoroutine(MoveUnit(drill, coord));
     }
 
 // Get grid input from player controller, translate it to functionality
@@ -79,10 +92,10 @@ public class PlayerManager : UnitManager {
 // Player clicks on enemy unit
             else if (u.owner == Unit.Owner.Enemy) 
             {
-                if (selectedUnit && currentAction == Action.Attack) 
+                if (selectedUnit && selectedUnit.selectedEquipment.action == EquipmentData.Action.Attack) 
                 {
-                    if (selectedUnit.validAttackCoords.Find(coord => coord == u.coord) != null) {
-                        StartCoroutine(AttackWithUnit(u.coord));
+                    if (selectedUnit.validActionCoords.Find(coord => coord == u.coord) != null) {
+                        StartCoroutine(AttackWithUnit(selectedUnit, u.coord));
                     } 
                 }
             }
@@ -98,15 +111,15 @@ public class PlayerManager : UnitManager {
 // Square empty
             else {
                 if (selectedUnit) {
-                    switch (currentAction) {
-                        case Action.None:
+                    switch (selectedUnit.selectedEquipment.action) {
+                        case EquipmentData.Action.None:
                             DeselectUnit(true);
                         break;
-                        case Action.Move:
-                            if (selectedUnit.validMoveCoords.Find(coord => coord == sqr.coord) != null)
-                                StartCoroutine(MoveUnit(sqr.coord));
+                        case EquipmentData.Action.Move:
+                            if (selectedUnit.validActionCoords.Find(coord => coord == sqr.coord) != null)
+                                StartCoroutine(MoveUnit(selectedUnit, sqr.coord));
                         break;
-                        case Action.Attack:
+                        case EquipmentData.Action.Attack:
 
                         break;
                     }
@@ -115,68 +128,32 @@ public class PlayerManager : UnitManager {
         }
     }
 
-    public void ChangeAction(int index) {
-        currentAction = (Action)index;
-        if (selectedUnit) {
-            selectedUnit.UpdateAction((int)currentAction);
-        }
-    }
 
     public override void SelectUnit(Unit u) {
         base.SelectUnit(u); 
-// Untarget every unit that isn't this one
+
         foreach(GridElement ge in currentGrid.gridElements) {
+// Untarget every unit that isn't this one
             ge.TargetElement(ge == u);
         }
-        if (currentAction != Action.None) {
-            selectedUnit.UpdateAction((int)currentAction);
-        }
     }
 
-    public override void DeselectUnit(bool untarget) {
-// Untarget every unit that isn't this one
-        foreach(GridElement ge in currentGrid.gridElements) {
-            ge.TargetElement(ge == selectedUnit);
-        }
-        base.DeselectUnit(untarget);
-    }
     
-    public override IEnumerator MoveUnit(Vector2 moveTo) 
+    public override IEnumerator MoveUnit(Unit unit, Vector2 moveTo, int cost = 0) 
     {
-        if (selectedUnit.energyCurrent > 0) {
-            currentAction = Action.None;
-            selectedUnit.energyCurrent -= 1;
-            Coroutine co = StartCoroutine(base.MoveUnit(moveTo));
+        if (selectedUnit.energyCurrent > cost) {
+            selectedUnit.energyCurrent -= cost;
+            Coroutine co = StartCoroutine(base.MoveUnit(unit, moveTo));
             yield return co;
-        } else {
-            currentAction = Action.None;
-            //energy warning
         }
     }
 
-    public override IEnumerator AttackWithUnit(Vector2 attackAt) 
+    public override IEnumerator AttackWithUnit(Unit unit, Vector2 attackAt) 
     {
         if (selectedUnit.energyCurrent > 0) {
-            currentAction = Action.None;
             selectedUnit.energyCurrent -= 1;
-            Coroutine co = StartCoroutine(base.AttackWithUnit(attackAt));
+            Coroutine co = StartCoroutine(base.AttackWithUnit(unit, attackAt));
             yield return co;   
-        } else {
-            currentAction = Action.None;
-            //energy warning
-        }
-    }
-
-    public override IEnumerator DefendUnit(int value)
-    {
-        if (selectedUnit.energyCurrent > 0) {
-            currentAction = Action.None;
-            selectedUnit.energyCurrent -= 1;
-            Coroutine co = StartCoroutine(base.DefendUnit(value));
-            yield return co;        
-        } else {
-            currentAction = Action.None;
-            //energy warning
         }
     }
 

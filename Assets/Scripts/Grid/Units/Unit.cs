@@ -8,30 +8,30 @@ public class Unit : GridElement {
 
     [Header("Unit")]
     public Owner owner;
-    public CardData attackCard, moveCard;
+    public List<EquipmentData> equipment;
+    public EquipmentData selectedEquipment;
 
-    public List<Vector2> validMoveCoords;
-    public List<Vector2> validAttackCoords;
+    public EquipmentData attackCard, moveCard;
+
+    public List<Vector2> validActionCoords;
 
     [SerializeField] float animDur = 1f;
 
 // Functions that will change depending on the class they're inherited from
 #region Inherited Functionality
-    public override void UpdateElement(Vector2 c) {
-        base.UpdateElement(c);
-    }
-    public virtual void UpdateAction(int index = 0) {
+
+    public virtual void UpdateAction(EquipmentData equipment = null) {
 // Clear data
-        validAttackCoords = null;
-        validMoveCoords = null;
+        validActionCoords = null;
         grid.DisableGridHighlight();
+        selectedEquipment = equipment;
     }
 
 // Called when a selected token previews a move action
-    public virtual void UpdateValidMovement(CardData card) 
+    public virtual void UpdateValidMovement(EquipmentData e) 
     {
 // Get adjacent coords based on action card        
-        List<Vector2> tempCoords = GetAdjacent(card, coord);
+        List<Vector2> tempCoords = GetAdjacent(e, coord);
 // loop through complete coord list to remove invalid moves
         for (int i = tempCoords.Count - 1; i >= 0; i--) {
             bool valid = true;
@@ -43,14 +43,14 @@ public class Unit : GridElement {
 // remove from list if invalid
             if (!valid) tempCoords.Remove(tempCoords[i]);
         }
-        validMoveCoords = tempCoords;
+        validActionCoords = tempCoords;
     }
 
 // Called when a selected token previews an attack action
-    public virtual void UpdateValidAttack(CardData card) 
+    public virtual void UpdateValidAttack(EquipmentData e) 
     {
 // Get adjacent coords based on action card
-        List<Vector2> tempCoords = GetAdjacent(card, coord);
+        List<Vector2> tempCoords = GetAdjacent(e, coord);
 // loop through complete coord list to remove invalid moves
         for (int i = tempCoords.Count - 1; i >= 0; i--) {
             bool valid = true;
@@ -70,7 +70,7 @@ public class Unit : GridElement {
 // remove from list if invalid
             if (!valid) tempCoords.Remove(tempCoords[i]);
         }
-        validAttackCoords = tempCoords;
+        validActionCoords = tempCoords;
     }
 #endregion
 
@@ -80,7 +80,7 @@ public class Unit : GridElement {
     public IEnumerator JumpToCoord(Vector2 moveTo) 
     {
         float timer = 0;
-        hpDisplay.UpdateHPDisplay();
+        elementCanvas.UpdateStatsDisplay();
         while (timer < animDur) {
             yield return null;
             transform.position = Vector3.Lerp(transform.position, grid.PosFromCoord(moveTo), timer/animDur);
@@ -95,7 +95,7 @@ public class Unit : GridElement {
     public IEnumerator AttackUnit(Unit unit) 
     {
         float timer = 0;
-        hpDisplay.UpdateHPDisplay();
+        elementCanvas.UpdateStatsDisplay();
         while (timer < animDur) {
             yield return null;
 
@@ -108,7 +108,7 @@ public class Unit : GridElement {
     public override IEnumerator Defend(int value) 
     {
         float timer = 0;
-        hpDisplay.UpdateHPDisplay();
+        elementCanvas.UpdateStatsDisplay();
         while (timer < animDur) {
             yield return null;
 
@@ -148,54 +148,54 @@ public class Unit : GridElement {
 #region Coordinate Adjacency
 
 // Accessor function, pass all params here and it will use the appropriate equation
-    public virtual List<Vector2> GetAdjacent(CardData card, Vector2 origin)
+    public virtual List<Vector2> GetAdjacent(EquipmentData e, Vector2 origin)
     {
         List<Vector2> _coords = new List<Vector2>();
 
-        switch(card.adjacency) {
-         case CardData.AdjacencyType.Diamond:
-            _coords = DiamondAdjacency(origin, card);
+        switch(e.adjacency) {
+         case EquipmentData.AdjacencyType.Diamond:
+            _coords = DiamondAdjacency(origin, e);
          break;
-         case CardData.AdjacencyType.Orthogonal:
-            _coords = OrthagonalAdjacency(origin, card);   
+         case EquipmentData.AdjacencyType.Orthogonal:
+            _coords = OrthagonalAdjacency(origin, e);   
          break;
-         case CardData.AdjacencyType.Diagonal:
-            _coords = DiagonalAdjacency(origin, card);   
+         case EquipmentData.AdjacencyType.Diagonal:
+            _coords = DiagonalAdjacency(origin, e);   
          break;
-         case CardData.AdjacencyType.Box:
-            _coords = BoxAdjacency(origin, card.range);
+         case EquipmentData.AdjacencyType.Box:
+            _coords = BoxAdjacency(origin, e.range);
          break;
         }
 
         return _coords;
     }
 
-    protected virtual List<Vector2> DiamondAdjacency(Vector2 origin, CardData card) 
+    protected virtual List<Vector2> DiamondAdjacency(Vector2 origin, EquipmentData card) 
     {
         List<Vector2> _coords = new List<Vector2>();
-        List<Vector2> e_coords = new List<Vector2>();
-        e_coords.Add(origin);
+        List<Vector2> frontier = new List<Vector2>();
+        frontier.Add(origin);
 
         for (int r = 1; r <= card.range; r++) {
-            for (int e = e_coords.Count - 1; e >= 0; e--) {
-                Vector2 current = e_coords[e];
-                e_coords.Remove(e_coords[e]);
+            for (int f = frontier.Count - 1; f >= 0; f--) {
+                Vector2 current = frontier[f];
+                frontier.Remove(frontier[f]);
 
                 for (int x = -1; x < 2; x+=2) {
                     Vector2 coord = new Vector2(current.x + x, current.y);
                     if (!_coords.Contains(coord)) {
                         if (grid.CoordContents(coord) is GridElement ge) {
                             switch (card.action) {
-                                case CardData.Action.Move:
+                                case EquipmentData.Action.Move:
                                     if (ge is Unit u) {
                                         if (u.owner != owner) break;
                                         else {
-                                            e_coords.Add(new Vector2(current.x + x, current.y));
+                                            frontier.Add(new Vector2(current.x + x, current.y));
                                             _coords.Add(new Vector2(current.x + x, current.y));
                                         }
                                     }
                                 break;
-                                case CardData.Action.Attack:
+                                case EquipmentData.Action.Attack:
                                     if (ge is Unit u2) {
                                         if (u2.owner == owner) break;
                                         else 
@@ -205,7 +205,7 @@ public class Unit : GridElement {
                             }
                         }
                         else {
-                            e_coords.Add(new Vector2(current.x + x, current.y));
+                            frontier.Add(new Vector2(current.x + x, current.y));
                             _coords.Add(new Vector2(current.x + x, current.y));
                         }
                     }
@@ -215,16 +215,16 @@ public class Unit : GridElement {
                     if (!_coords.Contains(coord)) {
                         if (grid.CoordContents(coord) is GridElement ge) {
                             switch (card.action) {
-                                case CardData.Action.Move:
+                                case EquipmentData.Action.Move:
                                     if (ge is Unit u) {
                                         if (u.owner != owner) break;
                                         else {
-                                            e_coords.Add(new Vector2(current.x, current.y + y));
+                                            frontier.Add(new Vector2(current.x, current.y + y));
                                             _coords.Add(new Vector2(current.x, current.y + y));
                                         }
                                     }
                                 break;
-                                case CardData.Action.Attack:
+                                case EquipmentData.Action.Attack:
                                     if (ge is Unit u2) {
                                         if (u2.owner == owner) break;
                                         else 
@@ -234,7 +234,7 @@ public class Unit : GridElement {
                             }
                         }
                         else {
-                            e_coords.Add(new Vector2(current.x, current.y + y));
+                            frontier.Add(new Vector2(current.x, current.y + y));
                             _coords.Add(new Vector2(current.x, current.y + y));
                         }
                     }
@@ -245,7 +245,7 @@ public class Unit : GridElement {
         return _coords;
     }
 
-    protected virtual List<Vector2> OrthagonalAdjacency(Vector2 origin, CardData card) 
+    protected virtual List<Vector2> OrthagonalAdjacency(Vector2 origin, EquipmentData e) 
     {
         List<Vector2> _coords = new List<Vector2>();
         Vector2 dir = Vector2.zero;
@@ -258,13 +258,13 @@ public class Unit : GridElement {
                 case 3: dir = Vector2.left; break;
             }
             bool blocked = false;
-            for (int r = 1; r <= card.range; r++) 
+            for (int r = 1; r <= e.range; r++) 
             {
                 if (blocked) break;
                 Vector2 coord = origin + dir * r;
                 if (grid.CoordContents(coord) is GridElement ge) {
-                    switch (card.action) {
-                        case CardData.Action.Move:
+                    switch (e.action) {
+                        case EquipmentData.Action.Move:
                             if (ge is Unit u) {
                                 if (u.owner != owner) blocked = true;
                                 else 
@@ -272,7 +272,7 @@ public class Unit : GridElement {
                             } else
                                 blocked = true;
                         break;
-                        case CardData.Action.Attack:
+                        case EquipmentData.Action.Attack:
                             if (ge is Unit u2) {
                                 if (u2.owner == owner) blocked = true;
                                 else 
@@ -291,7 +291,7 @@ public class Unit : GridElement {
         return _coords;
     }
 
-    protected virtual List<Vector2> DiagonalAdjacency(Vector2 origin, CardData card) 
+    protected virtual List<Vector2> DiagonalAdjacency(Vector2 origin, EquipmentData e) 
     {
         List<Vector2> _coords = new List<Vector2>();
         Vector2 dir = Vector2.zero;
@@ -304,13 +304,13 @@ public class Unit : GridElement {
                 case 3: dir = new Vector2(-1,-1); break;
             }
             bool blocked = false;
-            for (int r = 1; r <= card.range; r++) 
+            for (int r = 1; r <= e.range; r++) 
             {
                 if (blocked) break;
                 Vector2 coord = origin + dir * r;
                 if (grid.CoordContents(coord) is GridElement ge) {
-                    switch (card.action) {
-                        case CardData.Action.Move:
+                    switch (e.action) {
+                        case EquipmentData.Action.Move:
                             if (ge is Unit u) {
                                 if (u.owner != owner) blocked = true;
                                 else 
@@ -318,7 +318,7 @@ public class Unit : GridElement {
                             } else
                                 blocked = true;
                         break;
-                        case CardData.Action.Attack:
+                        case EquipmentData.Action.Attack:
                             if (ge is Unit u2) {
                                 if (u2.owner == owner) blocked = true;
                                 else 
