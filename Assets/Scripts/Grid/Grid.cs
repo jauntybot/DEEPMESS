@@ -74,7 +74,9 @@ public class Grid : MonoBehaviour {
     public IEnumerator DropDrill() {
         yield return null;
         Content drillSpawn = lvlDef.initSpawns.Find(ge => ge.gridElement is Drill);
-        player.UpdateDrill(drillSpawn.coord);
+        float xOffset = PosFromCoord(drillSpawn.coord).x;
+        player.drill.transform.position = new Vector3(xOffset, player.drill.transform.position.y, 0);
+        yield return StartCoroutine(player.UpdateDrill(drillSpawn.coord));
     }
 
     public void AddElement(GridElement ge) {

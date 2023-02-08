@@ -37,8 +37,8 @@ public class UnitManager : MonoBehaviour {
 
         for (int i = 0; i <= startingCoords.Count - 1; i++) {
             SpawnUnit(startingCoords[i], unitPrefabs[i].GetComponent<Unit>());
-            yield return new WaitForSeconds(Util.initD);
         }
+        yield return null;
     }
 
 // Create a new unit from prefab index, update its GridElement
@@ -50,7 +50,7 @@ public class UnitManager : MonoBehaviour {
 
         units.Add(u);
         SubscribeElement(u);
-        return unit;
+        return u;
     }
 
 // Inherited functionality dependent on inherited classes

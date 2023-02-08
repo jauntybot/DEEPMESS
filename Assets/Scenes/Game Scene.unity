@@ -674,6 +674,49 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 776745200}
   m_CullTransparentMesh: 1
+--- !u!1 &803065748
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 803065749}
+  - component: {fileID: 803065750}
+  m_Layer: 0
+  m_Name: DescentTransition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &803065749
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 803065748}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1272466583}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!210 &803065750
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 803065748}
+  m_Enabled: 1
+  m_SortingLayerID: -1434539209
+  m_SortingLayer: 1
+  m_SortingOrder: 1
 --- !u!1 &827279535
 GameObject:
   m_ObjectHideFlags: 0
@@ -811,7 +854,8 @@ MonoBehaviour:
   - {x: 4, y: 4}
   pc: {fileID: 0}
   drillPrefab: {fileID: 2911188987296525511, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
-  drill: {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
+  instancedDrill: {fileID: 0}
+  drill: {fileID: 0}
 --- !u!114 &894283984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1499,7 +1543,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 803065749}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1543,6 +1588,7 @@ MonoBehaviour:
   floors: []
   _gridSize: 8
   _sqrSize: 1.5
+  transitionParent: {fileID: 803065749}
   floorOffset: 15
   transitionDur: 0.75
   upButton: {fileID: 1118866942}

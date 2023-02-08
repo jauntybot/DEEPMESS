@@ -18,6 +18,7 @@ public class FloorManager : MonoBehaviour
     [SerializeField] float _sqrSize;
     public static float sqrSize;
 
+    [SerializeField] Transform transitionParent;
     public float floorOffset, transitionDur;
     Coroutine currentTransition;
     [SerializeField] GameObject upButton, downButton;
@@ -42,10 +43,12 @@ public class FloorManager : MonoBehaviour
         
         Grid newFloor = Instantiate(floorPrefab, this.transform).GetComponent<Grid>();
         if (topFloor) currentFloor = newFloor;
-        newFloor.lvlDef = floorDefinitions[Random.Range(0, floorDefinitions.Count)];
+        LevelDefinition floorDef = floorDefinitions[Random.Range(0, floorDefinitions.Count)];
+        newFloor.lvlDef = floorDef;
 
         Coroutine co = StartCoroutine(newFloor.GenerateGrid(floors.Count));
         yield return co;
+    
         newFloor.gameObject.name = "Floor" + newFloor.index;
         floors.Add(newFloor);
     }
@@ -102,8 +105,9 @@ public class FloorManager : MonoBehaviour
         DescentCollisionSolver();
 
         EnemyManager enemy = (EnemyManager)currentFloor.enemy;
-        enemy.transform.parent = null;
-        scenario.player.transform.parent = null;
+        enemy.transform.parent = transitionParent;
+        scenario.player.transform.parent = transitionParent;
+        scenario.player.drill.transform.parent = currentFloor.transform;
 
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
         yield return StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index+1].gameObject));
@@ -112,7 +116,9 @@ public class FloorManager : MonoBehaviour
         scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
         scenario.player.DescendGrids(currentFloor);
         
-        yield return new WaitForSecondsRealtime(1.5f);
+        yield return new WaitForSecondsRealtime(0.75f);
+        yield return StartCoroutine(currentFloor.DropDrill());        
+        yield return new WaitForSecondsRealtime(0.75f);
 
         yield return StartCoroutine(TransitionFloors(currentFloor.gameObject));
 

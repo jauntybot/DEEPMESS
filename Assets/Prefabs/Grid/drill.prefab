@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4979604410586634808}
   - component: {fileID: 1329050228170529337}
   - component: {fileID: 1124182531442868255}
-  - component: {fileID: 9103182826858831149}
   - component: {fileID: 2495743354695000907}
   m_Layer: 0
   m_Name: drill
@@ -28,11 +27,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2911188987296525511}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.33452654, y: -0.5459017, z: 0}
+  m_LocalPosition: {x: 0, y: 20, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7621696083639297842}
+  - {fileID: 4337182915708510399}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -103,7 +102,7 @@ MonoBehaviour:
   grid: {fileID: 0}
   coord: {x: 0, y: 0}
   selectable: 0
-  targeted: 0
+  targeted: 1
   hitbox: {fileID: 2495743354695000907}
   elementCanvas: {fileID: 0}
   hpMax: 15
@@ -119,24 +118,6 @@ MonoBehaviour:
   validActionCoords: []
   animDur: 1
   canvas: {fileID: 0}
---- !u!114 &9103182826858831149
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2911188987296525511}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f4f387d8b65d8e4fa2ba01429ec86e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  disable: 0
-  statDisplay: {fileID: 0}
-  hp: {fileID: 0}
-  energy: {fileID: 0}
-  hpText: {fileID: 0}
-  energyText: {fileID: 0}
 --- !u!60 &2495743354695000907
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -170,7 +151,7 @@ PolygonCollider2D:
       - {x: 0.47, y: 0.545}
       - {x: -0.47, y: 0.545}
       - {x: -0.47, y: -0.125}
---- !u!1001 &7217986809349273297
+--- !u!1001 &3593309654681874780
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -267,8 +248,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c775e6f888ed2a44fb702de8f68b33a9, type: 3}
---- !u!224 &7621696083639297842 stripped
+--- !u!224 &4337182915708510399 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1003956329267171811, guid: c775e6f888ed2a44fb702de8f68b33a9, type: 3}
-  m_PrefabInstance: {fileID: 7217986809349273297}
+  m_PrefabInstance: {fileID: 3593309654681874780}
   m_PrefabAsset: {fileID: 0}

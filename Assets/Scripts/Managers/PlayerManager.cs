@@ -14,7 +14,8 @@ public class PlayerManager : UnitManager {
 
 
     [Header("PLAYER MANAGER")]
-    [SerializeField] GameObject drillPrefab;
+    [SerializeField] public GameObject drillPrefab;
+    public GameObject instancedDrill;
     public Drill drill;
 
     #region Singleton (and Awake)
@@ -28,17 +29,15 @@ public class PlayerManager : UnitManager {
     }
     #endregion
 
-    protected override void Start() {
-        base.Start();
-        drill = SpawnUnit(Vector2.zero, drill).GetComponent<Drill>();
-        drill.gameObject.transform.position = new Vector3 (0,20,0);
-    }
-
     public override IEnumerator Initialize()
     {
         yield return base.Initialize();
         pc = GetComponent<PlayerController>();
         if (FloorManager.instance) floorManager = FloorManager.instance;
+        instancedDrill = SpawnUnit(Vector2.zero, drillPrefab.GetComponent<Drill>()).gameObject;
+        drill = instancedDrill.GetComponent<Drill>();
+        drill.gameObject.transform.position = new Vector3 (0,20,0);
+        drill.gameObject.transform.parent = unitParent.transform;
     }
 
     public void StartEndTurn(bool start) {
@@ -67,9 +66,11 @@ public class PlayerManager : UnitManager {
         return u;
     }
 
-    public void UpdateDrill(Vector2 coord) {
-        print ("move drill");
-        StartCoroutine(MoveUnit(drill, coord));
+    public IEnumerator UpdateDrill(Vector2 coord) {
+        drill.transform.parent = unitParent.transform;
+        yield return StartCoroutine(MoveUnit(drill, coord));
+        drill.StoreInGrid(currentGrid);
+
     }
 
 // Get grid input from player controller, translate it to functionality
@@ -94,7 +95,9 @@ public class PlayerManager : UnitManager {
             {
                 if (selectedUnit && selectedUnit.selectedEquipment.action == EquipmentData.Action.Attack) 
                 {
-                    if (selectedUnit.validActionCoords.Find(coord => coord == u.coord) != null) {
+                    if (selectedUnit.validActionCoords.Find(coord => coord == u.coord) != null
+                        && selectedUnit.energyCurrent > 0) {
+                        selectedUnit.energyCurrent -= 1;
                         StartCoroutine(AttackWithUnit(selectedUnit, u.coord));
                     } 
                 }
@@ -116,7 +119,9 @@ public class PlayerManager : UnitManager {
                             DeselectUnit(true);
                         break;
                         case EquipmentData.Action.Move:
-                            if (selectedUnit.validActionCoords.Find(coord => coord == sqr.coord) != null)
+                            if (selectedUnit.validActionCoords.Find(coord => coord == sqr.coord) != null
+                                && selectedUnit.energyCurrent > 0)
+                                selectedUnit.energyCurrent -= 1;
                                 StartCoroutine(MoveUnit(selectedUnit, sqr.coord));
                         break;
                         case EquipmentData.Action.Attack:
@@ -141,20 +146,16 @@ public class PlayerManager : UnitManager {
     
     public override IEnumerator MoveUnit(Unit unit, Vector2 moveTo, int cost = 0) 
     {
-        if (selectedUnit.energyCurrent > cost) {
-            selectedUnit.energyCurrent -= cost;
+            unit.energyCurrent -= cost;
             Coroutine co = StartCoroutine(base.MoveUnit(unit, moveTo));
             yield return co;
-        }
     }
 
     public override IEnumerator AttackWithUnit(Unit unit, Vector2 attackAt) 
     {
-        if (selectedUnit.energyCurrent > 0) {
             selectedUnit.energyCurrent -= 1;
             Coroutine co = StartCoroutine(base.AttackWithUnit(unit, attackAt));
             yield return co;   
-        }
     }
 
     protected override void RemoveUnit(GridElement ge)
