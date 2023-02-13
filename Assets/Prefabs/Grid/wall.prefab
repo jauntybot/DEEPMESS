@@ -11,9 +11,8 @@ GameObject:
   - component: {fileID: 6005169598005211249}
   - component: {fileID: 135743146407323883}
   - component: {fileID: 4634978180570587290}
-  - component: {fileID: 676785983980787379}
   - component: {fileID: 1344047576355502744}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -99,34 +98,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af180b0acace6de449ee41c40cf0fc4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  grid: {fileID: 0}
   coord: {x: 0, y: 0}
   selectable: 0
   targeted: 0
   hitbox: {fileID: 0}
-  hpDisplay: {fileID: 0}
+  elementCanvas: {fileID: 0}
   hpMax: 0
   hpCurrent: 0
   defense: 0
---- !u!114 &676785983980787379
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8157743951873733082}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f4f387d8b65d8e4fa2ba01429ec86e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  disable: 1
-  hpDisplay: {fileID: 0}
-  hpPipColor: {r: 0, g: 0, b: 0, a: 0}
-  hpPipContainer: {fileID: 0}
-  defensePipColor: {r: 0, g: 0, b: 0, a: 0}
-  defensePipContainer: {fileID: 0}
-  pipPrefab: {fileID: 0}
-  defenseShield: {fileID: 0}
+  energyCurrent: 0
+  energyMax: 0
 --- !u!60 &1344047576355502744
 PolygonCollider2D:
   m_ObjectHideFlags: 0

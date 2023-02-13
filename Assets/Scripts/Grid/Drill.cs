@@ -7,13 +7,14 @@ public class Drill : PlayerUnit
 {
 
     FloorManager floorManager;
-
+    public MoveData drillDrop;
 
     protected override void Start()
     {
         base.Start();
         if (FloorManager.instance)
             floorManager = FloorManager.instance;
+            selectedEquipment = equipment[0];
     }
 
     public override IEnumerator TakeDamage(int dmg, GridElement source)

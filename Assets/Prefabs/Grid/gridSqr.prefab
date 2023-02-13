@@ -444,10 +444,12 @@ MonoBehaviour:
   selectable: 0
   targeted: 0
   hitbox: {fileID: 0}
-  hpDisplay: {fileID: 0}
+  elementCanvas: {fileID: 0}
   hpMax: 0
   hpCurrent: 0
   defense: 0
+  energyCurrent: 0
+  energyMax: 0
   spriteRenderers:
   - {fileID: 7817496761048235123}
   - {fileID: 6537169198283793595}
@@ -499,10 +501,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   disable: 1
-  hpDisplay: {fileID: 0}
-  hpPipColor: {r: 0, g: 0, b: 0, a: 0}
-  hpPipContainer: {fileID: 0}
-  defensePipColor: {r: 0, g: 0, b: 0, a: 0}
-  defensePipContainer: {fileID: 0}
-  pipPrefab: {fileID: 0}
-  defenseShield: {fileID: 0}
+  statDisplay: {fileID: 0}
+  hp: {fileID: 0}
+  energy: {fileID: 0}
+  hpText: {fileID: 0}
+  energyText: {fileID: 0}

@@ -8,6 +8,8 @@ public class FloorManager : MonoBehaviour
 
     ScenarioManager scenario;
     [SerializeField] GameObject floorPrefab;
+    
+    public Color moveColor, attackColor, hammerColor;
     [SerializeField] List<LevelDefinition> floorDefinitions;
 
     public Grid currentFloor;

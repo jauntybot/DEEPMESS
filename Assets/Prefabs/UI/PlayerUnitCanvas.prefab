@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5176575663756676459}
-  m_Layer: 6
+  m_Layer: 5
   m_Name: Stats Display
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -184,7 +184,7 @@ GameObject:
   - component: {fileID: 8140192334948442432}
   - component: {fileID: 7685137944082624451}
   - component: {fileID: 6412230281627014281}
-  m_Layer: 6
+  m_Layer: 5
   m_Name: energyBG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -261,7 +261,7 @@ GameObject:
   - component: {fileID: 1373287246820861173}
   - component: {fileID: 8690990259878191532}
   - component: {fileID: 6244926660389849817}
-  m_Layer: 6
+  m_Layer: 5
   m_Name: hpBG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -475,7 +475,7 @@ GameObject:
   - component: {fileID: 3064112740698965249}
   - component: {fileID: 8283279539787568028}
   - component: {fileID: 8738160444006610102}
-  m_Layer: 6
+  m_Layer: 5
   m_Name: PlayerUnitCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -524,6 +524,7 @@ MonoBehaviour:
   energyText: {fileID: 2834446699022368574}
   equipmentDisplay: {fileID: 8920356598817709826}
   equipmentButtonPrefab: {fileID: 7665423317416184923, guid: 85d6d13e9b053eb47809426e6ba30490, type: 3}
+  buttons: []
 --- !u!223 &3064112740698965249
 Canvas:
   m_ObjectHideFlags: 0
@@ -567,7 +568,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &8738160444006610102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -595,8 +596,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5732808273585090802}
   - component: {fileID: 7518270386837237330}
-  - component: {fileID: 3221071627288062105}
-  m_Layer: 6
+  - component: {fileID: 1657455418276975179}
+  m_Layer: 5
   m_Name: Equipment Display
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -620,8 +621,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.902}
-  m_SizeDelta: {x: 3.1947, y: 0.75}
+  m_AnchoredPosition: {x: 0, y: 1.5}
+  m_SizeDelta: {x: 2, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7518270386837237330
 CanvasRenderer:
@@ -631,7 +632,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8920356598817709826}
   m_CullTransparentMesh: 1
---- !u!114 &3221071627288062105
+--- !u!114 &1657455418276975179
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -640,7 +641,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8920356598817709826}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
@@ -648,12 +649,10 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 4
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
+  m_ChildAlignment: 7
+  m_StartCorner: 2
+  m_StartAxis: 0
+  m_CellSize: {x: 0.825, y: 0.825}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 0
+  m_ConstraintCount: 2

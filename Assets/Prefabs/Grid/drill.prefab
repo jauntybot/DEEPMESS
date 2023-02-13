@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1329050228170529337}
   - component: {fileID: 1124182531442868255}
   - component: {fileID: 2495743354695000907}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: drill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -111,13 +111,14 @@ MonoBehaviour:
   energyCurrent: 0
   energyMax: 0
   owner: 0
-  equipment: []
+  selected: 0
+  equipment:
+  - {fileID: 11400000, guid: af1dca810e8d7d6488875275fc4d3ac3, type: 2}
   selectedEquipment: {fileID: 0}
-  attackCard: {fileID: 0}
-  moveCard: {fileID: 0}
   validActionCoords: []
   animDur: 1
   canvas: {fileID: 0}
+  drillDrop: {fileID: 11400000, guid: af1dca810e8d7d6488875275fc4d3ac3, type: 2}
 --- !u!60 &2495743354695000907
 PolygonCollider2D:
   m_ObjectHideFlags: 0

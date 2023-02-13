@@ -34,26 +34,24 @@ public class EnemyManager : UnitManager {
 
     public IEnumerator CalculateAction(EnemyUnit input) {
 // First attack scan
-        input.UpdateValidAttack(input.attackCard);
+        input.UpdateAction(input.equipment[1]);
         foreach (Vector2 coord in input.validActionCoords) 
         {
             if (currentGrid.CoordContents(coord) is Unit t) {
                 if (t.owner == Unit.Owner.Player) {
                     SelectUnit(input);
-                    currentGrid.DisplayValidCoords(input.validActionCoords, 1);
-                    foreach(Vector2 c in input.validActionCoords) {
-                        if (currentGrid.CoordContents(c) is Unit u) {
-                            u.TargetElement(true);
-                        }
-                    }
+                    currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
                     yield return new WaitForSecondsRealtime(0.5f);
-                    yield return StartCoroutine(AttackWithUnit(selectedUnit, coord));
+                    Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, t));
+                    DeselectUnit();
+                    currentGrid.DisableGridHighlight();
+                    yield return co;
                     yield break;
                 }
             }
         }
 // Move scan
-        input.UpdateValidMovement(input.moveCard);
+        input.UpdateAction(input.equipment[0]);
         Unit closestTkn = scenario.player.units[0];
         if (closestTkn) {
             foreach (Unit tkn in scenario.player.units) {
@@ -69,26 +67,27 @@ public class EnemyManager : UnitManager {
 // If there is a valid closest coord
             if (Mathf.Sign(closestCoord.x) == 1) {
                 SelectUnit(input);
-                currentGrid.DisplayValidCoords(input.validActionCoords, 0);
+                currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
                 yield return new WaitForSecondsRealtime(0.5f);
-                yield return StartCoroutine(MoveUnit(selectedUnit, closestCoord));
+                Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, currentGrid.sqrs.Find(sqr => sqr.coord == closestCoord)));
+                DeselectUnit();
+                currentGrid.DisableGridHighlight();
+                yield return co;
             }
         }
 // Second attack scan
-        input.UpdateValidAttack(input.attackCard);
+        input.UpdateAction(input.equipment[1]);
         foreach (Vector2 coord in input.validActionCoords) 
         {
             if (currentGrid.CoordContents(coord) is Unit t) {
                 if (t.owner == Unit.Owner.Player) {
                     SelectUnit(input);
-                    currentGrid.DisplayValidCoords(input.validActionCoords, 1);
-                    foreach(Vector2 c in input.validActionCoords) {
-                        if (currentGrid.CoordContents(c) is Unit u) {
-                            u.TargetElement(true);
-                        }
-                    }
+                    currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
                     yield return new WaitForSecondsRealtime(0.5f);
-                    yield return StartCoroutine(AttackWithUnit(selectedUnit, coord));
+                    Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, t));
+                    DeselectUnit();
+                    currentGrid.DisableGridHighlight();
+                    yield return co;
                     yield break;
                 }
             }
@@ -97,7 +96,7 @@ public class EnemyManager : UnitManager {
 
     public void EndTurn() {
         if (selectedUnit)
-           DeselectUnit(true);
+           DeselectUnit();
         foreach (Unit unit in units) {
             unit.UpdateAction();
             unit.TargetElement(false);
@@ -106,7 +105,7 @@ public class EnemyManager : UnitManager {
         StartCoroutine(scenario.SwitchTurns());
     }
 
-    public override IEnumerator AttackWithUnit(Unit unit, Vector2 attackAt)
+    public override IEnumerator AttackWithUnit(Unit unit, Vector2 attackAt, int cost = 0)
     {
         currentGrid.DisableGridHighlight();
         yield return base.AttackWithUnit(unit, attackAt);

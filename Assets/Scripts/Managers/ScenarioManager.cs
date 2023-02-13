@@ -49,7 +49,7 @@ public class ScenarioManager : MonoBehaviour
         yield return StartCoroutine(player.Initialize());
         yield return StartCoroutine(floorManager.currentFloor.DropDrill());
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.25f);
         yield return StartCoroutine(floorManager.TransitionFloors(floorManager.currentFloor.gameObject));
 
         if (floorManager) yield return StartCoroutine(floorManager.GenerateFloor(true));

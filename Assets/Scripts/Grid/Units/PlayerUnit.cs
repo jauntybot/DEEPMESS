@@ -14,10 +14,15 @@ public class PlayerUnit : Unit {
     }
 
 // Called when an action is applied to a unit or to clear it's actions
-    public override void UpdateAction(EquipmentData equipment) 
+    public override void UpdateAction(EquipmentData equipment = null) 
     {
         base.UpdateAction(equipment);
+        if (equipment)  {
+            grid.DisplayValidCoords(validActionCoords, equipment.gridColor);
+            canvas.ToggleEquipmentDisplay(false);
+        }
 // Update action data by card
+        /*
         if (equipment) {
             canvas.ToggleEquipmentDisplay(false);
             switch (equipment.action) {
@@ -30,6 +35,7 @@ public class PlayerUnit : Unit {
                 break;
             }
         }
+        */
     }
 
 // Allow the player to click on this
@@ -39,6 +45,8 @@ public class PlayerUnit : Unit {
         hitbox.enabled = state;
     }
 
+
+/*
 // Calculate and display valid move coordinates
     public override void UpdateValidMovement(EquipmentData e) 
     {
@@ -57,7 +65,7 @@ public class PlayerUnit : Unit {
             }
         }
     }
-
+*/  
     public override void TargetElement(bool state)
     {
         base.TargetElement(state);

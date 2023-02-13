@@ -22,7 +22,6 @@ public class Grid : MonoBehaviour {
     public List<GridSquare> sqrs = new List<GridSquare>();
     public List<GridElement> gridElements = new List<GridElement>();
 
-    public Color moveColor, attackColor, defendColor;
 
     void Start() {
         if (FloorManager.instance) floorManager = FloorManager.instance;
@@ -97,18 +96,18 @@ public class Grid : MonoBehaviour {
     public void DisplayValidCoords(List<Vector2> coords, int? index = null) {
         DisableGridHighlight();
 
-        Color c = moveColor;
+        Color c = floorManager.moveColor;
         if (index is int i) {
             switch (i) {
              case 0:
-                c = moveColor;
+                c = floorManager.moveColor;
              break;
              case 1:
-                c = attackColor;
+                c = floorManager.attackColor;
              break;
              case 2:
-                c = defendColor;
-             break;
+                c = floorManager.hammerColor;
+            break;
             }
         }
 

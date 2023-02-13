@@ -21,12 +21,6 @@ public class UnitManager : MonoBehaviour {
     public List<Vector2> startingCoords;
 
 
-
-    protected virtual void Start() 
-    {
-
-    }
-
 // Called from scenario manager when game starts
     public virtual IEnumerator Initialize() 
     {
@@ -56,20 +50,28 @@ public class UnitManager : MonoBehaviour {
 // Inherited functionality dependent on inherited classes
     public virtual void SelectUnit(Unit t) {
         if (selectedUnit) {
-            DeselectUnit(true);
+            DeselectUnit();
         }
 
         t.TargetElement(true);
         selectedUnit = t;
+        t.selected = true;
 
         currentGrid.DisplayGridCursor(true, t.coord);
     }
-    public virtual void DeselectUnit(bool untarget) {
+    public virtual void DeselectUnit() {
+        // Untarget every unit that isn't this one
+        foreach(GridElement ge in currentGrid.gridElements) 
+            ge.TargetElement(false);
+            
         if (selectedUnit) {
 // Clear action data
-            if (untarget)
-                selectedUnit.TargetElement(false);
+            
+            selectedUnit.TargetElement(false);
 
+            selectedUnit.selectedEquipment = null;
+            selectedUnit.validActionCoords = null;
+            selectedUnit.selected = false;
             selectedUnit = null;
 
             currentGrid.DisplayGridCursor(true, Vector2.one * -32);
@@ -79,16 +81,16 @@ public class UnitManager : MonoBehaviour {
     }
     public virtual IEnumerator MoveUnit(Unit unit, Vector2 moveTo, int cost = 0) {
 
-        DeselectUnit(false);
+        DeselectUnit();
 
-        yield return StartCoroutine(unit.JumpToCoord(moveTo));
+        //yield return StartCoroutine(unit.JumpToCoord(moveTo));
         unit.UpdateAction();
 
         yield return new WaitForSecondsRealtime(.5f);
         unit.TargetElement(false);
     }
 
-    public virtual IEnumerator AttackWithUnit(Unit unit, Vector2 attackAt) {
+    public virtual IEnumerator AttackWithUnit(Unit unit, Vector2 attackAt, int cost = 0) {
          
         Unit recipient = currentGrid.CoordContents(attackAt) as Unit;
         foreach(Vector2 coord in selectedUnit.validActionCoords) {
@@ -97,8 +99,8 @@ public class UnitManager : MonoBehaviour {
             }
         }
 
-        DeselectUnit(false);    
-        yield return StartCoroutine(unit.AttackUnit(recipient));
+        DeselectUnit();    
+        //yield return StartCoroutine(unit.AttackUnit(recipient));
 
         unit.UpdateAction();
         yield return new WaitForSecondsRealtime(.5f);

@@ -8,8 +8,7 @@ using UnityEngine.UI;
 //[RequireComponent(typeof(PolygonCollider2D))]
 public class GridElement : MonoBehaviour{
 
-    [SerializeField]
-    protected Grid grid;
+    public Grid grid;
 
     [Header("Grid Element")]
     public Vector2 coord;
@@ -33,7 +32,7 @@ public class GridElement : MonoBehaviour{
         hpCurrent = hpMax;
         energyCurrent = energyMax;
         elementCanvas = GetComponentInChildren<ElementCanvas>();
-        elementCanvas.Initialize(this);
+        if (elementCanvas) elementCanvas.Initialize(this);
     }
 
     public virtual void StoreInGrid(Grid owner) {
@@ -84,7 +83,7 @@ public class GridElement : MonoBehaviour{
             }
             defense = 0;
         }
-        elementCanvas.UpdateStatsDisplay();
+        if (elementCanvas) elementCanvas.UpdateStatsDisplay();
         yield return new WaitForSecondsRealtime(.5f);
         TargetElement(false);
     }
@@ -99,7 +98,9 @@ public class GridElement : MonoBehaviour{
     public virtual void TargetElement(bool state) 
     {
         targeted = state;
-        if (elementCanvas) elementCanvas.ToggleStatsDisplay(state);
+        if (elementCanvas) {
+            elementCanvas.ToggleStatsDisplay(state);
+        }
     }
     
 }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 125915573521978910}
   - component: {fileID: 7448665701938143107}
   m_Layer: 6
-  m_Name: EnemyPawn
+  m_Name: EnemyUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -111,10 +111,11 @@ MonoBehaviour:
   energyCurrent: 0
   energyMax: 0
   owner: 1
-  equipment: []
+  selected: 0
+  equipment:
+  - {fileID: 11400000, guid: 6c2566a89d99f1f459d7a13abb0c056e, type: 2}
+  - {fileID: 11400000, guid: f85cae2dd5b03d141b7b1679989bbdb7, type: 2}
   selectedEquipment: {fileID: 0}
-  attackCard: {fileID: 11400000, guid: dadea16ee7e243c4c9af3d10a59ec34b, type: 2}
-  moveCard: {fileID: 11400000, guid: 60170f27b45c24c4099d41c4f18b8b4c, type: 2}
   validActionCoords: []
   animDur: 1
 --- !u!60 &7448665701938143107
