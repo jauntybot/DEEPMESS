@@ -10,16 +10,16 @@ public class EquipmentAdjacency : MonoBehaviour
 #region Coordinate Adjacency
 
 // Accessor function, pass all params here and it will use the appropriate equation
-    public static List<Vector2> GetAdjacent(Vector2 origin, EquipmentData data)
+    public static List<Vector2> GetAdjacent(GridElement from, EquipmentData data, GridElement targetLast = null)
     {
         List<Vector2> _coords = new List<Vector2>();
 
         switch(data.adjacency) {
         case EquipmentData.AdjacencyType.Diamond:
-            _coords = DiamondAdjacency(origin, data.range, data.filters);
+            _coords = DiamondAdjacency(from, data, targetLast);
         break;
         case EquipmentData.AdjacencyType.OfType:
-            _coords = OfTypeOnBoardAdjacency(data.filters[0], origin);
+            _coords = OfTypeOnBoardAdjacency(from, data.filters[0], from.coord);
         break;
         
         }
@@ -27,13 +27,13 @@ public class EquipmentAdjacency : MonoBehaviour
         return _coords;
     }
 
-    protected static List<Vector2> DiamondAdjacency(Vector2 origin, int range, List<GridElement> filters) 
+    protected static List<Vector2> DiamondAdjacency(GridElement from, EquipmentData data, GridElement targetLast) 
     {
         List<Vector2> _coords = new List<Vector2>();
         List<Vector2> frontier = new List<Vector2>();
-        frontier.Add(origin);
+        frontier.Add(from.coord);
 
-        for (int r = 1; r <= range; r++) {
+        for (int r = 1; r <= data.range; r++) {
             for (int f = frontier.Count - 1; f >= 0; f--) {
                 Vector2 current = frontier[f];
                 frontier.Remove(frontier[f]);
@@ -44,9 +44,13 @@ public class EquipmentAdjacency : MonoBehaviour
 // If there is something already occupying this coord
                         if (FloorManager.instance.currentFloor.CoordContents(coord) is GridElement ge) {
 // Valid coord if element is not filtered
-                            if (!filters.Find(f => f.GetType() == ge.GetType())) {
+                            if (!data.filters.Find(f => f.GetType() == ge.GetType())) {
                                 frontier.Add(coord);
                                 _coords.Add(coord);
+                            } else if (targetLast) {
+                                if (ge.GetType() == targetLast.GetType()) {
+                                    _coords.Add(coord);
+                                }
                             }
                         }
 // Coord is empty
@@ -63,9 +67,13 @@ public class EquipmentAdjacency : MonoBehaviour
 // If there is something already occupying this coord                        
                         if (FloorManager.instance.currentFloor.CoordContents(coord) is GridElement ge) {
 // Valid coord if element is not filtered
-                            if (!filters.Find(f => f.GetType() == ge.GetType())) {
+                            if (!data.filters.Find(f => f.GetType() == ge.GetType())) {
                                 frontier.Add(coord);
                                 _coords.Add(coord);
+                            } else if (targetLast) {
+                                if (ge.GetType() == targetLast.GetType()) {
+                                    _coords.Add(coord);
+                                }
                             }
                         }
 // Coord is empty
@@ -80,6 +88,29 @@ public class EquipmentAdjacency : MonoBehaviour
         _coords = RemoveOffGridCoords(_coords);
         return _coords;
     }
+
+        protected static List<Vector2> OfTypeOnBoardAdjacency(GridElement from, GridElement element, Vector2 origin) {
+        List<Vector2> _coords = new List<Vector2>();
+
+        foreach (GridElement ge in from.grid.gridElements) {
+            if (ge.GetType() == element.GetType() && ge.coord != origin) {
+                _coords.Add(ge.coord);
+            }
+        }
+
+        return _coords;
+    } 
+
+    protected static List<Vector2> RemoveOffGridCoords(List<Vector2> list) {
+        // check if coords are off the board
+        for (int i = list.Count - 1; i >= 0; i--) 
+        {
+            if (list[i].x > FloorManager.gridSize - 1 || list[i].x < 0 || list[i].y > FloorManager.gridSize - 1 || list[i].y < 0)
+                list.Remove(list[i]);
+        }
+        return list;
+    }
+
 /*
     protected static List<Vector2> OrthagonalAdjacency(Vector2 origin, int range) 
     {
@@ -192,27 +223,6 @@ public class EquipmentAdjacency : MonoBehaviour
         return _coords;
     }
 */
-    protected static List<Vector2> OfTypeOnBoardAdjacency(GridElement element, Vector2 origin) {
-        List<Vector2> _coords = new List<Vector2>();
-
-        foreach (GridElement ge in element.grid.gridElements) {
-            if (ge.GetType() == element.GetType() && ge.coord != origin) {
-                _coords.Add(ge.coord);
-            }
-        }
-
-        return _coords;
-    } 
-
-    protected static List<Vector2> RemoveOffGridCoords(List<Vector2> list) {
-        // check if coords are off the board
-        for (int i = list.Count - 1; i >= 0; i--) 
-        {
-            if (list[i].x > FloorManager.gridSize - 1 || list[i].x < 0 || list[i].y > FloorManager.gridSize - 1 || list[i].y < 0)
-                list.Remove(list[i]);
-        }
-        return list;
-    }
 
     /*
     protected virtual List<Vector2> DirectionalAdjacency(Vector2 origin, int range, List<Vector2> dirs) 

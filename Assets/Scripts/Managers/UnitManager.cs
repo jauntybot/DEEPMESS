@@ -44,6 +44,8 @@ public class UnitManager : MonoBehaviour {
 
         units.Add(u);
         SubscribeElement(u);
+        u.manager = this;
+
         return u;
     }
 
@@ -60,7 +62,7 @@ public class UnitManager : MonoBehaviour {
         currentGrid.DisplayGridCursor(true, t.coord);
     }
     public virtual void DeselectUnit() {
-        // Untarget every unit that isn't this one
+// Untarget every unit
         foreach(GridElement ge in currentGrid.gridElements) 
             ge.TargetElement(false);
             
@@ -78,33 +80,6 @@ public class UnitManager : MonoBehaviour {
             currentGrid.DisableGridHighlight();
         }            
         
-    }
-    public virtual IEnumerator MoveUnit(Unit unit, Vector2 moveTo, int cost = 0) {
-
-        DeselectUnit();
-
-        //yield return StartCoroutine(unit.JumpToCoord(moveTo));
-        unit.UpdateAction();
-
-        yield return new WaitForSecondsRealtime(.5f);
-        unit.TargetElement(false);
-    }
-
-    public virtual IEnumerator AttackWithUnit(Unit unit, Vector2 attackAt, int cost = 0) {
-         
-        Unit recipient = currentGrid.CoordContents(attackAt) as Unit;
-        foreach(Vector2 coord in selectedUnit.validActionCoords) {
-            if (currentGrid.CoordContents(coord) is Unit u) {
-                u.TargetElement(u == recipient);
-            }
-        }
-
-        DeselectUnit();    
-        //yield return StartCoroutine(unit.AttackUnit(recipient));
-
-        unit.UpdateAction();
-        yield return new WaitForSecondsRealtime(.5f);
-        unit.TargetElement(false);
     }
 
     public virtual void SubscribeElement(GridElement ge) {

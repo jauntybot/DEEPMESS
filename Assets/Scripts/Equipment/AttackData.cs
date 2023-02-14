@@ -7,14 +7,16 @@ using UnityEngine;
 public class AttackData : EquipmentData
 {
     
-    public Unit.Owner targetOwner;
+    public GridElement targetType;
     public int dmg;
 
     public override List<Vector2> TargetEquipment(GridElement user) {
-        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, this);
+        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, this, targetType);
+        user.grid.DisplayValidCoords(validCoords, gridColor);
+        if (user is PlayerUnit pu) pu.canvas.ToggleEquipmentDisplay(false);
         for (int i = validCoords.Count - 1; i >= 0; i--) {
             if (FloorManager.instance.currentFloor.CoordContents(validCoords[i]) is Unit u) {
-                if (u.owner != targetOwner) validCoords.Remove(validCoords[i]);
+                if (u.GetType() != targetType.GetType()) validCoords.Remove(validCoords[i]);
                 else u.TargetElement(true);
             } else validCoords.Remove(validCoords[i]);
         }
@@ -31,7 +33,6 @@ public class AttackData : EquipmentData
 
     public IEnumerator AttackElement(GridElement user, GridElement target) 
     {
-        Debug.Log("Equipment use");
         float timer = 0;
         Vector2 attackLerp = (target.coord - user.coord)/2;
         user.elementCanvas.UpdateStatsDisplay();
@@ -48,7 +49,6 @@ public class AttackData : EquipmentData
         }
 
         target.StartCoroutine(target.TakeDamage(dmg));
-        Debug.Log("Equipment used");
     }
 
 }

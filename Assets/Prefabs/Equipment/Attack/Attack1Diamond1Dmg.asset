@@ -12,14 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a51220ee3cfa3d74ab370dc769e0be48, type: 3}
   m_Name: Attack1Diamond1Dmg
   m_EditorClassIdentifier: 
-  name: Attack 1 Diamond
+  name: ATTACK 1 DMG
   icon: {fileID: 0}
   gridColor: 1
   energyCost: 1
   adjacency: 0
   range: 1
-  filters: []
+  filters:
+  - {fileID: 4634978180570587290, guid: c7249e601f4730c4999df2560c657aac, type: 3}
+  - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
+  - {fileID: 125915573521978910, guid: 4dc34de201185614bb265c1e92a8e66c, type: 3}
+  - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
   filterValid: 0
-  dummy: 0
-  targetOwner: 1
+  targetType: {fileID: 125915573521978910, guid: 4dc34de201185614bb265c1e92a8e66c, type: 3}
   dmg: 1

@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class Unit : GridElement {
 
+
     public enum Owner { Player, Enemy }
 
     [Header("Unit")]
-    public Owner owner;
+    public UnitManager manager;
+    public Owner owner; // Depreciate in favor of manager ^
     public bool selected;
     public List<EquipmentData> equipment;
     public EquipmentData selectedEquipment;
@@ -30,8 +32,17 @@ public class Unit : GridElement {
         }
     }
 
-    public virtual void ExecuteAction() {
-        if (selectedEquipment) selectedEquipment.UseEquipment(this);
+    public virtual void ExecuteAction(GridElement target = null) {
+        if (selectedEquipment) StartCoroutine(selectedEquipment.UseEquipment(this, target));
+    }
+
+    public bool ValidCommand(Vector2 target) {
+        if (selectedEquipment == null) return false;
+        if (validActionCoords.Count == 0) return false;
+        if (validActionCoords.Find(coord => coord == target) == default) return false;
+        if (energyCurrent < selectedEquipment.energyCost) return false;
+
+        return true;
     }
 
 

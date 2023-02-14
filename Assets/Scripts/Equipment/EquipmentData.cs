@@ -25,13 +25,15 @@ public class EquipmentData : ScriptableObject {
     public enum AdjacencyType { Diamond, Orthogonal, Diagonal, Star, Box, OfType };
 
     public virtual List<Vector2> TargetEquipment(GridElement user) {
-        List<Vector2> validCoords = new List<Vector2>();
-
+        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, this);
+        user.grid.DisplayValidCoords(validCoords, gridColor);
+        if (user is PlayerUnit u) u.canvas.ToggleEquipmentDisplay(false);
         return validCoords;
     }
 
     public virtual IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         user.energyCurrent -= energyCost;
+        user.elementCanvas.UpdateStatsDisplay();
         yield return null;
     }
 

@@ -17,6 +17,13 @@ public class PlayerUnitCanvas : ElementCanvas
 
     public void UpdateEquipmentDisplay() {
         PlayerUnit unit = (PlayerUnit)element;
+        for (int i = buttons.Count - 1; i >= 0; i--) {
+            if (!unit.equipment.Find(e => e ==  buttons[i].data)) {
+                EquipmentButton b = buttons[i];
+                buttons.Remove(b);
+                Destroy(b.gameObject);
+            }
+        }
         foreach (EquipmentData equip in unit.equipment) {
             if (!buttons.Find(b => b.data == equip)) {
                 EquipmentButton newButt = Instantiate(equipmentButtonPrefab, equipmentDisplay.transform).GetComponent<EquipmentButton>();
@@ -26,9 +33,7 @@ public class PlayerUnitCanvas : ElementCanvas
         }
     }
 
-
     public void ToggleEquipmentDisplay(bool state) {
-        if (!disable)
-            equipmentDisplay.SetActive(state);
+        equipmentDisplay.SetActive(state);
     }
 }

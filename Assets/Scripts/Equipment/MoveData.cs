@@ -8,13 +8,6 @@ public class MoveData : EquipmentData
 {
 
 
-
-    public override List<Vector2> TargetEquipment(GridElement user) {
-        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, this);
-
-        return validCoords;
-    }
-
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
     {
         yield return base.UseEquipment(user);

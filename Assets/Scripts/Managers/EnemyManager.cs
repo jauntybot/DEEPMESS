@@ -105,19 +105,6 @@ public class EnemyManager : UnitManager {
         StartCoroutine(scenario.SwitchTurns());
     }
 
-    public override IEnumerator AttackWithUnit(Unit unit, Vector2 attackAt, int cost = 0)
-    {
-        currentGrid.DisableGridHighlight();
-        yield return base.AttackWithUnit(unit, attackAt);
-        
-    }
-
-    public override IEnumerator MoveUnit(Unit unit, Vector2 moveTo, int cost = 0)
-    {
-        currentGrid.DisableGridHighlight();
-        yield return base.MoveUnit(unit, moveTo);
-    }
-
     public virtual void SeedUnits(Grid newGrid) {
         for (int i = units.Count - 1; i >= 0; i--) {
             newGrid.enemy.units.Add(units[i]);

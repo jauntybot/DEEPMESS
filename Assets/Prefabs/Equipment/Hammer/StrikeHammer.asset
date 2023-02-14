@@ -10,17 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 42cda6d173eef2c4abd7421276a3540d, type: 3}
-  m_Name: LobHammer
+  m_Name: StrikeHammer
   m_EditorClassIdentifier: 
-  name: Lob Hammer
+  name: STRIKE HAMMER
   icon: {fileID: 0}
   gridColor: 2
-  energyCost: 1
-  adjacency: 5
-  range: 0
+  energyCost: 0
+  adjacency: 0
+  range: 1
   filters:
+  - {fileID: 125915573521978910, guid: 4dc34de201185614bb265c1e92a8e66c, type: 3}
   - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
+  - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
+  - {fileID: 4634978180570587290, guid: c7249e601f4730c4999df2560c657aac, type: 3}
   filterValid: 0
-  hammerPrefab: {fileID: 3955549777479365904, guid: 4640002de0d999a438ec6223649c5e13, type: 3}
   hammer: {fileID: 0}
-  action: 0
+  action: 1

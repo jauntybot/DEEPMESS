@@ -16,7 +16,9 @@ public class PlayerManager : UnitManager {
     [Header("PLAYER MANAGER")]
     
     public Drill drill;
-    public List<EquipmentData> hammerActions;
+    public int hammerCharge, descentChargeReq;
+    [SerializeField] HammerChargeDisplay chargeDisplay;
+    public List<HammerData> hammerActions;
     [SerializeField] public GameObject drillPrefab, hammerPrefab;
 
     #region Singleton (and Awake)
@@ -32,21 +34,26 @@ public class PlayerManager : UnitManager {
 
     public override IEnumerator Initialize()
     {
+        hammerCharge = 0;
+        chargeDisplay.UpdateCharges(hammerCharge);
+
         yield return base.Initialize();
 
+        drill = (Drill)SpawnUnit(Vector2.zero, drillPrefab.GetComponent<Drill>());
+        drill.gameObject.transform.position = new Vector3 (0,20,0);
+        drill.gameObject.transform.parent = unitParent.transform;
+
         PlayerUnit u = (PlayerUnit)units[0];
-        foreach(EquipmentData action in hammerActions) {
+        GameObject h = Instantiate(hammerPrefab, u.transform.position, Quaternion.identity, u.transform);
+        foreach(HammerData action in hammerActions) {
             u.equipment.Add(action);
             action.EquipEquipment(u);
+            action.AssignHammer(h, drill);
         }
         u.canvas.UpdateEquipmentDisplay();
 
         pc = GetComponent<PlayerController>();
         if (FloorManager.instance) floorManager = FloorManager.instance;
-
-        drill = (Drill)SpawnUnit(Vector2.zero, drillPrefab.GetComponent<Drill>());
-        drill.gameObject.transform.position = new Vector3 (0,20,0);
-        drill.gameObject.transform.parent = unitParent.transform;
     }
 
 // Initializes or closes functions for turn start/end
@@ -79,6 +86,14 @@ public class PlayerManager : UnitManager {
         return u;
     }
 
+    public void ChargeHammer(int charge) {
+        if (hammerCharge < descentChargeReq) {
+            hammerCharge += charge;
+            if (hammerCharge > descentChargeReq) hammerCharge = descentChargeReq;
+            chargeDisplay.UpdateCharges(hammerCharge);
+        }
+    }
+
     public IEnumerator UpdateDrill(Vector2 coord) {
         drill.transform.parent = unitParent.transform;
         yield return StartCoroutine(drill.drillDrop.MoveToCoord(drill, coord));
@@ -98,20 +113,25 @@ public class PlayerManager : UnitManager {
                     if (u == selectedUnit) 
                     {  
                         DeselectUnit();                 
-                    } else 
+                    }
+                    else if (selectedUnit.ValidCommand(u.coord)) {
+                        selectedUnit.ExecuteAction(u);
+                        DeselectUnit();
+                    } else {
+                        DeselectUnit();
                         SelectUnit(u);
+                    }
                 } else
                     SelectUnit(u);
             }
 // Player clicks on enemy unit
             else if (u.owner == Unit.Owner.Enemy) 
             {
-                if (selectedUnit && selectedUnit.selectedEquipment) 
+                if (selectedUnit) 
                 {
 // Unit is a target of valid action adjacency
-                    if (selectedUnit.validActionCoords.Find(coord => coord == u.coord) != null
-                        && selectedUnit.energyCurrent > 0) {
-                        StartCoroutine(selectedUnit.selectedEquipment.UseEquipment(selectedUnit, u));
+                    if (selectedUnit.ValidCommand(u.coord)) {
+                        selectedUnit.ExecuteAction(u);
                         DeselectUnit();
                     } 
                 }
@@ -129,11 +149,9 @@ public class PlayerManager : UnitManager {
             else {
                 if (selectedUnit) {
 // Square is a target of valid action adjacency
-                    if (selectedUnit.selectedEquipment &&
-                    selectedUnit.validActionCoords.Find(coord => coord == sqr.coord) != null &&
-                    selectedUnit.energyCurrent > 0) {
+                    if (selectedUnit.ValidCommand(sqr.coord)) {
                         currentGrid.DisableGridHighlight();
-                        StartCoroutine(selectedUnit.selectedEquipment.UseEquipment(selectedUnit, sqr));
+                        selectedUnit.ExecuteAction(sqr);
                         DeselectUnit();
                     } else {
                         DeselectUnit();
@@ -143,31 +161,10 @@ public class PlayerManager : UnitManager {
         }
     }
 
-
-    public override void SelectUnit(Unit u) {
-        base.SelectUnit(u); 
-        PlayerUnit pu = (PlayerUnit)u;
-// Disable equipment display if out of energy
-        if (pu.energyCurrent == 0) pu.canvas.ToggleEquipmentDisplay(false);
-// Untarget every unit that isn't this one
-        foreach(GridElement ge in currentGrid.gridElements) 
-            ge.TargetElement(ge == u);
-        
-    }
-
-    
-    public override IEnumerator MoveUnit(Unit unit, Vector2 moveTo, int cost = 0) 
+    public override void SelectUnit(Unit t)
     {
-            unit.energyCurrent -= cost;
-            Coroutine co = StartCoroutine(base.MoveUnit(unit, moveTo));
-            yield return co;
-    }
+        base.SelectUnit(t);
 
-    public override IEnumerator AttackWithUnit(Unit unit, Vector2 attackAt, int cost = 0) 
-    {
-            selectedUnit.energyCurrent -= cost;
-            Coroutine co = StartCoroutine(base.AttackWithUnit(unit, attackAt));
-            yield return co;   
     }
 
     protected override void RemoveUnit(GridElement ge)
@@ -178,6 +175,11 @@ public class PlayerManager : UnitManager {
         }
     }
 
+    public void TriggerDescent() {
+        scenario.EndTurn();
+        floorManager.Descend();
+    }
+
     public virtual void DescendGrids(Grid newGrid) {
         foreach(Unit unit in units) {
             currentGrid.RemoveElement(unit);
@@ -185,5 +187,7 @@ public class PlayerManager : UnitManager {
         }
         currentGrid = newGrid;
         transform.parent = newGrid.transform;
+        hammerCharge = 0;
+        chargeDisplay.UpdateCharges(hammerCharge);
     }
 }
