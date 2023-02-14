@@ -7,18 +7,24 @@ using UnityEngine;
 public class AttackData : EquipmentData
 {
     
-    public GridElement targetType;
+    public List<GridElement> targetTypes;
     public int dmg;
 
     public override List<Vector2> TargetEquipment(GridElement user) {
-        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, this, targetType);
+        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, this, targetTypes);
         user.grid.DisplayValidCoords(validCoords, gridColor);
         if (user is PlayerUnit pu) pu.canvas.ToggleEquipmentDisplay(false);
         for (int i = validCoords.Count - 1; i >= 0; i--) {
-            if (FloorManager.instance.currentFloor.CoordContents(validCoords[i]) is Unit u) {
-                if (u.GetType() != targetType.GetType()) validCoords.Remove(validCoords[i]);
-                else u.TargetElement(true);
-            } else validCoords.Remove(validCoords[i]);
+            if (FloorManager.instance.currentFloor.CoordContents(validCoords[i]) is GridElement ge) {
+                bool remove = true;
+                foreach(GridElement target in targetTypes) {
+                    if (ge.GetType() == target.GetType())
+                        remove = false;
+                }
+                if (remove) 
+                    validCoords.Remove(validCoords[i]);
+            } else 
+                validCoords.Remove(validCoords[i]);
         }
         return validCoords;
     }
