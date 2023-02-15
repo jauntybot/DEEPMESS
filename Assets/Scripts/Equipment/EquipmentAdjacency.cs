@@ -10,7 +10,7 @@ public class EquipmentAdjacency : MonoBehaviour
 #region Coordinate Adjacency
 
 // Accessor function, pass all params here and it will use the appropriate equation
-    public static List<Vector2> GetAdjacent(GridElement from, EquipmentData data, GridElement targetLast = null)
+    public static List<Vector2> GetAdjacent(GridElement from, EquipmentData data, List<GridElement> targetLast = null)
     {
         List<Vector2> _coords = new List<Vector2>();
 
@@ -27,7 +27,7 @@ public class EquipmentAdjacency : MonoBehaviour
         return _coords;
     }
 
-    protected static List<Vector2> DiamondAdjacency(GridElement from, EquipmentData data, GridElement targetLast) 
+    protected static List<Vector2> DiamondAdjacency(GridElement from, EquipmentData data, List<GridElement> targetLast) 
     {
         List<Vector2> _coords = new List<Vector2>();
         List<Vector2> frontier = new List<Vector2>();
@@ -47,9 +47,11 @@ public class EquipmentAdjacency : MonoBehaviour
                             if (!data.filters.Find(f => f.GetType() == ge.GetType())) {
                                 frontier.Add(coord);
                                 _coords.Add(coord);
-                            } else if (targetLast) {
-                                if (ge.GetType() == targetLast.GetType()) {
-                                    _coords.Add(coord);
+                            } else if (targetLast != null) {
+                                foreach(GridElement target in targetLast) {
+                                    if (ge.GetType() == target.GetType()) {
+                                        _coords.Add(coord);
+                                    }
                                 }
                             }
                         }
@@ -70,9 +72,11 @@ public class EquipmentAdjacency : MonoBehaviour
                             if (!data.filters.Find(f => f.GetType() == ge.GetType())) {
                                 frontier.Add(coord);
                                 _coords.Add(coord);
-                            } else if (targetLast) {
-                                if (ge.GetType() == targetLast.GetType()) {
-                                    _coords.Add(coord);
+                            } else if (targetLast != null) {
+                                foreach(GridElement target in targetLast) {
+                                    if (ge.GetType() == target.GetType()) {
+                                        _coords.Add(coord);
+                                    }
                                 }
                             }
                         }

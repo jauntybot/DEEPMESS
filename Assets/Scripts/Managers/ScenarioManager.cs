@@ -75,19 +75,17 @@ public class ScenarioManager : MonoBehaviour
         {
             case Turn.Player:
                 player.StartEndTurn(false);
-                if (currentEnemy.units.Count > 0) {
                     yield return StartCoroutine(messagePanel.DisplayMessage("ENEMY TURN"));
                     currentTurn = Turn.Enemy;
+                    foreach(Unit u in currentEnemy.units) {
+                        u.energyCurrent = u.energyMax;
+                        u.elementCanvas.UpdateStatsDisplay();
+                    }
                     endTurnButton.enabled = false;
                     StartCoroutine(currentEnemy.TakeTurn());
-                } else {
-                    yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER WINS"));
-                    yield return new WaitForSecondsRealtime(1.5f);
-                    SceneManager.LoadScene("Game Scene");
-                }
             break;
             case Turn.Enemy:
-                if (player.units.Count > 0) {
+                if (player.units.Count > 2) {
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN"));
                     currentTurn = Turn.Player;
                     endTurnButton.enabled = true;

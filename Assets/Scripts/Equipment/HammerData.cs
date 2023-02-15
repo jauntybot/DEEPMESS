@@ -25,14 +25,26 @@ public class HammerData : EquipmentData
             case Action.Lob:
                 return base.TargetEquipment(user);
             case Action.Strike:
-                List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, this, drill);
+                List<GridElement> targetLast = new List<GridElement>();
+                targetLast.Add(drill);
+                List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, this, targetLast);
                 user.grid.DisplayValidCoords(validCoords, gridColor);
                 if (user is PlayerUnit pu) pu.canvas.ToggleEquipmentDisplay(false);
                 for (int i = validCoords.Count - 1; i >= 0; i--) {
-                        if (FloorManager.instance.currentFloor.CoordContents(validCoords[i]) is Unit u) {
-                            if (u.GetType() != drill.GetType()) validCoords.Remove(validCoords[i]);
-                        else u.TargetElement(true);
-                    } else validCoords.Remove(validCoords[i]);
+                    if (FloorManager.instance.currentFloor.CoordContents(validCoords[i]) is Unit u) {
+                        foreach(GridElement target in targetLast) {
+                            if (u.GetType() != target.GetType())
+                                validCoords.Remove(validCoords[i]);
+                            else if (u is Drill d) {
+                                PlayerUnit playerUnit = (PlayerUnit)user;
+                                PlayerManager manager = (PlayerManager)playerUnit.manager;
+                                if (manager.hammerCharge < manager.descentChargeReq) {
+                                    validCoords.Remove(validCoords[i]);
+                                }
+                            }
+                        }
+                    } else 
+                        validCoords.Remove(validCoords[i]);
                 }
             return validCoords;
         }

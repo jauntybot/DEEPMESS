@@ -37,17 +37,16 @@ public class EnemyManager : UnitManager {
         input.UpdateAction(input.equipment[1]);
         foreach (Vector2 coord in input.validActionCoords) 
         {
-            if (currentGrid.CoordContents(coord) is Unit t) {
-                if (t.owner == Unit.Owner.Player) {
-                    SelectUnit(input);
-                    currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
-                    yield return new WaitForSecondsRealtime(0.5f);
-                    Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, t));
-                    DeselectUnit();
-                    currentGrid.DisableGridHighlight();
-                    yield return co;
-                    yield break;
-                }
+            if (input.ValidCommand(coord)) {
+                SelectUnit(input);
+                GridElement target = selectedUnit.grid.CoordContents(coord);          
+                currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
+                yield return new WaitForSecondsRealtime(0.5f);
+                Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, target));
+                DeselectUnit();
+                currentGrid.DisableGridHighlight();
+                yield return co;
+                yield break;
             }
         }
 // Move scan
@@ -57,7 +56,6 @@ public class EnemyManager : UnitManager {
             foreach (Unit tkn in scenario.player.units) {
                 if (Vector2.Distance(tkn.coord, input.coord) < Vector2.Distance(closestTkn.coord, input.coord))
                     closestTkn = tkn;
-                    Debug.Log(closestTkn.name);
             }
             Vector2 closestCoord = Vector2.one * -32;
             foreach(Vector2 coord in input.validActionCoords) {
@@ -79,17 +77,16 @@ public class EnemyManager : UnitManager {
         input.UpdateAction(input.equipment[1]);
         foreach (Vector2 coord in input.validActionCoords) 
         {
-            if (currentGrid.CoordContents(coord) is Unit t) {
-                if (t.owner == Unit.Owner.Player) {
-                    SelectUnit(input);
-                    currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
-                    yield return new WaitForSecondsRealtime(0.5f);
-                    Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, t));
-                    DeselectUnit();
-                    currentGrid.DisableGridHighlight();
-                    yield return co;
-                    yield break;
-                }
+            if (input.ValidCommand(coord)) {       
+                SelectUnit(input);   
+                GridElement target = selectedUnit.grid.CoordContents(coord);          
+                currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
+                yield return new WaitForSecondsRealtime(0.5f);
+                Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, target));
+                DeselectUnit();
+                currentGrid.DisableGridHighlight();
+                yield return co;
+                yield break;               
             }
         }
     }

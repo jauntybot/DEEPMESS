@@ -34,7 +34,9 @@ public class Grid : MonoBehaviour {
             for (int x = 0; x < FloorManager.gridSize; x++) {
 //store bool for white sqrs
                 GridSquare sqr = Instantiate(sqrPrefab, this.transform).GetComponent<GridSquare>();
-                sqr.white = true;
+                sqr.white=false;
+                if (x%2==0) { if (y%2==0) sqr.white=true; } 
+                else { if (y%2!=0) sqr.white=true; }
                 sqr.StoreInGrid(this);
                 sqr.UpdateElement(new Vector2(x,y));
 
@@ -132,8 +134,8 @@ public class Grid : MonoBehaviour {
      public Vector3 PosFromCoord(Vector2 coord) {
         return new Vector3(
 // offset from scene origin + coord to pos conversion + ortho offset + center measure
-            -(FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x) + (ORTHO_OFFSET.x * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 
-            (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y) - (ORTHO_OFFSET.y * FloorManager.sqrSize * coord.x), 
+            transform.position.x - (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x) + (ORTHO_OFFSET.x * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 
+            transform.position.y + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y) - (ORTHO_OFFSET.y * FloorManager.sqrSize * coord.x), 
             0);
     }
 }
