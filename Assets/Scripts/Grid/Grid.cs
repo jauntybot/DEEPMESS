@@ -138,4 +138,8 @@ public class Grid : MonoBehaviour {
             transform.position.y + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y) - (ORTHO_OFFSET.y * FloorManager.sqrSize * coord.x), 
             0);
     }
+
+    public int SortOrderFromCoord(Vector2 coord) {
+        return 8 + (int)coord.x - (int)coord.y;
+    }
 }

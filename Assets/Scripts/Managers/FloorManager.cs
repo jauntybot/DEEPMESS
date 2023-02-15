@@ -93,8 +93,11 @@ public class FloorManager : MonoBehaviour
             yield return null;
             timer += Time.deltaTime;
         }
-        if (floor2) currentFloor = floor2.GetComponent<Grid>();
-        
+        floor1.transform.position = to1;
+        if (floor2) {
+            currentFloor = floor2.GetComponent<Grid>();
+            floor2.transform.position = to2;
+        }
     }
 
     public void Descend() {
