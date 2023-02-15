@@ -19,7 +19,12 @@ public class MoveData : EquipmentData
     {
         float timer = 0;
         ge.elementCanvas.UpdateStatsDisplay();
+        
+// exposed UpdateElement code to selectively update sort order
+        if (ge.grid.SortOrderFromCoord(moveTo) > ge.grid.SortOrderFromCoord(ge.coord))
+            ge.UpdateSortOrder(moveTo);
         ge.coord = moveTo;
+        
         while (timer < animDur) {
             yield return null;
             ge.transform.position = Vector3.Lerp(ge.transform.position, FloorManager.instance.currentFloor.PosFromCoord(moveTo), timer/animDur);

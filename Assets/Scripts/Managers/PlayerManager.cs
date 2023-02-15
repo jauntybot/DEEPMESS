@@ -15,11 +15,11 @@ public class PlayerManager : UnitManager {
 
     [Header("PLAYER MANAGER")]
     
-    public Drill drill;
+    public Nail nail;
     public int hammerCharge, descentChargeReq;
     [SerializeField] HammerChargeDisplay chargeDisplay;
     public List<HammerData> hammerActions;
-    [SerializeField] public GameObject drillPrefab, hammerPrefab;
+    [SerializeField] public GameObject nailPrefab, hammerPrefab;
 
     #region Singleton (and Awake)
     public static PlayerManager instance;
@@ -39,16 +39,18 @@ public class PlayerManager : UnitManager {
 
         yield return base.Initialize();
 
-        drill = (Drill)SpawnUnit(Vector2.zero, drillPrefab.GetComponent<Drill>());
-        drill.gameObject.transform.position = new Vector3 (0,20,0);
-        drill.gameObject.transform.parent = unitParent.transform;
+        nail = (Nail)SpawnUnit(Vector2.zero, nailPrefab.GetComponent<Nail>());
+        nail.gameObject.transform.position = new Vector3 (0,20,0);
+        nail.gameObject.transform.parent = unitParent.transform;
 
         PlayerUnit u = (PlayerUnit)units[0];
         GameObject h = Instantiate(hammerPrefab, u.transform.position, Quaternion.identity, u.transform);
+        h.GetComponent<SpriteRenderer>().sortingOrder = u.gfx[0].sortingOrder;
+        u.gfx.Add(h.GetComponent<SpriteRenderer>());
         foreach(HammerData action in hammerActions) {
             u.equipment.Add(action);
             action.EquipEquipment(u);
-            action.AssignHammer(h, drill);
+            action.AssignHammer(h, nail);
         }
         u.canvas.UpdateEquipmentDisplay();
 
@@ -94,10 +96,10 @@ public class PlayerManager : UnitManager {
         }
     }
 
-    public IEnumerator UpdateDrill(Vector2 coord) {
-        drill.transform.parent = unitParent.transform;
-        yield return StartCoroutine(drill.drillDrop.MoveToCoord(drill, coord));
-        drill.StoreInGrid(currentGrid);
+    public IEnumerator UpdateNail(Vector2 coord) {
+        nail.transform.parent = unitParent.transform;
+        yield return StartCoroutine(nail.nailDrop.MoveToCoord(nail, coord));
+        nail.StoreInGrid(currentGrid);
 
     }
 

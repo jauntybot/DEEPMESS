@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1124182531442868255}
   - component: {fileID: 2495743354695000907}
   m_Layer: 6
-  m_Name: drill
+  m_Name: nail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -105,11 +105,14 @@ MonoBehaviour:
   targeted: 1
   hitbox: {fileID: 2495743354695000907}
   elementCanvas: {fileID: 0}
+  gfx:
+  - {fileID: 1329050228170529337}
   hpMax: 15
   hpCurrent: 15
   defense: 0
   energyCurrent: 0
   energyMax: 0
+  manager: {fileID: 0}
   owner: 0
   selected: 0
   equipment:
@@ -118,7 +121,7 @@ MonoBehaviour:
   validActionCoords: []
   animDur: 1
   canvas: {fileID: 0}
-  drillDrop: {fileID: 11400000, guid: af1dca810e8d7d6488875275fc4d3ac3, type: 2}
+  nailDrop: {fileID: 11400000, guid: af1dca810e8d7d6488875275fc4d3ac3, type: 2}
 --- !u!60 &2495743354695000907
 PolygonCollider2D:
   m_ObjectHideFlags: 0

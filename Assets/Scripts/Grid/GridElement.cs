@@ -15,7 +15,7 @@ public class GridElement : MonoBehaviour{
     public bool selectable, targeted;
     public PolygonCollider2D hitbox;
     public ElementCanvas elementCanvas;
-    [SerializeField] List<SpriteRenderer> gfx;
+    public List<SpriteRenderer> gfx;
 
 
     public delegate void OnElementUpdate(GridElement ge);
@@ -60,10 +60,14 @@ public class GridElement : MonoBehaviour{
     public virtual void UpdateElement(Vector2 c) 
     {
         transform.position = grid.PosFromCoord(c);
-        foreach (SpriteRenderer sr in gfx)
-            sr.sortingOrder = grid.SortOrderFromCoord(c);
+        UpdateSortOrder(c);
         coord=c;
     }  
+
+    public virtual void UpdateSortOrder(Vector2 c) {
+        foreach (SpriteRenderer sr in gfx)
+            sr.sortingOrder = grid.SortOrderFromCoord(c);
+    }
 
     public virtual void EnableSelection(bool state) {}
 
@@ -104,6 +108,11 @@ public class GridElement : MonoBehaviour{
         if (elementCanvas) {
             elementCanvas.ToggleStatsDisplay(state);
         }
+    }
+
+    public virtual IEnumerator CollideFromBelow() {
+
+        yield return null;
     }
     
 }

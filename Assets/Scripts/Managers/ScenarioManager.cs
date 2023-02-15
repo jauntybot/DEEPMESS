@@ -47,7 +47,7 @@ public class ScenarioManager : MonoBehaviour
             player.transform.parent = floorManager.currentFloor.transform;
         }
         yield return StartCoroutine(player.Initialize());
-        yield return StartCoroutine(floorManager.currentFloor.DropDrill());
+        yield return StartCoroutine(floorManager.currentFloor.DropNail());
 
         yield return new WaitForSeconds(0.25f);
         yield return StartCoroutine(floorManager.TransitionFloors(floorManager.currentFloor.gameObject));

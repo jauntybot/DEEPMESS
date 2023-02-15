@@ -51,7 +51,7 @@ public class Unit : GridElement {
 // The basics of being a unit; movement, HP, attacking
 #region Unit Functionality
     
-    public virtual IEnumerator CollideOnDescent(Vector2 moveTo) {
+    public virtual IEnumerator CollideFromAbove(Vector2 moveTo) {
         yield return new WaitForSecondsRealtime(1);
         float timer = 0;
         Vector3 bumpUp = transform.position + Vector3.up * 2;
@@ -70,6 +70,12 @@ public class Unit : GridElement {
         }   
 
         UpdateElement(moveTo);
+    }
+
+    public virtual IEnumerator CollideFromBelow() {
+
+
+        yield return null;
     }
 
 

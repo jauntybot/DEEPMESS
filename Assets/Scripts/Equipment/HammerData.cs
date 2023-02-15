@@ -8,14 +8,14 @@ public class HammerData : EquipmentData
 {
 
     public GameObject hammer;
-    public Drill drill;
+    public Nail nail;
     public enum Action { Lob, Strike };
     public Action action;
 
     
-    public void AssignHammer(GameObject h, Drill d) {
+    public void AssignHammer(GameObject h, Nail d) {
         hammer = h;
-        drill = d;
+        nail = d;
     }
     
     public override List<Vector2> TargetEquipment(GridElement user) {
@@ -26,7 +26,7 @@ public class HammerData : EquipmentData
                 return base.TargetEquipment(user);
             case Action.Strike:
                 List<GridElement> targetLast = new List<GridElement>();
-                targetLast.Add(drill);
+                targetLast.Add(nail);
                 List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, this, targetLast);
                 user.grid.DisplayValidCoords(validCoords, gridColor);
                 if (user is PlayerUnit pu) pu.canvas.ToggleEquipmentDisplay(false);
@@ -35,7 +35,7 @@ public class HammerData : EquipmentData
                         foreach(GridElement target in targetLast) {
                             if (u.GetType() != target.GetType())
                                 validCoords.Remove(validCoords[i]);
-                            else if (u is Drill d) {
+                            else if (u is Nail d) {
                                 PlayerUnit playerUnit = (PlayerUnit)user;
                                 PlayerManager manager = (PlayerManager)playerUnit.manager;
                                 if (manager.hammerCharge < manager.descentChargeReq) {
@@ -72,7 +72,8 @@ public class HammerData : EquipmentData
 
         PlayerManager manager = (PlayerManager)passer.manager;
         manager.ChargeHammer(1);
-
+        if (passTo.gfx[0].sortingOrder > passer.gfx[0].sortingOrder)
+            hammer.GetComponent<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;
         float timer = 0;
 
         while (timer < animDur) {
@@ -84,11 +85,13 @@ public class HammerData : EquipmentData
         for (int i = passer.equipment.Count - 1; i >= 0; i--) {
             if (passer.equipment[i] is HammerData) {
                 passTo.equipment.Add(passer.equipment[i]);
-                
+
                 passer.equipment.Remove(passer.equipment[i]);
             }
         }
+        passer.gfx.Remove(hammer.GetComponent<SpriteRenderer>());
         hammer.transform.parent = passTo.transform;
+        passTo.gfx.Add(hammer.GetComponent<SpriteRenderer>());
 
         passTo.canvas.UpdateEquipmentDisplay();
         passer.canvas.UpdateEquipmentDisplay();
@@ -112,7 +115,7 @@ public class HammerData : EquipmentData
             timer += Time.deltaTime;
         }
 
-        if (target is Drill) {
+        if (target is Nail) {
             PlayerUnit pu = (PlayerUnit)user;
             PlayerManager manager = (PlayerManager)pu.manager;
             manager.TriggerDescent();

@@ -112,8 +112,9 @@ public class FloorManager : MonoBehaviour
         EnemyManager enemy = (EnemyManager)currentFloor.enemy;
         enemy.transform.parent = transitionParent;
         scenario.player.transform.parent = transitionParent;
-        scenario.player.drill.transform.parent = currentFloor.transform;
+        scenario.player.nail.transform.parent = currentFloor.transform;
 
+        currentFloor.DisableGridHighlight();
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
         yield return StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index+1].gameObject));
         
@@ -122,7 +123,7 @@ public class FloorManager : MonoBehaviour
         scenario.player.DescendGrids(currentFloor);
         
         yield return new WaitForSecondsRealtime(0.75f);
-        yield return StartCoroutine(currentFloor.DropDrill());        
+        yield return StartCoroutine(currentFloor.DropNail());        
         yield return new WaitForSecondsRealtime(0.75f);
 
         yield return StartCoroutine(TransitionFloors(currentFloor.gameObject));
@@ -174,7 +175,7 @@ public class FloorManager : MonoBehaviour
                     if (subGE is Unit subU) {
                         StartCoroutine(subU.TakeDamage(1));
                     }
-                    StartCoroutine(u.CollideOnDescent(target));
+                    StartCoroutine(u.CollideFromAbove(target));
                     
         }
 

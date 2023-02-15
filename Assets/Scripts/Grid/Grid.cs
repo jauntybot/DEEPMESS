@@ -72,12 +72,12 @@ public class Grid : MonoBehaviour {
         
     }
 
-    public IEnumerator DropDrill() {
+    public IEnumerator DropNail() {
         yield return null;
-        Content drillSpawn = lvlDef.initSpawns.Find(ge => ge.gridElement is Drill);
-        float xOffset = PosFromCoord(drillSpawn.coord).x;
-        player.drill.transform.position = new Vector3(xOffset, player.drill.transform.position.y, 0);
-        yield return StartCoroutine(player.UpdateDrill(drillSpawn.coord));
+        Content nailSpawn = lvlDef.initSpawns.Find(ge => ge.gridElement is Nail);
+        float xOffset = PosFromCoord(nailSpawn.coord).x;
+        player.nail.transform.position = new Vector3(xOffset, player.nail.transform.position.y, 0);
+        yield return StartCoroutine(player.UpdateNail(nailSpawn.coord));
     }
 
     public void AddElement(GridElement ge) {
@@ -92,6 +92,7 @@ public class Grid : MonoBehaviour {
     public void DisplayGridCursor(bool state, Vector2 coord) {
         gridCursor.SetActive(state);
         gridCursor.transform.position = PosFromCoord(coord);
+        gridCursor.GetComponent<SpriteRenderer>().sortingOrder = SortOrderFromCoord(coord);
     }
 
 // Toggle GridSquare highlights, apply color by index

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Drill : PlayerUnit
+public class Nail : PlayerUnit
 {
 
     FloorManager floorManager;
-    public MoveData drillDrop;
+    public MoveData nailDrop;
 
     protected override void Start()
     {

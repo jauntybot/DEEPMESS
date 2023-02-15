@@ -1376,7 +1376,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.875, y: 0.5, z: -10}
+  m_LocalPosition: {x: -1.875, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2059,14 +2059,14 @@ MonoBehaviour:
   - {x: 3, y: 4}
   - {x: 4, y: 4}
   pc: {fileID: 0}
-  drill: {fileID: 0}
+  nail: {fileID: 0}
   hammerCharge: 0
   descentChargeReq: 3
   chargeDisplay: {fileID: 1759061469}
   hammerActions:
   - {fileID: 11400000, guid: 1fe902bf0871b8e4797cd5a933e91772, type: 2}
   - {fileID: 11400000, guid: f57be3308dd7a8c4d832a6af65097b7e, type: 2}
-  drillPrefab: {fileID: 2911188987296525511, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
+  nailPrefab: {fileID: 2911188987296525511, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
   hammerPrefab: {fileID: 3955549777479365904, guid: 4640002de0d999a438ec6223649c5e13, type: 3}
 --- !u!114 &894283984
 MonoBehaviour:
@@ -2972,7 +2972,7 @@ MonoBehaviour:
   _gridSize: 8
   _sqrSize: 1.5
   transitionParent: {fileID: 803065749}
-  floorOffset: 12
+  floorOffset: 13
   transitionDur: 0.25
   upButton: {fileID: 1118866942}
   downButton: {fileID: 541095386}
