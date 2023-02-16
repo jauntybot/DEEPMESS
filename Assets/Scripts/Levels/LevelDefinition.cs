@@ -9,6 +9,7 @@ public class LevelDefinition : ScriptableObject
 {
 
     public LevelAtlas atlas;
+    public int genPool;
     public List<Content> initSpawns;
 
 }
