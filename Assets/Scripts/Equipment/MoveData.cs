@@ -24,7 +24,7 @@ public class MoveData : EquipmentData
         if (ge.grid.SortOrderFromCoord(moveTo) > ge.grid.SortOrderFromCoord(ge.coord))
             ge.UpdateSortOrder(moveTo);
         ge.coord = moveTo;
-        AudioManager.PlaySound(AudioAtlas.Sound.slide01,moveTo);
+        AudioManager.PlaySound(AudioAtlas.Sound.moveSlide,moveTo);
         while (timer < animDur) {
             yield return null;
             ge.transform.position = Vector3.Lerp(ge.transform.position, FloorManager.instance.currentFloor.PosFromCoord(moveTo), timer/animDur);

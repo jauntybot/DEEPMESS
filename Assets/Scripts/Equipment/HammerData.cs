@@ -75,7 +75,7 @@ public class HammerData : EquipmentData
         if (passTo.gfx[0].sortingOrder > passer.gfx[0].sortingOrder)
             hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;
         float timer = 0;
-        AudioManager.PlaySound(AudioAtlas.Sound.swish01, passTo.transform.position);
+        AudioManager.PlaySound(AudioAtlas.Sound.hammerPass, passTo.transform.position);
         while (timer < animDur) {
             hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(passTo.coord), timer/animDur);
             yield return null;
@@ -109,7 +109,7 @@ public class HammerData : EquipmentData
             timer += Time.deltaTime;
         }
         timer = 0;
-        AudioManager.PlaySound(AudioAtlas.Sound.strike, target.transform.position);
+        AudioManager.PlaySound(AudioAtlas.Sound.attackStrike, target.transform.position);
         while (timer < animDur/2) {
             yield return null;
             hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(user.coord), timer/animDur);

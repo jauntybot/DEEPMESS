@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8749535763676181805}
-  - component: {fileID: 8749535763676181806}
+  - component: {fileID: 4054205056616370804}
   m_Layer: 0
   m_Name: AudioAtlas
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8749535763676181806
+--- !u!114 &4054205056616370804
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -46,24 +46,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializedSFX:
-  - sound: 3
-    audioClips: []
-  - sound: 1
-    audioClips: []
-  - sound: 2
-    audioClips: []
   - sound: 0
-    audioClips: []
+    audioClips:
+    - {fileID: 8300000, guid: c11a55fd43758451c8fd55c51fd638fb, type: 3}
+  - sound: 1
+    audioClips:
+    - {fileID: 8300000, guid: f153494964a064b86ac0e4306368abb1, type: 3}
+  - sound: 2
+    audioClips:
+    - {fileID: 8300000, guid: 44a1228fce5e34ac6b71fa8676e97589, type: 3}
+  - sound: 3
+    audioClips:
+    - {fileID: 8300000, guid: 79bf374c532ab41bba98be2dd4da06c5, type: 3}
+    - {fileID: 8300000, guid: 61daeb878d112442688b137eca8ba34e, type: 3}
+    - {fileID: 8300000, guid: 87d28f709e25d4ae8a00288dc53fc88b, type: 3}
+    - {fileID: 8300000, guid: ee03852029b7c4947be45872faec27f3, type: 3}
   - sound: 4
-    audioClips: []
+    audioClips:
+    - {fileID: 8300000, guid: 2160f301859320b48a88a088623e7376, type: 3}
+    - {fileID: 8300000, guid: 518dbb146139d064da8ca41929592760, type: 3}
   - sound: 5
-    audioClips: []
+    audioClips:
+    - {fileID: 8300000, guid: 3171af5b44996bb44bb52573d90f2d85, type: 3}
   - sound: 6
     audioClips:
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 8300000, guid: 4c01a90b642bb9d4e85c05018cacd326, type: 3}
+    - {fileID: 8300000, guid: 49c41a09d21809944aa5053e4940a6ce, type: 3}
+  - sound: 7
+    audioClips:
+    - {fileID: 8300000, guid: f5e6a9463a2c6914e8bc0bb14140994b, type: 3}
 --- !u!1 &8749535763870887715
 GameObject:
   m_ObjectHideFlags: 0
