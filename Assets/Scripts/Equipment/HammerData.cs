@@ -73,9 +73,9 @@ public class HammerData : EquipmentData
         PlayerManager manager = (PlayerManager)passer.manager;
         manager.ChargeHammer(1);
         if (passTo.gfx[0].sortingOrder > passer.gfx[0].sortingOrder)
-            hammer.GetComponent<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;
+            hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;
         float timer = 0;
-
+        AudioManager.PlaySound(AudioAtlas.Sound.swish01, passTo.transform.position);
         while (timer < animDur) {
             hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(passTo.coord), timer/animDur);
             yield return null;
@@ -89,9 +89,9 @@ public class HammerData : EquipmentData
                 passer.equipment.Remove(passer.equipment[i]);
             }
         }
-        passer.gfx.Remove(hammer.GetComponent<SpriteRenderer>());
+        passer.gfx.Remove(hammer.GetComponentInChildren<SpriteRenderer>());
         hammer.transform.parent = passTo.transform;
-        passTo.gfx.Add(hammer.GetComponent<SpriteRenderer>());
+        passTo.gfx.Add(hammer.GetComponentInChildren<SpriteRenderer>());
 
         passTo.canvas.UpdateEquipmentDisplay();
         passer.canvas.UpdateEquipmentDisplay();
@@ -109,6 +109,7 @@ public class HammerData : EquipmentData
             timer += Time.deltaTime;
         }
         timer = 0;
+        AudioManager.PlaySound(AudioAtlas.Sound.strike, target.transform.position);
         while (timer < animDur/2) {
             yield return null;
             hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(user.coord), timer/animDur);

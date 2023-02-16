@@ -47,6 +47,7 @@ public class AttackData : EquipmentData
             user.transform.position = Vector3.Lerp(user.transform.position, target.transform.position, timer/animDur);
             timer += Time.deltaTime;
         }
+        AudioManager.PlaySound(AudioAtlas.Sound.strike, target.transform.position);
         timer = 0;
         while (timer < animDur/2) {
             yield return null;

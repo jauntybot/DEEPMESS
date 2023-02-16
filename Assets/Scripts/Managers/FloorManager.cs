@@ -22,6 +22,7 @@ public class FloorManager : MonoBehaviour
 
     [SerializeField] Transform transitionParent;
     public float floorOffset, transitionDur;
+    public 
     Coroutine currentTransition;
     [SerializeField] GameObject upButton, downButton;
 
@@ -107,8 +108,6 @@ public class FloorManager : MonoBehaviour
 
     public IEnumerator DescendFloors() {
 
-        DescentCollisionSolver();
-
         EnemyManager enemy = (EnemyManager)currentFloor.enemy;
         enemy.transform.parent = transitionParent;
         scenario.player.transform.parent = transitionParent;
@@ -116,15 +115,25 @@ public class FloorManager : MonoBehaviour
 
         currentFloor.DisableGridHighlight();
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
+        DescentCollisionSolver();
         yield return StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index+1].gameObject));
         
+        
+
         enemy.SeedUnits(currentFloor);
         scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
         scenario.player.DescendGrids(currentFloor);
         
         yield return new WaitForSecondsRealtime(0.75f);
-        yield return StartCoroutine(currentFloor.DropNail());        
-        yield return new WaitForSecondsRealtime(0.75f);
+        yield return StartCoroutine(scenario.player.DropNail());        
+        
+
+        yield return new WaitForSecondsRealtime(.75f);
+        for (int i = currentFloor.gridElements.Count - 1; i >= 0; i--) {
+            if (currentFloor.gridElements[i] is LandingBuff b)
+                StartCoroutine(b.DestroyElement()); 
+        }
+        yield return new WaitForSecondsRealtime(.75f);
 
         yield return StartCoroutine(TransitionFloors(currentFloor.gameObject));
 
@@ -134,51 +143,25 @@ public class FloorManager : MonoBehaviour
         SwitchFloors(true);
         yield return new WaitForSeconds(0.5f);
 
+     
+
         StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
     }
 
     public void DescentCollisionSolver() {
-        List<Unit> bumpedUnits = new List<Unit>();
-        List<Vector2> bumpOccupancy = new List<Vector2>();
+        List<GridElement> subElements = new List<GridElement>();
+
         foreach (GridElement ge in currentFloor.gridElements) {
-            if (ge is Unit u) {
-                GridElement subGE = floors[currentFloor.index+1].gridElements.Find(g => g.coord == u.coord);
-                if (subGE) 
-                    bumpedUnits.Add(u);
-                else
-                    bumpOccupancy.Add(u.coord);
+            if (ge is Unit u) { // Replace with descends? bool
+                if (u is not Nail) {
+                    GridElement subGE = floors[currentFloor.index+1].gridElements.Find(g => g.coord == u.coord);
+                    if (subGE) {
+                        StartCoroutine(u.CollideFromAbove(u.coord));
+                        StartCoroutine(subGE.CollideFromBelow(u));
+                    }
+                }     
             }
         }
-        foreach (Unit u in bumpedUnits) {
-            List<Vector2> bumpCoords = new List<Vector2>();
-                    Vector2 dir = Vector2.zero;
-                    for (int i = 0; i <= 3; i++) {
-                        switch (i) {
-                            case 0: dir = Vector2.up; break;
-                            case 1: dir = Vector2.right; break;
-                            case 2: dir = Vector2.down; break;
-                            case 3: dir = Vector2.left; break;
-                        }
-                        Vector2 coord = u.coord + dir;
-                        foreach(Vector2 c in bumpOccupancy)
-                            print ("bumpCoords" + c);
-                        print (coord);
-                        if (!floors[currentFloor.index+1].CoordContents(coord) 
-                            && coord.x >= 0 && coord.x <= gridSize -1 && coord.y >= 0 && coord.y <= gridSize -1) {
-                                if (bumpOccupancy.Contains(coord)) print ("occupied");
-                                else bumpCoords.Add(coord);
-                            }
-                    }
-                    Vector2 target = bumpCoords[Random.Range(0, bumpCoords.Count - 1)];
-                    bumpOccupancy.Add(target);
-                    GridElement subGE = floors[currentFloor.index+1].gridElements.Find(ge => ge.coord == u.coord);
-                    if (subGE is Unit subU) {
-                        StartCoroutine(subU.TakeDamage(1));
-                    }
-                    StartCoroutine(u.CollideFromAbove(target));
-                    
-        }
-
     }
 
 }

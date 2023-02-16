@@ -30,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4040941871375026148}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1812062305092922383
 SpriteRenderer:
@@ -199,7 +199,7 @@ Transform:
   m_Children:
   - {fileID: 6854011372038518342}
   m_Father: {fileID: 4040941871375026148}
-  m_RootOrder: 0
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2202044658481402577
 SpriteRenderer:
@@ -264,7 +264,7 @@ GameObject:
   - component: {fileID: 4727838957970290943}
   - component: {fileID: 4282559391306887220}
   m_Layer: 6
-  m_Name: GameObject
+  m_Name: GFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -278,12 +278,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4642587950052384135}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.492, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4040941871375026148}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4282559391306887220
 SpriteRenderer:
@@ -326,7 +326,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 90844fceaca684b1e8d8895bba4d1e0e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 39fe43dd2302fa74aa50b6897ee56a1a, type: 3}
   m_Color: {r: 0.53333336, g: 0.53333336, b: 0.53333336, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -367,7 +367,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4040941871375026148}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6537169198283793595
 SpriteRenderer:
@@ -453,10 +453,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8484983104034085635}
   - {fileID: 5492283541104611261}
   - {fileID: 6347098872533537489}
   - {fileID: 4727838957970290943}
+  - {fileID: 8484983104034085635}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -509,7 +509,7 @@ SpriteRenderer:
   m_Size: {x: 1.51, y: 1.51}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &-2553350826419457478
@@ -531,7 +531,7 @@ MonoBehaviour:
   hitbox: {fileID: 0}
   elementCanvas: {fileID: 0}
   gfx:
-  - {fileID: 7817496761048235123}
+  - {fileID: 4282559391306887220}
   - {fileID: 6537169198283793595}
   - {fileID: 1812062305092922383}
   - {fileID: 2202044658481402577}

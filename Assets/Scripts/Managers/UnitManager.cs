@@ -60,6 +60,7 @@ public class UnitManager : MonoBehaviour {
         t.selected = true;
 
         currentGrid.DisplayGridCursor(true, t.coord);
+        AudioManager.PlaySound(AudioAtlas.Sound.selection, t.gameObject.transform.position);
     }
     public virtual void DeselectUnit() {
 // Untarget every unit

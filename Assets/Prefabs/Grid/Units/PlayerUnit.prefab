@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 7486529668692161338}
   - component: {fileID: 1733487337013861869}
   m_Layer: 6
-  m_Name: GFX - Reggie
+  m_Name: GFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -109,7 +109,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1857152798358888980}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.154, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -157,7 +157,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: b0690a828744b4ebabc5a3f7e0b1e548, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 906fcea0c9fd91c4faf3e1d9ba632e1d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -178,7 +178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3908257913917299124}
   - component: {fileID: 7182560657884744695}
-  - component: {fileID: 2806980022530069875}
+  - component: {fileID: 1861962347920690942}
   m_Layer: 6
   m_Name: PlayerUnit
   m_TagString: Untagged
@@ -223,7 +223,7 @@ MonoBehaviour:
   hitbox: {fileID: 0}
   elementCanvas: {fileID: 0}
   gfx:
-  - {fileID: 5038078834824349799}
+  - {fileID: 1733487337013861869}
   hpMax: 3
   hpCurrent: 0
   defense: 0
@@ -239,7 +239,7 @@ MonoBehaviour:
   validActionCoords: []
   animDur: 1
   canvas: {fileID: 0}
---- !u!60 &2806980022530069875
+--- !u!60 &1861962347920690942
 PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -252,36 +252,33 @@ PolygonCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.154, y: 0}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1.51, y: 1.51}
-    newSize: {x: 1.51, y: 1.51}
+    newSize: {x: 1.61, y: 1.61}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.645, y: 0.345}
-      - {x: 0.345, y: 0.45499998}
-      - {x: -0.055, y: 0.45499998}
-      - {x: -0.315, y: 0.39499998}
-      - {x: -0.42499998, y: 0.265}
-      - {x: -0.42499998, y: -0.33499998}
-      - {x: -0.21499999, y: -0.39499998}
-      - {x: -0.175, y: -0.445}
-      - {x: 0.465, y: -0.445}
-      - {x: 0.475, y: -0.435}
-      - {x: 0.72499996, y: -0.345}
-      - {x: 0.72499996, y: 0.24499999}
-    - - {x: 0.145, y: -0.33499998}
-      - {x: 0.145, y: -0.114999995}
-      - {x: 0.155, y: -0.114999995}
-      - {x: 0.155, y: -0.33499998}
-      - {x: 0.145, y: -0.345}
-      - {x: 0.155, y: -0.345}
+    - - {x: 0.405, y: 0.225}
+      - {x: 0.285, y: 0.36499998}
+      - {x: 0.195, y: 0.445}
+      - {x: -0.175, y: 0.445}
+      - {x: -0.275, y: 0.405}
+      - {x: -0.445, y: 0.175}
+      - {x: -0.445, y: -0.13499999}
+      - {x: -0.435, y: -0.175}
+      - {x: -0.375, y: -0.265}
+      - {x: -0.24499999, y: -0.39499998}
+      - {x: -0.105, y: -0.445}
+      - {x: 0.13499999, y: -0.445}
+      - {x: 0.355, y: -0.315}
+      - {x: 0.445, y: -0.16499999}
+      - {x: 0.445, y: 0.145}
 --- !u!1001 &5120164640369480109
 PrefabInstance:
   m_ObjectHideFlags: 0

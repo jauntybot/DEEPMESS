@@ -45,8 +45,8 @@ public class PlayerManager : UnitManager {
 
         PlayerUnit u = (PlayerUnit)units[0];
         GameObject h = Instantiate(hammerPrefab, u.transform.position, Quaternion.identity, u.transform);
-        h.GetComponent<SpriteRenderer>().sortingOrder = u.gfx[0].sortingOrder;
-        u.gfx.Add(h.GetComponent<SpriteRenderer>());
+        h.GetComponentInChildren<SpriteRenderer>().sortingOrder = u.gfx[0].sortingOrder;
+        u.gfx.Add(h.GetComponentInChildren<SpriteRenderer>());
         foreach(HammerData action in hammerActions) {
             u.equipment.Add(action);
             action.EquipEquipment(u);
@@ -96,9 +96,35 @@ public class PlayerManager : UnitManager {
         }
     }
 
+    public IEnumerator DropNail() {
+        yield return null;
+
+        bool nonPlayerCoord = false;
+        Vector2 spawn = Vector2.zero;
+        while (!nonPlayerCoord) {
+            nonPlayerCoord = true;
+            spawn = new Vector2(Random.Range(1,6), Random.Range(1,6));
+            foreach(Unit u in units) {
+                if (u.coord == spawn) nonPlayerCoord = false;
+            }
+        }
+
+        float xOffset = currentGrid.PosFromCoord(spawn).x;
+        nail.transform.position = new Vector3(xOffset, nail.transform.position.y, 0);
+        yield return StartCoroutine(UpdateNail(spawn));
+    }
+
     public IEnumerator UpdateNail(Vector2 coord) {
         nail.transform.parent = unitParent.transform;
+        GridElement subGE = currentGrid.gridElements.Find(ge => ge.coord == coord);
+        
+        if (subGE != null) {
+            StartCoroutine(subGE.CollideFromBelow(nail));
+
+        }
         yield return StartCoroutine(nail.nailDrop.MoveToCoord(nail, coord));
+        
+            
         nail.StoreInGrid(currentGrid);
 
     }
@@ -178,7 +204,6 @@ public class PlayerManager : UnitManager {
     }
 
     public void TriggerDescent() {
-        scenario.EndTurn();
         floorManager.Descend();
     }
 

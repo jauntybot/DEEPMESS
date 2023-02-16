@@ -85,10 +85,12 @@ public class EnemyManager : UnitManager {
                 Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, target));
                 DeselectUnit();
                 currentGrid.DisableGridHighlight();
-                yield return co;
-                yield break;               
+                yield return co;            
+                yield return new WaitForSecondsRealtime(1);
             }
         }
+        currentGrid.DisableGridHighlight();
+
     }
 
     public void EndTurn() {

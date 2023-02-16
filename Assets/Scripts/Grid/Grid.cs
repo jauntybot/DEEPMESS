@@ -55,12 +55,12 @@ public class Grid : MonoBehaviour {
         yield return StartCoroutine(enemy.Initialize());
         foreach (Content c in lvlDef.initSpawns) 
         {
-            if (c.gridElement is Unit u) 
+            if (c.prefabToSpawn is Unit u) 
             {
                 if (u is EnemyUnit e)
                     enemy.SpawnUnit(c.coord, e);
             } else {
-                GridElement ge = Instantiate(c.gridElement.gameObject, this.transform).GetComponent<GridElement>();
+                GridElement ge = Instantiate(c.prefabToSpawn.gameObject, this.transform).GetComponent<GridElement>();
                 gridElements.Add(ge);
                 ge.transform.parent = neutralGridElements.transform;
 
@@ -72,13 +72,7 @@ public class Grid : MonoBehaviour {
         
     }
 
-    public IEnumerator DropNail() {
-        yield return null;
-        Content nailSpawn = lvlDef.initSpawns.Find(ge => ge.gridElement is Nail);
-        float xOffset = PosFromCoord(nailSpawn.coord).x;
-        player.nail.transform.position = new Vector3(xOffset, player.nail.transform.position.y, 0);
-        yield return StartCoroutine(player.UpdateNail(nailSpawn.coord));
-    }
+
 
     public void AddElement(GridElement ge) {
         gridElements.Add(ge);

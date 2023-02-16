@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3908257913917299124}
   - component: {fileID: 125915573521978910}
-  - component: {fileID: 8566348224663396102}
+  - component: {fileID: 826655729305271934}
   m_Layer: 6
   m_Name: EnemyUnit
   m_TagString: Untagged
@@ -54,7 +54,7 @@ MonoBehaviour:
   hitbox: {fileID: 0}
   elementCanvas: {fileID: 0}
   gfx:
-  - {fileID: 3908257913917299125}
+  - {fileID: 4933312119725587991}
   hpMax: 1
   hpCurrent: 0
   defense: 0
@@ -69,7 +69,7 @@ MonoBehaviour:
   selectedEquipment: {fileID: 0}
   validActionCoords: []
   animDur: 1
---- !u!60 &8566348224663396102
+--- !u!60 &826655729305271934
 PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -82,36 +82,29 @@ PolygonCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.153, y: 0}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1.51, y: 1.51}
-    newSize: {x: 1.51, y: 1.51}
+    newSize: {x: 1.61, y: 1.61}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.645, y: 0.345}
-      - {x: 0.345, y: 0.45499998}
-      - {x: -0.055, y: 0.45499998}
-      - {x: -0.315, y: 0.39499998}
-      - {x: -0.42499998, y: 0.265}
-      - {x: -0.42499998, y: -0.33499998}
-      - {x: -0.21499999, y: -0.39499998}
-      - {x: -0.175, y: -0.445}
-      - {x: 0.465, y: -0.445}
-      - {x: 0.475, y: -0.435}
-      - {x: 0.72499996, y: -0.345}
-      - {x: 0.72499996, y: 0.24499999}
-    - - {x: 0.145, y: -0.33499998}
-      - {x: 0.145, y: -0.114999995}
-      - {x: 0.155, y: -0.114999995}
-      - {x: 0.155, y: -0.33499998}
-      - {x: 0.145, y: -0.345}
-      - {x: 0.155, y: -0.345}
+    - - {x: 0.015, y: 0.295}
+      - {x: -0.015, y: 0.295}
+      - {x: -0.024999999, y: 0.285}
+      - {x: -0.405, y: -0.355}
+      - {x: -0.415, y: -0.39499998}
+      - {x: -0.415, y: -0.435}
+      - {x: -0.39499998, y: -0.445}
+      - {x: 0.405, y: -0.445}
+      - {x: 0.42499998, y: -0.435}
+      - {x: 0.42499998, y: -0.405}
+      - {x: 0.355, y: -0.235}
 --- !u!1 &8160189913326037157
 GameObject:
   m_ObjectHideFlags: 0
@@ -137,7 +130,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8160189913326037157}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.153, y: 0.022, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -185,7 +178,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: b0690a828744b4ebabc5a3f7e0b1e548, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ce51decf880789048babcd66249adc3b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

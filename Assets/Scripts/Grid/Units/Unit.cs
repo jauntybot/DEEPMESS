@@ -18,6 +18,7 @@ public class Unit : GridElement {
 
     [SerializeField] float animDur = 1f;
 
+
 // Functions that will change depending on the class they're inherited from
 #region Inherited Functionality
 
@@ -52,31 +53,32 @@ public class Unit : GridElement {
 #region Unit Functionality
     
     public virtual IEnumerator CollideFromAbove(Vector2 moveTo) {
-        yield return new WaitForSecondsRealtime(1);
-        float timer = 0;
-        Vector3 bumpUp = transform.position + Vector3.up * 2;
-        while (timer<animDur) {
-            yield return null;
-            transform.position = Vector3.Lerp(transform.position, bumpUp, timer/animDur);
-            timer += Time.deltaTime;
-        }
-        timer = 0;
-        StartCoroutine(TakeDamage(1));
-        while (timer<animDur) {
-            yield return null;
-            transform.position = Vector3.Lerp(transform.position, grid.PosFromCoord(moveTo), timer/animDur);
-
-            timer += Time.deltaTime;
-        }   
-
-        UpdateElement(moveTo);
-    }
-
-    public virtual IEnumerator CollideFromBelow() {
-
-
         yield return null;
+        UpdateElement(moveTo);
+
+        // yield return new WaitForSecondsRealtime(1);
+        // float timer = 0;
+        // Vector3 bumpUp = transform.position + Vector3.up * 2;
+        // while (timer<animDur) {
+        //     yield return null;
+        //     transform.position = Vector3.Lerp(transform.position, bumpUp, timer/animDur);
+        //     timer += Time.deltaTime;
+        // }
+        // timer = 0;
+        // StartCoroutine(TakeDamage(1));
+        // while (timer<animDur) {
+        //     yield return null;
+        //     transform.position = Vector3.Lerp(transform.position, grid.PosFromCoord(moveTo), timer/animDur);
+
+        //     timer += Time.deltaTime;
+        // }   
+
+        // UpdateElement(moveTo);
+        
+
     }
+
+
 
 
 #endregion

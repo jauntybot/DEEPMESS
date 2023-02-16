@@ -23,6 +23,9 @@ public class GridElement : MonoBehaviour{
 
     public int hpMax, hpCurrent, defense;
     public int energyCurrent, energyMax;
+    
+    [Header("Audio")]
+    public AudioAtlas.Sound destroyed;
 
 // Initialize references, scale to grid, subscribe onDeath event
     protected virtual void Start() 
@@ -81,24 +84,26 @@ public class GridElement : MonoBehaviour{
     
     public virtual IEnumerator TakeDamage(int dmg, GridElement source = null) 
     {
-        defense -= dmg;
-        if (Mathf.Sign(defense) == -1) {
-            hpCurrent += defense;
-            if (hpCurrent <= 0) {
-                StartCoroutine(DestroyElement());
-                yield break;
-            }
-            defense = 0;
+
+        hpCurrent -= dmg;
+        
+        if (elementCanvas) {
+            elementCanvas.UpdateStatsDisplay();
+            yield return StartCoroutine(elementCanvas.DisplayDamageNumber(dmg));
         }
-        if (elementCanvas) elementCanvas.UpdateStatsDisplay();
-        yield return new WaitForSecondsRealtime(.5f);
+        yield return new WaitForSecondsRealtime(.25f);
         TargetElement(false);
+        if (hpCurrent <= 0) {
+            StartCoroutine(DestroyElement());
+            yield break;
+        }
     }
 
     public virtual IEnumerator DestroyElement() 
     {
         ElementDestroyed?.Invoke(this);
-        yield return new WaitForSecondsRealtime(.5f);
+        AudioManager.PlaySound(destroyed, transform.position);
+        yield return new WaitForSecondsRealtime(.25f);
         DestroyImmediate(this.gameObject);
     }
 
@@ -110,8 +115,9 @@ public class GridElement : MonoBehaviour{
         }
     }
 
-    public virtual IEnumerator CollideFromBelow() {
-
+    public virtual IEnumerator CollideFromBelow(GridElement above) {
+        
+        StartCoroutine(TakeDamage(hpCurrent));
         yield return null;
     }
     

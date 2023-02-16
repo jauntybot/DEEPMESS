@@ -199,7 +199,7 @@ Transform:
   m_Children:
   - {fileID: 6854011372038518342}
   m_Father: {fileID: 4040941871375026148}
-  m_RootOrder: 0
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2202044658481402577
 SpriteRenderer:
@@ -283,7 +283,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4040941871375026148}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4282559391306887220
 SpriteRenderer:
@@ -327,7 +327,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: bceeeda03d0984bebac93655947a5594, type: 3}
-  m_Color: {r: 0.53333336, g: 0.53333336, b: 0.53333336, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -453,10 +453,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8484983104034085635}
+  - {fileID: 4727838957970290943}
   - {fileID: 5492283541104611261}
   - {fileID: 6347098872533537489}
-  - {fileID: 4727838957970290943}
+  - {fileID: 8484983104034085635}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -530,6 +530,10 @@ MonoBehaviour:
   targeted: 0
   hitbox: {fileID: 0}
   elementCanvas: {fileID: 0}
+  gfx:
+  - {fileID: 4282559391306887220}
+  - {fileID: 2202044658481402577}
+  - {fileID: 3705657307307802411}
   hpMax: 0
   hpCurrent: 0
   defense: 0
@@ -542,7 +546,7 @@ MonoBehaviour:
   sprites:
   - {fileID: 21300000, guid: 39fe43dd2302fa74aa50b6897ee56a1a, type: 3}
   white: 0
-  blackColor: {r: 0.6132076, g: 0.5997093, b: 0.5997093, a: 1}
+  blackColor: {r: 0.95117503, g: 0.8388039, b: 0.9622642, a: 1}
   highlight: {fileID: 3392904112776953772}
 --- !u!60 &8517864744566959261
 PolygonCollider2D:

@@ -22,9 +22,9 @@ public class ScenarioManager : MonoBehaviour
 
 // Instanced refs
     FloorManager floorManager;
+    [SerializeField] string resetSceneString;
     public EnemyManager currentEnemy;
     public PlayerManager player;
-    public LevelDefinition lvlDef;
     public Button endTurnButton;
 
     [SerializeField] MessagePanel messagePanel;
@@ -47,9 +47,9 @@ public class ScenarioManager : MonoBehaviour
             player.transform.parent = floorManager.currentFloor.transform;
         }
         yield return StartCoroutine(player.Initialize());
-        yield return StartCoroutine(floorManager.currentFloor.DropNail());
+        yield return StartCoroutine(player.DropNail());
 
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(.75f);
         yield return StartCoroutine(floorManager.TransitionFloors(floorManager.currentFloor.gameObject));
 
         if (floorManager) yield return StartCoroutine(floorManager.GenerateFloor(true));
@@ -93,7 +93,7 @@ public class ScenarioManager : MonoBehaviour
                 } else {
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER LOSES"));
                     yield return new WaitForSecondsRealtime(1.5f);
-                    SceneManager.LoadScene("Game Scene");
+                    SceneManager.LoadScene(resetSceneString);
                 }
             break;
             case Turn.Descent:
