@@ -9,7 +9,7 @@ public class Grid : MonoBehaviour {
     
     FloorManager floorManager;
     PlayerManager player;
-    public int index;
+    public int index = 0;
     [SerializeField] GameObject grid, neutralGridElements;
     public UnitManager enemy;
     [SerializeField] GameObject enemyPrefab;
@@ -49,12 +49,10 @@ public class Grid : MonoBehaviour {
         yield return StartCoroutine(SpawnLevelDefinition());
     }
 
-    IEnumerator SpawnLevelDefinition() 
-    {
+    IEnumerator SpawnLevelDefinition() {
         enemy = Instantiate(enemyPrefab, this.transform).GetComponent<EnemyManager>(); 
         yield return StartCoroutine(enemy.Initialize());
-        foreach (Content c in lvlDef.initSpawns) 
-        {
+        foreach (Content c in lvlDef.initSpawns) {
             if (c.prefabToSpawn is Unit u) 
             {
                 if (u is EnemyUnit e)
@@ -69,7 +67,6 @@ public class Grid : MonoBehaviour {
                 ge.UpdateElement(c.coord);
             }
         }
-        
     }
 
 

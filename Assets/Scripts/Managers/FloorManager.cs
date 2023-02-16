@@ -46,14 +46,18 @@ public class FloorManager : MonoBehaviour
         
         Grid newFloor = Instantiate(floorPrefab, this.transform).GetComponent<Grid>();
         if (topFloor) currentFloor = newFloor;
-        LevelDefinition floorDef = floorDefinitions[Random.Range(0, floorDefinitions.Count)];
+        LevelDefinition floorDef = floorDefinitions[currentFloor.index];
         newFloor.lvlDef = floorDef;
-
-        Coroutine co = StartCoroutine(newFloor.GenerateGrid(floors.Count));
-        yield return co;
-    
-        newFloor.gameObject.name = "Floor" + newFloor.index;
-        floors.Add(newFloor);
+        int index = currentFloor.index;
+        if (currentFloor.index >= 10) {
+            StartCoroutine(scenario.Win());
+        } else {
+            Coroutine co = StartCoroutine(newFloor.GenerateGrid(currentFloor.index + 1));
+            yield return co;
+        
+            newFloor.gameObject.name = "Floor" + newFloor.index;
+            floors.Add(newFloor);
+        }
     }
 
     public void SwitchFloors(bool up) {

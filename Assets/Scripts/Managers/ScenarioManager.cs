@@ -111,9 +111,11 @@ public class ScenarioManager : MonoBehaviour
         StartCoroutine(SwitchTurns());
     }
 
-    public void Win() 
+    public IEnumerator Win() 
     {
-
+        yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER WINS"));
+        yield return new WaitForSecondsRealtime(1.5f);
+        SceneManager.LoadScene(resetSceneString);
     }
 
     public void Lose() 
