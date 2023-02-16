@@ -17,13 +17,14 @@ public class AudioAtlas : MonoBehaviour
 #endregion
 
     public enum Sound {
-        strike,
-        slide01,
-        slide02,
-        selection,
-        death01,
-        death02,
-        swish01,
+        selectionUnit,
+        selectionButton,
+        selectionError,
+        attackStrike,
+        moveSlide,
+        hammerPass,
+        deathUnit,
+        deathEnemy,
     }
 
     public List<SFX> serializedSFX;
