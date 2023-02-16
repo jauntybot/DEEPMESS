@@ -136,7 +136,7 @@ public class FloorManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(.75f);
 
 // Check if player wins
-        if (currentFloor.index > 11) {
+        if (currentFloor.index >= 11) {
 
             StartCoroutine(scenario.Win());
 
@@ -150,7 +150,7 @@ public class FloorManager : MonoBehaviour
             SwitchFloors(true);
             yield return new WaitForSeconds(0.5f);
 
-            StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
+            StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
         }
     }
 

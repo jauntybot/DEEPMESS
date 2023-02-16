@@ -49,7 +49,6 @@ public class EnemyManager : UnitManager {
                 yield break;
             }
         }
-        yield return new WaitForSecondsRealtime(2); 
 // Move scan
         input.UpdateAction(input.equipment[0]);
         Vector2 targetCoord = input.SelectOptimalCoord(input.pathfinding);
@@ -79,7 +78,6 @@ public class EnemyManager : UnitManager {
                 yield return new WaitForSecondsRealtime(1);
             }
         }
-        yield return new WaitForSecondsRealtime(2);
         currentGrid.DisableGridHighlight();
 
     }
