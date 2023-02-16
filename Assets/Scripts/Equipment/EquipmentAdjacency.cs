@@ -47,7 +47,8 @@ public class EquipmentAdjacency : MonoBehaviour
 // If there is something already occupying this coord
                         if (FloorManager.instance.currentFloor.CoordContents(coord) is GridElement ge) {
 // Valid coord if element is not filtered
-                            if (!data.filters.Find(f => f.GetType() == ge.GetType())) {
+                            if (!data.filters.Find(f => f.GetType() == ge.GetType())
+                            || data.filters == null) {
                                 frontier.Add(coord);
                                 _coords.Add(coord);
                             } else if (targetLast != null) {
@@ -72,7 +73,8 @@ public class EquipmentAdjacency : MonoBehaviour
 // If there is something already occupying this coord                        
                         if (FloorManager.instance.currentFloor.CoordContents(coord) is GridElement ge) {
 // Valid coord if element is not filtered
-                            if (!data.filters.Find(f => f.GetType() == ge.GetType())) {
+                            if (!data.filters.Find(f => f.GetType() == ge.GetType())
+                            || data.filters == null) {
                                 frontier.Add(coord);
                                 _coords.Add(coord);
 // Valid coord if element is target, but stops frontier
@@ -119,7 +121,8 @@ public class EquipmentAdjacency : MonoBehaviour
                 if (FloorManager.instance.currentFloor.CoordContents(coord) is GridElement ge) 
                 {
 // Valid coord if element is not filtered
-                    if (!data.filters.Find(f => f.GetType() == ge.GetType())) {
+                    if (!data.filters.Find(f => f.GetType() == ge.GetType())
+                    || data.filters == null) {
                         _coords.Add(coord);
 // Valid coord if element is target, but stops frontier
                     } else if (targetLast != null) {

@@ -43,21 +43,19 @@ public class FloorManager : MonoBehaviour
     }
 
     public IEnumerator GenerateFloor(bool topFloor) {
-        
+        int index = floors.Count;
+
         Grid newFloor = Instantiate(floorPrefab, this.transform).GetComponent<Grid>();
         if (topFloor) currentFloor = newFloor;
-        LevelDefinition floorDef = floorDefinitions[currentFloor.index];
+        LevelDefinition floorDef = floorDefinitions[index];
         newFloor.lvlDef = floorDef;
-        int index = currentFloor.index;
-        if (currentFloor.index >= 10) {
-            StartCoroutine(scenario.Win());
-        } else {
-            Coroutine co = StartCoroutine(newFloor.GenerateGrid(currentFloor.index + 1));
-            yield return co;
-        
-            newFloor.gameObject.name = "Floor" + newFloor.index;
-            floors.Add(newFloor);
-        }
+    
+        Coroutine co = StartCoroutine(newFloor.GenerateGrid(index));
+        yield return co;
+    
+        newFloor.gameObject.name = "Floor" + newFloor.index;
+        floors.Add(newFloor);
+
     }
 
     public void SwitchFloors(bool up) {
@@ -121,8 +119,6 @@ public class FloorManager : MonoBehaviour
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
         DescentCollisionSolver();
         yield return StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index+1].gameObject));
-        
-        
 
         enemy.SeedUnits(currentFloor);
         scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
@@ -139,17 +135,23 @@ public class FloorManager : MonoBehaviour
         }
         yield return new WaitForSecondsRealtime(.75f);
 
-        yield return StartCoroutine(TransitionFloors(currentFloor.gameObject));
+// Check if player wins
+        if (currentFloor.index > 11) {
 
-        yield return StartCoroutine(GenerateFloor(true));
+            StartCoroutine(scenario.Win());
 
-        yield return new WaitForSeconds(0.5f);
-        SwitchFloors(true);
-        yield return new WaitForSeconds(0.5f);
+        } else {
 
-     
+            yield return StartCoroutine(TransitionFloors(currentFloor.gameObject));
 
-        StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
+            yield return StartCoroutine(GenerateFloor(true));
+
+            yield return new WaitForSeconds(0.5f);
+            SwitchFloors(true);
+            yield return new WaitForSeconds(0.5f);
+
+            StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
+        }
     }
 
     public void DescentCollisionSolver() {

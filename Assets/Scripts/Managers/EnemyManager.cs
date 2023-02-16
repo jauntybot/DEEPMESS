@@ -49,30 +49,20 @@ public class EnemyManager : UnitManager {
                 yield break;
             }
         }
+        yield return new WaitForSecondsRealtime(2); 
 // Move scan
         input.UpdateAction(input.equipment[0]);
-        Unit closestTkn = scenario.player.units[0];
-        if (closestTkn) {
-            foreach (Unit tkn in scenario.player.units) {
-                if (Vector2.Distance(tkn.coord, input.coord) < Vector2.Distance(closestTkn.coord, input.coord))
-                    closestTkn = tkn;
-            }
-            Vector2 closestCoord = Vector2.one * -32;
-            foreach(Vector2 coord in input.validActionCoords) {
-                if (Vector2.Distance(coord, closestTkn.coord) < Vector2.Distance(closestCoord, closestTkn.coord)) 
-                    closestCoord = coord;
-            }
-// If there is a valid closest coord
-            if (Mathf.Sign(closestCoord.x) == 1) {
-                SelectUnit(input);
-                currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
-                yield return new WaitForSecondsRealtime(0.5f);
-                Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, currentGrid.sqrs.Find(sqr => sqr.coord == closestCoord)));
-                DeselectUnit();
-                currentGrid.DisableGridHighlight();
-                yield return co;
-            }
+        Vector2 targetCoord = input.SelectOptimalCoord(input.pathfinding);
+        if (Mathf.Sign(targetCoord.x) == 1) {
+            SelectUnit(input);
+            currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
+            yield return new WaitForSecondsRealtime(0.5f);
+            Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, currentGrid.sqrs.Find(sqr => sqr.coord == targetCoord)));
+            DeselectUnit();
+            currentGrid.DisableGridHighlight();
+            yield return co;
         }
+
 // Second attack scan
         input.UpdateAction(input.equipment[1]);
         foreach (Vector2 coord in input.validActionCoords) 
@@ -89,6 +79,7 @@ public class EnemyManager : UnitManager {
                 yield return new WaitForSecondsRealtime(1);
             }
         }
+        yield return new WaitForSecondsRealtime(2);
         currentGrid.DisableGridHighlight();
 
     }
