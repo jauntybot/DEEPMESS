@@ -78,6 +78,8 @@ public class FloorManager : MonoBehaviour
         float dir = 1;
         Vector3 from2 = Vector3.zero;
         Vector3 to2 = Vector3.zero;
+        Vector3 scaleFrom2 = Vector3.zero;
+        Vector3 scaleTo2 = Vector3.zero;
         if (floor2) {
             dir = (floor1.transform.position.y > floor2.transform.position.y) ? 1 : -1;
             from2 = floor2.transform.position;
@@ -86,13 +88,17 @@ public class FloorManager : MonoBehaviour
         }
         Vector3 from1 = floor1.transform.position;
         Vector3 to1 = new Vector3(floor1.transform.position.x, floor1.transform.position.y + floorOffset * dir, floor1.transform.position.z);
+        Vector3 scaleFrom1 = Vector3.zero;
+        Vector3 scaleTo1 = Vector3.zero;
         floor1.GetComponent<SortingGroup>().sortingOrder = -1;
 
         float timer = 0;
-        while (timer < transitionDur) {
+        while (timer <= transitionDur) {
             floor1.transform.position = Vector3.Lerp(from1, to1, timer/transitionDur);
-            if (floor2) floor2.transform.position = Vector3.Lerp(from2, to2, timer/transitionDur);
-            
+            if (floor2) {
+                floor2.transform.position = Vector3.Lerp(from2, to2, timer/transitionDur);
+                //floor2.transform.localScale = Vector3.Lerp()
+            }
             yield return null;
             timer += Time.deltaTime;
         }
