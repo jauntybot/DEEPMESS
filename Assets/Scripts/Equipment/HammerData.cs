@@ -25,24 +25,18 @@ public class HammerData : EquipmentData
             case Action.Lob:
                 return base.TargetEquipment(user);
             case Action.Strike:
-                List<GridElement> targetLast = new List<GridElement>();
-                targetLast.Add(nail);
-                List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, this, targetLast);
+                List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, this, targetTypes);
                 user.grid.DisplayValidCoords(validCoords, gridColor);
                 if (user is PlayerUnit pu) pu.canvas.ToggleEquipmentDisplay(false);
                 for (int i = validCoords.Count - 1; i >= 0; i--) {
-                    if (FloorManager.instance.currentFloor.CoordContents(validCoords[i]) is Unit u) {
-                        foreach(GridElement target in targetLast) {
-                            if (u.GetType() != target.GetType())
-                                validCoords.Remove(validCoords[i]);
-                            else if (u is Nail d) {
-                                PlayerUnit playerUnit = (PlayerUnit)user;
-                                PlayerManager manager = (PlayerManager)playerUnit.manager;
-                                if (manager.hammerCharge < manager.descentChargeReq) {
-                                    validCoords.Remove(validCoords[i]);
-                                }
-                            }
+                    if (FloorManager.instance.currentFloor.CoordContents(validCoords[i]) is GridElement ge) {
+                        bool remove = true;
+                        foreach(GridElement target in targetTypes) {
+                            if (ge.GetType() == target.GetType())
+                                remove = false;
                         }
+                        if (remove) 
+                            validCoords.Remove(validCoords[i]);
                     } else 
                         validCoords.Remove(validCoords[i]);
                 }
@@ -58,7 +52,7 @@ public class HammerData : EquipmentData
                 yield return user.StartCoroutine(LobHammer((PlayerUnit)user, (PlayerUnit)target));
             break;
             case Action.Strike:
-                yield return user.StartCoroutine(StrikeHammer(user, target));
+                yield return user.StartCoroutine(StrikeNail((PlayerUnit)user));
             break;
         }
     }
@@ -75,7 +69,7 @@ public class HammerData : EquipmentData
         if (passTo.gfx[0].sortingOrder > passer.gfx[0].sortingOrder)
             hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;
         float timer = 0;
-        AudioManager.PlaySound(AudioAtlas.Sound.hammerPass, passTo.transform.position);
+        AudioManager.PlaySound(AudioAtlas.Sound.hammerPass, passer.transform.position);
         while (timer < animDur) {
             hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(passTo.coord), timer/animDur);
             yield return null;
@@ -97,30 +91,49 @@ public class HammerData : EquipmentData
         passer.canvas.UpdateEquipmentDisplay();
     }
 
-    public IEnumerator StrikeHammer(GridElement user, GridElement target) {
+    public IEnumerator StrikeNail(PlayerUnit user) {
         
+        PlayerManager manager = (PlayerManager)user.manager;
+        manager.ChargeHammer(1);
+        if (nail.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
+            hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = nail.gfx[0].sortingOrder;
+        AudioManager.PlaySound(AudioAtlas.Sound.hammerPass, user.transform.position);
+    
+// Lerp hammer to nail
         float timer = 0;
-
-        Vector2 attackLerp = (target.coord - user.coord)/2;
-        user.elementCanvas.UpdateStatsDisplay();
-        while (timer < animDur/2) {
+        while (timer < animDur / 2) {
+            hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(nail.coord), timer/animDur);
             yield return null;
-            hammer.transform.position = Vector3.Lerp(hammer.transform.position, target.transform.position, timer/animDur);
             timer += Time.deltaTime;
         }
+        AudioManager.PlaySound(AudioAtlas.Sound.attackStrike, user.transform.position);
+// Assign a random unit to pass the hammer to
+        PlayerUnit passTo = (PlayerUnit)manager.units[Random.Range(0, manager.units.Count - 1)];
+        if (passTo.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
+            hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;    
+// Lerp hammer to random unit
         timer = 0;
-        AudioManager.PlaySound(AudioAtlas.Sound.attackStrike, target.transform.position);
-        while (timer < animDur/2) {
+        while (timer < animDur) {
+            hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(passTo.coord), timer/animDur);
             yield return null;
-            hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(user.coord), timer/animDur);
             timer += Time.deltaTime;
         }
 
-        if (target is Nail) {
-            PlayerUnit pu = (PlayerUnit)user;
-            PlayerManager manager = (PlayerManager)pu.manager;
-            manager.TriggerDescent();
+        for (int i = user.equipment.Count - 1; i >= 0; i--) {
+            if (user.equipment[i] is HammerData) {
+                passTo.equipment.Add(user.equipment[i]);
+
+                user.equipment.Remove(user.equipment[i]);
+            }
         }
+        user.gfx.Remove(hammer.GetComponentInChildren<SpriteRenderer>());
+        hammer.transform.parent = passTo.transform;
+        passTo.gfx.Add(hammer.GetComponentInChildren<SpriteRenderer>());
+
+        passTo.canvas.UpdateEquipmentDisplay();
+        user.canvas.UpdateEquipmentDisplay();
+
+        manager.TriggerDescent();
     }
 
 }

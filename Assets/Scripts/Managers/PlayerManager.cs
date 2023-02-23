@@ -18,8 +18,8 @@ public class PlayerManager : UnitManager {
     public Nail nail;
     public int hammerCharge, descentChargeReq;
     [SerializeField] HammerChargeDisplay chargeDisplay;
-    public List<HammerData> hammerActions;
-    [SerializeField] public GameObject nailPrefab, hammerPrefab;
+    public List<EquipmentData> hammerActions;
+    [SerializeField] public GameObject nailPrefab, hammerPrefab, hammerPickupPrefab;
 
     #region Singleton (and Awake)
     public static PlayerManager instance;
@@ -43,19 +43,23 @@ public class PlayerManager : UnitManager {
         nail.gameObject.transform.position = new Vector3 (0,20,0);
         nail.gameObject.transform.parent = unitParent.transform;
 
-        PlayerUnit u = (PlayerUnit)units[0];
-        GameObject h = Instantiate(hammerPrefab, u.transform.position, Quaternion.identity, u.transform);
-        h.GetComponentInChildren<SpriteRenderer>().sortingOrder = u.gfx[0].sortingOrder;
-        u.gfx.Add(h.GetComponentInChildren<SpriteRenderer>());
-        foreach(HammerData action in hammerActions) {
-            u.equipment.Add(action);
-            action.EquipEquipment(u);
-            action.AssignHammer(h, nail);
-        }
-        u.canvas.UpdateEquipmentDisplay();
+        SpawnHammer((PlayerUnit)units[0], hammerActions);
 
         pc = GetComponent<PlayerController>();
         if (FloorManager.instance) floorManager = FloorManager.instance;
+    }
+
+// Spawn a new instance of a hammer and update hammer actions
+    public virtual void SpawnHammer(PlayerUnit unit, List<EquipmentData> actions) {
+        GameObject h = Instantiate(hammerPrefab, unit.transform.position, Quaternion.identity, unit.transform);
+        h.GetComponentInChildren<SpriteRenderer>().sortingOrder = unit.gfx[0].sortingOrder;
+        unit.gfx.Add(h.GetComponentInChildren<SpriteRenderer>());
+        foreach(HammerData action in actions) {
+            unit.equipment.Add(action);
+            action.EquipEquipment(unit);
+            action.AssignHammer(h, nail);
+        }
+        unit.canvas.UpdateEquipmentDisplay();
     }
 
 // Initializes or closes functions for turn start/end
@@ -181,11 +185,20 @@ public class PlayerManager : UnitManager {
                         currentGrid.DisableGridHighlight();
                         selectedUnit.ExecuteAction(sqr);
                         DeselectUnit();
-                    } else {
+                    } else 
                         DeselectUnit();
-                    }
                 }
             }            
+        }
+        else {
+            if (selectedUnit) {
+                if (selectedUnit.ValidCommand(input.coord)) {
+                    currentGrid.DisableGridHighlight();
+                    selectedUnit.ExecuteAction(input);
+                    DeselectUnit();
+                } else
+                    DeselectUnit();
+            }
         }
     }
 

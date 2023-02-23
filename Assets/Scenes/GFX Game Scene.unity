@@ -1474,6 +1474,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerUnit
       objectReference: {fileID: 0}
+    - target: {fileID: 3908257913917299126, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
 --- !u!1 &485428271 stripped
@@ -1489,7 +1493,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 485428271}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -2328,6 +2332,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f57be3308dd7a8c4d832a6af65097b7e, type: 2}
   nailPrefab: {fileID: 2911188987296525511, guid: 5f7d1db180f0240849bf67b9fe916f3b, type: 3}
   hammerPrefab: {fileID: 3955549777479365904, guid: a8ad447d87fd54d3284fc69a0b042b16, type: 3}
+  hammerPickupPrefab: {fileID: 447688835278664603, guid: 09eb2f74362cc7a4b9c63d19f2a52119, type: 3}
 --- !u!114 &894283984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3207,6 +3212,8 @@ MonoBehaviour:
   messagePanel: {fileID: 1677802823}
   gameState: 0
   currentTurn: 0
+  turnCount: 0
+  turnsToDescend: 4
 --- !u!114 &1272466585
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3320,7 +3327,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.12156863, g: 0.14509805, b: 0.27450982, a: 1}
+  m_Color: {r: 0.03773582, g: 0.03773582, b: 0.03773582, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

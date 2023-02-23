@@ -10,7 +10,7 @@ public class Grid : MonoBehaviour {
     FloorManager floorManager;
     PlayerManager player;
     public int index = 0;
-    [SerializeField] GameObject grid, neutralGridElements;
+    public GameObject gridContainer, neutralGEContainer;
     public UnitManager enemy;
     [SerializeField] GameObject enemyPrefab;
 
@@ -41,7 +41,7 @@ public class Grid : MonoBehaviour {
                 sqr.UpdateElement(new Vector2(x,y));
 
                 sqrs.Add(sqr);
-                sqr.transform.parent = grid.transform;
+                sqr.transform.parent = gridContainer.transform;
             }
         }
         gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
@@ -59,10 +59,8 @@ public class Grid : MonoBehaviour {
                     enemy.SpawnUnit(c.coord, e);
             } else {
                 GridElement ge = Instantiate(c.prefabToSpawn.gameObject, this.transform).GetComponent<GridElement>();
-                gridElements.Add(ge);
-                ge.transform.parent = neutralGridElements.transform;
+                ge.transform.parent = neutralGEContainer.transform;
 
-                ge.ElementDestroyed += RemoveElement;
                 ge.StoreInGrid(this);
                 ge.UpdateElement(c.coord);
             }

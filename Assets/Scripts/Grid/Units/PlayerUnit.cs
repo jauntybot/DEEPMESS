@@ -33,4 +33,27 @@ public class PlayerUnit : Unit {
         canvas.ToggleEquipmentDisplay(state);
         if (energyCurrent == 0) canvas.ToggleEquipmentDisplay(false);
     }
+
+    public override IEnumerator DestroyElement() {
+
+        bool droppedHammer = false;
+        EquipmentPickup pickup = null;
+        foreach (EquipmentData equip in equipment) {
+            if (equip is HammerData hammer) {
+                if (!droppedHammer) {
+                    PlayerManager m = (PlayerManager)manager;
+                    pickup = Instantiate(m.hammerPickupPrefab, transform.position, Quaternion.identity, grid.neutralGEContainer.transform).GetComponent<EquipmentPickup>();
+                    pickup.StoreInGrid(grid);
+                    pickup.UpdateElement(coord);
+                    droppedHammer = true;
+                }
+                if (pickup != null) {
+                    pickup.equipment.Add(equip);
+                }
+            }
+        }
+
+
+        yield return base.DestroyElement();
+    }
 }

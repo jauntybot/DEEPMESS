@@ -11,29 +11,42 @@ public class MoveData : EquipmentData
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
     {
         yield return base.UseEquipment(user);
-        yield return user.StartCoroutine(MoveToCoord(user, target.coord));
+        yield return user.StartCoroutine(MoveToCoord((Unit)user, target.coord));
         
     }
 
-    public IEnumerator MoveToCoord(GridElement ge, Vector2 moveTo) 
+    public IEnumerator MoveToCoord(Unit unit, Vector2 moveTo) 
     {
         float timer = 0;
-        ge.elementCanvas.UpdateStatsDisplay();
-        
-// exposed UpdateElement code to selectively update sort order
-        if (ge.grid.SortOrderFromCoord(moveTo) > ge.grid.SortOrderFromCoord(ge.coord))
-            ge.UpdateSortOrder(moveTo);
-        ge.coord = moveTo;
+        unit.elementCanvas.UpdateStatsDisplay();
+
+// Check for pickups
+        if (unit is PlayerUnit pu) {
+            if (pu.grid.CoordContents(moveTo) is EquipmentPickup equip) {
+   
+// Spawn new hammer and assign it to equipment data
+                PlayerManager manager = (PlayerManager)pu.manager;
+                manager.SpawnHammer(pu, equip.equipment);
+                pu.StartCoroutine(equip.DestroyElement());
+   
+            }
+        }
+// exposed UpdateElement() functionality to selectively update sort order
+        if (unit.grid.SortOrderFromCoord(moveTo) > unit.grid.SortOrderFromCoord(unit.coord))
+            unit.UpdateSortOrder(moveTo);
+        unit.coord = moveTo;
+
         AudioManager.PlaySound(AudioAtlas.Sound.moveSlide,moveTo);
+// Lerp units position to target
         while (timer < animDur) {
             yield return null;
-            ge.transform.position = Vector3.Lerp(ge.transform.position, FloorManager.instance.currentFloor.PosFromCoord(moveTo), timer/animDur);
+            unit.transform.position = Vector3.Lerp(unit.transform.position, FloorManager.instance.currentFloor.PosFromCoord(moveTo), timer/animDur);
             timer += Time.deltaTime;
         }
         
-        ge.UpdateElement(moveTo);
+        unit.UpdateElement(moveTo);
         yield return new WaitForSecondsRealtime(0.25f);
-        if (!ge.targeted) ge.TargetElement(false);
+        if (!unit.targeted) unit.TargetElement(false);
     }
 
 }

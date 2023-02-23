@@ -34,6 +34,7 @@ public class ScenarioManager : MonoBehaviour
     public GameState gameState;
     public enum Turn { Null, Player, Enemy, Descent }
     public Turn currentTurn;
+    public int turnCount, turnsToDescend;
 
 #region Initialization
     public IEnumerator Start() 
@@ -75,6 +76,9 @@ public class ScenarioManager : MonoBehaviour
         {
             case Turn.Player:
                 player.StartEndTurn(false);
+                if (turnCount >= turnsToDescend) {
+                    floorManager.Descend();
+                } else {
                     yield return StartCoroutine(messagePanel.DisplayMessage("ENEMY TURN"));
                     currentTurn = Turn.Enemy;
                     foreach(Unit u in currentEnemy.units) {
@@ -83,10 +87,16 @@ public class ScenarioManager : MonoBehaviour
                     }
                     endTurnButton.enabled = false;
                     StartCoroutine(currentEnemy.TakeTurn());
+                }
             break;
             case Turn.Enemy:
                 if (player.units.Count > 2) {
+                    turnCount++;
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN"));
+                    if (turnsToDescend - turnCount > 0)
+                        yield return StartCoroutine(messagePanel.DisplayMessage(turnsToDescend - turnCount + 1 + " TURNS UNTIL DESCENT"));
+                    else
+                        yield return StartCoroutine(messagePanel.DisplayMessage("FINAL TURN UNTIL DESCENT"));
                     currentTurn = Turn.Player;
                     endTurnButton.enabled = true;
                     player.StartEndTurn(true);
@@ -97,6 +107,7 @@ public class ScenarioManager : MonoBehaviour
                 }
             break;
             case Turn.Descent:
+                turnCount = 0;
                 player.StartEndTurn(false);
                 currentTurn = Turn.Descent;
                 endTurnButton.enabled = false;
