@@ -103,6 +103,7 @@ public class PlayerManager : UnitManager {
     public IEnumerator DropNail() {
         yield return null;
 
+// Find a valid coord that a player is not in
         bool nonPlayerCoord = false;
         Vector2 spawn = Vector2.zero;
         while (!nonPlayerCoord) {
@@ -128,8 +129,8 @@ public class PlayerManager : UnitManager {
         }
         yield return StartCoroutine(nail.nailDrop.MoveToCoord(nail, coord));
         
-            
-        nail.StoreInGrid(currentGrid);
+        if (!currentGrid.gridElements.Contains(nail))
+            nail.StoreInGrid(currentGrid);
 
     }
 

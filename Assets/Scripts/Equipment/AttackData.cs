@@ -7,7 +7,7 @@ using UnityEngine;
 public class AttackData : EquipmentData
 {
     
-    public List<GridElement> targetTypes;
+
     public int dmg;
 
     public override List<Vector2> TargetEquipment(GridElement user) {
@@ -18,8 +18,10 @@ public class AttackData : EquipmentData
             if (FloorManager.instance.currentFloor.CoordContents(validCoords[i]) is GridElement ge) {
                 bool remove = true;
                 foreach(GridElement target in targetTypes) {
-                    if (ge.GetType() == target.GetType())
+                    if (ge.GetType() == target.GetType()) {
                         remove = false;
+                        ge.elementCanvas.ToggleStatsDisplay(true);
+                    }
                 }
                 if (remove) 
                     validCoords.Remove(validCoords[i]);

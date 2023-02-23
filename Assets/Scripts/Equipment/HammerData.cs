@@ -118,7 +118,7 @@ public class HammerData : EquipmentData
             yield return null;
             timer += Time.deltaTime;
         }
-
+    
         for (int i = user.equipment.Count - 1; i >= 0; i--) {
             if (user.equipment[i] is HammerData) {
                 passTo.equipment.Add(user.equipment[i]);

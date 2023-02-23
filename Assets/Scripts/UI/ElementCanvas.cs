@@ -41,9 +41,10 @@ public class ElementCanvas : MonoBehaviour
             dmgText.text = "-" + dmg;
             dmgPanel.GetComponent<Image>().color = dmgColor;
         }
-        else if (dmg < 0)
+        else if (dmg < 0) {
             dmgText.text = "+" + Mathf.Abs(dmg);
             dmgPanel.GetComponent<Image>().color = healColor;
+        }
         while (dmgPanel.activeSelf) {
             yield return null;
         }

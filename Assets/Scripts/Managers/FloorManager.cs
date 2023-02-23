@@ -22,8 +22,11 @@ public class FloorManager : MonoBehaviour
 
     [SerializeField] Transform transitionParent;
     public float floorOffset, transitionDur;
-    public 
-    Coroutine currentTransition;
+    private bool transitioning;
+    [SerializeField] private GameObject descentPreview;
+    [SerializeField] private Dictionary<GridElement, LineRenderer> lineRenderers;
+    [SerializeField] private Material previewMaterial;
+    [SerializeField] private Color playerColor, enemyColor;
     [SerializeField] GameObject upButton, downButton;
 
     #region Singleton (and Awake)
@@ -40,6 +43,7 @@ public class FloorManager : MonoBehaviour
 
     void Start() {
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
+        lineRenderers = new Dictionary<GridElement, LineRenderer>();
     }
 
     public IEnumerator GenerateFloor(bool topFloor) {
@@ -58,16 +62,75 @@ public class FloorManager : MonoBehaviour
 
     }
 
-    public void SwitchFloors(bool up) {
-        if (!up) {
-            currentTransition = StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index+1].gameObject));
-            SetButtonActive(upButton, floors[currentFloor.index+1] != null);
-            SetButtonActive(downButton, floors[currentFloor.index+1] != null);
-        } else {
-            StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index-1].gameObject));
-            SetButtonActive(upButton, floors[currentFloor.index-1] != null);
-            SetButtonActive(downButton, floors[currentFloor.index-1] != null);
+    public IEnumerator PreviewFloor(bool down, bool draw) {
+        transitioning = true;
+        if (down) {
+            if (draw) StartCoroutine(ToggleDescentPreview(true));
+            if (draw) {
+                SetButtonActive(downButton, false); SetButtonActive(upButton, true);
+            }
+            yield return StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index+1].gameObject));
+            transitioning = false;
         }
+        else {
+            StartCoroutine(ToggleDescentPreview(false));
+            if (draw) {
+                SetButtonActive(downButton, true); SetButtonActive(upButton, false);
+            }
+            yield return StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index-1].gameObject));
+        
+            transitioning = false;
+        }
+    }
+
+    public IEnumerator ToggleDescentPreview(bool active) {
+        
+        if (active) {
+            lineRenderers = new Dictionary<GridElement, LineRenderer>();
+            foreach (GridElement ge in currentFloor.gridElements) {
+                if (ge is Unit && ge is not Nail) {
+                    LineRenderer lr = new GameObject().AddComponent<LineRenderer>();
+                    lr.gameObject.transform.parent = descentPreview.transform;
+                    lr.startWidth = 0.15f; lr.endWidth = 0.15f;
+                    lr.sortingLayerName = "UI";
+                    lr.material = previewMaterial;
+                    lr.positionCount = 2;
+                    lr.SetPosition(0, ge.transform.position); lr.SetPosition(1, ge.transform.position);
+                    lr.startColor = enemyColor; lr.endColor = enemyColor;
+                    if (ge is PlayerUnit) {
+                        lr.startColor = playerColor; lr.endColor = playerColor;
+                    }
+
+                    lineRenderers.Add(ge, lr);
+                }
+            }
+        }
+
+        float alpha = 255; float timer = 0;
+        while (transitioning) {
+            foreach (KeyValuePair<GridElement, LineRenderer> lr in lineRenderers) {
+                lr.Value.SetPosition(0, lr.Key.transform.position);
+            }
+            if (!active) {
+                foreach (KeyValuePair<GridElement, LineRenderer> lr in lineRenderers) {
+                    lr.Value.startColor = new Color(lr.Value.endColor.r, lr.Value.endColor.g, lr.Value.endColor.b, alpha);
+                    lr.Value.endColor = new Color(lr.Value.endColor.r, lr.Value.endColor.g, lr.Value.endColor.b, alpha);
+                    alpha = Mathf.Lerp(255, 0, timer / 1);
+                    timer += Time.deltaTime;
+                    yield return null;
+                }
+            }
+            yield return null;
+        }
+        if (!active) {
+            foreach (KeyValuePair<GridElement, LineRenderer> lr in lineRenderers)
+                DestroyImmediate(lr.Value.gameObject);
+            lineRenderers = new Dictionary<GridElement, LineRenderer>();
+        }        
+    }
+
+    public void PreviewButton(bool down) {
+        StartCoroutine(PreviewFloor(down, true));
     }
 
     void SetButtonActive(GameObject button, bool state) {
@@ -153,7 +216,7 @@ public class FloorManager : MonoBehaviour
             yield return StartCoroutine(GenerateFloor(true));
 
             yield return new WaitForSeconds(0.5f);
-            SwitchFloors(true);
+            yield return StartCoroutine(PreviewFloor(false, false));
             yield return new WaitForSeconds(0.5f);
 
             StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));

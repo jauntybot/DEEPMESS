@@ -56,7 +56,7 @@ public class ScenarioManager : MonoBehaviour
         if (floorManager) yield return StartCoroutine(floorManager.GenerateFloor(true));
 
         yield return new WaitForSeconds(0.75f);
-        floorManager.SwitchFloors(true);
+        StartCoroutine(floorManager.PreviewFloor(false, false));
         yield return new WaitForSeconds(1);
 
         StartCoroutine(SwitchTurns(Turn.Enemy));
