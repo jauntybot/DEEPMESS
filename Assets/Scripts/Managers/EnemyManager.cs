@@ -6,6 +6,7 @@ public class EnemyManager : UnitManager {
 
     public delegate void OnEnemyCondition(GridElement ge);
     public event OnEnemyCondition WipedOutCallback;
+    private Coroutine ongoingTurn;
 
     public override IEnumerator Initialize()
     {
@@ -21,8 +22,9 @@ public class EnemyManager : UnitManager {
         for (int i = units.Count - 1; i >= 0; i--) 
         {
             EnemyUnit enemy = units[i] as EnemyUnit;
-            yield return StartCoroutine(CalculateAction(enemy));
-            
+            ongoingTurn = StartCoroutine(CalculateAction(enemy));
+            yield return ongoingTurn;
+
             // for (int e = 1; e <= enemy.maxEnergy; e++) 
             // {
             //     yield return new WaitForSecondsRealtime(0.05f);
@@ -30,6 +32,13 @@ public class EnemyManager : UnitManager {
             // }
         }
         EndTurn();
+    }
+
+    public void EndTurnEarly() {
+        if (ongoingTurn != null) {
+            StopCoroutine(ongoingTurn);
+            ongoingTurn = null;
+        }
     }
 
     public IEnumerator CalculateAction(EnemyUnit input) {

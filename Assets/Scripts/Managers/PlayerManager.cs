@@ -212,8 +212,8 @@ public class PlayerManager : UnitManager {
     protected override void RemoveUnit(GridElement ge)
     {
         base.RemoveUnit(ge);
-        if (units.Count <= 0) {
-            scenario.Lose();            
+        if (units.Count <= 1) {
+            StartCoroutine(scenario.Lose());            
         }
     }
 

@@ -90,7 +90,7 @@ public class ScenarioManager : MonoBehaviour
                 }
             break;
             case Turn.Enemy:
-                if (player.units.Count > 2) {
+                if (player.units.Count >= 2) {
                     turnCount++;
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN"));
                     if (turnsToDescend - turnCount > 0)
@@ -101,9 +101,7 @@ public class ScenarioManager : MonoBehaviour
                     endTurnButton.enabled = true;
                     player.StartEndTurn(true);
                 } else {
-                    yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER LOSES"));
-                    yield return new WaitForSecondsRealtime(1.5f);
-                    SceneManager.LoadScene(resetSceneString);
+                    yield return StartCoroutine(Lose());
                 }
             break;
             case Turn.Descent:
@@ -129,8 +127,12 @@ public class ScenarioManager : MonoBehaviour
         SceneManager.LoadScene(resetSceneString);
     }
 
-    public void Lose() 
+    public IEnumerator Lose() 
     {
-
+        if (currentTurn == Turn.Enemy)
+            currentEnemy.EndTurnEarly();
+        yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER LOSES"));
+        yield return new WaitForSecondsRealtime(1.5f);
+        SceneManager.LoadScene(resetSceneString);
     }
 }
