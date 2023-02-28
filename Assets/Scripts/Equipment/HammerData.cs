@@ -48,11 +48,8 @@ public class HammerData : EquipmentData
     {
         yield return base.UseEquipment(user, target);
         switch (action) {
-            case Action.Lob:
-                yield return user.StartCoroutine(LobHammer((PlayerUnit)user, (PlayerUnit)target));
-            break;
             case Action.Strike:
-                yield return user.StartCoroutine(StrikeNail((PlayerUnit)user, target));
+                yield return user.StartCoroutine(ThrowHammer((PlayerUnit)user, target));
             break;
         }
     }
@@ -62,36 +59,7 @@ public class HammerData : EquipmentData
         base.EquipEquipment(user);
     }
 
-    public IEnumerator LobHammer(PlayerUnit passer, PlayerUnit passTo) {
-
-        PlayerManager manager = (PlayerManager)passer.manager;
-        manager.ChargeHammer(1);
-        if (passTo.gfx[0].sortingOrder > passer.gfx[0].sortingOrder)
-            hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;
-        float timer = 0;
-        AudioManager.PlaySound(AudioAtlas.Sound.hammerPass, passer.transform.position);
-        while (timer < animDur) {
-            hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(passTo.coord), timer/animDur);
-            yield return null;
-            timer += Time.deltaTime;
-        }
-
-        for (int i = passer.equipment.Count - 1; i >= 0; i--) {
-            if (passer.equipment[i] is HammerData) {
-                passTo.equipment.Add(passer.equipment[i]);
-
-                passer.equipment.Remove(passer.equipment[i]);
-            }
-        }
-        passer.gfx.Remove(hammer.GetComponentInChildren<SpriteRenderer>());
-        hammer.transform.parent = passTo.transform;
-        passTo.gfx.Add(hammer.GetComponentInChildren<SpriteRenderer>());
-
-        passTo.canvas.UpdateEquipmentDisplay();
-        passer.canvas.UpdateEquipmentDisplay();
-    }
-
-    public IEnumerator StrikeNail(PlayerUnit user, GridElement target) {
+    public IEnumerator ThrowHammer(PlayerUnit user, GridElement target) {
         
         PlayerManager manager = (PlayerManager)user.manager;
         if (target.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
@@ -105,18 +73,18 @@ public class HammerData : EquipmentData
             yield return null;
             timer += Time.deltaTime;
         }
-        if (target is PlayerUnit passTo) {
-            PassHammer((PlayerUnit)user, passTo);
+        if (target is PlayerUnit pu) {
+            PassHammer((PlayerUnit)user, pu);
         } else {
             AudioManager.PlaySound(AudioAtlas.Sound.attackStrike, user.transform.position);
 // Attack target if unit
             if (target is EnemyUnit) {
-                target.StartCoroutine(target.TakeDamage(manager.hammerCharge));
+                target.StartCoroutine(target.TakeDamage(3));
                 manager.hammerCharge = 0;
             }
             manager.ChargeHammer(1);
 // Assign a random unit to pass the hammer to
-            passTo = (PlayerUnit)manager.units[Random.Range(0, manager.units.Count - 1)];
+            PlayerUnit passTo = (PlayerUnit)manager.units[Random.Range(0, manager.units.Count - 1)];
             if (passTo.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
                 hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;    
 // Lerp hammer to random unit
