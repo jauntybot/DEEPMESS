@@ -50,19 +50,19 @@ public class UnitManager : MonoBehaviour {
     }
 
 // Inherited functionality dependent on inherited classes
-    public virtual void SelectUnit(Unit t) {
+    public virtual void SelectUnit(Unit u) {
         if (selectedUnit) {
             DeselectUnit();
         }
 
-        t.TargetElement(true);
-        selectedUnit = t;
-        t.selected = true;
+        selectedUnit = u;
+        u.TargetElement(true);
+        u.selected = true;
 
-        currentGrid.DisplayGridCursor(true, t.coord);
-        AudioManager.PlaySound(AudioAtlas.Sound.selectionUnit, t.gameObject.transform.position);
+        scenario.UpdateUnitUI(u);
 
-
+        currentGrid.DisplayGridCursor(true, u.coord);
+        AudioManager.PlaySound(AudioAtlas.Sound.selectionUnit, u.gameObject.transform.position);
     }
     public virtual void DeselectUnit() {
 // Untarget every unit

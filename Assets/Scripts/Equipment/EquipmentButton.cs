@@ -18,7 +18,7 @@ public class EquipmentButton : MonoBehaviour
         PlayerUnit unit = (PlayerUnit)ge;
         EquipmentSelected += unit.UpdateAction;
         bg = GetComponent<Image>();
-        if (d is MoveData) bg.color = FloorManager.instance.moveColor;
+        if (d is MoveData || d is PlacementData) bg.color = FloorManager.instance.moveColor;
         if (d is AttackData) bg.color = FloorManager.instance.attackColor;
         if (d is HammerData) bg.color = FloorManager.instance.hammerColor;
         bg.color = new Color(bg.color.r, bg.color.g, bg.color.b, 255);

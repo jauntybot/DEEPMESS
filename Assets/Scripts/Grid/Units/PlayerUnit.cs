@@ -31,7 +31,7 @@ public class PlayerUnit : Unit {
         base.TargetElement(state);
         PlayerUnitCanvas canvas = (PlayerUnitCanvas)elementCanvas;
         canvas.ToggleEquipmentDisplay(state);
-        if (energyCurrent == 0) canvas.ToggleEquipmentDisplay(false);
+        if (energyCurrent == 0 || manager.selectedUnit != this) canvas.ToggleEquipmentDisplay(false);
     }
 
     public override IEnumerator DestroyElement() {

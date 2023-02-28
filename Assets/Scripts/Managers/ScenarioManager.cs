@@ -135,4 +135,8 @@ public class ScenarioManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(1.5f);
         SceneManager.LoadScene(resetSceneString);
     }
+
+    public void UpdateUnitUI() {
+        
+    }
 }

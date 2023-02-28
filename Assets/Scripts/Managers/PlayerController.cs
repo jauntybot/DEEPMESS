@@ -30,6 +30,15 @@ public class PlayerController : MonoBehaviour {
                     }
                 }
             }
+
+            if (Input.GetKeyDown(KeyCode.Tab)) {
+            
+                manager.DisplayAllHP(true);
+            
+            } 
+            if (Input.GetKeyUp(KeyCode.Tab)) {
+                manager.DisplayAllHP(false);
+            }
         }
     }
 

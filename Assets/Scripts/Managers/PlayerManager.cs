@@ -231,4 +231,11 @@ public class PlayerManager : UnitManager {
         hammerCharge = 0;
         chargeDisplay.UpdateCharges(hammerCharge);
     }
+
+    public void DisplayAllHP(bool active) {
+        foreach (Unit u in units) 
+            u.TargetElement(active);
+        foreach(Unit u in scenario.currentEnemy.units)
+            u.TargetElement(active);
+    }
 }
