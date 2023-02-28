@@ -52,7 +52,7 @@ public class HammerData : EquipmentData
                 yield return user.StartCoroutine(LobHammer((PlayerUnit)user, (PlayerUnit)target));
             break;
             case Action.Strike:
-                yield return user.StartCoroutine(StrikeNail((PlayerUnit)user));
+                yield return user.StartCoroutine(StrikeNail((PlayerUnit)user, target));
             break;
         }
     }
@@ -91,22 +91,27 @@ public class HammerData : EquipmentData
         passer.canvas.UpdateEquipmentDisplay();
     }
 
-    public IEnumerator StrikeNail(PlayerUnit user) {
+    public IEnumerator StrikeNail(PlayerUnit user, GridElement target) {
         
         PlayerManager manager = (PlayerManager)user.manager;
-        manager.ChargeHammer(1);
-        if (nail.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
-            hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = nail.gfx[0].sortingOrder;
+        if (target.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
+            hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = target.gfx[0].sortingOrder;
         AudioManager.PlaySound(AudioAtlas.Sound.hammerPass, user.transform.position);
     
-// Lerp hammer to nail
+// Lerp hammer to target
         float timer = 0;
         while (timer < animDur / 2) {
-            hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(nail.coord), timer/animDur);
+            hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(target.coord), timer/animDur);
             yield return null;
             timer += Time.deltaTime;
         }
         AudioManager.PlaySound(AudioAtlas.Sound.attackStrike, user.transform.position);
+// Attack target if unit
+        if (target is EnemyUnit) {
+            target.StartCoroutine(target.TakeDamage(manager.hammerCharge));
+            manager.hammerCharge = 0;
+        }
+        manager.ChargeHammer(1);
 // Assign a random unit to pass the hammer to
         PlayerUnit passTo = (PlayerUnit)manager.units[Random.Range(0, manager.units.Count - 1)];
         if (passTo.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
@@ -133,7 +138,8 @@ public class HammerData : EquipmentData
         passTo.canvas.UpdateEquipmentDisplay();
         user.canvas.UpdateEquipmentDisplay();
 
-        manager.TriggerDescent();
+        if (target is Nail)
+            manager.TriggerDescent();
     }
 
 }

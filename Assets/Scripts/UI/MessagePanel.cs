@@ -14,7 +14,7 @@ public class MessagePanel : MonoBehaviour
         panel.SetActive(true);
         messageText.text = message;
         while (panel.activeSelf) {
-            yield return null;
+            yield return null; 
         }
     }
 

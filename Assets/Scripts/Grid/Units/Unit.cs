@@ -49,12 +49,13 @@ public class Unit : GridElement {
 
 #endregion
 
-// The basics of being a unit; movement, HP, attacking
+
 #region Unit Functionality
     
     public virtual IEnumerator CollideFromAbove(Vector2 moveTo) {
         yield return null;
         UpdateElement(moveTo);
+        StartCoroutine(TakeDamage(1));
 
         // yield return new WaitForSecondsRealtime(1);
         // float timer = 0;
