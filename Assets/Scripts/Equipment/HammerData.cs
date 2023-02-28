@@ -105,41 +105,48 @@ public class HammerData : EquipmentData
             yield return null;
             timer += Time.deltaTime;
         }
-        AudioManager.PlaySound(AudioAtlas.Sound.attackStrike, user.transform.position);
+        if (target is PlayerUnit passTo) {
+            PassHammer((PlayerUnit)user, passTo);
+        } else {
+            AudioManager.PlaySound(AudioAtlas.Sound.attackStrike, user.transform.position);
 // Attack target if unit
-        if (target is EnemyUnit) {
-            target.StartCoroutine(target.TakeDamage(manager.hammerCharge));
-            manager.hammerCharge = 0;
-        }
-        manager.ChargeHammer(1);
-// Assign a random unit to pass the hammer to
-        PlayerUnit passTo = (PlayerUnit)manager.units[Random.Range(0, manager.units.Count - 1)];
-        if (passTo.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
-            hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;    
-// Lerp hammer to random unit
-        timer = 0;
-        while (timer < animDur) {
-            hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(passTo.coord), timer/animDur);
-            yield return null;
-            timer += Time.deltaTime;
-        }
-    
-        for (int i = user.equipment.Count - 1; i >= 0; i--) {
-            if (user.equipment[i] is HammerData) {
-                passTo.equipment.Add(user.equipment[i]);
-
-                user.equipment.Remove(user.equipment[i]);
+            if (target is EnemyUnit) {
+                target.StartCoroutine(target.TakeDamage(manager.hammerCharge));
+                manager.hammerCharge = 0;
             }
+            manager.ChargeHammer(1);
+// Assign a random unit to pass the hammer to
+            passTo = (PlayerUnit)manager.units[Random.Range(0, manager.units.Count - 1)];
+            if (passTo.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
+                hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;    
+// Lerp hammer to random unit
+            timer = 0;
+            while (timer < animDur) {
+                hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(passTo.coord), timer/animDur);
+                yield return null;
+                timer += Time.deltaTime;
+            }
+        
+            PassHammer((PlayerUnit)user, passTo);
+
+            if (target is Nail)
+                manager.TriggerDescent();
         }
-        user.gfx.Remove(hammer.GetComponentInChildren<SpriteRenderer>());
-        hammer.transform.parent = passTo.transform;
-        passTo.gfx.Add(hammer.GetComponentInChildren<SpriteRenderer>());
-
-        passTo.canvas.UpdateEquipmentDisplay();
-        user.canvas.UpdateEquipmentDisplay();
-
-        if (target is Nail)
-            manager.TriggerDescent();
     }
 
+    public void PassHammer(PlayerUnit sender, PlayerUnit reciever) {
+        for (int i = sender.equipment.Count - 1; i >= 0; i--) {
+                if (sender.equipment[i] is HammerData) {
+                    reciever.equipment.Add(sender.equipment[i]);
+
+                    sender.equipment.Remove(sender.equipment[i]);
+                }
+            }
+            sender.gfx.Remove(hammer.GetComponentInChildren<SpriteRenderer>());
+            hammer.transform.parent = reciever.transform;
+            reciever.gfx.Add(hammer.GetComponentInChildren<SpriteRenderer>());
+
+            reciever.canvas.UpdateEquipmentDisplay();
+            sender.canvas.UpdateEquipmentDisplay();
+    }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Nail : PlayerUnit
+public class Nail : Unit
 {
 
     FloorManager floorManager;
