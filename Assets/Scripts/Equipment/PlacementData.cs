@@ -28,9 +28,10 @@ public class PlacementData : EquipmentData
         Unit placed = Instantiate(prefab, pu.manager.transform).GetComponent<Unit>();
         placed.StoreInGrid(pu.grid);
         placed.UpdateElement(pu.coord);
-
+        
         pu.manager.units.Add(placed);
         placed.manager = pu.manager;
+        placed.manager.SubscribeElement(placed);
         placed.selectable = true;
 
         count--;

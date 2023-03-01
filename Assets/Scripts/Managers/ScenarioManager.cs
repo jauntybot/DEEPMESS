@@ -44,7 +44,7 @@ public class ScenarioManager : MonoBehaviour
         {
             floorManager = FloorManager.instance;
             
-            yield return StartCoroutine(floorManager.GenerateFloor(true)); 
+            yield return StartCoroutine(floorManager.GenerateFloor()); 
             currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
             player.transform.parent = floorManager.currentFloor.transform;
         }
@@ -54,7 +54,7 @@ public class ScenarioManager : MonoBehaviour
         yield return new WaitForSeconds(.75f);
         yield return StartCoroutine(floorManager.TransitionFloors(floorManager.currentFloor.gameObject));
 
-        if (floorManager) yield return StartCoroutine(floorManager.GenerateFloor(true));
+        if (floorManager) yield return StartCoroutine(floorManager.GenerateFloor());
 
         yield return new WaitForSeconds(0.75f);
         StartCoroutine(floorManager.PreviewFloor(false, false));

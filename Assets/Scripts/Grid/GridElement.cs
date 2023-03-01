@@ -92,7 +92,7 @@ public class GridElement : MonoBehaviour{
         
         if (elementCanvas) {
             elementCanvas.UpdateStatsDisplay();
-            yield return StartCoroutine(elementCanvas.DisplayDamageNumber(dmg));
+            StartCoroutine(elementCanvas.DisplayDamageNumber(dmg));
         }
         yield return new WaitForSecondsRealtime(.25f);
         TargetElement(false);
@@ -120,8 +120,7 @@ public class GridElement : MonoBehaviour{
 
     public virtual IEnumerator CollideFromBelow(GridElement above) {
         
-        StartCoroutine(TakeDamage(hpCurrent));
-        yield return null;
+        yield return StartCoroutine(TakeDamage(hpCurrent));
     }
     
 }
