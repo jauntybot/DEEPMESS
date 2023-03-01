@@ -5,17 +5,17 @@ using UnityEngine;
 public class Unit : GridElement {
 
 
-    public enum Owner { Player, Enemy }
-
     [Header("Unit")]
     public UnitManager manager;
-    public Owner owner; // Depreciate in favor of manager ^
     public bool selected;
-    public List<EquipmentData> equipment;
     public EquipmentData selectedEquipment;
+    public List<EquipmentData> equipment;
 
     public List<Vector2> validActionCoords;
 
+    [Header("UI/UX")]
+    public UnitUI ui;
+    public Sprite portrait;
     [SerializeField] float animDur = 1f;
 
 

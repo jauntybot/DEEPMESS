@@ -5,14 +5,7 @@ using UnityEngine;
 // Inherited Unit; unit functionality dependent on player input
 
 public class PlayerUnit : Unit {
-
-    [HideInInspector] public PlayerUnitCanvas canvas;
     
-    protected override void Start() {
-        base.Start();
-        canvas = (PlayerUnitCanvas)elementCanvas;
-    }
-
 // Called when an action is applied to a unit or to clear it's actions
     public override void UpdateAction(EquipmentData equipment = null) 
     {
@@ -29,9 +22,8 @@ public class PlayerUnit : Unit {
     public override void TargetElement(bool state)
     {
         base.TargetElement(state);
-        PlayerUnitCanvas canvas = (PlayerUnitCanvas)elementCanvas;
-        canvas.ToggleEquipmentDisplay(state);
-        if (energyCurrent == 0 || manager.selectedUnit != this) canvas.ToggleEquipmentDisplay(false);
+        ui.ToggleEquipmentPanel(state);
+        if (energyCurrent == 0 || manager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
     }
 
     public override IEnumerator DestroyElement() {

@@ -52,9 +52,10 @@ public class EnemyManager : UnitManager {
                 currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
                 yield return new WaitForSecondsRealtime(0.5f);
                 Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, target));
-                DeselectUnit();
+                currentGrid.DisplayGridCursor(true, Vector2.one * -32);
                 currentGrid.DisableGridHighlight();
                 yield return co;
+                DeselectUnit();
                 yield break;
             }
         }
@@ -66,9 +67,10 @@ public class EnemyManager : UnitManager {
             currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
             yield return new WaitForSecondsRealtime(0.5f);
             Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, currentGrid.sqrs.Find(sqr => sqr.coord == targetCoord)));
-            DeselectUnit();
+            currentGrid.DisplayGridCursor(true, Vector2.one * -32);
             currentGrid.DisableGridHighlight();
             yield return co;
+            DeselectUnit();
         }
 
 // Second attack scan
@@ -81,14 +83,14 @@ public class EnemyManager : UnitManager {
                 currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
                 yield return new WaitForSecondsRealtime(0.5f);
                 Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, target));
-                DeselectUnit();
+                currentGrid.DisplayGridCursor(true, Vector2.one * -32);
                 currentGrid.DisableGridHighlight();
                 yield return co;            
-                yield return new WaitForSecondsRealtime(1);
+                DeselectUnit();
             }
         }
         currentGrid.DisableGridHighlight();
-
+        yield return new WaitForSecondsRealtime(1.25f);
     }
 
     public void EndTurn() {

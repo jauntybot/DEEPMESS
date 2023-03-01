@@ -136,7 +136,7 @@ public class ScenarioManager : MonoBehaviour
         SceneManager.LoadScene(resetSceneString);
     }
 
-    public void UpdateUnitUI() {
+    public void UpdateUnitUI(Unit u) {
         
     }
 }

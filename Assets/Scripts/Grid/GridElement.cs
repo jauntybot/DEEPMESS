@@ -11,6 +11,7 @@ public class GridElement : MonoBehaviour{
     public Grid grid;
 
     [Header("Grid Element")]
+    new public string name;
     public Vector2 coord;
     public bool selectable, targeted;
     public PolygonCollider2D hitbox;

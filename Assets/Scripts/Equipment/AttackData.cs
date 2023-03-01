@@ -13,7 +13,7 @@ public class AttackData : EquipmentData
     public override List<Vector2> TargetEquipment(GridElement user) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, this, targetTypes);
         user.grid.DisplayValidCoords(validCoords, gridColor);
-        if (user is PlayerUnit pu) pu.canvas.ToggleEquipmentDisplay(false);
+        if (user is PlayerUnit pu) pu.ui.ToggleEquipmentPanel(false);
         for (int i = validCoords.Count - 1; i >= 0; i--) {
             if (FloorManager.instance.currentFloor.CoordContents(validCoords[i]) is GridElement ge) {
                 bool remove = true;

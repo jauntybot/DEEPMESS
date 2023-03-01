@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 // Custom data class, stores card type enum, sprite, and other things to come
 
@@ -10,7 +9,7 @@ using UnityEngine.UI;
 public class EquipmentData : ScriptableObject {
 
     new public string name;
-    public Image icon;
+    public Sprite icon;
     public int gridColor;
     public int energyCost;
     public AdjacencyType adjacency;
@@ -28,7 +27,7 @@ public class EquipmentData : ScriptableObject {
     public virtual List<Vector2> TargetEquipment(GridElement user) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, this);
         user.grid.DisplayValidCoords(validCoords, gridColor);
-        if (user is PlayerUnit u) u.canvas.ToggleEquipmentDisplay(false);
+        if (user is PlayerUnit u) u.ui.ToggleEquipmentPanel(false);
         return validCoords;
     }
 

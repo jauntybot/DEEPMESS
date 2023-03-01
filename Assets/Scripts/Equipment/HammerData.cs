@@ -19,29 +19,24 @@ public class HammerData : EquipmentData
     }
     
     public override List<Vector2> TargetEquipment(GridElement user) {
-        switch (action) {
-            default:
-                return base.TargetEquipment(user);
-            case Action.Lob:
-                return base.TargetEquipment(user);
-            case Action.Strike:
-                List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, this, targetTypes);
-                user.grid.DisplayValidCoords(validCoords, gridColor);
-                if (user is PlayerUnit pu) pu.canvas.ToggleEquipmentDisplay(false);
-                for (int i = validCoords.Count - 1; i >= 0; i--) {
-                    if (FloorManager.instance.currentFloor.CoordContents(validCoords[i]) is GridElement ge) {
-                        bool remove = true;
-                        foreach(GridElement target in targetTypes) {
-                            if (ge.GetType() == target.GetType())
-                                remove = false;
-                        }
-                        if (remove) 
-                            validCoords.Remove(validCoords[i]);
-                    } else 
-                        validCoords.Remove(validCoords[i]);
+
+        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, this, targetTypes);
+        user.grid.DisplayValidCoords(validCoords, gridColor);
+        if (user is PlayerUnit pu) pu.ui.ToggleEquipmentPanel(false);
+        for (int i = validCoords.Count - 1; i >= 0; i--) {
+            if (FloorManager.instance.currentFloor.CoordContents(validCoords[i]) is GridElement ge) {
+                bool remove = true;
+                foreach(GridElement target in targetTypes) {
+                    if (ge.GetType() == target.GetType())
+                        remove = false;
                 }
-            return validCoords;
+                if (remove) 
+                    validCoords.Remove(validCoords[i]);
+            } else 
+                validCoords.Remove(validCoords[i]);
         }
+        return validCoords;
+        
     }
 
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
@@ -84,7 +79,8 @@ public class HammerData : EquipmentData
             }
             manager.ChargeHammer(1);
 // Assign a random unit to pass the hammer to
-            PlayerUnit passTo = (PlayerUnit)manager.units[Random.Range(0, manager.units.Count - 1)];
+            Unit passTo = manager.units[Random.Range(0, manager.units.Count - 1)];
+            while (passTo is not PlayerUnit) passTo = manager.units[Random.Range(0, manager.units.Count - 1)];
             if (passTo.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
                 hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;    
 // Lerp hammer to random unit
@@ -95,7 +91,7 @@ public class HammerData : EquipmentData
                 timer += Time.deltaTime;
             }
         
-            PassHammer((PlayerUnit)user, passTo);
+            PassHammer((PlayerUnit)user, (PlayerUnit)passTo);
 
             if (target is Nail)
                 manager.TriggerDescent();
@@ -114,7 +110,7 @@ public class HammerData : EquipmentData
             hammer.transform.parent = reciever.transform;
             reciever.gfx.Add(hammer.GetComponentInChildren<SpriteRenderer>());
 
-            reciever.canvas.UpdateEquipmentDisplay();
-            sender.canvas.UpdateEquipmentDisplay();
+            reciever.ui.UpdateEquipmentButtons();
+            sender.ui.UpdateEquipmentButtons();
     }
 }

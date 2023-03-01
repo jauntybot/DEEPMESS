@@ -15,10 +15,10 @@ public class UnitManager : MonoBehaviour {
     [Header("UNIT MANAGER")]
 // Unit vars
     [SerializeField] GameObject[] unitPrefabs;
+    public List<Vector2> startingCoords;
     [SerializeField] protected GameObject unitParent;
     public List<Unit> units = new List<Unit>();    
     public Unit selectedUnit;
-    public List<Vector2> startingCoords;
 
 
 // Called from scenario manager when game starts
@@ -46,6 +46,8 @@ public class UnitManager : MonoBehaviour {
         SubscribeElement(u);
         u.manager = this;
 
+        UIManager.instance.UpdatePortrait(u, false);
+
         return u;
     }
 
@@ -59,7 +61,7 @@ public class UnitManager : MonoBehaviour {
         u.TargetElement(true);
         u.selected = true;
 
-        scenario.UpdateUnitUI(u);
+        UIManager.instance.UpdatePortrait(u);
 
         currentGrid.DisplayGridCursor(true, u.coord);
         AudioManager.PlaySound(AudioAtlas.Sound.selectionUnit, u.gameObject.transform.position);
@@ -68,10 +70,12 @@ public class UnitManager : MonoBehaviour {
 // Untarget every unit
         foreach(GridElement ge in currentGrid.gridElements) 
             ge.TargetElement(false);
-            
+        
+
         if (selectedUnit) {
+
+            UIManager.instance.UpdatePortrait(selectedUnit, false);
 // Clear action data
-            
             selectedUnit.TargetElement(false);
 
             selectedUnit.selectedEquipment = null;

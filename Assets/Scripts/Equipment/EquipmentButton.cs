@@ -11,6 +11,9 @@ public class EquipmentButton : MonoBehaviour
     Image bg;
     public delegate void OnEquipmentUpdate(EquipmentData equipment);
     public event OnEquipmentUpdate EquipmentSelected;
+    [Header("Badge Count")]
+    [SerializeField] GameObject badge;
+    [SerializeField] TMPro.TMP_Text badgeNumber;
 
     public void Initialize(EquipmentData d, GridElement ge) {
         data = d;
@@ -18,13 +21,15 @@ public class EquipmentButton : MonoBehaviour
         PlayerUnit unit = (PlayerUnit)ge;
         EquipmentSelected += unit.UpdateAction;
         bg = GetComponent<Image>();
-        if (d is MoveData || d is PlacementData) bg.color = FloorManager.instance.moveColor;
-        if (d is AttackData) bg.color = FloorManager.instance.attackColor;
-        if (d is HammerData) bg.color = FloorManager.instance.hammerColor;
-        bg.color = new Color(bg.color.r, bg.color.g, bg.color.b, 255);
+        bg.sprite = data.icon;
+        badge.SetActive(d is PlacementData);
     }
 
     public void SelectEquipment() {
         EquipmentSelected?.Invoke(data);
+    }
+
+    public void UpdateBadge(int num) {
+        badgeNumber.text = num.ToString();
     }
 }

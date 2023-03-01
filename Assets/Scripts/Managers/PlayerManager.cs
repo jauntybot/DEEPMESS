@@ -19,7 +19,10 @@ public class PlayerManager : UnitManager {
     public int hammerCharge, descentChargeReq;
     [SerializeField] HammerChargeDisplay chargeDisplay;
     public List<EquipmentData> hammerActions;
+    [SerializeField] PlacementData sharedMines;
+
     [SerializeField] public GameObject nailPrefab, hammerPrefab, hammerPickupPrefab;
+
 
     #region Singleton (and Awake)
     public static PlayerManager instance;
@@ -37,6 +40,8 @@ public class PlayerManager : UnitManager {
         hammerCharge = 0;
         chargeDisplay.UpdateCharges(hammerCharge);
 
+        sharedMines.count = 15;
+        
         yield return base.Initialize();
 
         nail = (Nail)SpawnUnit(Vector2.zero, nailPrefab.GetComponent<Nail>());
@@ -59,7 +64,7 @@ public class PlayerManager : UnitManager {
             action.EquipEquipment(unit);
             action.AssignHammer(h, nail);
         }
-        unit.canvas.UpdateEquipmentDisplay();
+        unit.ui.UpdateEquipmentButtons();
     }
 
 // Initializes or closes functions for turn start/end
@@ -84,11 +89,12 @@ public class PlayerManager : UnitManager {
 // Overriden functionality
     public override Unit SpawnUnit(Vector2 coord, Unit unit) {
         Unit u = base.SpawnUnit(coord, unit);
-        u.owner = Unit.Owner.Player;
+
 // Initialize equipment from prefab
         foreach(EquipmentData e in u.equipment) {
             e.EquipEquipment(u);
         }
+
         return u;
     }
 
@@ -140,7 +146,7 @@ public class PlayerManager : UnitManager {
         if (input is Unit u) 
         {
 // Player clicks on their own unit
-            if (u.owner == Unit.Owner.Player) 
+            if (u.manager is PlayerManager) 
             {
                 if (selectedUnit) {
                     if (u == selectedUnit) 
@@ -158,7 +164,7 @@ public class PlayerManager : UnitManager {
                     SelectUnit(u);
             }
 // Player clicks on enemy unit
-            else if (u.owner == Unit.Owner.Enemy) 
+            else if (u.manager is EnemyManager) 
             {
                 if (selectedUnit) 
                 {
@@ -206,7 +212,7 @@ public class PlayerManager : UnitManager {
     public override void SelectUnit(Unit t)
     {
         base.SelectUnit(t);
-
+        if (t.energyCurrent > 0) t.ui.ToggleEquipmentPanel(true);
     }
 
     protected override void RemoveUnit(GridElement ge)

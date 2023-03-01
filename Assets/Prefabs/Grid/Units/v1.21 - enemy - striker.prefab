@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
+  name: Monophic
   coord: {x: 0, y: 0}
   selectable: 0
   targeted: 0
@@ -62,13 +63,14 @@ MonoBehaviour:
   energyMax: 2
   destroyed: 7
   manager: {fileID: 0}
-  owner: 1
   selected: 0
+  selectedEquipment: {fileID: 0}
   equipment:
   - {fileID: 11400000, guid: 6c2566a89d99f1f459d7a13abb0c056e, type: 2}
   - {fileID: 11400000, guid: f85cae2dd5b03d141b7b1679989bbdb7, type: 2}
-  selectedEquipment: {fileID: 0}
   validActionCoords: []
+  ui: {fileID: 0}
+  portrait: {fileID: 21300000, guid: 913542cc5df9bcf48a1a637e440cf27c, type: 3}
   animDur: 1
   pathfinding: 0
   closestTkn: {fileID: 0}

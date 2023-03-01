@@ -10,6 +10,7 @@ public class PlacementData : EquipmentData
     [Header("Placement Equipment")]
     public PlacementType placementType;
     [SerializeField] GameObject prefab;
+    public int count;
 
 
     public override List<Vector2> TargetEquipment(GridElement user)
@@ -32,6 +33,11 @@ public class PlacementData : EquipmentData
         placed.manager = pu.manager;
         placed.selectable = true;
 
+        count--;
+        foreach (Unit u in pu.manager.units) {
+            if (u is PlayerUnit _pu)
+                _pu.ui.UpdateEquipmentButtons();
+        }
         yield return user.StartCoroutine(MoveToCoord(pu, target.coord));
     }
 
