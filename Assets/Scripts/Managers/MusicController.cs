@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,9 +20,9 @@ public class MusicController : MonoBehaviour
     {
         musicAudioSource = GetComponent<AudioSource>();
 
-        trackIndex = 0;
-        musicAudioSource.clip = audioTracks[trackIndex].trackAudioClip;
-        trackTextUI.text = audioTracks[trackIndex].name;
+
+        trackIndex = Random.Range(0, audioTracks.Length - 1);
+        UpdateTrack(trackIndex);
     }
 
     public void PlayAudio()
@@ -45,9 +44,12 @@ public class MusicController : MonoBehaviour
     {
         if (trackIndex >= 1)
         {
-            trackIndex--;
-            UpdateTrack(trackIndex);
+            trackIndex--;  
+        } else {
+            trackIndex = audioTracks.Length - 1;
         }
+    
+        UpdateTrack(trackIndex);
     }
 
     public void SkipForward()
@@ -55,8 +57,11 @@ public class MusicController : MonoBehaviour
         if (trackIndex < audioTracks.Length - 1)
         {
             trackIndex++;
-            UpdateTrack(trackIndex);
         }
+        else {
+            trackIndex = 0;
+        }
+        UpdateTrack(trackIndex);
     }
 
     void UpdateTrack(int index)
