@@ -111,7 +111,7 @@ public class EnemyManager : UnitManager {
 
             units[i].transform.parent = newGrid.enemy.transform;
             units[i].StoreInGrid(newGrid);
-
+            units[i].UpdateElement(units[i].coord);
             units.RemoveAt(i);
         }
         DestroyImmediate(this.gameObject);

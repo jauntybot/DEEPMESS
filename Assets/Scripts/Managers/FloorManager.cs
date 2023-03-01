@@ -132,7 +132,8 @@ public class FloorManager : MonoBehaviour
     }
 
     public void PreviewButton(bool down) {
-        StartCoroutine(PreviewFloor(down, true));
+        if (!transitioning)
+            StartCoroutine(PreviewFloor(down, true));
     }
 
     void SetButtonActive(GameObject button, bool state) {
@@ -168,13 +169,15 @@ public class FloorManager : MonoBehaviour
         scenario.player.nail.transform.parent = currentFloor.transform;
         scenario.currentEnemy.transform.parent = transitionParent;
 
+        Coroutine finalCoroutine = null;
+
         for (int i = fromFloor.gridElements.Count - 1; i >= 0; i--) {
             if (fromFloor.gridElements[i] is Unit u && fromFloor.gridElements[i] is not Nail) {
-                StartCoroutine(DropUnit(u, fromFloor.PosFromCoord(u.coord), toFloor.PosFromCoord(u.coord), toFloor.CoordContents(u.coord)));
+                finalCoroutine = StartCoroutine(DropUnit(u, fromFloor.PosFromCoord(u.coord), toFloor.PosFromCoord(u.coord), toFloor.CoordContents(u.coord)));
                 yield return new WaitForSeconds(0.1f);
             }
         }
-
+        yield return finalCoroutine;
 
     }
 
@@ -185,9 +188,12 @@ public class FloorManager : MonoBehaviour
             yield return null;
             timer += Time.deltaTime;
         }
+        unit.transform.position = to;
+
         if (subElement) {
             yield return StartCoroutine(subElement.CollideFromBelow(unit));
-            yield return StartCoroutine(unit.CollideFromAbove(unit.coord));
+            if (subElement is not LandingBuff)
+                yield return StartCoroutine(unit.CollideFromAbove());
         }
     }
 
@@ -242,23 +248,6 @@ public class FloorManager : MonoBehaviour
 
             StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
         }
-    }
-
-    public IEnumerator DescentCollisionSolver(Grid subFloor) {
-        List<GridElement> subElements = new List<GridElement>();
-
-        foreach (GridElement ge in floors[subFloor.index-1].gridElements) {
-            if (ge is Unit u) { // Replace with descends? bool
-                if (u is not Nail) {
-                    GridElement subGE = currentFloor.gridElements.Find(g => g.coord == u.coord);
-                    if (subGE) {
-                        StartCoroutine(u.CollideFromAbove(u.coord));
-                        StartCoroutine(subGE.CollideFromBelow(u));
-                    }
-                }     
-            }
-        }
-        yield return new WaitForSeconds(0.25f);
     }
 
 }

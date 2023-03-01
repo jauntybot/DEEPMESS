@@ -52,8 +52,8 @@ public class Unit : GridElement {
 
 #region Unit Functionality
     
-    public virtual IEnumerator CollideFromAbove(Vector2 moveTo) {
-        UpdateElement(moveTo);
+    public virtual IEnumerator CollideFromAbove() {
+
         yield return StartCoroutine(TakeDamage(1));
 
         // yield return new WaitForSecondsRealtime(1);

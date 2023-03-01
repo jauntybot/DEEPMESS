@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Mine : Unit
 {
-    public override IEnumerator CollideFromAbove(Vector2 moveTo) {
-        UpdateElement(moveTo);
+    public override IEnumerator CollideFromAbove() {
+
         yield return StartCoroutine(TakeDamage(hpCurrent));
 
     }
