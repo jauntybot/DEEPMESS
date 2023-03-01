@@ -94,10 +94,13 @@ public class ScenarioManager : MonoBehaviour
                 if (player.units.Count >= 2) {
                     turnCount++;
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN"));
-                    if (turnsToDescend - turnCount > 0)
-                        yield return StartCoroutine(messagePanel.DisplayMessage(turnsToDescend - turnCount + 1 + " TURNS UNTIL DESCENT"));
-                    else
-                        yield return StartCoroutine(messagePanel.DisplayMessage("FINAL TURN UNTIL DESCENT"));
+
+                    UIManager.instance.metaDisplay.UpdateTurnsToDescend(turnsToDescend - turnCount + 1);
+
+                    // if (turnsToDescend - turnCount > 0)
+                    //     yield return StartCoroutine(messagePanel.DisplayMessage(turnsToDescend - turnCount + 1 + " TURNS UNTIL DESCENT"));
+                    // else
+                    //     yield return StartCoroutine(messagePanel.DisplayMessage("FINAL TURN UNTIL DESCENT"));
                     currentTurn = Turn.Player;
                     endTurnButton.enabled = true;
                     player.StartEndTurn(true);
@@ -135,9 +138,5 @@ public class ScenarioManager : MonoBehaviour
         yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER LOSES"));
         yield return new WaitForSecondsRealtime(1.5f);
         SceneManager.LoadScene(resetSceneString);
-    }
-
-    public void UpdateUnitUI(Unit u) {
-        
     }
 }

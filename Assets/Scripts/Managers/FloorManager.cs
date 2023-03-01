@@ -161,6 +161,7 @@ public class FloorManager : MonoBehaviour
         floorParent.transform.position = to;
 
         if (toFloor) currentFloor = toFloor;
+        UIManager.instance.metaDisplay.UpdateCurrentFloor(currentFloor.index);
     }
 
     public IEnumerator DropUnits(Grid fromFloor, Grid toFloor) {

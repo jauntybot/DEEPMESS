@@ -24,7 +24,7 @@ public class EnemyManager : UnitManager {
             EnemyUnit enemy = units[i] as EnemyUnit;
             ongoingTurn = StartCoroutine(CalculateAction(enemy));
             yield return ongoingTurn;
-
+            yield return new WaitForSecondsRealtime(0.125f);
             // for (int e = 1; e <= enemy.maxEnergy; e++) 
             // {
             //     yield return new WaitForSecondsRealtime(0.05f);

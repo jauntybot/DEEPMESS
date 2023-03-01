@@ -28,6 +28,14 @@ public class MusicController : MonoBehaviour
     public void PlayAudio()
     {
         musicAudioSource.Play();
+        StartCoroutine(WaitToSkip());
+    }
+
+    private IEnumerator WaitToSkip() {
+        while (musicAudioSource.isPlaying) {
+            yield return null;
+        }
+        SkipForward();
     }
     
     public void PauseAudio()
