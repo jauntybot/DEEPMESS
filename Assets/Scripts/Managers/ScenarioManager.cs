@@ -36,6 +36,7 @@ public class ScenarioManager : MonoBehaviour
     public Turn currentTurn;
     public int turnCount, turnsToDescend;
 
+
 #region Initialization
     public IEnumerator Start() 
     {
