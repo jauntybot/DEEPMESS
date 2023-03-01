@@ -23,6 +23,8 @@ public class UnitUI : MonoBehaviour
         unit = u;
         unitName.text = u.name;
         portrait.sprite = u.portrait;
+        gfx.sprite = u.gfx[0].sprite;
+
         if (u is PlayerUnit) {
             UpdateEquipmentButtons();
             ToggleEquipmentPanel(false);

@@ -11,12 +11,14 @@ public class GridElement : MonoBehaviour{
     public Grid grid;
 
     [Header("Grid Element")]
-    new public string name;
     public Vector2 coord;
     public bool selectable, targeted;
     public PolygonCollider2D hitbox;
     public ElementCanvas elementCanvas;
+
+    [Header("UI/UX")]
     public List<SpriteRenderer> gfx;
+    new public string name;
 
 
     public delegate void OnElementUpdate(GridElement ge);
