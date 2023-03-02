@@ -12,6 +12,7 @@ public class Grid : MonoBehaviour {
     public int index = 0;
     public GameObject gridContainer, neutralGEContainer;
     [SerializeField] GameObject chessNotation;
+    private bool notation = false;
     public UnitManager enemy;
     [SerializeField] GameObject enemyPrefab;
 
@@ -85,8 +86,8 @@ public class Grid : MonoBehaviour {
         }
     }
 
-    public void ToggleChessNotation() {
-        chessNotation.SetActive(!chessNotation.activeSelf);
+    public void ToggleChessNotation(bool state) {
+        chessNotation.SetActive(state);
     }
 
     public void AddElement(GridElement ge) {

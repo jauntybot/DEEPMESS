@@ -80,12 +80,13 @@ public class ScenarioManager : MonoBehaviour
                 if (turnCount >= turnsToDescend) {
                     floorManager.Descend();
                 } else {
-                    floorManager.upButton.SetActive(false); floorManager.downButton.SetActive(false);
+                    floorManager.upButton.GetComponent<Button>().enabled = false; floorManager.downButton.GetComponent<Button>().enabled = false;
                     yield return StartCoroutine(messagePanel.DisplayMessage("ENEMY TURN"));
                     currentTurn = Turn.Enemy;
                     foreach(Unit u in currentEnemy.units) {
                         u.energyCurrent = u.energyMax;
                         u.elementCanvas.UpdateStatsDisplay();
+                        u.ui.UpdateEnergy();
                     }
                     endTurnButton.enabled = false;
                     StartCoroutine(currentEnemy.TakeTurn());
@@ -95,7 +96,7 @@ public class ScenarioManager : MonoBehaviour
                 if (player.units.Count >= 2) {
                     turnCount++;
 
-                    floorManager.upButton.SetActive(true); floorManager.downButton.SetActive(true);
+                    floorManager.upButton.GetComponent<Button>().enabled = true; floorManager.downButton.GetComponent<Button>().enabled = true;
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN"));
 
                     UIManager.instance.metaDisplay.UpdateTurnsToDescend(turnsToDescend - turnCount + 1);

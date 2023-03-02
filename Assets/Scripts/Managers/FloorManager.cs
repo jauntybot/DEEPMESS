@@ -24,6 +24,7 @@ public class FloorManager : MonoBehaviour
     [SerializeField] Transform transitionParent;
     public float floorOffset, transitionDur;
     private bool transitioning;
+    private bool notation = false;
     [SerializeField] private GameObject descentPreview;
     [SerializeField] private Dictionary<GridElement, LineRenderer> lineRenderers;
     [SerializeField] private Material previewMaterial;
@@ -57,6 +58,7 @@ public class FloorManager : MonoBehaviour
     
         Coroutine co = StartCoroutine(newFloor.GenerateGrid(index));
         yield return co;
+        newFloor.ToggleChessNotation(notation);
     
         newFloor.gameObject.name = "Floor" + newFloor.index;
         newFloor.transform.SetParent(floorParent);
@@ -137,8 +139,9 @@ public class FloorManager : MonoBehaviour
     }
 
     public void ChessNotationToggle() {
+        notation = !notation;
         foreach (Grid floor in floors)
-            floor.ToggleChessNotation();
+            floor.ToggleChessNotation(notation);
     }
 
     void SetButtonActive(GameObject button, bool state) {

@@ -23,6 +23,8 @@ public class PlayerManager : UnitManager {
 
     [SerializeField] public GameObject nailPrefab, hammerPrefab, hammerPickupPrefab;
 
+// Get rid of this reference somehow
+    [SerializeField] EndTurnBlinking turnBlink;
 
     #region Singleton (and Awake)
     public static PlayerManager instance;
@@ -80,6 +82,7 @@ public class PlayerManager : UnitManager {
             foreach(Unit u in units) {
                 u.energyCurrent = u.energyMax;
                 u.elementCanvas.UpdateStatsDisplay();
+                u.ui.UpdateEnergy();
             }
         } else {
             DeselectUnit();
@@ -214,6 +217,12 @@ public class PlayerManager : UnitManager {
     {
         base.SelectUnit(t);
         if (t.energyCurrent > 0) t.ui.ToggleEquipmentPanel(true);
+    }
+
+    public override void DeselectUnit()
+    {
+        base.DeselectUnit();
+        turnBlink.BlinkEndTurn();
     }
 
     protected override void RemoveUnit(GridElement ge)

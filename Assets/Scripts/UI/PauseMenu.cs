@@ -2,31 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Unity.UI;
+using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
-    [SerializeField] GameObject musicController;
-    AudioSource audioSource;
+    [SerializeField] MusicController music;
+    private float prevVol;
+    public Slider audioVolume;
 
-    void Start()
-    {
-        audioSource = musicController.GetComponent<AudioSource>();
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (gameObject.activeSelf){
-            //game is paused
-            audioSource.volume = .10f;
-        }
+
+    void OnEnable() {
+        music.AudioVolume(0.1f);
+        Time.timeScale = 0;
     }
 
     public void ResumeButton()
-    {
-        gameObject.SetActive(false);
-        audioSource.volume = 1f;
+    {   
+        Time.timeScale = 1;
+        music.AudioVolume(audioVolume.value);
+        
+        gameObject.SetActive(false);        
     }
 
     public void RestartButton()
