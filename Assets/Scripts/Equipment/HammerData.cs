@@ -27,8 +27,11 @@ public class HammerData : EquipmentData
             if (FloorManager.instance.currentFloor.CoordContents(validCoords[i]) is GridElement ge) {
                 bool remove = true;
                 foreach(GridElement target in targetTypes) {
-                    if (ge.GetType() == target.GetType())
+                    if (ge.GetType() == target.GetType()) {
                         remove = false;
+                        if (ge is EnemyUnit)
+                            ge.elementCanvas.ToggleStatsDisplay(true);
+                    }
                 }
                 if (remove) 
                     validCoords.Remove(validCoords[i]);

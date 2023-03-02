@@ -5,51 +5,14 @@ using TMPro;
 
 public class MetaDisplay : MonoBehaviour
 {
-    [SerializeField] ScenarioManager scenarioManager;
+    [SerializeField] TMPro.TMP_Text turnsLeftText;
+    [SerializeField] TMPro.TMP_Text floorNumberText;
 
-    private int turns;
-    private int maxTurns;
-    private int turnsLeft;
-    private int turnsLeftClamp;
-    public int currentFloorNum;
-    private List<Grid> floorNumber;
-
-    //UI text objects
-    public GameObject goTurnsLeft;
-    public GameObject goFloorNumber;
-
-    //Text componenets
-    TextMeshProUGUI turnsLeftText;
-    TextMeshProUGUI floorNumberText;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        maxTurns = scenarioManager.turnsToDescend;
-        turnsLeftText = goTurnsLeft.GetComponent<TextMeshProUGUI>();
-        floorNumberText = goFloorNumber.GetComponent<TextMeshProUGUI>();
+    public void UpdateTurnsToDescend(int turnsToDescend) {    
+        turnsLeftText.text = turnsToDescend.ToString();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        TurnsLeft();
-        FloorNumber();
-    }
-
-    //display how many turns player has left on floor
-    public void TurnsLeft()
-    {
-        turns = scenarioManager.turnCount;
-        turnsLeft = (maxTurns + 1) - turns;
-        turnsLeftClamp = Mathf.Clamp(turnsLeft, 0, maxTurns);
-        turnsLeftText.text = turnsLeftClamp.ToString();
-    }
-
-    //display what floor the player is currently on
-    public void FloorNumber()
-    {
-        currentFloorNum = scenarioManager.GetComponent<FloorManager>().currentFloor.index + 1;
-        floorNumberText.text = currentFloorNum.ToString();
+    public void UpdateCurrentFloor(int currentFloor) {
+        floorNumberText.text = currentFloor.ToString();
     }
 }

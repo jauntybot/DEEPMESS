@@ -231,6 +231,8 @@ public class PlayerManager : UnitManager {
         foreach(Unit unit in units) {
             currentGrid.RemoveElement(unit);
             unit.StoreInGrid(newGrid);
+            if (unit is not Nail)
+                unit.UpdateElement(unit.coord);
         }
         currentGrid = newGrid;
         transform.parent = newGrid.transform;

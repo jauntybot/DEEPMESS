@@ -44,7 +44,7 @@ public class ScenarioManager : MonoBehaviour
         {
             floorManager = FloorManager.instance;
             
-            yield return StartCoroutine(floorManager.GenerateFloor(true)); 
+            yield return StartCoroutine(floorManager.GenerateFloor()); 
             currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
             player.transform.parent = floorManager.currentFloor.transform;
         }
@@ -54,7 +54,7 @@ public class ScenarioManager : MonoBehaviour
         yield return new WaitForSeconds(.75f);
         yield return StartCoroutine(floorManager.TransitionFloors(floorManager.currentFloor.gameObject));
 
-        if (floorManager) yield return StartCoroutine(floorManager.GenerateFloor(true));
+        if (floorManager) yield return StartCoroutine(floorManager.GenerateFloor());
 
         yield return new WaitForSeconds(0.75f);
         StartCoroutine(floorManager.PreviewFloor(false, false));
@@ -94,10 +94,13 @@ public class ScenarioManager : MonoBehaviour
                 if (player.units.Count >= 2) {
                     turnCount++;
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN"));
-                    if (turnsToDescend - turnCount > 0)
-                        yield return StartCoroutine(messagePanel.DisplayMessage(turnsToDescend - turnCount + 1 + " TURNS UNTIL DESCENT"));
-                    else
-                        yield return StartCoroutine(messagePanel.DisplayMessage("FINAL TURN UNTIL DESCENT"));
+
+                    UIManager.instance.metaDisplay.UpdateTurnsToDescend(turnsToDescend - turnCount + 1);
+
+                    // if (turnsToDescend - turnCount > 0)
+                    //     yield return StartCoroutine(messagePanel.DisplayMessage(turnsToDescend - turnCount + 1 + " TURNS UNTIL DESCENT"));
+                    // else
+                    //     yield return StartCoroutine(messagePanel.DisplayMessage("FINAL TURN UNTIL DESCENT"));
                     currentTurn = Turn.Player;
                     endTurnButton.enabled = true;
                     player.StartEndTurn(true);
@@ -135,9 +138,5 @@ public class ScenarioManager : MonoBehaviour
         yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER LOSES"));
         yield return new WaitForSecondsRealtime(1.5f);
         SceneManager.LoadScene(resetSceneString);
-    }
-
-    public void UpdateUnitUI(Unit u) {
-        
     }
 }

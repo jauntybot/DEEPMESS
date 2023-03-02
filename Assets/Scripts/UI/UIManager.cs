@@ -5,6 +5,10 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     
+    [Header("Meta Data")]
+    public MetaDisplay metaDisplay;
+
+    [Header("Portraits")]
     [SerializeField] Transform portraitParent;
     [SerializeField] GameObject portraitPrefab;
     List<UnitUI> unitPortraits = new List<UnitUI>();
@@ -33,11 +37,6 @@ public class UIManager : MonoBehaviour
         ui.Initialize(u);
         unitPortraits.Add(ui);
         return ui;
-
-    }
-
-    public void UpdateFloorStats() {
-
 
     }
 

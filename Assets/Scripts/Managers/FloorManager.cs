@@ -13,6 +13,7 @@ public class FloorManager : MonoBehaviour
     [SerializeField] List<LevelDefinition> floorDefinitions;
 
     public Grid currentFloor;
+    [SerializeField] Transform floorParent;
     public List<Grid> floors;
 
     [SerializeField] int _gridSize;
@@ -46,11 +47,11 @@ public class FloorManager : MonoBehaviour
         lineRenderers = new Dictionary<GridElement, LineRenderer>();
     }
 
-    public IEnumerator GenerateFloor(bool topFloor) {
+    public IEnumerator GenerateFloor() {
         int index = floors.Count;
 
         Grid newFloor = Instantiate(floorPrefab, this.transform).GetComponent<Grid>();
-        if (topFloor) currentFloor = newFloor;
+        currentFloor = newFloor;
         LevelDefinition floorDef = floorDefinitions[index];
         newFloor.lvlDef = floorDef;
     
@@ -58,6 +59,7 @@ public class FloorManager : MonoBehaviour
         yield return co;
     
         newFloor.gameObject.name = "Floor" + newFloor.index;
+        newFloor.transform.parent = floorParent;
         floors.Add(newFloor);
 
     }
@@ -69,7 +71,7 @@ public class FloorManager : MonoBehaviour
             if (draw) {
                 SetButtonActive(downButton, false); SetButtonActive(upButton, true);
             }
-            yield return StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index+1].gameObject));
+            yield return StartCoroutine(TransitionFloors(down));
             transitioning = false;
         }
         else {
@@ -77,7 +79,7 @@ public class FloorManager : MonoBehaviour
             if (draw) {
                 SetButtonActive(downButton, true); SetButtonActive(upButton, false);
             }
-            yield return StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index-1].gameObject));
+            yield return StartCoroutine(TransitionFloors(down));
         
             transitioning = false;
         }
@@ -130,45 +132,74 @@ public class FloorManager : MonoBehaviour
     }
 
     public void PreviewButton(bool down) {
-        StartCoroutine(PreviewFloor(down, true));
+        if (!transitioning)
+            StartCoroutine(PreviewFloor(down, true));
     }
 
     void SetButtonActive(GameObject button, bool state) {
         button.SetActive(state);
     }
 
-    public IEnumerator TransitionFloors(GameObject floor1, GameObject floor2 = null) {
-        float dir = 1;
-        Vector3 from2 = Vector3.zero;
-        Vector3 to2 = Vector3.zero;
-        Vector3 scaleFrom2 = Vector3.zero;
-        Vector3 scaleTo2 = Vector3.zero;
-        if (floor2) {
-            dir = (floor1.transform.position.y > floor2.transform.position.y) ? 1 : -1;
-            from2 = floor2.transform.position;
-            to2 = new Vector3(floor2.transform.position.x, floor2.transform.position.y + floorOffset * dir, floor2.transform.position.z);
-            floor2.GetComponent<SortingGroup>().sortingOrder = 0;
-        }
-        Vector3 from1 = floor1.transform.position;
-        Vector3 to1 = new Vector3(floor1.transform.position.x, floor1.transform.position.y + floorOffset * dir, floor1.transform.position.z);
-        Vector3 scaleFrom1 = Vector3.zero;
-        Vector3 scaleTo1 = Vector3.zero;
-        floor1.GetComponent<SortingGroup>().sortingOrder = -1;
+    public IEnumerator TransitionFloors(bool down) {
+        int dir = down? 1 : -1;
+        Grid toFloor = null;
+        if (floors.Count - 1 >= currentFloor.index + dir)
+            toFloor = floors[currentFloor.index + dir];
+        
+        if (toFloor) toFloor.GetComponent<SortingGroup>().sortingOrder = 0;
+        currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
+        
+        Vector3 from = floorParent.transform.position;
+        Vector3 to = new Vector3(from.x, from.y + floorOffset * dir, from.z);
+
+        float currFromA = down? 1: 1;
+        float currToA = down? 0 : 1;
 
         float timer = 0;
         while (timer <= transitionDur) {
-            floor1.transform.position = Vector3.Lerp(from1, to1, timer/transitionDur);
-            if (floor2) {
-                floor2.transform.position = Vector3.Lerp(from2, to2, timer/transitionDur);
-                //floor2.transform.localScale = Vector3.Lerp()
-            }
+            floorParent.transform.position = Vector3.Lerp(from, to, timer/transitionDur);
+            currentFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = Mathf.Lerp(currFromA, currToA, timer/transitionDur);
+            if (toFloor && !down) toFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = Mathf.Lerp(0, 1, timer/transitionDur);
             yield return null;
             timer += Time.deltaTime;
         }
-        floor1.transform.position = to1;
-        if (floor2) {
-            currentFloor = floor2.GetComponent<Grid>();
-            floor2.transform.position = to2;
+        floorParent.transform.position = to;
+
+        if (toFloor) currentFloor = toFloor;
+        UIManager.instance.metaDisplay.UpdateCurrentFloor(currentFloor.index);
+    }
+
+    public IEnumerator DropUnits(Grid fromFloor, Grid toFloor) {
+        
+        scenario.player.transform.parent = transitionParent;
+        scenario.player.nail.transform.parent = currentFloor.transform;
+        scenario.currentEnemy.transform.parent = transitionParent;
+
+        Coroutine finalCoroutine = null;
+
+        for (int i = fromFloor.gridElements.Count - 1; i >= 0; i--) {
+            if (fromFloor.gridElements[i] is Unit u && fromFloor.gridElements[i] is not Nail) {
+                finalCoroutine = StartCoroutine(DropUnit(u, fromFloor.PosFromCoord(u.coord), toFloor.PosFromCoord(u.coord), toFloor.CoordContents(u.coord)));
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+        yield return finalCoroutine;
+
+    }
+
+    private IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
+        float timer = 0;
+        while (timer <= transitionDur) {
+            unit.transform.position = Vector3.Lerp(from, to, timer/transitionDur);
+            yield return null;
+            timer += Time.deltaTime;
+        }
+        unit.transform.position = to;
+
+        if (subElement) {
+            yield return StartCoroutine(subElement.CollideFromBelow(unit));
+            if (subElement is not LandingBuff)
+                yield return StartCoroutine(unit.CollideFromAbove());
         }
     }
 
@@ -179,19 +210,21 @@ public class FloorManager : MonoBehaviour
 
     public IEnumerator DescendFloors() {
 
-        EnemyManager enemy = (EnemyManager)currentFloor.enemy;
-        enemy.transform.parent = transitionParent;
-        scenario.player.transform.parent = transitionParent;
-        scenario.player.nail.transform.parent = currentFloor.transform;
 
+        EnemyManager enemy = (EnemyManager)currentFloor.enemy;
+        
         currentFloor.DisableGridHighlight();
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
-        DescentCollisionSolver();
-        yield return StartCoroutine(TransitionFloors(currentFloor.gameObject, floors[currentFloor.index+1].gameObject));
+        yield return StartCoroutine(TransitionFloors(true));
 
+        yield return new WaitForSecondsRealtime(0.25f);
+
+        yield return StartCoroutine(DropUnits(floors[currentFloor.index-1], currentFloor));
+
+        scenario.player.DescendGrids(currentFloor);
         enemy.SeedUnits(currentFloor);
         scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
-        scenario.player.DescendGrids(currentFloor);
+        
         
         yield return new WaitForSecondsRealtime(0.75f);
         yield return StartCoroutine(scenario.player.DropNail());        
@@ -211,31 +244,15 @@ public class FloorManager : MonoBehaviour
 
         } else {
 
-            yield return StartCoroutine(TransitionFloors(currentFloor.gameObject));
+            yield return StartCoroutine(TransitionFloors(true));
 
-            yield return StartCoroutine(GenerateFloor(true));
+            yield return StartCoroutine(GenerateFloor());
 
             yield return new WaitForSeconds(0.5f);
             yield return StartCoroutine(PreviewFloor(false, false));
             yield return new WaitForSeconds(0.5f);
 
             StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
-        }
-    }
-
-    public void DescentCollisionSolver() {
-        List<GridElement> subElements = new List<GridElement>();
-
-        foreach (GridElement ge in currentFloor.gridElements) {
-            if (ge is Unit u) { // Replace with descends? bool
-                if (u is not Nail) {
-                    GridElement subGE = floors[currentFloor.index+1].gridElements.Find(g => g.coord == u.coord);
-                    if (subGE) {
-                        StartCoroutine(u.CollideFromAbove(u.coord));
-                        StartCoroutine(subGE.CollideFromBelow(u));
-                    }
-                }     
-            }
         }
     }
 

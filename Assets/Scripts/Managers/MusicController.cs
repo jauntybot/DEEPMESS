@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,47 +15,66 @@ public class MusicController : MonoBehaviour
     [SerializeField] private TMP_Text trackTextUI;
     
     private AudioSource musicAudioSource;
+    private Coroutine playing = null;
 
     private void Start()
     {
         musicAudioSource = GetComponent<AudioSource>();
 
-        trackIndex = 0;
-        musicAudioSource.clip = audioTracks[trackIndex].trackAudioClip;
-        trackTextUI.text = audioTracks[trackIndex].name;
+
+        trackIndex = Random.Range(0, audioTracks.Length - 1);
+        UpdateTrack(trackIndex);
     }
 
     public void PlayAudio()
     {
         musicAudioSource.Play();
+        playing = StartCoroutine(WaitToSkip());
+    }
+
+    private IEnumerator WaitToSkip() {
+        while (musicAudioSource.isPlaying) {
+            yield return null;
+        }
+        SkipForward();
     }
     
     public void PauseAudio()
     {
+        StopAllCoroutines();
         musicAudioSource.Pause();
     }
     
     public void StopAudio()
     {
+        StopAllCoroutines();
         musicAudioSource.Stop();
     }
     
     public void SkipBack()
     {
+        StopAllCoroutines();
         if (trackIndex >= 1)
         {
-            trackIndex--;
-            UpdateTrack(trackIndex);
+            trackIndex--;  
+        } else {
+            trackIndex = audioTracks.Length - 1;
         }
+    
+        UpdateTrack(trackIndex);
     }
 
     public void SkipForward()
     {
+        StopAllCoroutines();
         if (trackIndex < audioTracks.Length - 1)
         {
             trackIndex++;
-            UpdateTrack(trackIndex);
         }
+        else {
+            trackIndex = 0;
+        }
+        UpdateTrack(trackIndex);
     }
 
     void UpdateTrack(int index)

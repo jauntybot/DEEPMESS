@@ -41,6 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8294248095137744421}
   - component: {fileID: 8294248095137744420}
+  - component: {fileID: 669929821590553842}
   m_Layer: 0
   m_Name: EnemyManager
   m_TagString: Untagged
@@ -79,10 +80,24 @@ MonoBehaviour:
   currentGrid: {fileID: 0}
   scenario: {fileID: 0}
   unitPrefabs: []
-  unitParent: {fileID: 8294248094753621546}
-  units: []
-  selectedUnit: {fileID: 0}
   startingCoords:
   - {x: 3, y: 7}
   - {x: 4, y: 7}
   - {x: 5, y: 7}
+  unitParent: {fileID: 8294248094753621546}
+  units: []
+  selectedUnit: {fileID: 0}
+--- !u!114 &669929821590553842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8294248095137744425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b850d124d92f3945b0abedf8ebd0b8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alpha: 1
+  exclude: 0

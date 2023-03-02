@@ -24,7 +24,7 @@ public class EnemyManager : UnitManager {
             EnemyUnit enemy = units[i] as EnemyUnit;
             ongoingTurn = StartCoroutine(CalculateAction(enemy));
             yield return ongoingTurn;
-
+            yield return new WaitForSecondsRealtime(0.125f);
             // for (int e = 1; e <= enemy.maxEnergy; e++) 
             // {
             //     yield return new WaitForSecondsRealtime(0.05f);
@@ -111,7 +111,7 @@ public class EnemyManager : UnitManager {
 
             units[i].transform.parent = newGrid.enemy.transform;
             units[i].StoreInGrid(newGrid);
-
+            units[i].UpdateElement(units[i].coord);
             units.RemoveAt(i);
         }
         DestroyImmediate(this.gameObject);
