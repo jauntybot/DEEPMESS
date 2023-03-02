@@ -15,6 +15,7 @@ public class MusicController : MonoBehaviour
     [SerializeField] private TMP_Text trackTextUI;
     
     private AudioSource musicAudioSource;
+    private Coroutine playing = null;
 
     private void Start()
     {
@@ -28,7 +29,7 @@ public class MusicController : MonoBehaviour
     public void PlayAudio()
     {
         musicAudioSource.Play();
-        StartCoroutine(WaitToSkip());
+        playing = StartCoroutine(WaitToSkip());
     }
 
     private IEnumerator WaitToSkip() {
@@ -40,16 +41,19 @@ public class MusicController : MonoBehaviour
     
     public void PauseAudio()
     {
+        StopAllCoroutines();
         musicAudioSource.Pause();
     }
     
     public void StopAudio()
     {
+        StopAllCoroutines();
         musicAudioSource.Stop();
     }
     
     public void SkipBack()
     {
+        StopAllCoroutines();
         if (trackIndex >= 1)
         {
             trackIndex--;  
@@ -62,6 +66,7 @@ public class MusicController : MonoBehaviour
 
     public void SkipForward()
     {
+        StopAllCoroutines();
         if (trackIndex < audioTracks.Length - 1)
         {
             trackIndex++;

@@ -1704,6 +1704,7 @@ GameObject:
   - component: {fileID: 894283981}
   - component: {fileID: 894283984}
   - component: {fileID: 894283982}
+  - component: {fileID: 894283985}
   m_Layer: 0
   m_Name: PlayerManager
   m_TagString: Untagged
@@ -1775,6 +1776,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff6539855a3375e41b3b407c0b253678, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &894283985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 894283980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b850d124d92f3945b0abedf8ebd0b8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alpha: 1
+  exclude: 0
 --- !u!1 &1007848600
 GameObject:
   m_ObjectHideFlags: 0
@@ -3053,7 +3068,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 857e9e56e167a0745a74945d261fedee, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b9218280ca1a7b94da4b13a74e22c879, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

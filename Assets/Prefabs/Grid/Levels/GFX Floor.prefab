@@ -82,6 +82,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6704683991807647183}
   - component: {fileID: 6704683991807647168}
+  - component: {fileID: 2255728516425124017}
   - component: {fileID: 6092843610831544227}
   m_Layer: 0
   m_Name: GFX Floor
@@ -135,6 +136,20 @@ MonoBehaviour:
   lvlDef: {fileID: 0}
   sqrs: []
   gridElements: []
+--- !u!114 &2255728516425124017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6704683991807647169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b850d124d92f3945b0abedf8ebd0b8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alpha: 1
+  exclude: 0
 --- !u!210 &6092843610831544227
 SortingGroup:
   m_ObjectHideFlags: 0

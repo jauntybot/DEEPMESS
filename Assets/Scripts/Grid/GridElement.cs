@@ -94,7 +94,7 @@ public class GridElement : MonoBehaviour{
             elementCanvas.UpdateStatsDisplay();
             StartCoroutine(elementCanvas.DisplayDamageNumber(dmg));
         }
-        yield return new WaitForSecondsRealtime(.25f);
+        yield return new WaitForSecondsRealtime(.4f);
         TargetElement(false);
         if (hpCurrent <= 0) {
             StartCoroutine(DestroyElement());

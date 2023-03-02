@@ -9,13 +9,11 @@ public class ElementCanvas : MonoBehaviour
     [SerializeField] protected bool disable;
     protected GridElement element;
     public GameObject statDisplay, hp, energy;
-    [SerializeField] TMPro.TMP_Text hpText;
+    [SerializeField] GameObject hpPipPrefab, dmgPipPrefab;
     [SerializeField] TMPro.TMP_Text energyText;
 
     public GameObject dmgPanel;
-    [SerializeField] Color dmgColor, healColor;
-    public Animator dmgNumber;
-    public TMPro.TMP_Text dmgText;
+    [SerializeField] Animator dmgAnim;
 
     public virtual void Initialize(GridElement ge) 
     {
@@ -30,22 +28,41 @@ public class ElementCanvas : MonoBehaviour
     public virtual void UpdateStatsDisplay() {
         if (!disable) {
             if (element.energyMax == 0) energy.SetActive(false);
-            hpText.text = element.hpCurrent.ToString();
+            int dif = element.hpCurrent - hp.transform.childCount;
+            for (int i = Mathf.Abs(dif); i > 0; i--) {
+                if (Mathf.Sign(dif) < 0) {
+                    DestroyImmediate(hp.transform.GetChild(hp.transform.childCount - i).gameObject);
+                } else {
+                    Instantiate(hpPipPrefab, hp.transform);
+                    Instantiate(dmgPipPrefab, dmgPanel.transform);
+                }
+            }
             energyText.text = element.energyCurrent.ToString();
         }
     }
 
     public virtual IEnumerator DisplayDamageNumber(int dmg) {
-        dmgPanel.SetActive(true);
-        if (dmg > 0) {
-            dmgText.text = "-" + dmg;
-            dmgPanel.GetComponent<Image>().color = dmgColor;
+      
+        for (int i = dmgPanel.transform.childCount - 1; i >= 0; i--)
+            DestroyImmediate(dmgPanel.transform.GetChild(i).gameObject);
+        for (int i = 0; i < hp.transform.childCount; i++)
+            Instantiate(dmgPipPrefab, dmgPanel.transform);
+
+// Element is damaged
+        if (dmg > 0) {              
+            dmgAnim.SetBool("dmg", true);         
+            for (int i = 0; i <= hp.transform.childCount - 1 - dmg; i++)
+                dmgPanel.transform.GetChild(i).GetComponent<Image>().enabled = false;
+// Element is healed
+        } else if (dmg < 0) {
+            dmgAnim.SetBool("dmg", false);
+            for (int i = 0; i <= hp.transform.childCount - 1; i++)
+                dmgPanel.transform.GetChild(i).GetComponent<Image>().enabled = false;
         }
-        else if (dmg < 0) {
-            dmgText.text = "+" + Mathf.Abs(dmg);
-            dmgPanel.GetComponent<Image>().color = healColor;
-        }
-        while (dmgPanel.activeSelf) {
+        
+        dmgAnim.gameObject.SetActive(true);
+        
+        while (dmgAnim.gameObject.activeSelf) {
             yield return null;
         }
     }

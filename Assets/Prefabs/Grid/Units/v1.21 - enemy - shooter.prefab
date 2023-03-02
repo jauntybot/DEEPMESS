@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3908257913917299124}
   - component: {fileID: 125915573521978910}
   - component: {fileID: 1901842332046557893}
+  - component: {fileID: 84642545504465750}
   m_Layer: 6
   m_Name: v1.21 - enemy - shooter
   m_TagString: Untagged
@@ -55,7 +56,7 @@ MonoBehaviour:
   elementCanvas: {fileID: 0}
   gfx:
   - {fileID: 4933312119725587991}
-  name: 
+  name: Basophic
   hpMax: 3
   hpCurrent: 0
   defense: 0
@@ -150,6 +151,20 @@ PolygonCollider2D:
       - {x: 0.095, y: 0.205}
       - {x: 0.175, y: 0.285}
       - {x: 0.175, y: 0.325}
+--- !u!114 &84642545504465750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3908257913917299126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b850d124d92f3945b0abedf8ebd0b8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alpha: 1
+  exclude: 0
 --- !u!1 &8160189913326037157
 GameObject:
   m_ObjectHideFlags: 0
@@ -160,6 +175,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7247321595147202816}
   - component: {fileID: 4933312119725587991}
+  - component: {fileID: 7784889180863412798}
   m_Layer: 6
   m_Name: GFX
   m_TagString: Untagged
@@ -234,6 +250,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7784889180863412798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8160189913326037157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ee90040f786e6a47acff528e5821a3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alpha: 1
+  exclude: 0
 --- !u!1001 &6259434176934448093
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -252,7 +282,7 @@ PrefabInstance:
     - target: {fileID: 275242715233555640, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
       propertyPath: hpText
       value: 
-      objectReference: {fileID: 8691445730610647766}
+      objectReference: {fileID: 0}
     - target: {fileID: 275242715233555640, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
       propertyPath: energyText
       value: 
@@ -378,17 +408,6 @@ GameObject:
 --- !u!114 &8180789242895512803 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2834446699022368574, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-  m_PrefabInstance: {fileID: 6259434176934448093}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8691445730610647766 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3333734579570481419, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
   m_PrefabInstance: {fileID: 6259434176934448093}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}

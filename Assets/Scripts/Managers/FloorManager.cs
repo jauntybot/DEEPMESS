@@ -152,9 +152,14 @@ public class FloorManager : MonoBehaviour
         Vector3 from = floorParent.transform.position;
         Vector3 to = new Vector3(from.x, from.y + floorOffset * dir, from.z);
 
+        float currFromA = down? 1: 1;
+        float currToA = down? 0 : 1;
+
         float timer = 0;
         while (timer <= transitionDur) {
             floorParent.transform.position = Vector3.Lerp(from, to, timer/transitionDur);
+            currentFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = Mathf.Lerp(currFromA, currToA, timer/transitionDur);
+            if (toFloor && !down) toFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = Mathf.Lerp(0, 1, timer/transitionDur);
             yield return null;
             timer += Time.deltaTime;
         }
