@@ -122,6 +122,7 @@ public class PlayerManager : UnitManager {
 
         float xOffset = currentGrid.PosFromCoord(spawn).x;
         nail.transform.position = new Vector3(xOffset, nail.transform.position.y, 0);
+        nail.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         yield return StartCoroutine(UpdateNail(spawn));
     }
 

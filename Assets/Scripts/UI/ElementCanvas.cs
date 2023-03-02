@@ -49,14 +49,17 @@ public class ElementCanvas : MonoBehaviour
 
 // Element is damaged
         if (dmg > 0) {              
-            for (int i = 0; i < hp.transform.childCount - 1; i++)
+            for (int i = 0; i <= hp.transform.childCount - 1; i++)
                 Instantiate(dmgPipPrefab, dmgPanel.transform);
             dmgAnim.SetBool("dmg", true);         
-            for (int i = 0; i < hp.transform.childCount - 1 - dmg; i++)
-                dmgPanel.transform.GetChild(i).GetComponent<Image>().enabled = false;
+            for (int i = 0; i <= hp.transform.childCount - 1; i++)
+                if (i <= hp.transform.childCount - 1 - dmg)
+                    dmgPanel.transform.GetChild(i).GetComponent<Image>().enabled = false;
+                else 
+                    dmgPanel.transform.GetChild(i).GetComponent<Image>().enabled = true;
 // Element is healed
         } else if (dmg < 0) {
-            for (int i = 0; i < hp.transform.childCount + Mathf.Abs(dmg) - 1; i++)
+            for (int i = 0; i <= hp.transform.childCount + Mathf.Abs(dmg) - 1; i++)
                 Instantiate(hpPipPrefab, dmgPanel.transform);
             dmgAnim.SetBool("dmg", false);
             for (int i = 0; i <= hp.transform.childCount - 1; i++)

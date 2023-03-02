@@ -134,6 +134,7 @@ MonoBehaviour:
   sqrPrefab: {fileID: 8989576065795441841, guid: fa0dbb52d1a1543a2b64b9ca668137e5, type: 3}
   gridCursor: {fileID: 3587223527213720723}
   lvlDef: {fileID: 0}
+  offWhite: {r: 0.9150943, g: 0.9150943, b: 0.9150943, a: 1}
   sqrs: []
   gridElements: []
 --- !u!114 &2255728516425124017
@@ -227,6 +228,20 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7837303882697225820, guid: 896d4e562711d9544907b933c391bc46, type: 3}
   m_PrefabInstance: {fileID: 6704683991582790351}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3498221860124844039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3587223527213720723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ee90040f786e6a47acff528e5821a3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alpha: 1
+  exclude: 0
 --- !u!4 &6112194895401319342 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 709653730698701153, guid: 896d4e562711d9544907b933c391bc46, type: 3}

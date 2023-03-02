@@ -156,14 +156,19 @@ public class FloorManager : MonoBehaviour
         float currToA = down? 0 : 1;
 
         float timer = 0;
+        NestedFadeGroup.NestedFadeGroup currentFade = currentFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>();
+        NestedFadeGroup.NestedFadeGroup toFade = null;
+        if (toFloor && !down) toFade = toFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>();
         while (timer <= transitionDur) {
             floorParent.transform.position = Vector3.Lerp(from, to, timer/transitionDur);
-            currentFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = Mathf.Lerp(currFromA, currToA, timer/transitionDur);
-            if (toFloor && !down) toFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = Mathf.Lerp(0, 1, timer/transitionDur);
+            currentFade.AlphaSelf = Mathf.Lerp(currFromA, currToA, timer/transitionDur);
+            if (toFade) toFade.AlphaSelf = Mathf.Lerp(0, 1, timer/transitionDur);
             yield return null;
             timer += Time.deltaTime;
         }
         floorParent.transform.position = to;
+        currentFade.AlphaSelf = currToA;
+        if (toFade) toFade.AlphaSelf = 1;
 
         if (toFloor) currentFloor = toFloor;
         UIManager.instance.metaDisplay.UpdateCurrentFloor(currentFloor.index);
@@ -175,12 +180,20 @@ public class FloorManager : MonoBehaviour
         scenario.player.nail.transform.parent = currentFloor.transform;
         scenario.currentEnemy.transform.parent = transitionParent;
 
+        foreach (GridElement ge in fromFloor.gridElements) {
+            if (ge is Unit)
+                ge.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
+        }
+        
         Coroutine finalCoroutine = null;
 
         for (int i = fromFloor.gridElements.Count - 1; i >= 0; i--) {
-            if (fromFloor.gridElements[i] is Unit u && fromFloor.gridElements[i] is not Nail) {
+            if (fromFloor.gridElements[i] is Unit u) {
+                u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
+                if (fromFloor.gridElements[i] is not Nail) {
                 finalCoroutine = StartCoroutine(DropUnit(u, fromFloor.PosFromCoord(u.coord), toFloor.PosFromCoord(u.coord), toFloor.CoordContents(u.coord)));
                 yield return new WaitForSeconds(0.1f);
+                }
             }
         }
         yield return finalCoroutine;
@@ -189,12 +202,15 @@ public class FloorManager : MonoBehaviour
 
     private IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
         float timer = 0;
+        NestedFadeGroup.NestedFadeGroup fade = unit.GetComponent<NestedFadeGroup.NestedFadeGroup>();
         while (timer <= transitionDur) {
             unit.transform.position = Vector3.Lerp(from, to, timer/transitionDur);
+            fade.AlphaSelf = Mathf.Lerp(0, 1, timer/transitionDur/3);
             yield return null;
             timer += Time.deltaTime;
         }
         unit.transform.position = to;
+        fade.AlphaSelf = 1;
 
         if (subElement) {
             yield return StartCoroutine(subElement.CollideFromBelow(unit));

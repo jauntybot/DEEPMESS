@@ -18,6 +18,7 @@ public class Grid : MonoBehaviour {
     [SerializeField] GameObject sqrPrefab, gridCursor;
     public static float spawnDur = 10;
     public LevelDefinition lvlDef;
+    [SerializeField] Color offWhite;
 
     public List<GridSquare> sqrs = new List<GridSquare>();
     public List<GridElement> gridElements = new List<GridElement>();
@@ -37,6 +38,10 @@ public class Grid : MonoBehaviour {
                 sqr.white=false;
                 if (x%2==0) { if (y%2==0) sqr.white=true; } 
                 else { if (y%2!=0) sqr.white=true; }
+                if (!sqr.white) {
+                    foreach (SpriteRenderer sr in sqr.gfx)
+                        sr.color = offWhite;
+                }
                 sqr.StoreInGrid(this);
                 sqr.UpdateElement(new Vector2(x,y));
 
