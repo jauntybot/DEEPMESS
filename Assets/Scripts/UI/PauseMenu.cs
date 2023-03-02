@@ -27,7 +27,8 @@ public class PauseMenu : MonoBehaviour
 
     public void RestartButton()
     {
-        gameObject.SetActive(false);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Time.timeScale = 1;
+        music.AudioVolume(audioVolume.value);
+        SceneManager.LoadScene("GFX Game Scene");
     }
 }

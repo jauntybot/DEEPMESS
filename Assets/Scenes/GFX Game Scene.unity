@@ -1858,6 +1858,17 @@ Transform:
   m_Father: {fileID: 1272466583}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1260230829 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6638046353358422079, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+  m_PrefabInstance: {fileID: 1611387682}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 468c3aac07fe54e038550c820da32a87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1272466582
 GameObject:
   m_ObjectHideFlags: 0
@@ -2738,6 +2749,14 @@ PrefabInstance:
     - target: {fileID: 6638046354515914464, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -40
+      objectReference: {fileID: 0}
+    - target: {fileID: 6638046354783361609, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1260230829}
+    - target: {fileID: 6638046354783361609, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RestartButton
       objectReference: {fileID: 0}
     - target: {fileID: 7838619291563014655, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
