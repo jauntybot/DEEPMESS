@@ -57,7 +57,7 @@ public class AttackData : EquipmentData
             timer += Time.deltaTime;
         }
 
-        target.StartCoroutine(target.TakeDamage(dmg));
+        yield return target.StartCoroutine(target.TakeDamage(dmg));
     }
 
 }

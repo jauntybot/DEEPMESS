@@ -30,11 +30,11 @@ public class ElementCanvas : MonoBehaviour
             if (element.energyMax == 0) energy.SetActive(false);
             int dif = element.hpCurrent - hp.transform.childCount;
             for (int i = Mathf.Abs(dif); i > 0; i--) {
-                if (Mathf.Sign(dif) < 0) {
-                    DestroyImmediate(hp.transform.GetChild(hp.transform.childCount - i).gameObject);
-                } else {
+                if (dif < 0) {
+                    if (hp.transform.childCount - i >= 0)
+                       DestroyImmediate(hp.transform.GetChild(hp.transform.childCount - i).gameObject);
+                } else if (dif > 0) {
                     Instantiate(hpPipPrefab, hp.transform);
-                    Instantiate(dmgPipPrefab, dmgPanel.transform);
                 }
             }
             energyText.text = element.energyCurrent.ToString();
@@ -45,16 +45,19 @@ public class ElementCanvas : MonoBehaviour
       
         for (int i = dmgPanel.transform.childCount - 1; i >= 0; i--)
             DestroyImmediate(dmgPanel.transform.GetChild(i).gameObject);
-        for (int i = 0; i < hp.transform.childCount; i++)
-            Instantiate(dmgPipPrefab, dmgPanel.transform);
+        
 
 // Element is damaged
         if (dmg > 0) {              
+            for (int i = 0; i < hp.transform.childCount - 1; i++)
+                Instantiate(dmgPipPrefab, dmgPanel.transform);
             dmgAnim.SetBool("dmg", true);         
-            for (int i = 0; i <= hp.transform.childCount - 1 - dmg; i++)
+            for (int i = 0; i < hp.transform.childCount - 1 - dmg; i++)
                 dmgPanel.transform.GetChild(i).GetComponent<Image>().enabled = false;
 // Element is healed
         } else if (dmg < 0) {
+            for (int i = 0; i < hp.transform.childCount + Mathf.Abs(dmg) - 1; i++)
+                Instantiate(hpPipPrefab, dmgPanel.transform);
             dmgAnim.SetBool("dmg", false);
             for (int i = 0; i <= hp.transform.childCount - 1; i++)
                 dmgPanel.transform.GetChild(i).GetComponent<Image>().enabled = false;
