@@ -46,7 +46,8 @@ public class ElementCanvas : MonoBehaviour
         for (int i = dmgPanel.transform.childCount - 1; i >= 0; i--)
             DestroyImmediate(dmgPanel.transform.GetChild(i).gameObject);
         
-
+        dmgAnim.gameObject.SetActive(true);
+        
 // Element is damaged
         if (dmg > 0) {              
             for (int i = 0; i <= hp.transform.childCount - 1; i++)
@@ -66,7 +67,7 @@ public class ElementCanvas : MonoBehaviour
                 dmgPanel.transform.GetChild(i).GetComponent<Image>().enabled = false;
         }
         
-        dmgAnim.gameObject.SetActive(true);
+        
         
         while (dmgAnim.gameObject.activeSelf) {
             yield return null;

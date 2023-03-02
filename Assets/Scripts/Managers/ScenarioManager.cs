@@ -80,6 +80,7 @@ public class ScenarioManager : MonoBehaviour
                 if (turnCount >= turnsToDescend) {
                     floorManager.Descend();
                 } else {
+                    floorManager.upButton.SetActive(false); floorManager.downButton.SetActive(false);
                     yield return StartCoroutine(messagePanel.DisplayMessage("ENEMY TURN"));
                     currentTurn = Turn.Enemy;
                     foreach(Unit u in currentEnemy.units) {
@@ -93,6 +94,8 @@ public class ScenarioManager : MonoBehaviour
             case Turn.Enemy:
                 if (player.units.Count >= 2) {
                     turnCount++;
+
+                    floorManager.upButton.SetActive(true); floorManager.downButton.SetActive(true);
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN"));
 
                     UIManager.instance.metaDisplay.UpdateTurnsToDescend(turnsToDescend - turnCount + 1);

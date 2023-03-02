@@ -11,12 +11,13 @@ public class Grid : MonoBehaviour {
     PlayerManager player;
     public int index = 0;
     public GameObject gridContainer, neutralGEContainer;
+    [SerializeField] GameObject chessNotation;
     public UnitManager enemy;
     [SerializeField] GameObject enemyPrefab;
 
     static Vector2 ORTHO_OFFSET = new Vector2(0.75f, 0.5f);
     [SerializeField] GameObject sqrPrefab, gridCursor;
-    public static float spawnDur = 10;
+    [SerializeField] static float fadeInDur = 0.25f;
     public LevelDefinition lvlDef;
     [SerializeField] Color offWhite;
 
@@ -51,7 +52,19 @@ public class Grid : MonoBehaviour {
         }
         gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
         index = i;
+
         yield return StartCoroutine(SpawnLevelDefinition());
+       
+        NestedFadeGroup.NestedFadeGroup fade = GetComponent<NestedFadeGroup.NestedFadeGroup>();
+
+        float timer = 0;
+        while (timer <= fadeInDur) {
+            fade.AlphaSelf = Mathf.Lerp(0, 1, timer/fadeInDur);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        fade.AlphaSelf = 1;
     }
 
     IEnumerator SpawnLevelDefinition() {
@@ -72,7 +85,9 @@ public class Grid : MonoBehaviour {
         }
     }
 
-
+    public void ToggleChessNotation() {
+        chessNotation.SetActive(!chessNotation.activeSelf);
+    }
 
     public void AddElement(GridElement ge) {
         gridElements.Add(ge);

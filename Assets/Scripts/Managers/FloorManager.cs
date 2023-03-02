@@ -28,7 +28,7 @@ public class FloorManager : MonoBehaviour
     [SerializeField] private Dictionary<GridElement, LineRenderer> lineRenderers;
     [SerializeField] private Material previewMaterial;
     [SerializeField] private Color playerColor, enemyColor;
-    [SerializeField] GameObject upButton, downButton;
+    [SerializeField] public GameObject upButton, downButton;
 
     #region Singleton (and Awake)
     public static FloorManager instance;
@@ -59,7 +59,7 @@ public class FloorManager : MonoBehaviour
         yield return co;
     
         newFloor.gameObject.name = "Floor" + newFloor.index;
-        newFloor.transform.parent = floorParent;
+        newFloor.transform.SetParent(floorParent);
         floors.Add(newFloor);
 
     }
@@ -136,6 +136,11 @@ public class FloorManager : MonoBehaviour
             StartCoroutine(PreviewFloor(down, true));
     }
 
+    public void ChessNotationToggle() {
+        foreach (Grid floor in floors)
+            floor.ToggleChessNotation();
+    }
+
     void SetButtonActive(GameObject button, bool state) {
         button.SetActive(state);
     }
@@ -184,7 +189,7 @@ public class FloorManager : MonoBehaviour
             if (ge is Unit)
                 ge.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
         }
-        
+
         Coroutine finalCoroutine = null;
 
         for (int i = fromFloor.gridElements.Count - 1; i >= 0; i--) {

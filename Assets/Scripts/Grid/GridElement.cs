@@ -49,19 +49,6 @@ public class GridElement : MonoBehaviour{
         transform.localScale = Vector3.one * FloorManager.sqrSize;
     }
 
-    protected virtual IEnumerator SpawnElement() {
-       float timer = 0;
-
-       while (timer < Grid.spawnDur) {
-        transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one * FloorManager.sqrSize, timer/Grid.spawnDur);
-
-        yield return null;
-        timer += Time.deltaTime;
-       }
-
-       yield return null;
-    }
-
 // Update grid position and coordinate
     public virtual void UpdateElement(Vector2 c) 
     {
