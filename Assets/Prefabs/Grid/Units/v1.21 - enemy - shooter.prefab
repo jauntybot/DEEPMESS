@@ -239,7 +239,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 78fbc4c3333a0495783c0c84853ffc5f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: df864b55d69ba7849ba1a99f737c3ac3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -278,19 +278,15 @@ PrefabInstance:
     - target: {fileID: 275242715233555640, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
       propertyPath: energy
       value: 
-      objectReference: {fileID: 4347123657160497662}
-    - target: {fileID: 275242715233555640, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-      propertyPath: hpText
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 275242715233555640, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
       propertyPath: energyText
       value: 
-      objectReference: {fileID: 8180789242895512803}
+      objectReference: {fileID: 0}
     - target: {fileID: 275242715233555640, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-      propertyPath: statDisplay
+      propertyPath: hpPipPrefab
       value: 
-      objectReference: {fileID: 7607787553505672220}
+      objectReference: {fileID: 6918762094188802550, guid: c14861bdbe1025143a4cd42e98cae10b, type: 3}
     - target: {fileID: 1003956329267171811, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -361,7 +357,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1003956329267171811, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 1003956329267171811, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -375,6 +371,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7715025702989210221, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8283279539787568028, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
       propertyPath: m_PresetInfoIsWorld
       value: 1
@@ -383,13 +383,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: ElementCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 9023414508816232860, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 539febde836957f4e8604d4da70728d9, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
---- !u!1 &4347123657160497662 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7676930748416365091, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-  m_PrefabInstance: {fileID: 6259434176934448093}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4453142181534771632 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7715025702989210221, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
@@ -400,19 +399,3 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1003956329267171811, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
   m_PrefabInstance: {fileID: 6259434176934448093}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &7607787553505672220 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4560369889000945601, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-  m_PrefabInstance: {fileID: 6259434176934448093}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8180789242895512803 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2834446699022368574, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-  m_PrefabInstance: {fileID: 6259434176934448093}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

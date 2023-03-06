@@ -88,12 +88,9 @@ public class PlayerManager : UnitManager {
                     }
                 }
             } else {
-                nail.collisionChance = 100;
+                nail.collisionChance = 75;
                 UIManager.instance.UpdateDropChance(nail.collisionChance);
             }
-// Decrease nail collision chance
-            nail.collisionChance -= 25;
-            UIManager.instance.UpdateDropChance(nail.collisionChance);
         } else {
             DeselectUnit();
         }

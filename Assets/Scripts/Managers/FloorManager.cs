@@ -215,7 +215,7 @@ public class FloorManager : MonoBehaviour
             }
         }
         yield return finalCoroutine;
-
+        print("final coroutine");
     }
 
     private IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
@@ -261,8 +261,10 @@ public class FloorManager : MonoBehaviour
         
         
         yield return new WaitForSecondsRealtime(0.75f);
+        print("dropping nail");
         yield return StartCoroutine(scenario.player.DropNail());        
-        
+        UIManager.instance.metaDisplay.UpdateTurnsToDescend(scenario.turnsToDescend - scenario.turnCount);
+
 
         yield return new WaitForSecondsRealtime(.75f);
         for (int i = currentFloor.gridElements.Count - 1; i >= 0; i--) {
