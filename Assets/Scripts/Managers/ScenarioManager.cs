@@ -29,12 +29,14 @@ public class ScenarioManager : MonoBehaviour
 
     [SerializeField] MessagePanel messagePanel;
 
+
 // State machines
-    public enum GameState { Null, Setup, PlayerPlace, Battle, End }
+    public enum GameState { Null, Setup, Battle, End }
     public GameState gameState;
     public enum Turn { Null, Player, Enemy, Descent }
-    public Turn currentTurn;
+    public Turn currentTurn, prevTurn;
     public int turnCount, turnsToDescend;
+
 
 
 #region Initialization
@@ -60,7 +62,8 @@ public class ScenarioManager : MonoBehaviour
         StartCoroutine(floorManager.PreviewFloor(false, false));
         yield return new WaitForSeconds(1);
 
-        StartCoroutine(SwitchTurns(Turn.Enemy));
+        currentTurn = Turn.Enemy;
+        StartCoroutine(SwitchTurns(Turn.Player));
     }
 
 #endregion
@@ -71,18 +74,26 @@ public class ScenarioManager : MonoBehaviour
     }
 
 // Overload allows you to specify which turn to switch to, otherwise inverts the binary
-    public IEnumerator SwitchTurns(Turn fromTurn = Turn.Null) 
+    public IEnumerator SwitchTurns(Turn toTurn = default) 
     {
-        switch(fromTurn == Turn.Null ? currentTurn : fromTurn) 
+        if (toTurn == default) {
+            switch (currentTurn) {
+                default: toTurn = Turn.Player; break;
+                case Turn.Player: toTurn = Turn.Enemy; break;
+                case Turn.Enemy: toTurn = Turn.Player; break;
+                case Turn.Descent: toTurn = prevTurn; break;
+            }
+        }
+        switch(toTurn) 
         {
-            case Turn.Player:
+            case Turn.Enemy:
                 player.StartEndTurn(false);
                 if (turnCount >= turnsToDescend) {
                     floorManager.Descend();
-                } else {
+                } else if (currentEnemy.units.Count > 0) {
                     floorManager.upButton.GetComponent<Button>().enabled = false; floorManager.downButton.GetComponent<Button>().enabled = false;
-                    yield return StartCoroutine(messagePanel.DisplayMessage("ENEMY TURN"));
-                    currentTurn = Turn.Enemy;
+                    yield return StartCoroutine(messagePanel.DisplayMessage("ANTIBODY RESPONSE", 2));
+                    prevTurn = currentTurn; currentTurn = Turn.Enemy;
                     foreach(Unit u in currentEnemy.units) {
                         u.energyCurrent = u.energyMax;
                         u.elementCanvas.UpdateStatsDisplay();
@@ -91,33 +102,41 @@ public class ScenarioManager : MonoBehaviour
                     endTurnButton.enabled = false;
                     StartCoroutine(currentEnemy.TakeTurn());
                 }
+                else if (currentEnemy.units.Count <= 0) {
+                    prevTurn = currentTurn; currentTurn = Turn.Enemy;
+                    yield return null;
+                    EndTurn();
+                }
             break;
-            case Turn.Enemy:
+            case Turn.Player:
                 if (player.units.Count >= 2) {
                     turnCount++;
 
                     floorManager.upButton.GetComponent<Button>().enabled = true; floorManager.downButton.GetComponent<Button>().enabled = true;
-                    yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN"));
+                    yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN", 1));
 
-                    UIManager.instance.metaDisplay.UpdateTurnsToDescend(turnsToDescend - turnCount + 1);
+                    UIManager.instance.metaDisplay.UpdateTurnsToDescend(turnsToDescend - turnCount);
 
                     // if (turnsToDescend - turnCount > 0)
                     //     yield return StartCoroutine(messagePanel.DisplayMessage(turnsToDescend - turnCount + 1 + " TURNS UNTIL DESCENT"));
                     // else
                     //     yield return StartCoroutine(messagePanel.DisplayMessage("FINAL TURN UNTIL DESCENT"));
-                    currentTurn = Turn.Player;
+                    prevTurn = currentTurn; currentTurn = Turn.Player;
                     endTurnButton.enabled = true;
-                    player.StartEndTurn(true);
+                    if (prevTurn == Turn.Descent)
+                        player.StartEndTurn(true, true);
+                    else
+                        player.StartEndTurn(true);
                 } else {
                     yield return StartCoroutine(Lose());
                 }
             break;
             case Turn.Descent:
                 turnCount = 0;
-                player.StartEndTurn(false);
-                currentTurn = Turn.Descent;
+                //player.StartEndTurn(false);
+                prevTurn = currentTurn; currentTurn = Turn.Descent;
                 endTurnButton.enabled = false;
-                yield return StartCoroutine(messagePanel.DisplayMessage("DESCENDING"));
+                yield return StartCoroutine(messagePanel.DisplayMessage("DESCENDING", 0));
             break;
         }
     }
@@ -130,7 +149,7 @@ public class ScenarioManager : MonoBehaviour
 
     public IEnumerator Win() 
     {
-        yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER WINS"));
+        yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER WINS", 1));
         yield return new WaitForSecondsRealtime(1.5f);
         SceneManager.LoadScene(resetSceneString);
     }
@@ -139,7 +158,7 @@ public class ScenarioManager : MonoBehaviour
     {
         if (currentTurn == Turn.Enemy)
             currentEnemy.EndTurnEarly();
-        yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER LOSES"));
+        yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER LOSES", 2));
         yield return new WaitForSecondsRealtime(1.5f);
         SceneManager.LoadScene(resetSceneString);
     }

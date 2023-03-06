@@ -40,4 +40,8 @@ public class UIManager : MonoBehaviour
 
     }
 
+    public void UpdateDropChance(int chance) {
+        metaDisplay.UpdateDropChance(chance);
+    }
+
 }

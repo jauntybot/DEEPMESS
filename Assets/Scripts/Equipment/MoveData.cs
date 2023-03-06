@@ -18,7 +18,6 @@ public class MoveData : EquipmentData
     public IEnumerator MoveToCoord(Unit unit, Vector2 moveTo) 
     {
         float timer = 0;
-        unit.elementCanvas.UpdateStatsDisplay();
 
 // Check for pickups
         if (unit is PlayerUnit pu) {

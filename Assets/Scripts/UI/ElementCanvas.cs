@@ -8,9 +8,9 @@ public class ElementCanvas : MonoBehaviour
 {
     [SerializeField] protected bool disable;
     protected GridElement element;
-    public GameObject statDisplay, hp, energy;
+    public GameObject statDisplay, hpPips, hpInt;
     [SerializeField] GameObject hpPipPrefab, dmgPipPrefab;
-    [SerializeField] TMPro.TMP_Text energyText;
+    [SerializeField] TMPro.TMP_Text hpText;
 
     public GameObject dmgPanel;
     [SerializeField] Animator dmgAnim;
@@ -27,17 +27,21 @@ public class ElementCanvas : MonoBehaviour
 
     public virtual void UpdateStatsDisplay() {
         if (!disable) {
-            if (element.energyMax == 0) energy.SetActive(false);
-            int dif = element.hpCurrent - hp.transform.childCount;
-            for (int i = Mathf.Abs(dif); i > 0; i--) {
-                if (dif < 0) {
-                    if (hp.transform.childCount - i >= 0)
-                       DestroyImmediate(hp.transform.GetChild(hp.transform.childCount - i).gameObject);
-                } else if (dif > 0) {
-                    Instantiate(hpPipPrefab, hp.transform);
+            if (element.hpCurrent <= 5) {
+                hpPips.SetActive(true); hpInt.SetActive(false);
+                int dif = element.hpCurrent - hpPips.transform.childCount;
+                for (int i = Mathf.Abs(dif); i > 0; i--) {
+                    if (dif < 0) {
+                        if (hpPips.transform.childCount - i >= 0)
+                        DestroyImmediate(hpPips.transform.GetChild(hpPips.transform.childCount - i).gameObject);
+                    } else if (dif > 0) {
+                        Instantiate(hpPipPrefab, hpPips.transform);
+                    }
                 }
+            } else {
+                hpPips.SetActive(false); hpInt.SetActive(true);
+                hpText.text = element.hpCurrent.ToString();
             }
-            energyText.text = element.energyCurrent.ToString();
         }
     }
 
@@ -48,22 +52,23 @@ public class ElementCanvas : MonoBehaviour
         
         dmgAnim.gameObject.SetActive(true);
         
+        int r = hpPips.transform.childCount > 0? hpPips.transform.childCount - 1: 0;   
 // Element is damaged
-        if (dmg > 0) {              
-            for (int i = 0; i <= hp.transform.childCount - 1; i++)
+        if (dmg > 0) {           
+            for (int i = 0; i <= r; i++)
                 Instantiate(dmgPipPrefab, dmgPanel.transform);
             dmgAnim.SetBool("dmg", true);         
-            for (int i = 0; i <= hp.transform.childCount - 1; i++)
-                if (i <= hp.transform.childCount - 1 - dmg)
+            for (int i = 0; i <= r; i++)
+                if (i <= r - dmg)
                     dmgPanel.transform.GetChild(i).GetComponent<Image>().enabled = false;
                 else 
                     dmgPanel.transform.GetChild(i).GetComponent<Image>().enabled = true;
 // Element is healed
         } else if (dmg < 0) {
-            for (int i = 0; i <= hp.transform.childCount + Mathf.Abs(dmg) - 1; i++)
+            for (int i = 0; i <= r + Mathf.Abs(dmg); i++)
                 Instantiate(hpPipPrefab, dmgPanel.transform);
             dmgAnim.SetBool("dmg", false);
-            for (int i = 0; i <= hp.transform.childCount - 1; i++)
+            for (int i = 0; i <= r; i++)
                 dmgPanel.transform.GetChild(i).GetComponent<Image>().enabled = false;
         }
         

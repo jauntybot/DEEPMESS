@@ -62,16 +62,12 @@ public class GridElement : MonoBehaviour{
             sr.sortingOrder = grid.SortOrderFromCoord(c);
     }
 
-    public virtual void EnableSelection(bool state) {}
-
-// Apply shield to this element
-    public virtual IEnumerator Defend(int value) 
-    {
-        yield return null;
-        defense += value;
-        elementCanvas.UpdateStatsDisplay();
+    public virtual void EnableSelection(bool state) {
+        selectable = state;
+        hitbox.enabled = state;
     }
-    
+
+  
     public virtual IEnumerator TakeDamage(int dmg, GridElement source = null) 
     {
 

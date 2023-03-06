@@ -9,4 +9,6 @@ public class Mine : Unit
         yield return StartCoroutine(TakeDamage(hpCurrent));
 
     }
+
+    public override void EnableSelection(bool state) {}
 }

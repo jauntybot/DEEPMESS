@@ -33,6 +33,8 @@ public class UnitUI : MonoBehaviour
         }
         ToggleUnitPanel(false);
 
+        u.ElementDestroyed += UnitDestroyed;
+
         u.ui = this;
     }
 
@@ -85,5 +87,9 @@ public class UnitUI : MonoBehaviour
                 //if (place.count <= 0) b.
             }
         }
+    }
+
+    private void UnitDestroyed(GridElement ge) {
+        DestroyImmediate(this.gameObject);
     }
 }

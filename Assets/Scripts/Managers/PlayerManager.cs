@@ -70,7 +70,7 @@ public class PlayerManager : UnitManager {
     }
 
 // Initializes or closes functions for turn start/end
-    public void StartEndTurn(bool start) {
+    public void StartEndTurn(bool start, bool newFloor = false) {
         for (int i = 0; i <= units.Count - 1; i++) {
             units[i].EnableSelection(start);
         }
@@ -78,12 +78,22 @@ public class PlayerManager : UnitManager {
 
         if (start) {
             StartCoroutine(pc.GridInput());
-// Reset unit energy
-            foreach(Unit u in units) {
-                u.energyCurrent = u.energyMax;
-                u.elementCanvas.UpdateStatsDisplay();
-                u.ui.UpdateEnergy();
+            if (!newFloor) {
+// Reset unit energy if not continued turn
+                foreach(Unit u in units) {
+                    if (u is PlayerUnit) {
+                        u.energyCurrent = u.energyMax;
+                        u.elementCanvas.UpdateStatsDisplay();
+                        u.ui.UpdateEnergy();
+                    }
+                }
+            } else {
+                nail.collisionChance = 100;
+                UIManager.instance.UpdateDropChance(nail.collisionChance);
             }
+// Decrease nail collision chance
+            nail.collisionChance -= 25;
+            UIManager.instance.UpdateDropChance(nail.collisionChance);
         } else {
             DeselectUnit();
         }
@@ -111,18 +121,22 @@ public class PlayerManager : UnitManager {
 
     public IEnumerator DropNail() {
         yield return null;
-
-// Find a valid coord that a player is not in
-        bool nonPlayerCoord = false;
+        bool validCoord = false;
         Vector2 spawn = Vector2.zero;
-        while (!nonPlayerCoord) {
-            nonPlayerCoord = true;
-            spawn = new Vector2(Random.Range(1,6), Random.Range(1,6));
-            foreach(Unit u in units) {
-                if (u.coord == spawn) nonPlayerCoord = false;
+// Drop on an enemy
+        if (Random.Range(0,100) <= nail.collisionChance && scenario.currentEnemy.units.Count > 0) {
+            spawn = scenario.currentEnemy.units[Random.Range(0,scenario.currentEnemy.units.Count - 1)].coord;    
+// Drop on a neutral tile
+        } else {
+// Find a valid coord that a player is not in
+            while (!validCoord) {
+                validCoord = true;
+                spawn = new Vector2(Random.Range(1,6), Random.Range(1,6));
+                foreach(Unit u in units) {
+                    if (u.coord == spawn) validCoord = false;
+                }
             }
         }
-
         float xOffset = currentGrid.PosFromCoord(spawn).x;
         nail.transform.position = new Vector3(xOffset, nail.transform.position.y, 0);
         nail.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
@@ -228,7 +242,11 @@ public class PlayerManager : UnitManager {
     protected override void RemoveUnit(GridElement ge)
     {
         base.RemoveUnit(ge);
-        if (units.Count <= 1) {
+        float pu = 0;
+        foreach (Unit unit in units) {
+            if (unit is PlayerUnit) pu++;
+        }
+        if (pu <= 0) {
             StartCoroutine(scenario.Lose());            
         }
     }

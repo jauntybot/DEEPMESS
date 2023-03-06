@@ -68,6 +68,7 @@ public class FloorManager : MonoBehaviour
 
     public IEnumerator PreviewFloor(bool down, bool draw) {
         transitioning = true;
+        scenario.endTurnButton.enabled = !down;
         if (down) {
             if (draw) StartCoroutine(ToggleDescentPreview(true));
             if (draw) {
@@ -106,6 +107,7 @@ public class FloorManager : MonoBehaviour
                     }
 
                     lineRenderers.Add(ge, lr);
+                    ge.ElementDestroyed += DestroyPreview;
                 }
             }
         }
@@ -131,6 +133,14 @@ public class FloorManager : MonoBehaviour
                 DestroyImmediate(lr.Value.gameObject);
             lineRenderers = new Dictionary<GridElement, LineRenderer>();
         }        
+    }
+
+    public void DestroyPreview(GridElement ge) {
+        if (lineRenderers.ContainsKey(ge)) {
+            GameObject go = lineRenderers[ge].gameObject;
+            lineRenderers.Remove(ge);
+            DestroyImmediate(go);
+        }
     }
 
     public void PreviewButton(bool down) {
@@ -199,8 +209,8 @@ public class FloorManager : MonoBehaviour
             if (fromFloor.gridElements[i] is Unit u) {
                 u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
                 if (fromFloor.gridElements[i] is not Nail) {
-                finalCoroutine = StartCoroutine(DropUnit(u, fromFloor.PosFromCoord(u.coord), toFloor.PosFromCoord(u.coord), toFloor.CoordContents(u.coord)));
-                yield return new WaitForSeconds(0.1f);
+                    finalCoroutine = StartCoroutine(DropUnit(u, fromFloor.PosFromCoord(u.coord), toFloor.PosFromCoord(u.coord), toFloor.CoordContents(u.coord)));
+                    yield return new WaitForSeconds(0.1f);
                 }
             }
         }
@@ -276,7 +286,7 @@ public class FloorManager : MonoBehaviour
             yield return StartCoroutine(PreviewFloor(false, false));
             yield return new WaitForSeconds(0.5f);
 
-            StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
+            StartCoroutine(scenario.SwitchTurns(scenario.prevTurn));
         }
     }
 

@@ -38,9 +38,7 @@ public class EndTurnBlinking : MonoBehaviour
 
     public void BlinkEndTurn()
     {
-        if (!CheckEnergy()){
-            endTurnButton.color = Color.white;
-        } else {
+        if (CheckEnergy()){
             if (!blinking) StartCoroutine(BlinkButton());
         }
     }
@@ -52,5 +50,6 @@ public class EndTurnBlinking : MonoBehaviour
             yield return null;
         }
         blinking = false;
+        endTurnButton.color = Color.white;
     }
 }
