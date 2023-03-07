@@ -20,7 +20,7 @@ public class MusicController : MonoBehaviour
     private void Start()
     {
         musicAudioSource = GetComponent<AudioSource>();
-
+        AudioVolume(0);
 
         trackIndex = Random.Range(0, audioTracks.Length - 1);
         UpdateTrack(trackIndex);

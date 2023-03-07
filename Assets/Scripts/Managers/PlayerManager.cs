@@ -88,7 +88,7 @@ public class PlayerManager : UnitManager {
                     }
                 }
             } else {
-                nail.collisionChance = 75;
+                nail.collisionChance = 90;
                 UIManager.instance.UpdateDropChance(nail.collisionChance);
             }
         } else {
