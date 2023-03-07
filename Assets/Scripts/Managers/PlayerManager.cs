@@ -88,8 +88,7 @@ public class PlayerManager : UnitManager {
                     }
                 }
             } else {
-                nail.collisionChance = 90;
-                UIManager.instance.UpdateDropChance(nail.collisionChance);
+
             }
         } else {
             DeselectUnit();
@@ -132,12 +131,17 @@ public class PlayerManager : UnitManager {
                 foreach(Unit u in units) {
                     if (u.coord == spawn) validCoord = false;
                 }
+                foreach(Unit u in scenario.currentEnemy.units) {
+                    if (u.coord == spawn) validCoord = false;
+                }
             }
         }
         float xOffset = currentGrid.PosFromCoord(spawn).x;
         nail.transform.position = new Vector3(xOffset, nail.transform.position.y, 0);
         nail.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         yield return StartCoroutine(UpdateNail(spawn));
+        nail.collisionChance = 90;
+        UIManager.instance.UpdateDropChance(nail.collisionChance);
     }
 
     public IEnumerator UpdateNail(Vector2 coord) {

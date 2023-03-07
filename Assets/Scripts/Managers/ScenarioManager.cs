@@ -53,6 +53,7 @@ public class ScenarioManager : MonoBehaviour
         yield return StartCoroutine(SwitchTurns(Turn.Descent));
         yield return StartCoroutine(player.Initialize());
         yield return StartCoroutine(player.DropNail());
+        UIManager.instance.UpdateDropChance(player.nail.collisionChance);
 
         yield return new WaitForSeconds(.75f);
         yield return StartCoroutine(floorManager.TransitionFloors(floorManager.currentFloor.gameObject));
@@ -107,6 +108,9 @@ public class ScenarioManager : MonoBehaviour
                     StartCoroutine(currentEnemy.TakeTurn());
                 }
                 else if (currentEnemy.units.Count <= 0) {
+// Decrease nail collision chance
+                    player.nail.collisionChance -= 40;
+                    UIManager.instance.UpdateDropChance(player.nail.collisionChance);
                     prevTurn = currentTurn; currentTurn = Turn.Enemy;
                     yield return null;
                     EndTurn();
