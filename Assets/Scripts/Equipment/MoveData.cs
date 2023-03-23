@@ -22,7 +22,6 @@ public class MoveData : EquipmentData
 // Check for pickups
         if (unit is PlayerUnit pu) {
             if (pu.grid.CoordContents(moveTo) is EquipmentPickup equip) {
-   
 // Spawn new hammer and assign it to equipment data
                 PlayerManager manager = (PlayerManager)pu.manager;
                 manager.SpawnHammer(pu, equip.equipment);
@@ -30,6 +29,7 @@ public class MoveData : EquipmentData
    
             }
         }
+        
 // exposed UpdateElement() functionality to selectively update sort order
         if (unit.grid.SortOrderFromCoord(moveTo) > unit.grid.SortOrderFromCoord(unit.coord))
             unit.UpdateSortOrder(moveTo);
