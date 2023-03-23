@@ -70,11 +70,11 @@ public class FloorManager : MonoBehaviour
         transitioning = true;
         scenario.endTurnButton.enabled = !down;
         if (down) {
-            if (draw) StartCoroutine(ToggleDescentPreview(true));
             if (draw) {
+                StartCoroutine(ToggleDescentPreview(true));
                 SetButtonActive(downButton, false); SetButtonActive(upButton, true);
             }
-            yield return StartCoroutine(TransitionFloors(down));
+            yield return StartCoroutine(TransitionFloors(down, true));
             transitioning = false;
         }
         else {
@@ -82,7 +82,7 @@ public class FloorManager : MonoBehaviour
             if (draw) {
                 SetButtonActive(downButton, true); SetButtonActive(upButton, false);
             }
-            yield return StartCoroutine(TransitionFloors(down));
+            yield return StartCoroutine(TransitionFloors(down, true));
         
             transitioning = false;
         }
@@ -158,35 +158,57 @@ public class FloorManager : MonoBehaviour
         button.SetActive(state);
     }
 
-    public IEnumerator TransitionFloors(bool down) {
+    public IEnumerator TransitionFloors(bool down, bool preview) {
         int dir = down? 1 : -1;
         Grid toFloor = null;
         if (floors.Count - 1 >= currentFloor.index + dir)
             toFloor = floors[currentFloor.index + dir];
         
         if (toFloor) toFloor.GetComponent<SortingGroup>().sortingOrder = 0;
-        currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
+        if (!preview) currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
+        else if (!down) currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
+        else currentFloor.GetComponent<SortingGroup>().sortingOrder = 1;
         
         Vector3 from = floorParent.transform.position;
         Vector3 to = new Vector3(from.x, from.y + floorOffset * dir, from.z);
 
-        float currFromA = down? 1: 1;
+        float currFromA = 1;
         float currToA = down? 0 : 1;
 
+        List<NestedFadeGroup.NestedFadeGroup> currentFade = new List<NestedFadeGroup.NestedFadeGroup> {
+            currentFloor.gridContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
+            currentFloor.neutralGEContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
+        };
+
+        List<NestedFadeGroup.NestedFadeGroup> toFade = null;
+        if (toFloor && !down) {
+            toFade = new List<NestedFadeGroup.NestedFadeGroup> {
+                toFloor.gridContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
+                toFloor.neutralGEContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
+            };
+        }
+
         float timer = 0;
-        NestedFadeGroup.NestedFadeGroup currentFade = currentFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>();
-        NestedFadeGroup.NestedFadeGroup toFade = null;
-        if (toFloor && !down) toFade = toFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>();
         while (timer <= transitionDur) {
             floorParent.transform.position = Vector3.Lerp(from, to, timer/transitionDur);
-            currentFade.AlphaSelf = Mathf.Lerp(currFromA, currToA, timer/transitionDur);
-            if (toFade) toFade.AlphaSelf = Mathf.Lerp(0, 1, timer/transitionDur);
+            if (toFade != null) {
+                foreach(NestedFadeGroup.NestedFadeGroup fade in toFade) 
+                   fade.AlphaSelf = Mathf.Lerp(0, 1, timer/transitionDur);
+            }
             yield return null;
             timer += Time.deltaTime;
+            foreach(NestedFadeGroup.NestedFadeGroup fade in currentFade) 
+                fade.AlphaSelf = Mathf.Lerp(currFromA, currToA, timer/transitionDur);
+            
         }
         floorParent.transform.position = to;
-        currentFade.AlphaSelf = currToA;
-        if (toFade) toFade.AlphaSelf = 1;
+        foreach(NestedFadeGroup.NestedFadeGroup fade in currentFade) {
+            fade.AlphaSelf = currToA;
+        }
+        if (toFade != null) {
+            foreach(NestedFadeGroup.NestedFadeGroup fade in toFade) 
+                fade.AlphaSelf = 1;
+        }
 
         if (toFloor) currentFloor = toFloor;
         UIManager.instance.metaDisplay.UpdateCurrentFloor(currentFloor.index);
@@ -249,7 +271,7 @@ public class FloorManager : MonoBehaviour
         
         currentFloor.DisableGridHighlight();
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
-        yield return StartCoroutine(TransitionFloors(true));
+        yield return StartCoroutine(TransitionFloors(true, false));
 
         yield return new WaitForSecondsRealtime(0.25f);
 
@@ -280,7 +302,7 @@ public class FloorManager : MonoBehaviour
 
         } else {
 
-            yield return StartCoroutine(TransitionFloors(true));
+            yield return StartCoroutine(TransitionFloors(true, false));
 
             yield return StartCoroutine(GenerateFloor());
 

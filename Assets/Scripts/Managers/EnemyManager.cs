@@ -52,7 +52,7 @@ public class EnemyManager : UnitManager {
                 currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
                 yield return new WaitForSecondsRealtime(0.5f);
                 Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, target));
-                currentGrid.DisplayGridCursor(true, Vector2.one * -32);
+                currentGrid.UpdateSelectedCursor(true, Vector2.one * -32);
                 currentGrid.DisableGridHighlight();
                 yield return co;
                 DeselectUnit();
@@ -67,7 +67,7 @@ public class EnemyManager : UnitManager {
             currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
             yield return new WaitForSecondsRealtime(0.5f);
             Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, currentGrid.sqrs.Find(sqr => sqr.coord == targetCoord)));
-            currentGrid.DisplayGridCursor(true, Vector2.one * -32);
+            currentGrid.UpdateSelectedCursor(true, Vector2.one * -32);
             currentGrid.DisableGridHighlight();
             yield return co;
             DeselectUnit();
@@ -83,7 +83,7 @@ public class EnemyManager : UnitManager {
                 currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
                 yield return new WaitForSecondsRealtime(0.5f);
                 Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, target));
-                currentGrid.DisplayGridCursor(true, Vector2.one * -32);
+                currentGrid.UpdateSelectedCursor(true, Vector2.one * -32);
                 currentGrid.DisableGridHighlight();
                 yield return co;            
                 DeselectUnit();

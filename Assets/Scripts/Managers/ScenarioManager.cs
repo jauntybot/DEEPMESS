@@ -56,7 +56,7 @@ public class ScenarioManager : MonoBehaviour
         UIManager.instance.UpdateDropChance(player.nail.collisionChance);
 
         yield return new WaitForSeconds(.75f);
-        yield return StartCoroutine(floorManager.TransitionFloors(floorManager.currentFloor.gameObject));
+        yield return StartCoroutine(floorManager.TransitionFloors(floorManager.currentFloor.gameObject, false));
 
         if (floorManager) yield return StartCoroutine(floorManager.GenerateFloor());
 

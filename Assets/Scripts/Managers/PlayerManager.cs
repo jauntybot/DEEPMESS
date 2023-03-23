@@ -228,6 +228,10 @@ public class PlayerManager : UnitManager {
         }
     }
 
+    public void GridMouseOver(Vector2 pos) {
+        currentGrid.UpdateTargetCursor(true, pos);
+    }
+
     public override void SelectUnit(Unit t)
     {
         base.SelectUnit(t);

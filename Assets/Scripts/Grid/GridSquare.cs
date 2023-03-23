@@ -39,15 +39,15 @@ public class GridSquare : GridElement {
         hitbox.enabled = state;
 
         highlight.SetActive(state);
-        if (color is Color c) 
+        if (color is Color c) {
+            c.a = 50;
             UpdateHighlight(c);
+        }
     }
 
 // Made a function for 3 lines of code ig
     public virtual void UpdateHighlight(Color color) 
     {
         highlight.GetComponent<SpriteRenderer>().color = color;
-        foreach (SpriteRenderer sr in highlight.GetComponentsInChildren<SpriteRenderer>())
-            sr.color = color;
     }
 }

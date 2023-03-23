@@ -16,8 +16,8 @@ public class Grid : MonoBehaviour {
     public UnitManager enemy;
     [SerializeField] GameObject enemyPrefab;
 
-    static Vector2 ORTHO_OFFSET = new Vector2(0.75f, 0.5f);
-    [SerializeField] GameObject sqrPrefab, gridCursor;
+    static Vector2 ORTHO_OFFSET = new Vector2(0.8f, 0.5f);
+    [SerializeField] GameObject sqrPrefab, gridCursor, selectedCursor;
     [SerializeField] static float fadeInDur = 0.25f;
     public LevelDefinition lvlDef;
     [SerializeField] Color offWhite;
@@ -51,7 +51,9 @@ public class Grid : MonoBehaviour {
                 sqr.transform.parent = gridContainer.transform;
             }
         }
+        
         gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
+        selectedCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
         index = i;
 
         yield return StartCoroutine(SpawnLevelDefinition());
@@ -99,10 +101,16 @@ public class Grid : MonoBehaviour {
         gridElements.Remove(ge);
     }
 
-    public void DisplayGridCursor(bool state, Vector2 coord) {
+    public void UpdateTargetCursor(bool state, Vector2 coord) {
         gridCursor.SetActive(state);
         gridCursor.transform.position = PosFromCoord(coord);
-        gridCursor.GetComponent<SpriteRenderer>().sortingOrder = SortOrderFromCoord(coord);
+        gridCursor.GetComponentInChildren<SpriteRenderer>().sortingOrder = SortOrderFromCoord(coord);
+    }
+
+    public void UpdateSelectedCursor(bool state, Vector2 coord) {
+        selectedCursor.SetActive(state);
+        selectedCursor.transform.position = PosFromCoord(coord);
+        selectedCursor.GetComponentInChildren<SpriteRenderer>().sortingOrder = SortOrderFromCoord(coord);
     }
 
 // Toggle GridSquare highlights, apply color by index
