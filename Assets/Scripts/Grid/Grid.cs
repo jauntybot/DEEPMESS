@@ -16,7 +16,7 @@ public class Grid : MonoBehaviour {
     public UnitManager enemy;
     [SerializeField] GameObject enemyPrefab;
 
-    static Vector2 ORTHO_OFFSET = new Vector2(0.8f, 0.5f);
+    [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.1f, 0.5f);
     [SerializeField] GameObject sqrPrefab, gridCursor, selectedCursor;
     [SerializeField] static float fadeInDur = 0.25f;
     public LevelDefinition lvlDef;
@@ -155,8 +155,8 @@ public class Grid : MonoBehaviour {
      public Vector3 PosFromCoord(Vector2 coord) {
         return new Vector3(
 // offset from scene origin + coord to pos conversion + ortho offset + center measure
-            transform.position.x - (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x) + (ORTHO_OFFSET.x * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 
-            transform.position.y + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y) - (ORTHO_OFFSET.y * FloorManager.sqrSize * coord.x), 
+            transform.position.x - (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x) + (ORTHO_OFFSET.x/2.3f * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 
+            transform.position.y + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y/1.5f) - (ORTHO_OFFSET.y/4 * FloorManager.sqrSize * coord.x), 
             0);
     }
 
