@@ -22,7 +22,8 @@ public class EquipmentAdjacency : MonoBehaviour
             _coords = OrthagonalAdjacency(from, data, targetLast);
         break;
         case EquipmentData.AdjacencyType.OfType:
-            _coords = OfTypeOnBoardAdjacency(from, data.filters[0], from.coord);
+            _coords = OfTypeOnBoardAdjacency(from, data.filters, from.coord);
+            Debug.Log("adjacency");
         break;
         
         }
@@ -144,15 +145,20 @@ public class EquipmentAdjacency : MonoBehaviour
     }
 
     
-        protected static List<Vector2> OfTypeOnBoardAdjacency(GridElement from, GridElement element, Vector2 origin) {
+        protected static List<Vector2> OfTypeOnBoardAdjacency(GridElement from, List<GridElement> elements, Vector2 origin) {
         List<Vector2> _coords = new List<Vector2>();
 
         foreach (GridElement ge in from.grid.gridElements) {
-            if (ge.GetType() == element.GetType() && ge.coord != origin) {
-                _coords.Add(ge.coord);
+            foreach (GridElement type in elements) {
+                if (ge.GetType() == type.GetType() && ge.coord != origin) {
+                    _coords.Add(ge.coord);
+                }
             }
         }
+        foreach(Vector2 coord in _coords) {
 
+        Debug.Log(coord);
+        }
         return _coords;
     } 
 

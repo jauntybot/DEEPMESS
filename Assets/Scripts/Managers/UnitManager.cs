@@ -8,7 +8,7 @@ public class UnitManager : MonoBehaviour {
 
 // Global refs
     [SerializeField]
-    protected Grid currentGrid;
+    public Grid currentGrid;
     protected FloorManager floorManager;
     [HideInInspector] public ScenarioManager scenario;
 

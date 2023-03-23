@@ -73,7 +73,11 @@ public class FloorManager : MonoBehaviour
             if (draw) {
                 StartCoroutine(ToggleDescentPreview(true));
                 SetButtonActive(downButton, false); SetButtonActive(upButton, true);
+                scenario.player.transform.parent = transitionParent;
+                scenario.player.nail.transform.parent = currentFloor.transform;
+                scenario.currentEnemy.transform.parent = transitionParent;
             }
+            
             yield return StartCoroutine(TransitionFloors(down, true));
             transitioning = false;
         }
@@ -83,7 +87,10 @@ public class FloorManager : MonoBehaviour
                 SetButtonActive(downButton, true); SetButtonActive(upButton, false);
             }
             yield return StartCoroutine(TransitionFloors(down, true));
-        
+            scenario.player.transform.parent = currentFloor.transform;
+            scenario.player.nail.transform.parent = scenario.player.transform;
+            scenario.currentEnemy.transform.parent = currentFloor.transform;
+            
             transitioning = false;
         }
     }
@@ -106,7 +113,7 @@ public class FloorManager : MonoBehaviour
                         lr.startColor = playerColor; lr.endColor = playerColor;
                     }
 
-                    lineRenderers.Add(ge, lr);
+                    lineRenderers.Add(currentFloor.sqrs.Find(sqr => sqr.coord == ge.coord), lr);
                     ge.ElementDestroyed += DestroyPreview;
                 }
             }
@@ -174,18 +181,47 @@ public class FloorManager : MonoBehaviour
 
         float currFromA = 1;
         float currToA = down? 0 : 1;
+        float partialFrom = scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf;
+        float partialA = down? 0.25f : 1;
 
         List<NestedFadeGroup.NestedFadeGroup> currentFade = new List<NestedFadeGroup.NestedFadeGroup> {
             currentFloor.gridContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
             currentFloor.neutralGEContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
         };
+        List<NestedFadeGroup.NestedFadeGroup> partialFade = null;
+
+        if (currentFloor == scenario.player.currentGrid) {
+            if (!preview) {
+                currentFade.Add(scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>());
+                currentFade.Add(scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>());
+            } else {
+                currentFade.Add(scenario.player.nail.GetComponent<NestedFadeGroup.NestedFadeGroup>());
+                partialFade = new List<NestedFadeGroup.NestedFadeGroup>() {
+                    scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
+                    scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>()
+                };
+            }
+        }
 
         List<NestedFadeGroup.NestedFadeGroup> toFade = null;
+
         if (toFloor && !down) {
             toFade = new List<NestedFadeGroup.NestedFadeGroup> {
                 toFloor.gridContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
                 toFloor.neutralGEContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
             };
+            if (toFloor == scenario.player.currentGrid) {
+                if (!preview) {
+                    toFade.Add(scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>());
+                    toFade.Add(scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>());
+                } else {
+                    toFade.Add(scenario.player.nail.GetComponent<NestedFadeGroup.NestedFadeGroup>());
+                    partialFade = new List<NestedFadeGroup.NestedFadeGroup>() {
+                        scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
+                        scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>()
+                    };
+                }
+            }
         }
 
         float timer = 0;
@@ -194,6 +230,10 @@ public class FloorManager : MonoBehaviour
             if (toFade != null) {
                 foreach(NestedFadeGroup.NestedFadeGroup fade in toFade) 
                    fade.AlphaSelf = Mathf.Lerp(0, 1, timer/transitionDur);
+            }
+            if (partialFade != null) {
+                foreach(NestedFadeGroup.NestedFadeGroup fade in partialFade) 
+                   fade.AlphaSelf = Mathf.Lerp(partialFrom, partialA, timer/transitionDur);
             }
             yield return null;
             timer += Time.deltaTime;

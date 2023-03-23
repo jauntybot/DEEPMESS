@@ -17,7 +17,7 @@ public class SwapData : EquipmentData
 
         Vector2 to1 = unit2.coord; Vector2 to2 = unit1.coord;
         yield return null;
-        unit1.UpdateElement(to2); unit2.UpdateElement(to1);
+        unit1.UpdateElement(to1); unit2.UpdateElement(to2);
 
     }
 

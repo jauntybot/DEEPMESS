@@ -53,7 +53,9 @@ public class Grid : MonoBehaviour {
         }
         
         gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
+        gridCursor.transform.SetAsLastSibling();
         selectedCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
+        selectedCursor.transform.SetAsLastSibling();
         index = i;
 
         yield return StartCoroutine(SpawnLevelDefinition());
