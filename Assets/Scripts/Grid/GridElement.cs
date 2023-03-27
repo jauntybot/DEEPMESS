@@ -33,6 +33,7 @@ public class GridElement : MonoBehaviour{
 // Initialize references, scale to grid, subscribe onDeath event
     protected virtual void Start() 
     {
+
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
 

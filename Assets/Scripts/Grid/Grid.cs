@@ -75,17 +75,17 @@ public class Grid : MonoBehaviour {
     IEnumerator SpawnLevelDefinition() {
         enemy = Instantiate(enemyPrefab, this.transform).GetComponent<EnemyManager>(); 
         yield return StartCoroutine(enemy.Initialize());
-        foreach (Content c in lvlDef.initSpawns) {
-            if (c.prefabToSpawn is Unit u) 
+        foreach (Spawn spawn in lvlDef.initSpawns) {
+            if (spawn.asset.ge is Unit u) 
             {
                 if (u is EnemyUnit e)
-                    enemy.SpawnUnit(c.coord, e);
+                    enemy.SpawnUnit(spawn.coord, e);
             } else {
-                GridElement ge = Instantiate(c.prefabToSpawn.gameObject, this.transform).GetComponent<GridElement>();
+                GridElement ge = Instantiate(spawn.asset.prefab, this.transform).GetComponent<GridElement>();
                 ge.transform.parent = neutralGEContainer.transform;
 
                 ge.StoreInGrid(this);
-                ge.UpdateElement(c.coord);
+                ge.UpdateElement(spawn.coord);
             }
         }
     }

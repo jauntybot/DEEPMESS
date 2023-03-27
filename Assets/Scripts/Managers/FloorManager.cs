@@ -257,8 +257,10 @@ public class FloorManager : MonoBehaviour
     public IEnumerator DropUnits(Grid fromFloor, Grid toFloor) {
         
         scenario.player.transform.parent = transitionParent;
+        scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         scenario.player.nail.transform.parent = currentFloor.transform;
         scenario.currentEnemy.transform.parent = transitionParent;
+        scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
 
         foreach (GridElement ge in fromFloor.gridElements) {
             if (ge is Unit)
