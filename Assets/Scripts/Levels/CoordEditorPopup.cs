@@ -16,13 +16,12 @@ class CoordEditorPopup : EditorWindow
             button.name = entry.Key;
             button.icon = entry.Value;
             buttons.Add(button);
-            Debug.Log("updated options");
         }
     }
 
     public static void Reload(Vector2 pos) {
         window = GetWindow<CoordEditorPopup>();
-        window.position = new Rect(pos.x, pos.y, 200, 400);
+        window.position = new Rect(pos.x + 500, pos.y, 105, buttons.Count * 101);
         window.Show();
         
     }
@@ -30,7 +29,7 @@ class CoordEditorPopup : EditorWindow
     void OnGUI() {
         Rect h = EditorGUILayout.BeginVertical();
         for (int i = 0; i < buttons.Count; i++) {
-            if (GUILayout.Button(buttons[i].icon, GUILayout.Width(200), GUILayout.Height(100))) {
+            if (GUILayout.Button(buttons[i].icon, GUILayout.Width(100), GUILayout.Height(100))) {
                 LevelEditor.UpdateCoord(buttons[i].name);
                 if (i == 0) 
                     LevelEditor.UpdateCoord();

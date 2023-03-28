@@ -8,12 +8,11 @@ public class LevelDefinitionEditor : Editor
 {
     public override void OnInspectorGUI() 
     {
-        base.OnInspectorGUI();
         LevelDefinition arg = target as LevelDefinition;
-
-
         if (GUILayout.Button("Open Level Editor"))
             LevelEditor.Init(arg);
+            
+        base.OnInspectorGUI();
     }
 
 }

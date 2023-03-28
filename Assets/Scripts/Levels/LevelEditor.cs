@@ -39,6 +39,20 @@ public class LevelEditor : EditorWindow {
         }
     }
 
+    string Notation(int x) {
+        switch(x) {
+            default: return "a";
+            case 0: return "a";
+            case 1: return "b";
+            case 2: return "c";
+            case 3: return "d";
+            case 4: return "e";
+            case 5: return "f";
+            case 6: return "g";
+            case 7: return "h";
+        }
+    }
+
 
     void OnGUI()
     {
@@ -46,15 +60,18 @@ public class LevelEditor : EditorWindow {
         Rect h = (Rect)EditorGUILayout.BeginVertical();
         for (int y = 0; y < 8; y++) {
             Rect r = (Rect)EditorGUILayout.BeginHorizontal();
-            for (int x = 0; x < 8; x++) {
+            for (int x = 7; x >= 0; x--) {
                 Spawn spawn = lvl.initSpawns.Find(s => s.coord == new Vector2(x, y));
                 Texture buttonSprite = lvl.atlas.assets[0].icon;
                 if (spawn != null) buttonSprite = spawn.asset.icon;
-                if (GUILayout.Button(buttonSprite, GUILayout.Width(100), GUILayout.Height(100))) {
+                GUILayout.BeginArea(new Rect(x*101, (7-y)*101, 100, 100));
+                if (GUILayout.Button(buttonSprite, GUILayout.Width(100), GUILayout.Height(75))) {
                     Vector2 mousePos = evt.mousePosition;
                     activeCoord = new Vector2(x,y);
                     CoordEditorPopup.Reload(mousePos);    
                 }
+                GUILayout.Box(Notation(x)+(y+1));
+                GUILayout.EndArea();
             }
             EditorGUILayout.EndHorizontal();
         }
