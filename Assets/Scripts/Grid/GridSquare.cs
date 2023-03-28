@@ -17,7 +17,7 @@ public class GridSquare : GridElement {
     protected override void Start()
     {
         hitbox = GetComponent<PolygonCollider2D>();
-        hitbox.enabled = false;
+        //hitbox.enabled = false;
 // Temporary checkerboard, color sprite renderers
         if (!white) 
         {

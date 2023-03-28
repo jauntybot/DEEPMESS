@@ -115,6 +115,9 @@ public class FloorManager : MonoBehaviour
 
                     lineRenderers.Add(currentFloor.sqrs.Find(sqr => sqr.coord == ge.coord), lr);
                     ge.ElementDestroyed += DestroyPreview;
+
+                    floors[currentFloor.index+1].sqrs.Find(sqr => sqr.coord == ge.coord).ToggleValidCoord(true,
+                    ge is PlayerUnit ? playerColor : enemyColor);
                 }
             }
         }
@@ -139,6 +142,7 @@ public class FloorManager : MonoBehaviour
             foreach (KeyValuePair<GridElement, LineRenderer> lr in lineRenderers)
                 DestroyImmediate(lr.Value.gameObject);
             lineRenderers = new Dictionary<GridElement, LineRenderer>();
+            floors[currentFloor.index+1].DisableGridHighlight();
         }        
     }
 
@@ -282,7 +286,7 @@ public class FloorManager : MonoBehaviour
         print("final coroutine");
     }
 
-    private IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
+    public IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
         float timer = 0;
         NestedFadeGroup.NestedFadeGroup fade = unit.GetComponent<NestedFadeGroup.NestedFadeGroup>();
         while (timer <= transitionDur) {

@@ -14,7 +14,7 @@ public class PlayerManager : UnitManager {
 
 
     [Header("PLAYER MANAGER")]
-    
+    public LoadoutManager loadout;
     public Nail nail;
     public int hammerCharge, descentChargeReq;
     [SerializeField] HammerChargeDisplay chargeDisplay;
@@ -46,9 +46,14 @@ public class PlayerManager : UnitManager {
         
         yield return base.Initialize();
 
-        nail = (Nail)SpawnUnit(Vector2.zero, nailPrefab.GetComponent<Nail>());
-        nail.gameObject.transform.position = new Vector3 (0,20,0);
+
+        SpawnUnit(new Vector2(3,4), loadout.unitPrefabs[0]);
+        SpawnUnit(new Vector2(4,4), loadout.unitPrefabs[1]);
+        SpawnUnit(new Vector2(3,3), loadout.unitPrefabs[1]);
+
+        nail = (Nail)SpawnUnit(new Vector3(0, 30), nailPrefab.GetComponent<Nail>());
         nail.gameObject.transform.parent = unitParent.transform;
+        yield return StartCoroutine(DropNail());
 
         SpawnHammer((PlayerUnit)units[0], hammerActions);
 
@@ -98,6 +103,9 @@ public class PlayerManager : UnitManager {
 // Overriden functionality
     public override Unit SpawnUnit(Vector2 coord, Unit unit) {
         Unit u = base.SpawnUnit(coord, unit);
+        u.transform.position += new Vector3(0, floorManager.floorOffset, 0);
+        u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
+        StartCoroutine(floorManager.DropUnit(u, u.transform.position, currentGrid.PosFromCoord(coord)));
 
 // Initialize equipment from prefab
         foreach(EquipmentData e in u.equipment) {
@@ -136,8 +144,7 @@ public class PlayerManager : UnitManager {
                 }
             }
         }
-        float xOffset = currentGrid.PosFromCoord(spawn).x;
-        nail.transform.position = new Vector3(xOffset, nail.transform.position.y, 0);
+        nail.transform.position = new Vector3(spawn.x, spawn.y+floorManager.floorOffset, 0);
         nail.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         yield return StartCoroutine(UpdateNail(spawn));
         nail.collisionChance = 90;
@@ -228,8 +235,8 @@ public class PlayerManager : UnitManager {
         }
     }
 
-    public void GridMouseOver(Vector2 pos) {
-        currentGrid.UpdateTargetCursor(true, pos);
+    public void GridMouseOver(Vector2 pos, bool state) {
+        currentGrid.UpdateTargetCursor(state, pos);
     }
 
     public override void SelectUnit(Unit t)

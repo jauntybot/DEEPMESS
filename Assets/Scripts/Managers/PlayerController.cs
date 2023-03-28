@@ -24,13 +24,16 @@ public class PlayerController : MonoBehaviour {
             if (hit != default(RaycastHit2D)) {
                 if (hit.transform.GetComponent<GridElement>()) {
 // On click
-                    manager.GridMouseOver(hit.transform.GetComponent<GridElement>().coord);
+                    manager.GridMouseOver(hit.transform.GetComponent<GridElement>().coord, true);
                     if (Input.GetMouseButtonDown(0)) {
 // Pass call to contextualize click to manager
                         manager.GridInput(hit.transform.GetComponent<GridElement>());       
                     }
                 }    
-            }
+                else
+                    manager.GridMouseOver(new Vector2(-32, -32), false);
+            } else
+                manager.GridMouseOver(new Vector2(-32, -32), false);
 
             if (Input.GetKeyDown(KeyCode.Tab)) {
                 manager.DisplayAllHP(true);

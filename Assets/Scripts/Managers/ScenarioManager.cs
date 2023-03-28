@@ -50,9 +50,16 @@ public class ScenarioManager : MonoBehaviour
             currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
             player.transform.parent = floorManager.currentFloor.transform;
         }
+        yield return StartCoroutine(player.loadout.Initialize());
+    }
+
+    public void InitialDescent() {
+        StartCoroutine(FirstTurn());
+    }
+
+    public IEnumerator FirstTurn() {
         yield return StartCoroutine(SwitchTurns(Turn.Descent));
         yield return StartCoroutine(player.Initialize());
-        yield return StartCoroutine(player.DropNail());
         UIManager.instance.UpdateDropChance(player.nail.collisionChance);
 
         yield return new WaitForSeconds(.75f);

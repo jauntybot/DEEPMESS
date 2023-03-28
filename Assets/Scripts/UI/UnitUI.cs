@@ -17,6 +17,7 @@ public class UnitUI : MonoBehaviour
     [Header("Equipment")]
     public List<EquipmentButton> equipment; 
     [SerializeField] GameObject equipmentPanel, equipmentButtonPrefab, apPipPrefab;
+    [SerializeField] bool energyDisplay;
     [SerializeField] Transform energy, energyContainer;
     
     public void Initialize(Unit u) {
@@ -26,7 +27,7 @@ public class UnitUI : MonoBehaviour
         portrait.sprite = u.portrait;
         gfx.sprite = u.gfx[0].sprite;
 
-        if (u is PlayerUnit) {
+        if (u is PlayerUnit && energyDisplay) {
             UpdateEquipmentButtons();
             ToggleEquipmentPanel(false);
             energy.gameObject.SetActive(true);
