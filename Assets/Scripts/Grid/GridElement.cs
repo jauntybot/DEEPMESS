@@ -106,6 +106,10 @@ public class GridElement : MonoBehaviour{
         
         yield return StartCoroutine(TakeDamage(hpCurrent));
     }
+
+    public virtual void OnSharedSpace(GridElement sharedWith) {
+        
+    }
     
 }
 

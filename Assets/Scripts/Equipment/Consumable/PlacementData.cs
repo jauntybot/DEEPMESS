@@ -4,16 +4,15 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName = "Equipment/Consumable/Placeable")]
 [System.Serializable]   
-public class PlacementData : EquipmentData
+public class PlacementData : ConsumableEquipmentData
 {
     public enum PlacementType { MoveAndPlace, PlaceAdjacent};
     [Header("Placement Equipment")]
     public PlacementType placementType;
     [SerializeField] GameObject prefab;
-    public int count;
 
 
-    public override List<Vector2> TargetEquipment(GridElement user)
+    public override List<Vector2> TargetEquipment(GridElement user, int mod)
     {
         return base.TargetEquipment(user);
 
@@ -25,38 +24,38 @@ public class PlacementData : EquipmentData
     {
         yield return base.UseEquipment(user, target);
         PlayerUnit pu = (PlayerUnit)user;
-        Unit placed = Instantiate(prefab, pu.manager.transform).GetComponent<Unit>();
-        placed.StoreInGrid(pu.grid);
-        placed.UpdateElement(pu.coord);
         
-        pu.manager.units.Add(placed);
-        placed.manager = pu.manager;
-        placed.manager.SubscribeElement(placed);
-        placed.selectable = true;
+        GridElement toPlace = prefab.GetComponent<GridElement>();
+        GridElement placed = (toPlace is Unit u) ? 
+            (GridElement)pu.manager.SpawnUnit(target.coord, u) : 
+            Instantiate(prefab, user.grid.neutralGEContainer.transform).GetComponent<GridElement>();
+        placed.StoreInGrid(pu.grid);
+        if (placed.GetComponent<NestedFadeGroup.NestedFadeGroup>())
+            placed.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
 
-        count--;
-        foreach (Unit u in pu.manager.units) {
-            if (u is PlayerUnit _pu)
-                _pu.ui.UpdateEquipmentButtons();
+        switch(placementType) {
+            default: break;
+            case PlacementType.MoveAndPlace:
+                placed.UpdateElement(pu.coord);            
+                yield return user.StartCoroutine(MoveToCoord(pu, target.coord));
+            break;
+            case PlacementType.PlaceAdjacent:
+                placed.UpdateElement(target.coord);
+                if (target != null)
+                    placed.OnSharedSpace(target);
+            break;
         }
-        yield return user.StartCoroutine(MoveToCoord(pu, target.coord));
     }
 
 public IEnumerator MoveToCoord(Unit unit, Vector2 moveTo) 
     {
         float timer = 0;
 
-// Check for pickups
-        if (unit is PlayerUnit pu) {
-            if (pu.grid.CoordContents(moveTo) is EquipmentPickup equip) {
-   
-// Spawn new hammer and assign it to equipment data
-                PlayerManager manager = (PlayerManager)pu.manager;
-                manager.SpawnHammer(pu, equip.equipment);
-                pu.StartCoroutine(equip.DestroyElement());
-   
-            }
+// Check for shared space  
+        foreach (GridElement ge in unit.grid.CoordContents(moveTo)) {
+            ge.OnSharedSpace(unit);
         }
+        
 // exposed UpdateElement() functionality to selectively update sort order
         if (unit.grid.SortOrderFromCoord(moveTo) > unit.grid.SortOrderFromCoord(unit.coord))
             unit.UpdateSortOrder(moveTo);
@@ -64,9 +63,10 @@ public IEnumerator MoveToCoord(Unit unit, Vector2 moveTo)
 
         AudioManager.PlaySound(AudioAtlas.Sound.moveSlide,moveTo);
 // Lerp units position to target
+        Vector3 toPos = FloorManager.instance.currentFloor.PosFromCoord(moveTo);
         while (timer < animDur) {
             yield return null;
-            unit.transform.position = Vector3.Lerp(unit.transform.position, FloorManager.instance.currentFloor.PosFromCoord(moveTo), timer/animDur);
+            unit.transform.position = Vector3.Lerp(unit.transform.position, toPos, timer/animDur);
             timer += Time.deltaTime;
         }
         

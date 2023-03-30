@@ -69,17 +69,21 @@ public class Grid : MonoBehaviour {
             timer += Time.deltaTime;
             yield return null;
         }
+        LockGrid(true);
         fade.AlphaSelf = 1;
     }
 
     IEnumerator SpawnLevelDefinition() {
         enemy = Instantiate(enemyPrefab, this.transform).GetComponent<EnemyManager>(); 
+        enemy.transform.SetSiblingIndex(2);
         yield return StartCoroutine(enemy.Initialize());
         foreach (Spawn spawn in lvlDef.initSpawns) {
             if (spawn.asset.ge is Unit u) 
             {
-                if (u is EnemyUnit e)
+                if (u is EnemyUnit e) {
                     enemy.SpawnUnit(spawn.coord, e);
+                    Debug.Log("enemy unit");
+                }
             } else {
                 GridElement ge = Instantiate(spawn.asset.prefab, this.transform).GetComponent<GridElement>();
                 ge.transform.parent = neutralGEContainer.transform;
@@ -148,8 +152,14 @@ public class Grid : MonoBehaviour {
             sqr.ToggleValidCoord(false);
     }
 
-    public GridElement CoordContents(Vector2 coord) {
-        return gridElements.Find(ge => ge.coord == coord);
+    public void LockGrid(bool state) {
+        Debug.Log("Hitbox active: " + !state);
+        foreach (GridSquare sqr in sqrs)
+            sqr.ToggleHitBox(!state);
+    }
+
+    public List<GridElement> CoordContents(Vector2 coord) {
+        return gridElements.FindAll(ge => ge.coord == coord);
     }
 
      public Vector3 PosFromCoord(Vector2 coord) {

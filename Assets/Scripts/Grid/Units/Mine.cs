@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Mine : Unit
 {
-    public override IEnumerator CollideFromAbove() {
+    public override IEnumerator CollideFromAbove(GridElement subGE) {
 
         yield return StartCoroutine(TakeDamage(hpCurrent));
 

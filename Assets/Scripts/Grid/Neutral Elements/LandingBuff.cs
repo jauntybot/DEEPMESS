@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LandingBuff : GridElement
+public class LandingBuff : GroundElement
 {
 
     public enum Buff { Heal, Armor, Energy, }
@@ -10,18 +10,18 @@ public class LandingBuff : GridElement
 
     public int value;
 
-    public override IEnumerator CollideFromBelow(GridElement above) {
-    
+
+    public override void OnSharedSpace(GridElement sharedWith)
+    {
+        base.OnSharedSpace(sharedWith);
         switch (buff) {
             default:
             case Buff.Heal:
-                StartCoroutine(above.TakeDamage(-value));
+                StartCoroutine(sharedWith.TakeDamage(-value));
 
             break;
         }
         StartCoroutine(DestroyElement());
-        yield return null;
-
     }
 
 }

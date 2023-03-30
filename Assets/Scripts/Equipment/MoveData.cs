@@ -17,17 +17,10 @@ public class MoveData : EquipmentData
 
     public IEnumerator MoveToCoord(Unit unit, Vector2 moveTo) 
     {
-        float timer = 0;
 
-// Check for pickups
-        if (unit is PlayerUnit pu) {
-            if (pu.grid.CoordContents(moveTo) is EquipmentPickup equip) {
-// Spawn new hammer and assign it to equipment data
-                PlayerManager manager = (PlayerManager)pu.manager;
-                manager.SpawnHammer(pu, equip.equipment);
-                pu.StartCoroutine(equip.DestroyElement());
-   
-            }
+// Check for shared space  
+        foreach (GridElement ge in unit.grid.CoordContents(moveTo)) {
+            ge.OnSharedSpace(unit);
         }
         
 // exposed UpdateElement() functionality to selectively update sort order
@@ -36,14 +29,18 @@ public class MoveData : EquipmentData
         unit.coord = moveTo;
 
         AudioManager.PlaySound(AudioAtlas.Sound.moveSlide,moveTo);
+        
 // Lerp units position to target
+        float timer = 0;
+        Vector3 toPos = FloorManager.instance.currentFloor.PosFromCoord(moveTo);
         while (timer < animDur) {
             yield return null;
-            unit.transform.position = Vector3.Lerp(unit.transform.position, FloorManager.instance.currentFloor.PosFromCoord(moveTo), timer/animDur);
+            unit.transform.position = Vector3.Lerp(unit.transform.position, toPos, timer/animDur);
             timer += Time.deltaTime;
         }
         
         unit.UpdateElement(moveTo);
+
         yield return new WaitForSecondsRealtime(0.25f);
         if (!unit.targeted) unit.TargetElement(false);
     }

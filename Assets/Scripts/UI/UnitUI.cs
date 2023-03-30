@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class UnitUI : MonoBehaviour
 {
-
+    enum UIType {Portrait, Loadout};
+    [SerializeField] UIType uiType;
     public Unit unit;
 
     [Header("Canvas Elements")]
@@ -17,26 +18,28 @@ public class UnitUI : MonoBehaviour
     [Header("Equipment")]
     public List<EquipmentButton> equipment; 
     [SerializeField] GameObject equipmentPanel, equipmentButtonPrefab, apPipPrefab;
-    [SerializeField] bool energyDisplay;
     [SerializeField] Transform energy, energyContainer;
+    [SerializeField] GameObject equipmentOptions;
+
     
-    public void Initialize(Unit u) {
+    public UnitUI Initialize(Unit u) {
 
         unit = u;
         unitName.text = u.name;
         portrait.sprite = u.portrait;
         gfx.sprite = u.gfx[0].sprite;
 
-        if (u is PlayerUnit && energyDisplay) {
+        if (u is PlayerUnit) {
             UpdateEquipmentButtons();
             ToggleEquipmentPanel(false);
-            energy.gameObject.SetActive(true);
+            if (uiType == UIType.Portrait)
+                energy.gameObject.SetActive(true);
         }
         ToggleUnitPanel(false);
 
         u.ElementDestroyed += UnitDestroyed;
 
-        u.ui = this;
+        return this;
     }
 
     public void ToggleUnitPanel(bool active) {
@@ -72,6 +75,8 @@ public class UnitUI : MonoBehaviour
             if (unit.equipment.Find(d => d == b.data) == null) {
                 equipment.Remove(b);
                 Destroy(b.gameObject);
+            } else {
+                b.transform.parent.SetSiblingIndex(i);
             }
             
         }
@@ -82,15 +87,46 @@ public class UnitUI : MonoBehaviour
                 newButt.Initialize(equip, unit);
                 equipment.Add(newButt);
             }
-            if (equip is PlacementData place) {
-                EquipmentButton b = equipment.Find(b => b.data == place);
-                b.UpdateBadge(place.count);
+            if (equip is ConsumableEquipmentData consume) {
+                EquipmentButton b = equipment.Find(b => b.data == consume);
+                PlayerUnit pu = (PlayerUnit)unit;
+                b.UpdateBadge(pu.consumableCount);
                 //if (place.count <= 0) b.
             }
         }
+        UpdateEquipmentButtonMods();
     }
 
     private void UnitDestroyed(GridElement ge) {
         DestroyImmediate(this.gameObject);
     }
+
+    public void ToggleEquipmentOptions() {
+        equipmentOptions.SetActive(!equipmentOptions.activeSelf);
+    }
+
+    public void UpdateEquipmentButtonMods() {
+        foreach (EquipmentButton b in equipment) 
+            b.UpdateMod();
+        
+    }
+
+    public void UpdateLoadout(EquipmentData equip) {
+        for (int i = unit.equipment.Count - 1; i >= 0; i--) {
+            if (unit.equipment[i] is ConsumableEquipmentData e) {
+                if (equip == e) return;
+                unit.equipment.Remove(e);
+            }
+        }
+        unit.equipment.Insert(2, equip);
+        unit.ui.UpdateEquipmentButtons();
+
+        UpdateEquipmentButtons();
+        for(int i = equipment.Count - 2; i >= 0; i--) {
+                EquipmentButton b = equipment[i];
+                equipment.Remove(b);
+                Destroy(b.gameObject);
+        }
+    }
+
 }

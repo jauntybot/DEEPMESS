@@ -50,7 +50,7 @@ public class ScenarioManager : MonoBehaviour
             currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
             player.transform.parent = floorManager.currentFloor.transform;
         }
-        yield return StartCoroutine(player.loadout.Initialize());
+        yield return StartCoroutine(player.Initialize());
     }
 
     public void InitialDescent() {
@@ -59,7 +59,6 @@ public class ScenarioManager : MonoBehaviour
 
     public IEnumerator FirstTurn() {
         yield return StartCoroutine(SwitchTurns(Turn.Descent));
-        yield return StartCoroutine(player.Initialize());
         UIManager.instance.UpdateDropChance(player.nail.collisionChance);
 
         yield return new WaitForSeconds(.75f);
@@ -73,6 +72,7 @@ public class ScenarioManager : MonoBehaviour
 
         currentTurn = Turn.Enemy;
         StartCoroutine(SwitchTurns(Turn.Player));
+        floorManager.currentFloor.LockGrid(false);
     }
 
 #endregion
@@ -101,11 +101,11 @@ public class ScenarioManager : MonoBehaviour
                     floorManager.Descend();
                 } else if (currentEnemy.units.Count > 0) {
 // Decrease nail collision chance
-                player.nail.collisionChance -= 40;
-                UIManager.instance.UpdateDropChance(player.nail.collisionChance);
+                    player.nail.collisionChance -= 40;
+                    UIManager.instance.UpdateDropChance(player.nail.collisionChance);
                     floorManager.upButton.GetComponent<Button>().enabled = false; floorManager.downButton.GetComponent<Button>().enabled = false;
-                    yield return StartCoroutine(messagePanel.DisplayMessage("ANTIBODY RESPONSE", 2));
                     prevTurn = currentTurn; currentTurn = Turn.Enemy;
+                    yield return StartCoroutine(messagePanel.DisplayMessage("ANTIBODY RESPONSE", 2));
                     foreach(Unit u in currentEnemy.units) {
                         u.energyCurrent = u.energyMax;
                         u.elementCanvas.UpdateStatsDisplay();
@@ -124,9 +124,9 @@ public class ScenarioManager : MonoBehaviour
                 }
             break;
             case Turn.Player:
+                currentEnemy.ResolveConditions();
                 if (player.units.Count >= 2) {
                     turnCount++;
-
                     floorManager.upButton.GetComponent<Button>().enabled = true; floorManager.downButton.GetComponent<Button>().enabled = true;
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN", 1));
                     UIManager.instance.metaDisplay.UpdateTurnsToDescend(turnsToDescend - turnCount);

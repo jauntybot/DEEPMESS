@@ -83,10 +83,18 @@ public class UnitManager : MonoBehaviour {
             selectedUnit.selected = false;
             selectedUnit = null;
 
-            currentGrid.UpdateSelectedCursor(true, Vector2.one * -32);
+            currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
             currentGrid.DisableGridHighlight();
         }            
         
+    }
+
+    public virtual void ResolveConditions() {
+        foreach(Unit u in units) {
+            if (u.status != Unit.Status.Normal) {
+                u.RemoveCondition();
+            }
+        }
     }
 
     public virtual void SubscribeElement(GridElement ge) {

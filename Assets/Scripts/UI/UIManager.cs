@@ -43,7 +43,7 @@ public class UIManager : MonoBehaviour
     public UnitUI CreateUnitUI(Unit u) {
 
         UnitUI ui = Instantiate(portraitPrefab, portraitParent).GetComponent<UnitUI>();
-        ui.Initialize(u);
+        u.ui = ui.Initialize(u);
         unitPortraits.Add(ui);
         return ui;
 
@@ -60,14 +60,6 @@ public class UIManager : MonoBehaviour
     public IEnumerator InitialLoadOutScreen() {
         loadoutPanel.gameObject.SetActive(true);
         while (scenario.currentTurn != ScenarioManager.Turn.Descent) {
-            Vector2 pos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-            RaycastHit2D hitInfo = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(pos), Vector2.zero);
-            if (hitInfo != default(RaycastHit2D)) {
-                UnitUI ui = hitInfo.transform.GetComponent<UnitUI>();
-                if (ui != null) {
-                    ui.ToggleEquipmentPanel(true);
-                }
-            }
 
             yield return null;
         }

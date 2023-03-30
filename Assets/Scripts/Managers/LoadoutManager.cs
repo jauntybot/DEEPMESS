@@ -10,20 +10,20 @@ public class LoadoutManager : MonoBehaviour
 
     public List<EquipmentData> loadoutOptions;
 
-    public IEnumerator Initialize() {
-        yield return StartCoroutine(UIManager.instance.InitialLoadOutScreen());
-        foreach(Unit u in unitPrefabs) {
-            UIManager.instance.CreateLoadoutUI(u);
-        }
-    }
+    public IEnumerator Initialize(List<Unit> units) {
 
-    public void UpdateLoadout(Unit u, EquipmentData equip) {
-        foreach(EquipmentData e in u.equipment) {
-            if (e is ConsumableEquipmentData) {
-                u.equipment.Remove(e);
+        yield return null;
+
+        foreach(Unit u in units) {
+            UnitUI ui = UIManager.instance.CreateLoadoutUI(u);
+            ui.ToggleUnitPanel(true);
+            for(int i = ui.equipment.Count - 2; i >= 0; i--) {
+                EquipmentButton b = ui.equipment[i];
+                ui.equipment.Remove(b);
+                Destroy(b.gameObject);
             }
+            ui.ToggleEquipmentPanel(true);
         }
-        u.equipment.Add(equip);
+        yield return StartCoroutine(UIManager.instance.InitialLoadOutScreen());
     }
-
 }

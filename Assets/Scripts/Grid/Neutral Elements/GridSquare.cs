@@ -5,7 +5,7 @@ using UnityEngine;
 // Class to control individual squares of a grid, linked to GridSquare prefab
 
 [System.Serializable]
-public class GridSquare : GridElement {
+public class GridSquare : GroundElement {
 
     [SerializeField] SpriteRenderer[] spriteRenderers;
     [SerializeField] Sprite[] sprites;
@@ -36,13 +36,16 @@ public class GridSquare : GridElement {
     public void ToggleValidCoord(bool state, Color? color = null) 
     {
         selectable = state;
-        hitbox.enabled = state;
+        
 
         highlight.SetActive(state);
         if (color is Color c) {
             c.a = 50;
             UpdateHighlight(c);
         }
+    }
+    public void ToggleHitBox(bool state) {
+        hitbox.enabled = state;
     }
 
 // Made a function for 3 lines of code ig
