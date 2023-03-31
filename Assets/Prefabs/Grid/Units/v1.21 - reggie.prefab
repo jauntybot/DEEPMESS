@@ -125,7 +125,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1857152798358888980}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.154, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -173,7 +173,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: b0690a828744b4ebabc5a3f7e0b1e548, type: 3}
+  m_Sprite: {fileID: 21300000, guid: aeaf4bc7d64b5234885501d510561da2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -208,8 +208,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3908257913917299124}
   - component: {fileID: 7182560657884744695}
-  - component: {fileID: 2806980022530069875}
   - component: {fileID: 6378630401893328485}
+  - component: {fileID: 6478205618308831308}
   m_Layer: 6
   m_Name: v1.21 - reggie
   m_TagString: Player
@@ -271,51 +271,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 20a9e7c2a0575b44f8040600e4ab6bc9, type: 2}
   validActionCoords: []
   ui: {fileID: 0}
-  portrait: {fileID: 21300000, guid: 09d3307546ccdd64fab9673f122447ce, type: 3}
+  portrait: {fileID: 21300000, guid: f15dfb2ab0a38a144bf448663a77875a, type: 3}
   animDur: 1
---- !u!60 &2806980022530069875
-PolygonCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3908257913917299126}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.154, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.51, y: 1.51}
-    newSize: {x: 1.51, y: 1.51}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 0.645, y: 0.345}
-      - {x: 0.345, y: 0.45499998}
-      - {x: -0.055, y: 0.45499998}
-      - {x: -0.315, y: 0.39499998}
-      - {x: -0.42499998, y: 0.265}
-      - {x: -0.42499998, y: -0.33499998}
-      - {x: -0.21499999, y: -0.39499998}
-      - {x: -0.175, y: -0.445}
-      - {x: 0.465, y: -0.445}
-      - {x: 0.475, y: -0.435}
-      - {x: 0.72499996, y: -0.345}
-      - {x: 0.72499996, y: 0.24499999}
-    - - {x: 0.145, y: -0.33499998}
-      - {x: 0.145, y: -0.114999995}
-      - {x: 0.155, y: -0.114999995}
-      - {x: 0.155, y: -0.33499998}
-      - {x: 0.145, y: -0.345}
-      - {x: 0.155, y: -0.345}
+  consumableCount: 0
 --- !u!114 &6378630401893328485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -330,6 +288,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   alpha: 1
   exclude: 0
+--- !u!60 &6478205618308831308
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3908257913917299126}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.020099778, y: 0.46735585}
+      - {x: -0.7500587, y: 0.1884183}
+      - {x: -0.37673756, y: -0.47737077}
+      - {x: 0.42698714, y: -0.4773706}
+      - {x: 0.6495598, y: 0.27886745}
 --- !u!1001 &4736502795495518719
 PrefabInstance:
   m_ObjectHideFlags: 0

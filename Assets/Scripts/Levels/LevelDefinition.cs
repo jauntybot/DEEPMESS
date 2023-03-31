@@ -10,14 +10,15 @@ public class LevelDefinition : ScriptableObject
 
     public LevelAtlas atlas;
     public int genPool;
-    public List<Content> initSpawns;
+    public List<Spawn> initSpawns;
 
 }
 
 [System.Serializable]
-public class Content {
+public class Spawn {
 
+    public LevelAsset asset;
     public Vector2 coord;
-    public GridElement prefabToSpawn;
+
 }
 

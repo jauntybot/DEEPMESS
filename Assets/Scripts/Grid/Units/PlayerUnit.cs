@@ -5,11 +5,16 @@ using UnityEngine;
 // Inherited Unit; unit functionality dependent on player input
 
 public class PlayerUnit : Unit {
+
+    public int consumableCount;
     
 // Called when an action is applied to a unit or to clear it's actions
-    public override void UpdateAction(EquipmentData equipment = null) 
+    public override void UpdateAction(EquipmentData equipment = null, int mod = 0) 
     {
-        base.UpdateAction(equipment);
+        if (equipment is ConsumableEquipmentData && consumableCount > 0)
+            base.UpdateAction(equipment, mod);
+        else if (equipment is not ConsumableEquipmentData)
+            base.UpdateAction(equipment, mod);
     }
 
 // Allow the player to click on this
@@ -40,7 +45,7 @@ public class PlayerUnit : Unit {
                     droppedHammer = true;
                 }
                 if (pickup != null) {
-                    pickup.equipment.Add(equip);
+                    pickup.equipment = equip;
                 }
             }
         }

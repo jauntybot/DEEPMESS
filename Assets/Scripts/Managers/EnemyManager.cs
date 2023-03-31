@@ -48,11 +48,13 @@ public class EnemyManager : UnitManager {
         {
             if (input.ValidCommand(coord)) {
                 SelectUnit(input);
-                GridElement target = selectedUnit.grid.CoordContents(coord);          
+                GridElement target = null;
+                foreach (GridElement ge in selectedUnit.grid.CoordContents(coord))
+                    target = ge;
                 currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
                 yield return new WaitForSecondsRealtime(0.5f);
                 Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, target));
-                currentGrid.UpdateSelectedCursor(true, Vector2.one * -32);
+                currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
                 currentGrid.DisableGridHighlight();
                 yield return co;
                 DeselectUnit();
@@ -60,14 +62,14 @@ public class EnemyManager : UnitManager {
             }
         }
 // Move scan
-        input.UpdateAction(input.equipment[0]);
+        input.UpdateAction(input.equipment[0], input.moveMod);
         Vector2 targetCoord = input.SelectOptimalCoord(input.pathfinding);
         if (Mathf.Sign(targetCoord.x) == 1) {
             SelectUnit(input);
             currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
             yield return new WaitForSecondsRealtime(0.5f);
             Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, currentGrid.sqrs.Find(sqr => sqr.coord == targetCoord)));
-            currentGrid.UpdateSelectedCursor(true, Vector2.one * -32);
+            currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
             currentGrid.DisableGridHighlight();
             yield return co;
             DeselectUnit();
@@ -79,11 +81,13 @@ public class EnemyManager : UnitManager {
         {
             if (input.ValidCommand(coord)) {       
                 SelectUnit(input);   
-                GridElement target = selectedUnit.grid.CoordContents(coord);          
+                GridElement target = null;
+                foreach (GridElement ge in selectedUnit.grid.CoordContents(coord))
+                    target = ge;
                 currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
                 yield return new WaitForSecondsRealtime(0.5f);
                 Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, target));
-                currentGrid.UpdateSelectedCursor(true, Vector2.one * -32);
+                currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
                 currentGrid.DisableGridHighlight();
                 yield return co;            
                 DeselectUnit();
