@@ -1,0 +1,163 @@
+{
+    "Units": [
+        {
+            "unitName": "Brute",
+            "health": 5,
+            "moveRange": 4
+        },
+        {
+            "unitName": "Bob Lob",
+            "health": 5,
+            "moveRange": 4
+        },
+        {
+            "unitName": "Reggie",
+            "health": 5,
+            "moveRange": 4
+        }
+    ],
+    "Upgrades": [
+        {
+            "upgradeName": "Attack+",
+            "attackModifier": 1,
+            "moveModifier": 0,
+            "rangeModifier": 0,
+            "defenceModifier": 0,
+            "description": "Adds 1 to Basic Attack damage."
+        },
+        {
+            "upgradeName": "Attack++",
+            "attackModifier": 2,
+            "moveModifier": 0,
+            "rangeModifier": 0,
+            "defenceModifier": 0,
+            "description": "Adds 2 to Basic Attack damage."
+        },
+        {
+            "upgradeName": "Move+",
+            "attackModifier": 0,
+            "moveModifier": 1,
+            "rangeModifier": 0,
+            "defenceModifier": 0,
+            "description": "Adds 1 to Move tile range."
+        },
+        {
+            "upgradeName": "Move++",
+            "attackModifier": 0,
+            "moveModifier": 2,
+            "rangeModifier": 0,
+            "defenceModifier": 0,
+            "description": "Adds 2 to Move tile range."
+        },
+        {
+            "upgradeName": "Range+",
+            "attackModifier": 0,
+            "moveModifier": 0,
+            "rangeModifier": 1,
+            "defenceModifier": 0,
+            "description": "Adds 1 to Basic Attack range."
+        },
+        {
+            "upgradeName": "Range++",
+            "attackModifier": 0,
+            "moveModifier": 0,
+            "rangeModifier": 2,
+            "defenceModifier": 0,
+            "description": "Adds 2 to Basic Attack range."
+        },
+        {
+            "upgradeName": "Defence+",
+            "attackModifier": 0,
+            "moveModifier": 0,
+            "rangeModifier": 0,
+            "defenceModifier": 1,
+            "description": "Adds 1 to Defenece. Defence absobs damage taken before Health is reduced."
+        },
+        {
+            "upgradeName": "Defence++",
+            "attackModifier": 0,
+            "moveModifier": 0,
+            "rangeModifier": 0,
+            "defenceModifier": 2,
+            "description": "Adds 2 to Defenece. Defence absobs damage taken before Health is reduced."
+        }
+    ],
+    "Equipment": [
+        {
+            "equipmentName": "Anvil",
+            "damage": 100,
+            "range": 1,
+            "startingInventory": 10,
+            "maximumInventory": 10,
+            "resupply": 2,
+            "health": 2,
+            "description": "Anvil can be placed orthagonally. Can be attacked by enemies. Anvils destroy anything they land on top of. "
+        },
+        {
+            "equipmentName": "Position Swap",
+            "damage": 0,
+            "range": 100,
+            "startingInventory": 5,
+            "maximumInventory": 5,
+            "resupply": 2,
+            "health": 0,
+            "description": "Switch positions with any other unit."
+        },
+        {
+            "equipmentName": "Immobilize",
+            "damage": 0,
+            "range": 100,
+            "startingInventory": 10,
+            "maximumInventory": 10,
+            "resupply": 2,
+            "health": 0,
+            "description": "Immobilize an enemy unit for 1 turn. Orthagonal/line of sight."
+        },
+        {
+            "equipmentName": "Big Wind",
+            "damage": 0,
+            "range": 1,
+            "startingInventory": 5,
+            "maximumInventory": 5,
+            "resupply": 2,
+            "health": 0,
+            "description": "Pushes all enemies 1 tile in chosen direction."
+        }
+    ],
+    "Weapons": [
+        {
+            "weaponName": "Punch",
+            "baseDamage": 2,
+            "range": 1,
+            "undefined": "Melee attack"
+        },
+        {
+            "weaponName": "Molten rod",
+            "baseDamage": 2,
+            "range": 3,
+            "undefined": "Molten laser"
+        },
+        {
+            "weaponName": "Gunk drop",
+            "baseDamage": 3,
+            "range": 4,
+            "undefined": "Drop a big gunk"
+        }
+    ],
+    "Hammer": [
+        {
+            "hammerName": "Basic Hammer",
+            "range": 100,
+            "damage": 3
+        }
+    ],
+    "Nail": [
+        {
+            "nailName": "Basic Nail",
+            "health": 15,
+            "range": 100,
+            "damage": 100,
+            "description": "Has percentage chance to land on an enemy when descending. Percentage drops each turn the player stays on current floor."
+        }
+    ]
+}

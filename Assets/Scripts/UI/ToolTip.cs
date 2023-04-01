@@ -1,4 +1,4 @@
-using UnityEngine.EventSystems
+using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +8,7 @@ public class ToolTip : MonoBehaviour
 {
     [SerializeField] TMPro.TMP_Text itemName;
     [SerializeField] TMPro.TMP_Text itemDescription;
+ 
 
     private bool IsMouseOverUI()
     {
