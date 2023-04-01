@@ -18,13 +18,15 @@ public class HammerData : EquipmentData
         nail = d;
     }
     
-    public override List<Vector2> TargetEquipment(GridElement user) {
+    public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
 
-        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, this, targetTypes);
+        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this, targetTypes);
         user.grid.DisplayValidCoords(validCoords, gridColor);
         if (user is PlayerUnit pu) pu.ui.ToggleEquipmentPanel(false);
         for (int i = validCoords.Count - 1; i >= 0; i--) {
-            if (FloorManager.instance.currentFloor.CoordContents(validCoords[i]) is GridElement ge) {
+            bool occupied = false;
+            foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(validCoords[i])) {
+                occupied = true;
                 bool remove = true;
                 foreach(GridElement target in targetTypes) {
                     if (ge.GetType() == target.GetType()) {
@@ -35,7 +37,8 @@ public class HammerData : EquipmentData
                 }
                 if (remove) 
                     validCoords.Remove(validCoords[i]);
-            } else 
+            } 
+            if (!occupied)
                 validCoords.Remove(validCoords[i]);
         }
         return validCoords;
@@ -104,7 +107,7 @@ public class HammerData : EquipmentData
     public void PassHammer(PlayerUnit sender, PlayerUnit reciever) {
         for (int i = sender.equipment.Count - 1; i >= 0; i--) {
                 if (sender.equipment[i] is HammerData) {
-                    reciever.equipment.Add(sender.equipment[i]);
+                    reciever.equipment.Insert(3, sender.equipment[i]);
 
                     sender.equipment.Remove(sender.equipment[i]);
                 }

@@ -10,22 +10,26 @@ public class AttackData : EquipmentData
 
     public int dmg;
 
-    public override List<Vector2> TargetEquipment(GridElement user) {
-        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, this, targetTypes);
+    public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
+        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this, targetTypes);
         user.grid.DisplayValidCoords(validCoords, gridColor);
         if (user is PlayerUnit pu) pu.ui.ToggleEquipmentPanel(false);
         for (int i = validCoords.Count - 1; i >= 0; i--) {
-            if (FloorManager.instance.currentFloor.CoordContents(validCoords[i]) is GridElement ge) {
+            bool occupied = false;
+            foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(validCoords[i])) {
+                occupied = true;
                 bool remove = true;
                 foreach(GridElement target in targetTypes) {
                     if (ge.GetType() == target.GetType()) {
                         remove = false;
                         ge.elementCanvas.ToggleStatsDisplay(true);
+                        Debug.Log(ge.name);
                     }
                 }
                 if (remove) 
                     validCoords.Remove(validCoords[i]);
-            } else 
+            } 
+            if (!occupied)
                 validCoords.Remove(validCoords[i]);
         }
         return validCoords;

@@ -16,10 +16,10 @@ public class Grid : MonoBehaviour {
     public UnitManager enemy;
     [SerializeField] GameObject enemyPrefab;
 
-    static Vector2 ORTHO_OFFSET = new Vector2(0.75f, 0.5f);
-    [SerializeField] GameObject sqrPrefab, gridCursor;
+    static Vector2 ORTHO_OFFSET = new Vector2(0.8f, 0.5f);
+    [SerializeField] GameObject sqrPrefab, gridCursor, selectedCursor;
     [SerializeField] static float fadeInDur = 0.25f;
-    public LevelDefinition lvlDef;
+    public FloorDefinition lvlDef;
     [SerializeField] Color offWhite;
 
     public List<GridSquare> sqrs = new List<GridSquare>();
@@ -51,7 +51,11 @@ public class Grid : MonoBehaviour {
                 sqr.transform.parent = gridContainer.transform;
             }
         }
+        
         gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
+        gridCursor.transform.SetAsLastSibling();
+        selectedCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
+        selectedCursor.transform.SetAsLastSibling();
         index = i;
 
         yield return StartCoroutine(SpawnLevelDefinition());
@@ -65,23 +69,27 @@ public class Grid : MonoBehaviour {
             timer += Time.deltaTime;
             yield return null;
         }
+        LockGrid(true);
         fade.AlphaSelf = 1;
     }
 
     IEnumerator SpawnLevelDefinition() {
         enemy = Instantiate(enemyPrefab, this.transform).GetComponent<EnemyManager>(); 
+        enemy.transform.SetSiblingIndex(2);
         yield return StartCoroutine(enemy.Initialize());
-        foreach (Content c in lvlDef.initSpawns) {
-            if (c.prefabToSpawn is Unit u) 
+        foreach (Spawn spawn in lvlDef.initSpawns) {
+            if (spawn.asset.ge is Unit u) 
             {
-                if (u is EnemyUnit e)
-                    enemy.SpawnUnit(c.coord, e);
+                if (u is EnemyUnit e) {
+                    enemy.SpawnUnit(spawn.coord, e);
+                    Debug.Log("enemy unit");
+                }
             } else {
-                GridElement ge = Instantiate(c.prefabToSpawn.gameObject, this.transform).GetComponent<GridElement>();
+                GridElement ge = Instantiate(spawn.asset.prefab, this.transform).GetComponent<GridElement>();
                 ge.transform.parent = neutralGEContainer.transform;
 
                 ge.StoreInGrid(this);
-                ge.UpdateElement(c.coord);
+                ge.UpdateElement(spawn.coord);
             }
         }
     }
@@ -99,10 +107,16 @@ public class Grid : MonoBehaviour {
         gridElements.Remove(ge);
     }
 
-    public void DisplayGridCursor(bool state, Vector2 coord) {
+    public void UpdateTargetCursor(bool state, Vector2 coord) {
         gridCursor.SetActive(state);
         gridCursor.transform.position = PosFromCoord(coord);
-        gridCursor.GetComponent<SpriteRenderer>().sortingOrder = SortOrderFromCoord(coord);
+        gridCursor.GetComponentInChildren<SpriteRenderer>().sortingOrder = SortOrderFromCoord(coord);
+    }
+
+    public void UpdateSelectedCursor(bool state, Vector2 coord) {
+        selectedCursor.SetActive(state);
+        selectedCursor.transform.position = PosFromCoord(coord);
+        selectedCursor.GetComponentInChildren<SpriteRenderer>().sortingOrder = SortOrderFromCoord(coord);
     }
 
 // Toggle GridSquare highlights, apply color by index
@@ -138,8 +152,14 @@ public class Grid : MonoBehaviour {
             sqr.ToggleValidCoord(false);
     }
 
-    public GridElement CoordContents(Vector2 coord) {
-        return gridElements.Find(ge => ge.coord == coord);
+    public void LockGrid(bool state) {
+        Debug.Log("Hitbox active: " + !state);
+        foreach (GridSquare sqr in sqrs)
+            sqr.ToggleHitBox(!state);
+    }
+
+    public List<GridElement> CoordContents(Vector2 coord) {
+        return gridElements.FindAll(ge => ge.coord == coord);
     }
 
      public Vector3 PosFromCoord(Vector2 coord) {

@@ -14,12 +14,12 @@ public class PlayerManager : UnitManager {
 
 
     [Header("PLAYER MANAGER")]
-    
+    public LoadoutManager loadout;
     public Nail nail;
     public int hammerCharge, descentChargeReq;
     [SerializeField] HammerChargeDisplay chargeDisplay;
-    public List<EquipmentData> hammerActions;
-    [SerializeField] PlacementData sharedMines;
+    public EquipmentData hammerAction;
+
 
     [SerializeField] public GameObject nailPrefab, hammerPrefab, hammerPickupPrefab;
 
@@ -41,31 +41,39 @@ public class PlayerManager : UnitManager {
     {
         hammerCharge = 0;
         chargeDisplay.UpdateCharges(hammerCharge);
-
-        sharedMines.count = 15;
         
         yield return base.Initialize();
 
-        nail = (Nail)SpawnUnit(Vector2.zero, nailPrefab.GetComponent<Nail>());
-        nail.gameObject.transform.position = new Vector3 (0,20,0);
-        nail.gameObject.transform.parent = unitParent.transform;
+        List<Unit> initU = new List<Unit>() {
+            SpawnUnit(new Vector2(3,4), loadout.unitPrefabs[0]),
+            SpawnUnit(new Vector2(4,4), loadout.unitPrefabs[1]),
+            SpawnUnit(new Vector2(3,3), loadout.unitPrefabs[2])
+        };
+        yield return StartCoroutine(loadout.Initialize(initU));
 
-        SpawnHammer((PlayerUnit)units[0], hammerActions);
+        SpawnHammer((PlayerUnit)units[0], (HammerData)hammerAction);
+        foreach (Unit u in initU) {
+            StartCoroutine(floorManager.DropUnit(u, u.transform.position, currentGrid.PosFromCoord(u.coord)));
+        }
+        
+        nail = (Nail)SpawnUnit(new Vector3(0, 30), nailPrefab.GetComponent<Nail>());
+        nail.gameObject.transform.parent = unitParent.transform;
+        yield return StartCoroutine(DropNail());
+
 
         pc = GetComponent<PlayerController>();
         if (FloorManager.instance) floorManager = FloorManager.instance;
     }
 
 // Spawn a new instance of a hammer and update hammer actions
-    public virtual void SpawnHammer(PlayerUnit unit, List<EquipmentData> actions) {
+    public virtual void SpawnHammer(PlayerUnit unit, HammerData equip) {
         GameObject h = Instantiate(hammerPrefab, unit.transform.position, Quaternion.identity, unit.transform);
         h.GetComponentInChildren<SpriteRenderer>().sortingOrder = unit.gfx[0].sortingOrder;
         unit.gfx.Add(h.GetComponentInChildren<SpriteRenderer>());
-        foreach(HammerData action in actions) {
-            unit.equipment.Add(action);
-            action.EquipEquipment(unit);
-            action.AssignHammer(h, nail);
-        }
+        unit.equipment.Insert(3, equip);
+        equip.EquipEquipment(unit);
+        equip.AssignHammer(h, nail);
+        
         unit.ui.UpdateEquipmentButtons();
     }
 
@@ -87,19 +95,22 @@ public class PlayerManager : UnitManager {
                         u.ui.UpdateEnergy();
                     }
                 }
+                ResolveConditions();
             } else {
-                nail.collisionChance = 75;
-                UIManager.instance.UpdateDropChance(nail.collisionChance);
+
             }
         } else {
             DeselectUnit();
+            currentGrid.UpdateTargetCursor(false, Vector2.one * -32);
         }
     }
 
 // Overriden functionality
     public override Unit SpawnUnit(Vector2 coord, Unit unit) {
         Unit u = base.SpawnUnit(coord, unit);
-
+        u.transform.position += new Vector3(0, floorManager.floorOffset, 0);
+        u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
+        
 // Initialize equipment from prefab
         foreach(EquipmentData e in u.equipment) {
             e.EquipEquipment(u);
@@ -132,12 +143,17 @@ public class PlayerManager : UnitManager {
                 foreach(Unit u in units) {
                     if (u.coord == spawn) validCoord = false;
                 }
+                foreach(Unit u in scenario.currentEnemy.units) {
+                    if (u.coord == spawn) validCoord = false;
+                }
             }
         }
-        float xOffset = currentGrid.PosFromCoord(spawn).x;
-        nail.transform.position = new Vector3(xOffset, nail.transform.position.y, 0);
+        Debug.Log(spawn.x+ ", "+ (spawn.y) + ", "+ 0);
+        nail.transform.position = currentGrid.PosFromCoord(spawn) + new Vector3(0, floorManager.floorOffset, 0);
         nail.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         yield return StartCoroutine(UpdateNail(spawn));
+        nail.collisionChance = 90;
+        UIManager.instance.UpdateDropChance(nail.collisionChance);
     }
 
     public IEnumerator UpdateNail(Vector2 coord) {
@@ -195,7 +211,8 @@ public class PlayerManager : UnitManager {
         else if (input is GridSquare sqr) 
         {
 // Check if square is empty
-            GridElement contents = currentGrid.CoordContents(sqr.coord);
+            GridElement contents = null;
+            foreach (GridElement ge in currentGrid.CoordContents(sqr.coord)) contents = ge;
 // Square not empty, recurse this function with reference to square contents
             if (contents)
                 GridInput(contents);
@@ -222,6 +239,10 @@ public class PlayerManager : UnitManager {
                     DeselectUnit();
             }
         }
+    }
+
+    public void GridMouseOver(Vector2 pos, bool state) {
+        currentGrid.UpdateTargetCursor(state, pos);
     }
 
     public override void SelectUnit(Unit t)
@@ -261,6 +282,7 @@ public class PlayerManager : UnitManager {
         }
         currentGrid = newGrid;
         transform.parent = newGrid.transform;
+        transform.SetSiblingIndex(3);
         hammerCharge = 0;
         chargeDisplay.UpdateCharges(hammerCharge);
     }

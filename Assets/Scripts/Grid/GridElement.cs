@@ -33,6 +33,7 @@ public class GridElement : MonoBehaviour{
 // Initialize references, scale to grid, subscribe onDeath event
     protected virtual void Start() 
     {
+
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
 
@@ -104,6 +105,10 @@ public class GridElement : MonoBehaviour{
     public virtual IEnumerator CollideFromBelow(GridElement above) {
         
         yield return StartCoroutine(TakeDamage(hpCurrent));
+    }
+
+    public virtual void OnSharedSpace(GridElement sharedWith) {
+        
     }
     
 }

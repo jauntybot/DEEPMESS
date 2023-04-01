@@ -12,6 +12,13 @@ public class Unit : GridElement {
     public List<EquipmentData> equipment;
 
     public List<Vector2> validActionCoords;
+    
+    public enum Status { Normal, Immobilized }
+    [Header("Modifiers")]
+    public Status status;
+    private int prevMod;
+    public int moveMod;
+    public int attackMod;
 
     [Header("UI/UX")]
     public UnitUI ui;
@@ -22,14 +29,14 @@ public class Unit : GridElement {
 // Functions that will change depending on the class they're inherited from
 #region Inherited Functionality
 
-    public virtual void UpdateAction(EquipmentData equipment = null) {
+    public virtual void UpdateAction(EquipmentData equipment = null, int mod = 0) {
 // Clear data
         validActionCoords = null;
         grid.DisableGridHighlight();
 // Assign new data if provided
         selectedEquipment = equipment;
         if (selectedEquipment) {
-            validActionCoords = selectedEquipment.TargetEquipment(this);
+            validActionCoords = selectedEquipment.TargetEquipment(this, mod);
         }
     }
 
@@ -52,7 +59,7 @@ public class Unit : GridElement {
 
 #region Unit Functionality
     
-    public virtual IEnumerator CollideFromAbove() {
+    public virtual IEnumerator CollideFromAbove(GridElement subGE) {
 
         yield return StartCoroutine(TakeDamage(1));
 
@@ -78,7 +85,35 @@ public class Unit : GridElement {
 
     }
 
+    public virtual void ApplyCondition(Status s) {
+        status = s;
+        switch(status) {
+            default: return;
+            case Status.Normal: return;
+            case Status.Immobilized:
+                prevMod = moveMod;
+                moveMod -= 10;
+                ui.UpdateEquipmentButtonMods();
+            break;
+        }
+    }
 
+    public virtual void RemoveCondition() {
+        switch(status) {
+            default: return;
+            case Status.Normal: return;
+            case Status.Immobilized:
+                moveMod = prevMod;
+                ui.UpdateEquipmentButtonMods();
+                foreach(GridElement ge in grid.CoordContents(coord)) {
+                    if (ge is ImmobilizeGoo goo) {
+                        print("goo found");
+                        Destroy(goo.gameObject);
+                    }
+                }
+            break;
+        }
+    }
 
 
 #endregion

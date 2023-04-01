@@ -5,6 +5,8 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     
+    ScenarioManager scenario;
+
     [Header("Meta Data")]
     public MetaDisplay metaDisplay;
 
@@ -13,13 +15,20 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject portraitPrefab;
     List<UnitUI> unitPortraits = new List<UnitUI>();
     bool unitDisplayed;
-
+    [Header("Loadouts")]
+    [SerializeField] GameObject loadoutPrefab;
+    [SerializeField] Transform loadoutPanel, loadoutUIParent;
+    List<UnitUI> loadoutUIs = new List<UnitUI>();
 
 
     public static UIManager instance;
     private void Awake() {
         if (UIManager.instance) return;
         UIManager.instance = this;
+    }
+
+    void Start() {
+        scenario = ScenarioManager.instance;
     }
 
     public void UpdatePortrait(Unit u = null, bool active = true) {
@@ -34,10 +43,27 @@ public class UIManager : MonoBehaviour
     public UnitUI CreateUnitUI(Unit u) {
 
         UnitUI ui = Instantiate(portraitPrefab, portraitParent).GetComponent<UnitUI>();
-        ui.Initialize(u);
+        u.ui = ui.Initialize(u);
         unitPortraits.Add(ui);
         return ui;
 
+    }
+
+    public UnitUI CreateLoadoutUI(Unit u) {
+        UnitUI ui = Instantiate(loadoutPrefab, loadoutUIParent).GetComponent<UnitUI>();
+        ui.Initialize(u);
+        loadoutUIs.Add(ui);
+        return ui;
+    }
+    
+
+    public IEnumerator InitialLoadOutScreen() {
+        loadoutPanel.gameObject.SetActive(true);
+        while (scenario.currentTurn != ScenarioManager.Turn.Descent) {
+
+            yield return null;
+        }
+        loadoutPanel.gameObject.SetActive(false);
     }
 
     public void UpdateDropChance(int chance) {

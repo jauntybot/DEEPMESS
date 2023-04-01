@@ -19,22 +19,24 @@ public class PlayerController : MonoBehaviour {
     public IEnumerator GridInput() {
         while (manager.scenario.currentTurn == ScenarioManager.Turn.Player) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
+            RaycastHit2D hit = ClickInput();
+// On mouseover
+            if (hit != default(RaycastHit2D)) {
+                if (hit.transform.GetComponent<GridElement>()) {
 // On click
-            if (Input.GetMouseButtonDown(0)) {
-                RaycastHit2D hit = ClickInput();
-                if (hit != default(RaycastHit2D)) {
-// If clicked a grid element                           
-                    if (hit.transform.GetComponent<GridElement>()) {
+                    manager.GridMouseOver(hit.transform.GetComponent<GridElement>().coord, true);
+                    if (Input.GetMouseButtonDown(0)) {
 // Pass call to contextualize click to manager
-                        manager.GridInput(hit.transform.GetComponent<GridElement>());
+                        manager.GridInput(hit.transform.GetComponent<GridElement>());       
                     }
-                }
-            }
+                }    
+                else
+                    manager.GridMouseOver(new Vector2(-32, -32), false);
+            } else
+                manager.GridMouseOver(new Vector2(-32, -32), false);
 
             if (Input.GetKeyDown(KeyCode.Tab)) {
-            
                 manager.DisplayAllHP(true);
-            
             } 
             if (Input.GetKeyUp(KeyCode.Tab)) {
                 manager.DisplayAllHP(false);

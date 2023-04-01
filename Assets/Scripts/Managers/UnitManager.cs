@@ -8,7 +8,7 @@ public class UnitManager : MonoBehaviour {
 
 // Global refs
     [SerializeField]
-    protected Grid currentGrid;
+    public Grid currentGrid;
     protected FloorManager floorManager;
     [HideInInspector] public ScenarioManager scenario;
 
@@ -63,7 +63,7 @@ public class UnitManager : MonoBehaviour {
 
         UIManager.instance.UpdatePortrait(u);
 
-        currentGrid.DisplayGridCursor(true, u.coord);
+        currentGrid.UpdateSelectedCursor(true, u.coord);
         AudioManager.PlaySound(AudioAtlas.Sound.selectionUnit, u.gameObject.transform.position);
     }
     public virtual void DeselectUnit() {
@@ -83,10 +83,18 @@ public class UnitManager : MonoBehaviour {
             selectedUnit.selected = false;
             selectedUnit = null;
 
-            currentGrid.DisplayGridCursor(true, Vector2.one * -32);
+            currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
             currentGrid.DisableGridHighlight();
         }            
         
+    }
+
+    public virtual void ResolveConditions() {
+        foreach(Unit u in units) {
+            if (u.status != Unit.Status.Normal) {
+                u.RemoveCondition();
+            }
+        }
     }
 
     public virtual void SubscribeElement(GridElement ge) {

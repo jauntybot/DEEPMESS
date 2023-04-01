@@ -6,27 +6,39 @@ using UnityEngine.UI;
 public class EquipmentButton : MonoBehaviour
 {
     public EquipmentData data;
+    PlayerUnit unit;
 
     [SerializeField] TMPro.TMP_Text equipmentNameText;
     Image bg;
-    public delegate void OnEquipmentUpdate(EquipmentData equipment);
+    public delegate void OnEquipmentUpdate(EquipmentData equipment, int rangeMod);
+    private int rangeMod;
     public event OnEquipmentUpdate EquipmentSelected;
     [Header("Badge Count")]
     [SerializeField] GameObject badge;
     [SerializeField] TMPro.TMP_Text badgeNumber;
+    
 
     public void Initialize(EquipmentData d, GridElement ge) {
         data = d;
         equipmentNameText.text = data.name;
-        PlayerUnit unit = (PlayerUnit)ge;
+        unit = (PlayerUnit)ge;
         EquipmentSelected += unit.UpdateAction;
         bg = GetComponent<Image>();
         bg.sprite = data.icon;
-        badge.SetActive(d is PlacementData);
+        badge.SetActive(d is ConsumableEquipmentData);
+        UpdateMod();
+    }
+
+    public void UpdateMod() {
+        if (data is MoveData) {
+            rangeMod = unit.moveMod;
+        } else if (data is AttackData) {
+            rangeMod = unit.attackMod;
+        }
     }
 
     public void SelectEquipment() {
-        EquipmentSelected?.Invoke(data);
+        EquipmentSelected?.Invoke(data, rangeMod);
     }
 
     public void UpdateBadge(int num) {

@@ -10,7 +10,7 @@ public class FloorManager : MonoBehaviour
     [SerializeField] GameObject floorPrefab;
     
     public Color moveColor, attackColor, hammerColor;
-    [SerializeField] List<LevelDefinition> floorDefinitions;
+    [SerializeField] List<FloorDefinition> floorDefinitions;
 
     public Grid currentFloor;
     [SerializeField] Transform floorParent;
@@ -53,7 +53,7 @@ public class FloorManager : MonoBehaviour
 
         Grid newFloor = Instantiate(floorPrefab, this.transform).GetComponent<Grid>();
         currentFloor = newFloor;
-        LevelDefinition floorDef = floorDefinitions[index];
+        FloorDefinition floorDef = floorDefinitions[index];
         newFloor.lvlDef = floorDef;
     
         Coroutine co = StartCoroutine(newFloor.GenerateGrid(index));
@@ -70,11 +70,15 @@ public class FloorManager : MonoBehaviour
         transitioning = true;
         scenario.endTurnButton.enabled = !down;
         if (down) {
-            if (draw) StartCoroutine(ToggleDescentPreview(true));
             if (draw) {
+                StartCoroutine(ToggleDescentPreview(true));
                 SetButtonActive(downButton, false); SetButtonActive(upButton, true);
+                scenario.player.transform.parent = transitionParent;
+                scenario.player.nail.transform.parent = currentFloor.transform;
+                scenario.currentEnemy.transform.parent = transitionParent;
             }
-            yield return StartCoroutine(TransitionFloors(down));
+            
+            yield return StartCoroutine(TransitionFloors(down, true));
             transitioning = false;
         }
         else {
@@ -82,8 +86,11 @@ public class FloorManager : MonoBehaviour
             if (draw) {
                 SetButtonActive(downButton, true); SetButtonActive(upButton, false);
             }
-            yield return StartCoroutine(TransitionFloors(down));
-        
+            yield return StartCoroutine(TransitionFloors(down, true));
+            scenario.player.transform.parent = currentFloor.transform;
+            scenario.player.nail.transform.parent = scenario.player.transform;
+            scenario.currentEnemy.transform.parent = currentFloor.transform;
+            
             transitioning = false;
         }
     }
@@ -106,8 +113,11 @@ public class FloorManager : MonoBehaviour
                         lr.startColor = playerColor; lr.endColor = playerColor;
                     }
 
-                    lineRenderers.Add(ge, lr);
+                    lineRenderers.Add(currentFloor.sqrs.Find(sqr => sqr.coord == ge.coord), lr);
                     ge.ElementDestroyed += DestroyPreview;
+
+                    floors[currentFloor.index+1].sqrs.Find(sqr => sqr.coord == ge.coord).ToggleValidCoord(true,
+                    ge is PlayerUnit ? playerColor : enemyColor);
                 }
             }
         }
@@ -132,6 +142,7 @@ public class FloorManager : MonoBehaviour
             foreach (KeyValuePair<GridElement, LineRenderer> lr in lineRenderers)
                 DestroyImmediate(lr.Value.gameObject);
             lineRenderers = new Dictionary<GridElement, LineRenderer>();
+            floors[currentFloor.index+1].DisableGridHighlight();
         }        
     }
 
@@ -158,35 +169,90 @@ public class FloorManager : MonoBehaviour
         button.SetActive(state);
     }
 
-    public IEnumerator TransitionFloors(bool down) {
+    public IEnumerator TransitionFloors(bool down, bool preview) {
         int dir = down? 1 : -1;
         Grid toFloor = null;
         if (floors.Count - 1 >= currentFloor.index + dir)
             toFloor = floors[currentFloor.index + dir];
         
         if (toFloor) toFloor.GetComponent<SortingGroup>().sortingOrder = 0;
-        currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
+        if (!preview) currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
+        else if (!down) currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
+        else currentFloor.GetComponent<SortingGroup>().sortingOrder = 1;
         
         Vector3 from = floorParent.transform.position;
         Vector3 to = new Vector3(from.x, from.y + floorOffset * dir, from.z);
 
-        float currFromA = down? 1: 1;
+        float currFromA = 1;
         float currToA = down? 0 : 1;
+        float partialFrom = scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf;
+        float partialA = down? 0.25f : 1;
+
+        List<NestedFadeGroup.NestedFadeGroup> currentFade = new List<NestedFadeGroup.NestedFadeGroup> {
+            currentFloor.gridContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
+            currentFloor.neutralGEContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
+        };
+        List<NestedFadeGroup.NestedFadeGroup> partialFade = null;
+
+        if (currentFloor == scenario.player.currentGrid) {
+            if (!preview) {
+                currentFade.Add(scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>());
+                currentFade.Add(scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>());
+            } else {
+                currentFade.Add(scenario.player.nail.GetComponent<NestedFadeGroup.NestedFadeGroup>());
+                partialFade = new List<NestedFadeGroup.NestedFadeGroup>() {
+                    scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
+                    scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>()
+                };
+            }
+        }
+
+        List<NestedFadeGroup.NestedFadeGroup> toFade = null;
+
+        if (toFloor && !down) {
+            toFade = new List<NestedFadeGroup.NestedFadeGroup> {
+                toFloor.gridContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
+                toFloor.neutralGEContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
+            };
+            if (toFloor == scenario.player.currentGrid) {
+                if (!preview) {
+                    toFade.Add(scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>());
+                    toFade.Add(scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>());
+                } else {
+                    toFade.Add(scenario.player.nail.GetComponent<NestedFadeGroup.NestedFadeGroup>());
+                    partialFade = new List<NestedFadeGroup.NestedFadeGroup>() {
+                        scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
+                        scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>()
+                    };
+                }
+            }
+        }
 
         float timer = 0;
-        NestedFadeGroup.NestedFadeGroup currentFade = currentFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>();
-        NestedFadeGroup.NestedFadeGroup toFade = null;
-        if (toFloor && !down) toFade = toFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>();
         while (timer <= transitionDur) {
             floorParent.transform.position = Vector3.Lerp(from, to, timer/transitionDur);
-            currentFade.AlphaSelf = Mathf.Lerp(currFromA, currToA, timer/transitionDur);
-            if (toFade) toFade.AlphaSelf = Mathf.Lerp(0, 1, timer/transitionDur);
+            if (toFade != null) {
+                foreach(NestedFadeGroup.NestedFadeGroup fade in toFade) 
+                   fade.AlphaSelf = Mathf.Lerp(0, 1, timer/transitionDur);
+            }
+            if (partialFade != null) {
+                foreach(NestedFadeGroup.NestedFadeGroup fade in partialFade) 
+                   fade.AlphaSelf = Mathf.Lerp(partialFrom, partialA, timer/transitionDur);
+            }
             yield return null;
             timer += Time.deltaTime;
+            foreach(NestedFadeGroup.NestedFadeGroup fade in currentFade) 
+                fade.AlphaSelf = Mathf.Lerp(currFromA, currToA, timer/transitionDur);
+            
         }
         floorParent.transform.position = to;
-        currentFade.AlphaSelf = currToA;
-        if (toFade) toFade.AlphaSelf = 1;
+        foreach(NestedFadeGroup.NestedFadeGroup fade in currentFade) {
+            fade.AlphaSelf = currToA;
+        }
+        if (toFade != null) {
+            foreach(NestedFadeGroup.NestedFadeGroup fade in toFade) 
+                fade.AlphaSelf = 1;
+        }
 
         if (toFloor) currentFloor = toFloor;
         UIManager.instance.metaDisplay.UpdateCurrentFloor(currentFloor.index);
@@ -195,8 +261,10 @@ public class FloorManager : MonoBehaviour
     public IEnumerator DropUnits(Grid fromFloor, Grid toFloor) {
         
         scenario.player.transform.parent = transitionParent;
+        scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         scenario.player.nail.transform.parent = currentFloor.transform;
         scenario.currentEnemy.transform.parent = transitionParent;
+        scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
 
         foreach (GridElement ge in fromFloor.gridElements) {
             if (ge is Unit)
@@ -209,16 +277,17 @@ public class FloorManager : MonoBehaviour
             if (fromFloor.gridElements[i] is Unit u) {
                 u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
                 if (fromFloor.gridElements[i] is not Nail) {
-                    finalCoroutine = StartCoroutine(DropUnit(u, fromFloor.PosFromCoord(u.coord), toFloor.PosFromCoord(u.coord), toFloor.CoordContents(u.coord)));
+                    GridElement subElement = null;
+                    foreach (GridElement ge in toFloor.CoordContents(u.coord)) subElement = ge;
+                    finalCoroutine = StartCoroutine(DropUnit(u, fromFloor.PosFromCoord(u.coord), toFloor.PosFromCoord(u.coord), subElement));
                     yield return new WaitForSeconds(0.1f);
                 }
             }
         }
         yield return finalCoroutine;
-        print("final coroutine");
     }
 
-    private IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
+    public IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
         float timer = 0;
         NestedFadeGroup.NestedFadeGroup fade = unit.GetComponent<NestedFadeGroup.NestedFadeGroup>();
         while (timer <= transitionDur) {
@@ -232,8 +301,8 @@ public class FloorManager : MonoBehaviour
 
         if (subElement) {
             yield return StartCoroutine(subElement.CollideFromBelow(unit));
-            if (subElement is not LandingBuff)
-                yield return StartCoroutine(unit.CollideFromAbove());
+            if (subElement is not GroundElement)
+                yield return StartCoroutine(unit.CollideFromAbove(subElement));
         }
     }
 
@@ -248,8 +317,9 @@ public class FloorManager : MonoBehaviour
         EnemyManager enemy = (EnemyManager)currentFloor.enemy;
         
         currentFloor.DisableGridHighlight();
+        currentFloor.LockGrid(true);
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
-        yield return StartCoroutine(TransitionFloors(true));
+        yield return StartCoroutine(TransitionFloors(true, false));
 
         yield return new WaitForSecondsRealtime(0.25f);
 
@@ -259,6 +329,7 @@ public class FloorManager : MonoBehaviour
         enemy.SeedUnits(currentFloor);
         scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
         
+        currentFloor.LockGrid(false);
         
         yield return new WaitForSecondsRealtime(0.75f);
         print("dropping nail");
@@ -267,10 +338,10 @@ public class FloorManager : MonoBehaviour
 
 
         yield return new WaitForSecondsRealtime(.75f);
-        for (int i = currentFloor.gridElements.Count - 1; i >= 0; i--) {
-            if (currentFloor.gridElements[i] is LandingBuff b)
-                StartCoroutine(b.DestroyElement()); 
-        }
+        // for (int i = currentFloor.gridElements.Count - 1; i >= 0; i--) {
+        //     if (currentFloor.gridElements[i] is LandingBuff b)
+        //         StartCoroutine(b.DestroyElement()); 
+        // }
         yield return new WaitForSecondsRealtime(.75f);
 
 // Check if player wins
@@ -280,7 +351,7 @@ public class FloorManager : MonoBehaviour
 
         } else {
 
-            yield return StartCoroutine(TransitionFloors(true));
+            yield return StartCoroutine(TransitionFloors(true, false));
 
             yield return StartCoroutine(GenerateFloor());
 
