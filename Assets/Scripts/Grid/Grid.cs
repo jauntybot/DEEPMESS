@@ -166,8 +166,7 @@ public class Grid : MonoBehaviour {
         return new Vector3(
 // offset from scene origin + coord to pos conversion + ortho offset + center measure
             transform.position.x - (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x) + (ORTHO_OFFSET.x/2.3f * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 
-            transform.position.y + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y/1.5f) - (ORTHO_OFFSET.y/4 * FloorManager.sqrSize * coord.x), 
-            0);
+            transform.position.y + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y/1.5f) - (ORTHO_OFFSET.y/4 * FloorManager.sqrSize * coord.x),             0);
     }
 
     public int SortOrderFromCoord(Vector2 coord) {
