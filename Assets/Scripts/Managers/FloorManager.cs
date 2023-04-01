@@ -10,7 +10,7 @@ public class FloorManager : MonoBehaviour
     [SerializeField] GameObject floorPrefab;
     
     public Color moveColor, attackColor, hammerColor;
-    [SerializeField] List<LevelDefinition> floorDefinitions;
+    [SerializeField] List<FloorDefinition> floorDefinitions;
 
     public Grid currentFloor;
     [SerializeField] Transform floorParent;
@@ -53,7 +53,7 @@ public class FloorManager : MonoBehaviour
 
         Grid newFloor = Instantiate(floorPrefab, this.transform).GetComponent<Grid>();
         currentFloor = newFloor;
-        LevelDefinition floorDef = floorDefinitions[index];
+        FloorDefinition floorDef = floorDefinitions[index];
         newFloor.lvlDef = floorDef;
     
         Coroutine co = StartCoroutine(newFloor.GenerateGrid(index));

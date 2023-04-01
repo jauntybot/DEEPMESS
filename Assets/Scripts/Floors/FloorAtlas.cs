@@ -2,18 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Grid/Level Atlas")]
+[CreateAssetMenu(menuName = "Floors/Floor Atlas")]
 [System.Serializable]
-public class LevelAtlas : ScriptableObject
+public class FloorAtlas : ScriptableObject
 {
 
-    public List<LevelAsset> assets;
+    public List<FloorAsset> assets;
 
 
 }
 
 [System.Serializable]
-public class LevelAsset {
+public class FloorAsset {
     public string name;
     public GridElement ge;
     public GameObject prefab;

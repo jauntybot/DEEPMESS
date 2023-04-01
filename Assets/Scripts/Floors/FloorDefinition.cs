@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-[CreateAssetMenu(menuName = "Grid/Level Definition")]
+[CreateAssetMenu(menuName = "Floors/Floor Definition")]
 [System.Serializable]
-public class LevelDefinition : ScriptableObject
+public class FloorDefinition : ScriptableObject
 {
 
-    public LevelAtlas atlas;
+    public FloorAtlas atlas;
     public int genPool;
     public List<Spawn> initSpawns;
 
@@ -17,7 +17,7 @@ public class LevelDefinition : ScriptableObject
 [System.Serializable]
 public class Spawn {
 
-    public LevelAsset asset;
+    public FloorAsset asset;
     public Vector2 coord;
 
 }
