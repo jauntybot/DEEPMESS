@@ -6,11 +6,11 @@ using UnityEditor;
 
 class CoordEditorPopup : EditorWindow
 {
-    static List<PopupButton> buttons = new List<PopupButton>();
     static EditorWindow window = null;
-    int index = 0;
+    static List<PopupButton> buttons = new List<PopupButton>();
 
     public static void Init(Dictionary<string, Texture> _options) {
+        buttons = new List<PopupButton>();
         foreach(KeyValuePair<string, Texture> entry in _options) {
             PopupButton button = new PopupButton();
             button.name = entry.Key;
@@ -20,8 +20,8 @@ class CoordEditorPopup : EditorWindow
     }
 
     public static void Reload(Vector2 pos) {
-        window = GetWindow<CoordEditorPopup>();
-        window.position = new Rect(pos.x + 500, pos.y, 105, buttons.Count * 101);
+        window = GetWindow<CoordEditorPopup>(true, "Content");
+        window.position = new Rect(pos.x, pos.y, 105, buttons.Count * 101);
         window.Show();
         
     }
@@ -30,9 +30,9 @@ class CoordEditorPopup : EditorWindow
         Rect h = EditorGUILayout.BeginVertical();
         for (int i = 0; i < buttons.Count; i++) {
             if (GUILayout.Button(buttons[i].icon, GUILayout.Width(100), GUILayout.Height(100))) {
-                LevelEditor.UpdateCoord(buttons[i].name);
+                FloorEditor.UpdateCoord(buttons[i].name);
                 if (i == 0) 
-                    LevelEditor.UpdateCoord();
+                    FloorEditor.UpdateCoord();
                 CloseWindow();
             }
         }
