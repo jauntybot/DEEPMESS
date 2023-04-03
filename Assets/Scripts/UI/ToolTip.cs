@@ -33,6 +33,6 @@ public class ToolTip : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        myEquipmentList = JsonUtility.FromJson<EquipmentList>(textJSON.text);
+        //myEquipmentList = JsonUtility.FromJson<EquipmentList>(textJSON.text);
     }
 }
