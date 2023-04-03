@@ -81,7 +81,7 @@ public class GridElement : MonoBehaviour{
         yield return new WaitForSecondsRealtime(.4f);
         TargetElement(false);
         if (hpCurrent <= 0) {
-            yield return StartCoroutine(DestroyElement());
+            StartCoroutine(DestroyElement());
         }
     }
 

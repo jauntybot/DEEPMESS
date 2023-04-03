@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2590438898875856828}
   - component: {fileID: 4548692920616438334}
+  - component: {fileID: 3597763259703875192}
+  - component: {fileID: 5763990174567675168}
   m_Layer: 6
   m_Name: GFX
   m_TagString: Untagged
@@ -84,6 +86,34 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &3597763259703875192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86320390212167392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b850d124d92f3945b0abedf8ebd0b8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alpha: 1
+  exclude: 0
+--- !u!114 &5763990174567675168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86320390212167392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ee90040f786e6a47acff528e5821a3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alpha: 1
+  exclude: 0
 --- !u!1 &1584112630451297120
 GameObject:
   m_ObjectHideFlags: 0
@@ -178,7 +208,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8484983104034085635}
   - component: {fileID: 2202044658481402577}
-  - component: {fileID: 699505904151411024}
+  - component: {fileID: 1723079959207389794}
   m_Layer: 6
   m_Name: highlight
   m_TagString: Untagged
@@ -253,7 +283,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &699505904151411024
+--- !u!114 &1723079959207389794
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -364,7 +394,7 @@ GameObject:
   - component: {fileID: 8517864744566959261}
   - component: {fileID: 6347572499611998251}
   m_Layer: 6
-  m_Name: v1.21 - bone tile
+  m_Name: v1.21 - blood tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

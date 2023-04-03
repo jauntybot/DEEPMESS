@@ -103,7 +103,79 @@ public class EquipmentAdjacency : MonoBehaviour
         return _coords;
     }
 
+    public static Dictionary<Vector2, Vector2> SteppedCoordAdjacency(Vector2 from, Vector2 to, EquipmentData data) {
+        Dictionary<Vector2, Vector2> _toFrom = new Dictionary<Vector2, Vector2>();
+        List<Vector2> frontier = new List<Vector2>();
+        frontier.Add(from);
+        Vector2 current = from;
+        int traveled = Mathf.RoundToInt(Mathf.Abs(to.x - from.x) + Mathf.Abs(to.y - from.y));
+        Debug.Log(Mathf.Abs(to.x - from.x) + Mathf.Abs(to.y - from.y));
 
+        while (!Vector2.Equals(current, to)) {
+            for (int f = frontier.Count - 1; f >= 0; f--) {
+                current = frontier[f];
+                frontier.Remove(frontier[f]);
+// X Axis adjacency
+                for (int x = -1; x < 2; x+=2) {
+                    Vector2 coord = new Vector2(current.x + x, current.y);
+                    if (!_toFrom.ContainsKey(coord)) {
+// If there is something already occupying this coord  
+                        bool occupied = false;
+                        foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
+                            occupied = true;
+// Valid coord if element is not filtered
+                            if (!data.filters.Find(f => f.GetType() == ge.GetType())
+                            || data.filters == null) {
+                                frontier.Add(coord);
+                                _toFrom.Add(coord,current);
+                                if (Vector2.Equals(current, to)) break;
+                            }
+                        }
+// Coord is empty
+                        if (!occupied) {
+                            frontier.Add(coord);
+                            _toFrom.Add(coord, current);
+                            if (Vector2.Equals(current, to)) break;
+                        }
+                    }
+                }
+// Y Axis adjacency
+                for (int y = -1; y < 2; y+=2) {    
+                    Vector2 coord = new Vector2(current.x, current.y + y);
+                    if (!_toFrom.ContainsKey(coord)) {
+// If there is something already occupying this coord                        
+                        bool occupied = false;
+                        foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
+                            occupied = true;
+// Valid coord if element is not filtered
+                            if (!data.filters.Find(f => f.GetType() == ge.GetType())
+                            || data.filters == null) {
+                                frontier.Add(coord);
+                                _toFrom.Add(coord, current);
+                                if (Vector2.Equals(current, to)) break;
+// Valid coord if element is target, but stops frontier
+                            }
+                        }
+// Coord is empty
+                        if (!occupied) {
+                            frontier.Add(coord);
+                            _toFrom.Add(coord, current);
+                            if (Vector2.Equals(current, to)) break;
+                        }
+                    }
+                }
+                if (Vector2.Equals(current, to)) break;
+            }            
+        }
+        Dictionary<Vector2, Vector2> _fromTo = new Dictionary<Vector2, Vector2>();
+        current = to;
+        while (!Vector2.Equals(current, from)) {
+            _fromTo.Add(_toFrom[current], current);
+            current = _toFrom[current];
+            if (Vector2.Equals(current, from)) { Debug.Log("break"); break; }
+        }
+        return _fromTo;
+    }
 
     protected static List<Vector2> OrthagonalAdjacency(GridElement from, int range, EquipmentData data, List<GridElement> targetLast) 
     {

@@ -57,7 +57,7 @@ public class PlayerManager : UnitManager {
             StartCoroutine(floorManager.DropUnit(u, u.transform.position, currentGrid.PosFromCoord(u.coord)));
         }
         
-        nail = (Nail)SpawnUnit(new Vector3(0, 30), nailPrefab.GetComponent<Nail>());
+        nail = (Nail)SpawnUnit(new Vector3(3, 3), nailPrefab.GetComponent<Nail>());
         nail.gameObject.transform.parent = unitParent.transform;
         yield return StartCoroutine(DropNail());
 
