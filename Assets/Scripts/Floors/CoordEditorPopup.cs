@@ -7,9 +7,10 @@ using UnityEditor;
 class CoordEditorPopup : EditorWindow
 {
     static EditorWindow window = null;
+    static FloorDefinition lvl;
     static List<PopupButton> buttons = new List<PopupButton>();
 
-    public static void Init(Dictionary<string, Texture> _options) {
+    public static void Init(Dictionary<string, Texture> _options, FloorDefinition _lvl) {
         buttons = new List<PopupButton>();
         foreach(KeyValuePair<string, Texture> entry in _options) {
             PopupButton button = new PopupButton();
@@ -17,6 +18,7 @@ class CoordEditorPopup : EditorWindow
             button.icon = entry.Value;
             buttons.Add(button);
         }
+        lvl = _lvl;
     }
 
     public static void Reload(Vector2 pos) {
@@ -33,6 +35,7 @@ class CoordEditorPopup : EditorWindow
                 FloorEditor.UpdateCoord(buttons[i].name);
                 if (i == 0) 
                     FloorEditor.UpdateCoord();
+                EditorUtility.SetDirty(lvl);
                 CloseWindow();
             }
         }

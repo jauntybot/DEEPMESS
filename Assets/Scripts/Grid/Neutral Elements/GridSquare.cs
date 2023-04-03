@@ -8,22 +8,14 @@ using UnityEngine;
 public class GridSquare : GroundElement {
 
     [SerializeField] SpriteRenderer[] spriteRenderers;
-    [SerializeField] Sprite[] sprites;
-    [HideInInspector] public bool white;
+
+    public bool white;
     [SerializeField] Color blackColor;
     [SerializeField] GameObject highlight;
 
 // Initialize refs
-    protected override void Start()
-    {
+    protected override void Start() {
         hitbox = GetComponent<PolygonCollider2D>();
-        //hitbox.enabled = false;
-// Temporary checkerboard, color sprite renderers
-        if (!white) 
-        {
-            foreach (SpriteRenderer sr in spriteRenderers) 
-                sr.color = blackColor;
-        }
     }
 
 // Don't inherit base class initialization to avoid adding GridElement to wrong list
@@ -52,5 +44,16 @@ public class GridSquare : GroundElement {
     public virtual void UpdateHighlight(Color color) 
     {
         highlight.GetComponent<SpriteRenderer>().color = color;
+        highlight.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = .5f;
+    }
+
+    public override void UpdateElement(Vector2 c)
+    {
+        base.UpdateElement(c);
+        if (!white) {
+// Apply color variant to GFX sprite renderer
+            foreach (SpriteRenderer sr in spriteRenderers) 
+                sr.color = blackColor;
+        }
     }
 }

@@ -8,8 +8,8 @@ public class ElementCanvas : MonoBehaviour
 {
     [SerializeField] protected bool disable;
     protected GridElement element;
-    public GameObject statDisplay, hpPips, hpInt;
-    [SerializeField] GameObject hpPipPrefab, dmgPipPrefab;
+    public GameObject statDisplay, hpPips, hpInt, apPips;
+    [SerializeField] GameObject hpPipPrefab, apPipPrefab, dmgPipPrefab;
     [SerializeField] TMPro.TMP_Text hpText;
 
     public GameObject dmgPanel;
@@ -22,6 +22,9 @@ public class ElementCanvas : MonoBehaviour
 
             UpdateStatsDisplay();
             ToggleStatsDisplay(false);
+        }
+        if (element is PlayerUnit) {
+            apPips.SetActive(true);
         }
     }
 
@@ -41,6 +44,17 @@ public class ElementCanvas : MonoBehaviour
             } else {
                 hpPips.SetActive(false); hpInt.SetActive(true);
                 hpText.text = element.hpCurrent.ToString();
+            }
+            if (element is PlayerUnit) {
+                int dif = element.energyCurrent - apPips.transform.childCount;
+                for (int i = Mathf.Abs(dif); i > 0; i--) {
+                    if (dif < 0) {
+                        if (apPips.transform.childCount - i >= 0)
+                        DestroyImmediate(apPips.transform.GetChild(apPips.transform.childCount - i).gameObject);
+                    } else if (dif > 0) {
+                        Instantiate(apPipPrefab, apPips.transform);
+                    }
+                }
             }
         }
     }

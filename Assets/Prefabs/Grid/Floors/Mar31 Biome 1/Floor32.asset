@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2f6d51c1e9f52f47b0a682683df3570, type: 3}
+  m_Name: Floor32
+  m_EditorClassIdentifier: 
+  atlas: {fileID: 11400000, guid: bd75c3133639f4604a4aa9a39c1ef6d0, type: 2}
+  genPool: 0
+  initSpawns:
+  - asset:
+      name: Wall
+      ge: {fileID: 4634978180570587290, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      prefab: {fileID: 8157743951873733082, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      icon: {fileID: 2800000, guid: d10aec7797ccd81448caefa41628e8f3, type: 3}
+    coord: {x: 6, y: 2}
+  - asset:
+      name: Wall
+      ge: {fileID: 4634978180570587290, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      prefab: {fileID: 8157743951873733082, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      icon: {fileID: 2800000, guid: d10aec7797ccd81448caefa41628e8f3, type: 3}
+    coord: {x: 0, y: 7}
+  - asset:
+      name: Wall
+      ge: {fileID: 4634978180570587290, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      prefab: {fileID: 8157743951873733082, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      icon: {fileID: 2800000, guid: d10aec7797ccd81448caefa41628e8f3, type: 3}
+    coord: {x: 0, y: 6}
+  - asset:
+      name: Wall
+      ge: {fileID: 4634978180570587290, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      prefab: {fileID: 8157743951873733082, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      icon: {fileID: 2800000, guid: d10aec7797ccd81448caefa41628e8f3, type: 3}
+    coord: {x: 3, y: 0}
+  - asset:
+      name: Wall
+      ge: {fileID: 4634978180570587290, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      prefab: {fileID: 8157743951873733082, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      icon: {fileID: 2800000, guid: d10aec7797ccd81448caefa41628e8f3, type: 3}
+    coord: {x: 2, y: 7}
+  - asset:
+      name: Wall
+      ge: {fileID: 4634978180570587290, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      prefab: {fileID: 8157743951873733082, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      icon: {fileID: 2800000, guid: d10aec7797ccd81448caefa41628e8f3, type: 3}
+    coord: {x: 2, y: 6}
+  - asset:
+      name: Wall
+      ge: {fileID: 4634978180570587290, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      prefab: {fileID: 8157743951873733082, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      icon: {fileID: 2800000, guid: d10aec7797ccd81448caefa41628e8f3, type: 3}
+    coord: {x: 3, y: 7}
+  - asset:
+      name: Wall
+      ge: {fileID: 4634978180570587290, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      prefab: {fileID: 8157743951873733082, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      icon: {fileID: 2800000, guid: d10aec7797ccd81448caefa41628e8f3, type: 3}
+    coord: {x: 3, y: 6}
+  - asset:
+      name: Wall
+      ge: {fileID: 4634978180570587290, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      prefab: {fileID: 8157743951873733082, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      icon: {fileID: 2800000, guid: d10aec7797ccd81448caefa41628e8f3, type: 3}
+    coord: {x: 5, y: 5}
+  - asset:
+      name: Wall
+      ge: {fileID: 4634978180570587290, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      prefab: {fileID: 8157743951873733082, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      icon: {fileID: 2800000, guid: d10aec7797ccd81448caefa41628e8f3, type: 3}
+    coord: {x: 6, y: 5}
+  - asset:
+      name: Wall
+      ge: {fileID: 4634978180570587290, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      prefab: {fileID: 8157743951873733082, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      icon: {fileID: 2800000, guid: d10aec7797ccd81448caefa41628e8f3, type: 3}
+    coord: {x: 5, y: 3}
+  - asset:
+      name: Wall
+      ge: {fileID: 4634978180570587290, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      prefab: {fileID: 8157743951873733082, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      icon: {fileID: 2800000, guid: d10aec7797ccd81448caefa41628e8f3, type: 3}
+    coord: {x: 1, y: 4}
+  - asset:
+      name: Wall
+      ge: {fileID: 4634978180570587290, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      prefab: {fileID: 8157743951873733082, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
+      icon: {fileID: 2800000, guid: d10aec7797ccd81448caefa41628e8f3, type: 3}
+    coord: {x: 1, y: 2}

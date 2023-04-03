@@ -24,7 +24,7 @@ public class FloorEditor : EditorWindow {
         for (int i = 0; i < lvl.atlas.assets.Count; i++) {
             options.Add(lvl.atlas.assets[i].name, lvl.atlas.assets[i].icon);
         }
-        CoordEditorPopup.Init(options);
+        CoordEditorPopup.Init(options, lvl);
     }
 
     public static void UpdateCoord(string content = null) {

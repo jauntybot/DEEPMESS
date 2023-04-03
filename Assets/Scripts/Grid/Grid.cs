@@ -16,7 +16,7 @@ public class Grid : MonoBehaviour {
     public UnitManager enemy;
     [SerializeField] GameObject enemyPrefab;
 
-    static Vector2 ORTHO_OFFSET = new Vector2(0.8f, 0.5f);
+    [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.1f, 0.5f);
     [SerializeField] GameObject sqrPrefab, gridCursor, selectedCursor;
     [SerializeField] static float fadeInDur = 0.25f;
     public FloorDefinition lvlDef;
@@ -40,10 +40,7 @@ public class Grid : MonoBehaviour {
                 sqr.white=false;
                 if (x%2==0) { if (y%2==0) sqr.white=true; } 
                 else { if (y%2!=0) sqr.white=true; }
-                if (!sqr.white) {
-                    foreach (SpriteRenderer sr in sqr.gfx)
-                        sr.color = offWhite;
-                }
+
                 sqr.StoreInGrid(this);
                 sqr.UpdateElement(new Vector2(x,y));
 
@@ -82,7 +79,6 @@ public class Grid : MonoBehaviour {
             {
                 if (u is EnemyUnit e) {
                     enemy.SpawnUnit(spawn.coord, e);
-                    Debug.Log("enemy unit");
                 }
             } else {
                 GridElement ge = Instantiate(spawn.asset.prefab, this.transform).GetComponent<GridElement>();
@@ -153,7 +149,6 @@ public class Grid : MonoBehaviour {
     }
 
     public void LockGrid(bool state) {
-        Debug.Log("Hitbox active: " + !state);
         foreach (GridSquare sqr in sqrs)
             sqr.ToggleHitBox(!state);
     }
@@ -165,12 +160,12 @@ public class Grid : MonoBehaviour {
      public Vector3 PosFromCoord(Vector2 coord) {
         return new Vector3(
 // offset from scene origin + coord to pos conversion + ortho offset + center measure
-            transform.position.x - (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x) + (ORTHO_OFFSET.x * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 
-            transform.position.y + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y) - (ORTHO_OFFSET.y * FloorManager.sqrSize * coord.x), 
+            transform.position.x - (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x/1.25f) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x/2.25f) + (ORTHO_OFFSET.x * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 
+            transform.position.y + (FloorManager.sqrSize * 1.75f) + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y) - (ORTHO_OFFSET.y*2.25f * FloorManager.sqrSize * coord.x),             
             0);
     }
 
     public int SortOrderFromCoord(Vector2 coord) {
-        return 8 + (int)coord.x - (int)coord.y;
+        return 8 - (int)coord.x + (int)coord.y;
     }
 }

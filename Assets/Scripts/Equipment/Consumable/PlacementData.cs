@@ -29,7 +29,7 @@ public class PlacementData : ConsumableEquipmentData
         GridElement placed = (toPlace is Unit u) ? 
             (GridElement)pu.manager.SpawnUnit(target.coord, u) : 
             Instantiate(prefab, user.grid.neutralGEContainer.transform).GetComponent<GridElement>();
-        placed.StoreInGrid(pu.grid);
+        if (toPlace is not Unit) placed.StoreInGrid(pu.grid);
         if (placed.GetComponent<NestedFadeGroup.NestedFadeGroup>())
             placed.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
 
