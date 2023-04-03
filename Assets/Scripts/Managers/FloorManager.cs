@@ -169,17 +169,21 @@ public class FloorManager : MonoBehaviour
         button.SetActive(state);
     }
 
+// Huge function, animation should be seperated
+// Handles all calls to transition the floor view, from upper to lower, lower to upper, preview or descent
     public IEnumerator TransitionFloors(bool down, bool preview) {
+// Orients the animation
         int dir = down? 1 : -1;
-        Grid toFloor = null;
-        if (floors.Count - 1 >= currentFloor.index + dir)
+        Grid toFloor = null; // After a descent the next floor hasn't generated before panning to it
+
+        if (floors.Count - 1 >= currentFloor.index + dir) // Checks if there is a floor in the direction transitioning
             toFloor = floors[currentFloor.index + dir];
-        
+// Adjust sorting orders contextually
         if (toFloor) toFloor.GetComponent<SortingGroup>().sortingOrder = 0;
         if (!preview) currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
         else if (!down) currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
         else currentFloor.GetComponent<SortingGroup>().sortingOrder = 1;
-        
+// Local params for animation
         Vector3 from = floorParent.transform.position;
         Vector3 to = new Vector3(from.x, from.y + floorOffset * dir, from.z);
 
@@ -188,12 +192,15 @@ public class FloorManager : MonoBehaviour
         float partialFrom = scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf;
         float partialA = down? 0.25f : 1;
 
+// All this code should be refactored into the stencil buffer alpha, NestedFadeGroup should go
+// Store references to which groups of grid objects will be faded with the transition contextually by preview
         List<NestedFadeGroup.NestedFadeGroup> currentFade = new List<NestedFadeGroup.NestedFadeGroup> {
             currentFloor.gridContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
             currentFloor.neutralGEContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
         };
         List<NestedFadeGroup.NestedFadeGroup> partialFade = null;
 
+// Assign addiitonal groups by preview
         if (currentFloor == scenario.player.currentGrid) {
             if (!preview) {
                 currentFade.Add(scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>());
@@ -206,7 +213,7 @@ public class FloorManager : MonoBehaviour
                 };
             }
         }
-
+// Same as above and boy is it ugly
         List<NestedFadeGroup.NestedFadeGroup> toFade = null;
 
         if (toFloor && !down) {
@@ -228,23 +235,30 @@ public class FloorManager : MonoBehaviour
             }
         }
 
+// And the actual animation. Has become cluttered with NestedFadeGroup logic too.
         float timer = 0;
         while (timer <= transitionDur) {
+// Lerp position of floor contatiner
             floorParent.transform.position = Vector3.Lerp(from, to, timer/transitionDur);
+// Fade in destination floor if present
             if (toFade != null) {
                 foreach(NestedFadeGroup.NestedFadeGroup fade in toFade) 
                    fade.AlphaSelf = Mathf.Lerp(0, 1, timer/transitionDur);
             }
+// Fade previewed GridElements like player units
             if (partialFade != null) {
                 foreach(NestedFadeGroup.NestedFadeGroup fade in partialFade) 
                    fade.AlphaSelf = Mathf.Lerp(partialFrom, partialA, timer/transitionDur);
             }
+// Coroutine/animation lerp yield
             yield return null;
             timer += Time.deltaTime;
+// Fade out currentfloor
             foreach(NestedFadeGroup.NestedFadeGroup fade in currentFade) 
                 fade.AlphaSelf = Mathf.Lerp(currFromA, currToA, timer/transitionDur);
             
         }
+// Hard set lerped variables
         floorParent.transform.position = to;
         foreach(NestedFadeGroup.NestedFadeGroup fade in currentFade) {
             fade.AlphaSelf = currToA;
@@ -253,7 +267,7 @@ public class FloorManager : MonoBehaviour
             foreach(NestedFadeGroup.NestedFadeGroup fade in toFade) 
                 fade.AlphaSelf = 1;
         }
-
+// Update floor manager current floor... preview next floor untis stats?
         if (toFloor) currentFloor = toFloor;
         UIManager.instance.metaDisplay.UpdateCurrentFloor(currentFloor.index);
     }
