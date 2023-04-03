@@ -299,6 +299,7 @@ public class FloorManager : MonoBehaviour
             }
         }
         yield return finalCoroutine;
+        Debug.Log("final coroutine");
     }
 
     public IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
@@ -359,7 +360,7 @@ public class FloorManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(.75f);
 
 // Check if player wins
-        if (currentFloor.index >= 11) {
+        if (currentFloor.index >= floorDefinitions.Count - 2) {
 
             StartCoroutine(scenario.Win());
 
