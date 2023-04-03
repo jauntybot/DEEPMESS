@@ -166,6 +166,6 @@ public class Grid : MonoBehaviour {
     }
 
     public int SortOrderFromCoord(Vector2 coord) {
-        return 8 - (int)coord.x + (int)coord.y;
+        return 8 + (int)coord.x - (int)coord.y;
     }
 }
