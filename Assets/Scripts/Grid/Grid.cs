@@ -19,7 +19,7 @@ public class Grid : MonoBehaviour {
     [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.1f, 0.5f);
     [SerializeField] GameObject sqrPrefab, gridCursor, selectedCursor;
     [SerializeField] static float fadeInDur = 0.25f;
-    public LevelDefinition lvlDef;
+    public FloorDefinition lvlDef;
     [SerializeField] Color offWhite;
 
     public List<GridSquare> sqrs = new List<GridSquare>();
