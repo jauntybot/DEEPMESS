@@ -109,7 +109,6 @@ public class ScenarioManager : MonoBehaviour
                     foreach(Unit u in currentEnemy.units) {
                         u.energyCurrent = u.energyMax;
                         u.elementCanvas.UpdateStatsDisplay();
-                        u.ui.UpdateEnergy();
                     }
                     endTurnButton.enabled = false;
                     StartCoroutine(currentEnemy.TakeTurn());

@@ -17,8 +17,7 @@ public class UnitUI : MonoBehaviour
 
     [Header("Equipment")]
     public List<EquipmentButton> equipment; 
-    [SerializeField] GameObject equipmentPanel, equipmentButtonPrefab, apPipPrefab;
-    [SerializeField] Transform energy, energyContainer;
+    [SerializeField] GameObject equipmentPanel, equipmentButtonPrefab;
     [SerializeField] GameObject equipmentOptions;
 
     
@@ -32,8 +31,6 @@ public class UnitUI : MonoBehaviour
         if (u is PlayerUnit) {
             UpdateEquipmentButtons();
             ToggleEquipmentPanel(false);
-            if (uiType == UIType.Portrait)
-                energy.gameObject.SetActive(true);
         }
         ToggleUnitPanel(false);
 
@@ -51,19 +48,6 @@ public class UnitUI : MonoBehaviour
     public void ToggleEquipmentPanel(bool active) {
 
         equipmentPanel.SetActive(active);
-
-    }
-
-    public void UpdateEnergy() {
-        int dif = unit.energyCurrent - energyContainer.childCount;
-        for (int i = Mathf.Abs(dif); i > 0; i--) {
-            if (dif < 0) {
-                if (energyContainer.childCount - i >= 0)
-                    DestroyImmediate(energyContainer.GetChild(energyContainer.childCount - i).gameObject);
-            } else if (dif > 0) {
-                Instantiate(apPipPrefab, energyContainer);
-            }
-        }
 
     }
 

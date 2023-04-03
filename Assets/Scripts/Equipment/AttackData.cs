@@ -17,7 +17,7 @@ public class AttackData : EquipmentData
         for (int i = validCoords.Count - 1; i >= 0; i--) {
             bool occupied = false;
             foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(validCoords[i])) {
-                occupied = true;
+                if (ge is not GroundElement) occupied = true;
                 bool remove = true;
                 foreach(GridElement target in targetTypes) {
                     if (ge.GetType() == target.GetType()) {

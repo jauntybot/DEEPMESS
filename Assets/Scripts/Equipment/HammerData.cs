@@ -26,7 +26,7 @@ public class HammerData : EquipmentData
         for (int i = validCoords.Count - 1; i >= 0; i--) {
             bool occupied = false;
             foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(validCoords[i])) {
-                occupied = true;
+                if (ge is not GroundElement) occupied = true;
                 bool remove = true;
                 foreach(GridElement target in targetTypes) {
                     if (ge.GetType() == target.GetType()) {
@@ -35,12 +35,13 @@ public class HammerData : EquipmentData
                             ge.elementCanvas.ToggleStatsDisplay(true);
                     }
                 }
-                if (remove) 
+                if (remove)
                     validCoords.Remove(validCoords[i]);
             } 
             if (!occupied)
                 validCoords.Remove(validCoords[i]);
         }
+
         return validCoords;
         
     }

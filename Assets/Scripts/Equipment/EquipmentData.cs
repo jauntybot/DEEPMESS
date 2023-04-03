@@ -34,8 +34,7 @@ public class EquipmentData : ScriptableObject {
     public virtual IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         user.energyCurrent -= energyCost;
         user.elementCanvas.UpdateStatsDisplay();
-        if (user is PlayerUnit pu)
-            pu.ui.UpdateEnergy();
+
         yield return null;
     }
 

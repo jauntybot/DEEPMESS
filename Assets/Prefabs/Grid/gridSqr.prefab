@@ -536,11 +536,13 @@ MonoBehaviour:
   - {fileID: 1812062305092922383}
   - {fileID: 2202044658481402577}
   - {fileID: 3705657307307802411}
+  name: 
   hpMax: 0
   hpCurrent: 0
   defense: 0
   energyCurrent: 0
   energyMax: 0
+  destroyed: 0
   spriteRenderers:
   - {fileID: 7817496761048235123}
   - {fileID: 6537169198283793595}
@@ -593,7 +595,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   disable: 1
   statDisplay: {fileID: 0}
-  hp: {fileID: 0}
-  energy: {fileID: 0}
+  hpPips: {fileID: 0}
+  hpInt: {fileID: 0}
+  hpPipPrefab: {fileID: 0}
+  dmgPipPrefab: {fileID: 0}
   hpText: {fileID: 0}
-  energyText: {fileID: 0}
+  dmgPanel: {fileID: 0}
+  dmgAnim: {fileID: 0}

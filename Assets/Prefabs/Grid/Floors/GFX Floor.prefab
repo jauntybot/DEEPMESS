@@ -164,7 +164,7 @@ MonoBehaviour:
   chessNotation: {fileID: 283530396714013588}
   enemy: {fileID: 0}
   enemyPrefab: {fileID: 8294248095137744425, guid: 317783b74d19859469fed42b0fab219b, type: 3}
-  ORTHO_OFFSET: {x: 1.1, y: -1.1}
+  ORTHO_OFFSET: {x: 1.15, y: 0.35}
   sqrPrefab: {fileID: 8989576065795441841, guid: fa0dbb52d1a1543a2b64b9ca668137e5, type: 3}
   gridCursor: {fileID: 675793754582529034}
   selectedCursor: {fileID: 3587223527213720723}
@@ -252,6 +252,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: selectedCursor
       objectReference: {fileID: 0}
+    - target: {fileID: 7837303882697225820, guid: 896d4e562711d9544907b933c391bc46, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8952097438192926558, guid: 896d4e562711d9544907b933c391bc46, type: 3}
       propertyPath: m_Color.a
       value: 0
@@ -323,17 +327,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: 'gridCursor '
       objectReference: {fileID: 0}
+    - target: {fileID: 7837303882697225820, guid: 896d4e562711d9544907b933c391bc46, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8952097438192926558, guid: 896d4e562711d9544907b933c391bc46, type: 3}
       propertyPath: m_Color.a
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8952097438192926558, guid: 896d4e562711d9544907b933c391bc46, type: 3}
       propertyPath: m_Color.b
-      value: 1
+      value: 0.9612026
       objectReference: {fileID: 0}
     - target: {fileID: 8952097438192926558, guid: 896d4e562711d9544907b933c391bc46, type: 3}
       propertyPath: m_Color.g
-      value: 0.7310357
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8952097438192926558, guid: 896d4e562711d9544907b933c391bc46, type: 3}
       propertyPath: m_Color.r

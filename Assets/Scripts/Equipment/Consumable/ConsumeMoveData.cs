@@ -41,10 +41,11 @@ public class ConsumeMoveData : ConsumableEquipmentData
         }
         unitsToMove.Sort(SortByDir);
         Dictionary<Unit, Vector2> targetPositions = new Dictionary<Unit, Vector2>();
+        int moveRange = 1;
         foreach (Unit u in unitsToMove) {
             bool blocked = false;
             Vector2 frontier = u.coord;
-            for (int i = 0; i <= 7; i++) {
+            for (int i = 0; i <= moveRange; i++) {
                 foreach (GridElement ge in user.grid.CoordContents(frontier + dir)) {
                     if (ge is not GroundElement) {
                         if (ge is Unit u2) {
@@ -69,6 +70,7 @@ public class ConsumeMoveData : ConsumableEquipmentData
                 if (frontier.x + dir.x < 0 || frontier.x + dir.x > 7 || frontier.y + dir.y < 0 || frontier.y + dir.y > 7) {
                     blocked = true;
                 }
+                if (i == moveRange) blocked = true;
                 if (blocked) {
                     targetPositions.Add(u, frontier);
                     break;
