@@ -14,11 +14,11 @@ public class EquipmentData : ScriptableObject {
     public int energyCost;
     public AdjacencyType adjacency;
     public int range;
+    [SerializeField] protected float animDur = 0.5f;
     public List<GridElement> filters; 
 // When false, filters out listed elements from adjacenecy checks, when true, only allows listed elements in adjacency checks
     public bool filterValid;
     public List<GridElement> targetTypes;
-    protected float animDur = 0.5f;
 
 // The following variables are dependent on the card Action, hidden with custom editor
 

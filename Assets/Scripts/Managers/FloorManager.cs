@@ -293,12 +293,13 @@ public class FloorManager : MonoBehaviour
                 if (fromFloor.gridElements[i] is not Nail) {
                     GridElement subElement = null;
                     foreach (GridElement ge in toFloor.CoordContents(u.coord)) subElement = ge;
-                    finalCoroutine = StartCoroutine(DropUnit(u, fromFloor.PosFromCoord(u.coord), toFloor.PosFromCoord(u.coord), subElement));
+                    yield return StartCoroutine(DropUnit(u, fromFloor.PosFromCoord(u.coord), toFloor.PosFromCoord(u.coord), subElement));
                     yield return new WaitForSeconds(0.1f);
                 }
             }
         }
-        yield return finalCoroutine;
+        //yield return finalCoroutine;
+        Debug.Log("final coroutine");
     }
 
     public IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
@@ -359,7 +360,7 @@ public class FloorManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(.75f);
 
 // Check if player wins
-        if (currentFloor.index >= 11) {
+        if (currentFloor.index >= floorDefinitions.Count - 2) {
 
             StartCoroutine(scenario.Win());
 

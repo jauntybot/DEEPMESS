@@ -82,7 +82,6 @@ public class GridElement : MonoBehaviour{
         TargetElement(false);
         if (hpCurrent <= 0) {
             StartCoroutine(DestroyElement());
-            yield break;
         }
     }
 
