@@ -90,6 +90,7 @@ public class PlayerManager : UnitManager {
                 foreach(Unit u in units) {
                     if (u is PlayerUnit) {
                         u.energyCurrent = u.energyMax;
+                        u.moved = false;
                         u.elementCanvas.UpdateStatsDisplay();
                     }
                 }
