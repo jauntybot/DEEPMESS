@@ -54,7 +54,7 @@ public class UnitUI : MonoBehaviour
     public void UpdateEquipmentButtons() {
 
 // Remove buttons no longer owned by unit
-        for (int i = equipment.Count - 1; i > 0; i--) {
+        for (int i = equipment.Count - 1; i >= 0; i--) {
             EquipmentButton b = equipment[i];
             if (unit.equipment.Find(d => d == b.data) == null) {
                 equipment.Remove(b);
@@ -98,17 +98,16 @@ public class UnitUI : MonoBehaviour
     }
 
     public void UpdateLoadout(EquipmentData equip) {
-        for (int i = unit.equipment.Count - 1; i > 0; i--) {
+        for (int i = unit.equipment.Count - 1; i >= 0; i--) {
             if (unit.equipment[i] is ConsumableEquipmentData e) {
                 if (equip == e) return;
                 unit.equipment.Remove(e);
             }
         }
         unit.equipment.Insert(1, equip);
-        unit.ui.UpdateEquipmentButtons();
 
         UpdateEquipmentButtons();
-        for(int i = equipment.Count - 2; i > 0; i--) {
+        for(int i = equipment.Count - 2; i >= 0; i--) {
                 EquipmentButton b = equipment[i];
                 equipment.Remove(b);
                 Destroy(b.gameObject);

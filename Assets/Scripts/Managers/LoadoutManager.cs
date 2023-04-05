@@ -8,8 +8,6 @@ public class LoadoutManager : MonoBehaviour
 
     public Unit[] unitPrefabs;
 
-    public List<EquipmentData> loadoutOptions;
-
     public IEnumerator Initialize(List<Unit> units) {
 
         yield return null;

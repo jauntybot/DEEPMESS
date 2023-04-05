@@ -52,12 +52,12 @@ public class MoveData : EquipmentData
 // exposed UpdateElement() functionality to selectively update sort order
             if (unit.grid.SortOrderFromCoord(fromTo[current]) > unit.grid.SortOrderFromCoord(current))
                 unit.UpdateSortOrder(fromTo[current]);
-            current = fromTo[current];
             while (timer < animDur) {
                 yield return null;
                 unit.transform.position = Vector3.Lerp(unit.transform.position, toPos, timer/animDur);
                 timer += Time.deltaTime;
             }
+            current = fromTo[current];
         }        
         unit.UpdateElement(moveTo);
 // Check for shared space  

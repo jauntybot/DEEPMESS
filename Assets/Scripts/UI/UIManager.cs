@@ -70,6 +70,8 @@ public class UIManager : MonoBehaviour
             yield return null;
         }
         loadoutPanel.gameObject.SetActive(false);
+        foreach(Unit u in scenario.player.units)
+            u.ui.UpdateEquipmentButtons();
     }
 
     public void UpdateDropChance(int chance) {
