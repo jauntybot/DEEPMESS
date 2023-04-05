@@ -10,6 +10,7 @@ public class Unit : GridElement {
     public bool selected;
     public EquipmentData selectedEquipment;
     public List<EquipmentData> equipment;
+    public bool moved;
 
     public List<Vector2> validActionCoords;
     

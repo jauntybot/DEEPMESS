@@ -54,7 +54,7 @@ public class UnitUI : MonoBehaviour
     public void UpdateEquipmentButtons() {
 
 // Remove buttons no longer owned by unit
-        for (int i = equipment.Count - 1; i >= 0; i--) {
+        for (int i = equipment.Count - 1; i > 0; i--) {
             EquipmentButton b = equipment[i];
             if (unit.equipment.Find(d => d == b.data) == null) {
                 equipment.Remove(b);
@@ -66,16 +66,18 @@ public class UnitUI : MonoBehaviour
         }
 // Add buttons unit owns but does not have
         foreach (EquipmentData equip in unit.equipment) {
-            if (equipment.Find(b => b.data == equip) == null) {
-                EquipmentButton newButt = Instantiate(equipmentButtonPrefab, equipmentPanel.transform).GetComponent<EquipmentButton>();
-                newButt.Initialize(equip, unit);
-                equipment.Add(newButt);
-            }
-            if (equip is ConsumableEquipmentData consume) {
-                EquipmentButton b = equipment.Find(b => b.data == consume);
-                PlayerUnit pu = (PlayerUnit)unit;
-                b.UpdateBadge(pu.consumableCount);
-                //if (place.count <= 0) b.
+            if (equip is not MoveData) {
+                if (equipment.Find(b => b.data == equip) == null) {
+                    EquipmentButton newButt = Instantiate(equipmentButtonPrefab, equipmentPanel.transform).GetComponent<EquipmentButton>();
+                    newButt.Initialize(equip, unit);
+                    equipment.Add(newButt);
+                }
+                if (equip is ConsumableEquipmentData consume) {
+                    EquipmentButton b = equipment.Find(b => b.data == consume);
+                    PlayerUnit pu = (PlayerUnit)unit;
+                    b.UpdateBadge(pu.consumableCount);
+                    //if (place.count <= 0) b.
+                }
             }
         }
         UpdateEquipmentButtonMods();
@@ -96,7 +98,7 @@ public class UnitUI : MonoBehaviour
     }
 
     public void UpdateLoadout(EquipmentData equip) {
-        for (int i = unit.equipment.Count - 1; i >= 0; i--) {
+        for (int i = unit.equipment.Count - 1; i > 0; i--) {
             if (unit.equipment[i] is ConsumableEquipmentData e) {
                 if (equip == e) return;
                 unit.equipment.Remove(e);
@@ -106,7 +108,7 @@ public class UnitUI : MonoBehaviour
         unit.ui.UpdateEquipmentButtons();
 
         UpdateEquipmentButtons();
-        for(int i = equipment.Count - 2; i >= 0; i--) {
+        for(int i = equipment.Count - 2; i > 0; i--) {
                 EquipmentButton b = equipment[i];
                 equipment.Remove(b);
                 Destroy(b.gameObject);

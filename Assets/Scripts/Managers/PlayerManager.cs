@@ -264,10 +264,14 @@ public class PlayerManager : UnitManager {
         }
     }
 
-    public override void SelectUnit(Unit t)
+    public override void SelectUnit(Unit u)
     {
-        base.SelectUnit(t);
-        if (t.energyCurrent > 0) t.ui.ToggleEquipmentPanel(true);
+        base.SelectUnit(u);
+        if (u.energyCurrent > 0) u.ui.ToggleEquipmentPanel(true);
+        if (!u.moved) {
+            u.selectedEquipment = u.equipment[0];
+            u.UpdateAction(u.selectedEquipment, u.moveMod);
+        }
         prevCursorTargetState = true;
     }
 
@@ -296,7 +300,7 @@ public class PlayerManager : UnitManager {
 
             MoveData move = (MoveData)lastMoved.equipment[0];
             StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved], true));
-            lastMoved.energyCurrent += 1;
+            lastMoved.moved = false;
             lastMoved.elementCanvas.UpdateStatsDisplay();
 
             undoOrder.Remove(lastMoved);
