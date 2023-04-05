@@ -94,6 +94,8 @@ public class PlayerManager : UnitManager {
                         u.elementCanvas.UpdateStatsDisplay();
                     }
                 }
+                undoableMoves = new Dictionary<Unit, Vector2>();
+                undoOrder = new List<Unit>();
                 ResolveConditions();
             } else {
 
