@@ -1,8 +1,16 @@
 using UnityEngine.EventSystems;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using TMPro;
+
+[System.Serializable]
+public class PlayerInfo
+{
+
+}
 
 public class ToolTip : MonoBehaviour
 {
@@ -13,29 +21,8 @@ public class ToolTip : MonoBehaviour
     private int numOfChildren;
     private string goName;
 
-    List<string> _goList = new List<string>();
- 
+    [SerializeField] List<string> _goList = new List<string>();
 
-    private bool IsMouseOverUI()
-    {
-        return EventSystem.current.IsPointerOverGameObject();
-    }
-
-
-    [System.Serializable]
-    public class Equipment
-    {
-        [SerializeField] string JSONpage;
-    }
- 
-    [System.Serializable]
-    public class EquipmentList
-    {
-        public Equipment[] equipment;
-    }
-
-    public EquipmentList myEquipmentList = new EquipmentList();
-    // Start is called before the first frame update
     void Start()
     {
 
@@ -44,17 +31,16 @@ public class ToolTip : MonoBehaviour
         CreateGameObjectList();
 
 
-        //COMPARE GAMEOBJECT LIST 
+        //COMPARE GAMEOBJECT LIST
 
         //LOAD RELEVANT TEXT TO THE TOOL TIP
 
         Debug.Log(_goList[2]);
-
-        
-
-        //myEquipmentList = JsonUtility.FromJson<EquipmentList>(textJSON.text);
     }
 
+    /// <summary>
+    /// Create a list from the children of the game object
+    /// </summary>
     void CreateGameObjectList()
     {
         //creates a list from the children of the game object
@@ -71,5 +57,10 @@ public class ToolTip : MonoBehaviour
     void CreateJSONList()
     {
 
+    }
+
+    private bool IsMouseOverUI()
+    {
+        return EventSystem.current.IsPointerOverGameObject();
     }
 }
