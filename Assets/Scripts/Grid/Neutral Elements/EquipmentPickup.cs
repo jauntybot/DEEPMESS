@@ -35,7 +35,7 @@ public class EquipmentPickup : GroundElement
                         if (pu.equipment[i] is ConsumableEquipmentData c)
                             pu.equipment.Remove(c);
                     }
-                    pu.equipment.Insert(2, equipment);
+                    pu.equipment.Insert(1, equipment);
                     pu.equipment[2].EquipEquipment(pu);
         
                     pu.ui.UpdateEquipmentButtons();

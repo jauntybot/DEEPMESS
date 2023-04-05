@@ -104,7 +104,7 @@ public class UnitUI : MonoBehaviour
                 unit.equipment.Remove(e);
             }
         }
-        unit.equipment.Insert(2, equip);
+        unit.equipment.Insert(1, equip);
         unit.ui.UpdateEquipmentButtons();
 
         UpdateEquipmentButtons();

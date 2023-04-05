@@ -69,7 +69,7 @@ public class PlayerManager : UnitManager {
         GameObject h = Instantiate(hammerPrefab, unit.transform.position, Quaternion.identity, unit.transform);
         h.GetComponentInChildren<SpriteRenderer>().sortingOrder = unit.gfx[0].sortingOrder;
         unit.gfx.Add(h.GetComponentInChildren<SpriteRenderer>());
-        unit.equipment.Insert(3, equip);
+        unit.equipment.Insert(2, equip);
         equip.EquipEquipment(unit);
         equip.AssignHammer(h, nail);
         

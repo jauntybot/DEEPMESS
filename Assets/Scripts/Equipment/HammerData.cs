@@ -106,7 +106,7 @@ public class HammerData : EquipmentData
     public void PassHammer(PlayerUnit sender, PlayerUnit reciever) {
         for (int i = sender.equipment.Count - 1; i >= 0; i--) {
                 if (sender.equipment[i] is HammerData) {
-                    reciever.equipment.Insert(2, sender.equipment[i]);
+                    reciever.equipment.Insert(1, sender.equipment[i]);
 
                     sender.equipment.Remove(sender.equipment[i]);
                 }
