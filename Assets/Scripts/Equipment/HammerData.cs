@@ -82,9 +82,7 @@ public class HammerData : EquipmentData
 // Attack target if unit
             if (target is EnemyUnit) {
                 target.StartCoroutine(target.TakeDamage(3));
-                manager.hammerCharge = 0;
             }
-            manager.ChargeHammer(1);
 // Assign a random unit to pass the hammer to
             Unit passTo = manager.units[Random.Range(0, manager.units.Count - 1)];
             while (passTo is not PlayerUnit) passTo = manager.units[Random.Range(0, manager.units.Count - 1)];

@@ -17,6 +17,12 @@ public class PlayerUnit : Unit {
             base.UpdateAction(equipment, mod);
     }
 
+    public override void ExecuteAction(GridElement target = null) {
+        base.ExecuteAction(target);
+        PlayerManager m = (PlayerManager)manager;
+        UIManager.instance.ToggleUndoButton(m.undoOrder.Count > 0);
+    }
+
 // Allow the player to click on this
     public override void EnableSelection(bool state) 
     {

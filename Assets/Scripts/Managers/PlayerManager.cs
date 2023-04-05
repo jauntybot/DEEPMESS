@@ -16,13 +16,14 @@ public class PlayerManager : UnitManager {
     [Header("PLAYER MANAGER")]
     public LoadoutManager loadout;
     public Nail nail;
-    public int hammerCharge, descentChargeReq;
-    [SerializeField] HammerChargeDisplay chargeDisplay;
     public EquipmentData hammerAction;
 
     private GridElement prevCursorTarget = null;
     private bool prevCursorTargetState = false;
     [SerializeField] public GameObject nailPrefab, hammerPrefab, hammerPickupPrefab;
+
+    public Dictionary<Unit, Vector2> undoableMoves = new Dictionary<Unit, Vector2>();
+    public List<Unit> undoOrder;
 
 // Get rid of this reference somehow
     [SerializeField] EndTurnBlinking turnBlink;
@@ -40,9 +41,6 @@ public class PlayerManager : UnitManager {
 
     public override IEnumerator Initialize()
     {
-        hammerCharge = 0;
-        chargeDisplay.UpdateCharges(hammerCharge);
-        
         yield return base.Initialize();
 
         List<Unit> initU = new List<Unit>() {
@@ -117,14 +115,6 @@ public class PlayerManager : UnitManager {
         }
 
         return u;
-    }
-
-    public void ChargeHammer(int charge) {
-        if (hammerCharge < descentChargeReq) {
-            hammerCharge += charge;
-            if (hammerCharge > descentChargeReq) hammerCharge = descentChargeReq;
-            chargeDisplay.UpdateCharges(hammerCharge);
-        }
     }
 
     public IEnumerator DropNail() {
@@ -300,11 +290,34 @@ public class PlayerManager : UnitManager {
         }
     }
 
+    public void UndoMove() {
+        if (undoableMoves.Count > 0 && undoOrder.Count > 0) {
+            Unit lastMoved = undoOrder[undoOrder.Count - 1];
+
+            MoveData move = (MoveData)lastMoved.equipment[0];
+            StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved], true));
+            lastMoved.energyCurrent += 1;
+            lastMoved.elementCanvas.UpdateStatsDisplay();
+
+            undoOrder.Remove(lastMoved);
+            undoableMoves.Remove(lastMoved);
+            UIManager.instance.ToggleUndoButton(undoOrder.Count > 0);
+
+        } else if ((undoableMoves.Count > 0 && undoOrder.Count == 0) ||(undoableMoves.Count == 0 && undoOrder.Count > 0)) {
+            undoOrder = new List<Unit>();
+            undoableMoves = new Dictionary<Unit, Vector2>();
+        }
+    }
+
     public void TriggerDescent() {
         floorManager.Descend();
     }
 
     public virtual void DescendGrids(Grid newGrid) {
+        undoableMoves = new Dictionary<Unit, Vector2>();
+        undoOrder = new List<Unit>();
+        UIManager.instance.ToggleUndoButton(undoOrder.Count > 0);
+
         foreach(Unit unit in units) {
             currentGrid.RemoveElement(unit);
             unit.StoreInGrid(newGrid);
@@ -314,8 +327,6 @@ public class PlayerManager : UnitManager {
         currentGrid = newGrid;
         transform.parent = newGrid.transform;
         transform.SetSiblingIndex(3);
-        hammerCharge = 0;
-        chargeDisplay.UpdateCharges(hammerCharge);
     }
 
     Dictionary<Unit, bool> prevTargetStates;

@@ -11,13 +11,21 @@ public class MoveData : EquipmentData
 
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
     {
-        yield return base.UseEquipment(user);
+        user.energyCurrent -= energyCost;
+        user.elementCanvas.UpdateStatsDisplay();
+
         yield return user.StartCoroutine(MoveToCoord((Unit)user, target.coord));
         
     }
 
-    public IEnumerator MoveToCoord(Unit unit, Vector2 moveTo) 
-    {          
+    public IEnumerator MoveToCoord(Unit unit, Vector2 moveTo, bool undo = false) 
+    {       
+// Add move to undo dictionary if player unit
+        if (unit is PlayerUnit pu && !undo) {
+            PlayerManager manager = (PlayerManager)pu.manager;
+            manager.undoableMoves.Add(unit, unit.coord);
+            manager.undoOrder.Add(unit);
+        }
 // Build frontier dictionary for stepped lerp
         Dictionary<Vector2, Vector2> fromTo = new Dictionary<Vector2, Vector2>();
         if (animType == AnimType.Stepped) 

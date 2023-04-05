@@ -1,25 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
     
     ScenarioManager scenario;
 
-    [Header("Meta Data")]
+    [Header("Top UIs")]
     public MetaDisplay metaDisplay;
+    public Button undoButton;
+    public TextMeshProUGUI undoText;
 
     [Header("Portraits")]
     [SerializeField] Transform portraitParent;
     [SerializeField] GameObject portraitPrefab;
     List<UnitUI> unitPortraits = new List<UnitUI>();
     bool unitDisplayed;
+
     [Header("Loadouts")]
     [SerializeField] GameObject loadoutPrefab;
     [SerializeField] Transform loadoutPanel, loadoutUIParent;
     List<UnitUI> loadoutUIs = new List<UnitUI>();
-
+    
 
     public static UIManager instance;
     private void Awake() {
@@ -29,6 +34,7 @@ public class UIManager : MonoBehaviour
 
     void Start() {
         scenario = ScenarioManager.instance;
+        ToggleUndoButton(false);
     }
 
     public void UpdatePortrait(Unit u = null, bool active = true) {
@@ -68,6 +74,13 @@ public class UIManager : MonoBehaviour
 
     public void UpdateDropChance(int chance) {
         metaDisplay.UpdateDropChance(chance);
+    }
+
+    public void ToggleUndoButton(bool state) {
+        undoButton.interactable = state;
+        Color c = state ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1);
+        undoText.color = c;
+        Debug.Log(c.r);
     }
 
 }
