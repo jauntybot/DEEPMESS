@@ -128,7 +128,6 @@ public class ScenarioManager : MonoBehaviour
                     turnCount++;
                     floorManager.upButton.GetComponent<Button>().enabled = true; floorManager.downButton.GetComponent<Button>().enabled = true;
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN", 1));
-                    UIManager.instance.metaDisplay.UpdateTurnsToDescend(turnsToDescend - turnCount);
 
                     prevTurn = currentTurn; currentTurn = Turn.Player;
                     endTurnButton.enabled = true;

@@ -120,4 +120,10 @@ public class EnemyManager : UnitManager {
         }
         DestroyImmediate(this.gameObject);
     }
+
+    protected override void RemoveUnit(GridElement ge)
+    {
+        base.RemoveUnit(ge);
+        UIManager.instance.metaDisplay.UpdateTurnsToDescend(units.Count - 1);
+    }
 }
