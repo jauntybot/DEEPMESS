@@ -65,14 +65,15 @@ public class UnitUI : MonoBehaviour
             
         }
 // Add buttons unit owns but does not have
-        foreach (EquipmentData equip in unit.equipment) {
-            if (equip is not MoveData) {
-                if (equipment.Find(b => b.data == equip) == null) {
+        for (int i = unit.equipment.Count - 1; i >= 0; i--) {
+            if (unit.equipment[i] is not MoveData) {
+                if (equipment.Find(b => b.data == unit.equipment[i]) == null) {
                     EquipmentButton newButt = Instantiate(equipmentButtonPrefab, equipmentPanel.transform).GetComponent<EquipmentButton>();
-                    newButt.Initialize(equip, unit);
+                    newButt.Initialize(unit.equipment[i], unit);
                     equipment.Add(newButt);
+                    newButt.transform.parent.SetSiblingIndex(i);
                 }
-                if (equip is ConsumableEquipmentData consume) {
+                if (unit.equipment[i] is ConsumableEquipmentData consume) {
                     EquipmentButton b = equipment.Find(b => b.data == consume);
                     PlayerUnit pu = (PlayerUnit)unit;
                     b.UpdateBadge(pu.consumableCount);
@@ -107,10 +108,12 @@ public class UnitUI : MonoBehaviour
         unit.equipment.Insert(1, equip);
 
         UpdateEquipmentButtons();
-        for(int i = equipment.Count - 2; i >= 0; i--) {
+        for(int i = equipment.Count - 1; i >= 0; i--) {
+            if (equipment[i].data is not ConsumableEquipmentData) {
                 EquipmentButton b = equipment[i];
                 equipment.Remove(b);
                 Destroy(b.gameObject);
+            }
         }
     }
 

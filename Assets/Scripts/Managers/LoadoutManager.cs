@@ -15,10 +15,12 @@ public class LoadoutManager : MonoBehaviour
         foreach(Unit u in units) {
             UnitUI ui = UIManager.instance.CreateLoadoutUI(u);
             ui.ToggleUnitPanel(true);
-            for(int i = ui.equipment.Count - 2; i >= 0; i--) {
-                EquipmentButton b = ui.equipment[i];
-                ui.equipment.Remove(b);
-                Destroy(b.gameObject);
+            for(int i = ui.equipment.Count - 1; i >= 0; i--) {
+                if (ui.equipment[i].data is not ConsumableEquipmentData) {
+                    EquipmentButton b = ui.equipment[i];
+                    ui.equipment.Remove(b);
+                    Destroy(b.gameObject);
+                }
             }
             ui.ToggleEquipmentPanel(true);
         }
