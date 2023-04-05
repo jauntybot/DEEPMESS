@@ -49,7 +49,8 @@ public class Unit : GridElement {
         if (selectedEquipment == null) return false;
         if (validActionCoords.Count == 0) return false;
         if (validActionCoords.Find(coord => coord == target) == default) return false;
-        if (energyCurrent < selectedEquipment.energyCost) return false;
+        if (energyCurrent < selectedEquipment.energyCost && selectedEquipment is not MoveData) return false;
+        else if (moved && selectedEquipment is MoveData) return false;
 
         return true;
     }
