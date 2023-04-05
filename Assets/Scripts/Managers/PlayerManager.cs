@@ -271,7 +271,7 @@ public class PlayerManager : UnitManager {
     {
         base.SelectUnit(u);
         if (u.energyCurrent > 0) u.ui.ToggleEquipmentPanel(true);
-        if (!u.moved) {
+        if (!u.moved && u is PlayerUnit) {
             u.selectedEquipment = u.equipment[0];
             u.UpdateAction(u.selectedEquipment, u.moveMod);
         }
