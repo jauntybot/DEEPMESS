@@ -39,11 +39,12 @@ public class ToolTip : MonoBehaviour
     void Start()
     {
 
-        //
+        //create list from game object
+        //use _goList
         CreateGameObjectList();
 
 
-        //COMPARE GAMEOBJECT LIST TO JSON LIST
+        //COMPARE GAMEOBJECT LIST 
 
         //LOAD RELEVANT TEXT TO THE TOOL TIP
 
@@ -56,15 +57,19 @@ public class ToolTip : MonoBehaviour
 
     void CreateGameObjectList()
     {
-        //create list from game object list
+        //creates a list from the children of the game object
         goName = this.gameObject.name;
         go = this.gameObject;
         numOfChildren = go.transform.childCount;
 
-        //update the unity list from the children name
         for (int i = 0; i < numOfChildren; i++)
         {
             _goList.Add(go.transform.GetChild(i).gameObject.name.ToLower());
         }
+    }
+
+    void CreateJSONList()
+    {
+
     }
 }
