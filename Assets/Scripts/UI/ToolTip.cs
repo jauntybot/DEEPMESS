@@ -12,10 +12,8 @@ public class ToolTip : MonoBehaviour
     [SerializeField] TMPro.TMP_Text description;
     [SerializeField] TMPro.TMP_Text damage;
 
-
     public GridElement testGE;
     public static ToolTip _instance;
-
 
     //Singleton to make sure there is only one tool tip at a time
     public void Awake()
@@ -38,7 +36,7 @@ public class ToolTip : MonoBehaviour
     void CreateCSVList(GridElement geTest)
     {
         //get game object tag
-        string goName =  geTest.name;
+        string goName = geTest.name;
         TextAsset data = Resources.Load<TextAsset>("Database - " + geTest.GetType().Name);
 
         //create rows
@@ -56,7 +54,8 @@ public class ToolTip : MonoBehaviour
             for (int l = 0; l < nameLength; l++)
                 refName += textData[i][l];
 
-            if (goName == refName) {
+            if (goName == refName)
+            {
                 index = i;
                 Debug.Log(goName + " is at index " + i);
 
@@ -67,5 +66,4 @@ public class ToolTip : MonoBehaviour
             }
         }
     }
-
 }
