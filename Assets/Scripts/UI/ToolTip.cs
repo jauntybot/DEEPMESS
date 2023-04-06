@@ -12,19 +12,13 @@ public class ToolTip : MonoBehaviour
     [SerializeField] TMPro.TMP_Text description;
     [SerializeField] TMPro.TMP_Text damage;
 
-    private GameObject go;
-    private int numOfChildren;
-    private string goName;
 
-    public GameObject testObject;
-
-    [SerializeField] List<GameObject> _goList = new List<GameObject>();
-
+    public GridElement testGE;
     public static ToolTip _instance;
 
 
     //Singleton to make sure there is only one tool tip at a time
-    /*public void Awake()
+    public void Awake()
     {
         if (_instance != null && _instance == this)
         {
@@ -34,65 +28,44 @@ public class ToolTip : MonoBehaviour
         {
             _instance = this;
         }
-    }*/
+    }
 
     void Start()
     {
-        CreateCSVList(testObject);
+        CreateCSVList(testGE);
     }
 
-    /// <summary>
-    /// Create a list from the children of the game object
-    /// </summary>
-    void CreateGameObjectList()
-    {
-        //creates a list from the children of the game object
-        goName = this.gameObject.name;
-        go = this.gameObject;
-        numOfChildren = go.transform.childCount;
-
-        for (int i = 0; i < numOfChildren; i++)
-        {
-            _goList.Add(go.transform.GetChild(i).gameObject);
-        }
-    }
-
-    void CreateCSVList(GameObject goTest)
+    void CreateCSVList(GridElement geTest)
     {
         //get game object tag
-        string goName =  goTest.name;
-        string goTag = goTest.tag;
-        
-        TextAsset data = Resources.Load<TextAsset>("Database - " + goTag);
+        string goName =  geTest.name;
+        TextAsset data = Resources.Load<TextAsset>("Database - " + geTest.GetType().Name);
 
         //create rows
         string[] textData = data.text.Split(new char[] { '\n' });
 
+        Debug.Log(textData[2]);
+
+        int nameLength = goName.Length;
+        int index = 0;
+
         //create columns
         for (int i = 1; i < textData.Length; i++)
         {
-            //create rows
-            string[] row = textData[i].Split(new char[] { ',' });
-            Debug.Log("index = " + Array.IndexOf(row, row[i]) + "name = " + row[i]);
+            string refName = "";
+            for (int l = 0; l < nameLength; l++)
+                refName += textData[i][l];
 
-        }
+            if (goName == refName) {
+                index = i;
+                Debug.Log(goName + " is at index " + i);
 
-        Debug.Log(textData[0]);
-
-        //find go name in array
-        for (int i = 0; i < textData.Length; i ++)
-        {
-            if (textData[i] == goName)
-            {
-                Debug.Log(textData[i]);
-            }
-            else
-            {
-                Debug.Log("Can't find.");
+                string[] column = textData[i].Split(new char[] { ',' });
+                elementName.text = column[0];
+                description.text = column[1];
+                damage.text = column[2];
             }
         }
-        
-
     }
 
 }
