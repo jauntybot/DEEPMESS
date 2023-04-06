@@ -118,12 +118,13 @@ public class EnemyManager : UnitManager {
             units[i].UpdateElement(units[i].coord);
             units.RemoveAt(i);
         }
+        UIManager.instance.metaDisplay.UpdateTurnsToDescend(newGrid.enemy.units.Count);
         DestroyImmediate(this.gameObject);
     }
 
     protected override void RemoveUnit(GridElement ge)
     {
         base.RemoveUnit(ge);
-        UIManager.instance.metaDisplay.UpdateTurnsToDescend(units.Count - 1);
+        UIManager.instance.metaDisplay.UpdateTurnsToDescend(units.Count);
     }
 }

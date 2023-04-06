@@ -27,7 +27,7 @@ public class EquipmentData : ScriptableObject {
     public virtual List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this);
         user.grid.DisplayValidCoords(validCoords, gridColor);
-        if (user is PlayerUnit u) u.ui.ToggleEquipmentPanel(false);
+        if (user is PlayerUnit u) u.ui.ToggleEquipmentButtons();
         return validCoords;
     }
 

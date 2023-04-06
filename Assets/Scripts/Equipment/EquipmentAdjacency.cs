@@ -109,7 +109,6 @@ public class EquipmentAdjacency : MonoBehaviour
         frontier.Add(from);
         Vector2 current = from;
         int traveled = Mathf.RoundToInt(Mathf.Abs(to.x - from.x) + Mathf.Abs(to.y - from.y));
-        Debug.Log(Mathf.Abs(to.x - from.x) + Mathf.Abs(to.y - from.y));
 
         while (!Vector2.Equals(current, to)) {
             for (int f = frontier.Count - 1; f >= 0; f--) {
@@ -172,7 +171,7 @@ public class EquipmentAdjacency : MonoBehaviour
         while (!Vector2.Equals(current, from)) {
             _fromTo.Add(_toFrom[current], current);
             current = _toFrom[current];
-            if (Vector2.Equals(current, from)) { Debug.Log("break"); break; }
+            if (Vector2.Equals(current, from)) break;
         }
         return _fromTo;
     }

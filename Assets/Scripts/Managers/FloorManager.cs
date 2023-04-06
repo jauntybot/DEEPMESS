@@ -101,23 +101,25 @@ public class FloorManager : MonoBehaviour
             lineRenderers = new Dictionary<GridElement, LineRenderer>();
             foreach (GridElement ge in currentFloor.gridElements) {
                 if (ge is Unit && ge is not Nail) {
-                    LineRenderer lr = new GameObject().AddComponent<LineRenderer>();
-                    lr.gameObject.transform.parent = descentPreview.transform;
-                    lr.startWidth = 0.15f; lr.endWidth = 0.15f;
-                    lr.sortingLayerName = "UI";
-                    lr.material = previewMaterial;
-                    lr.positionCount = 2;
-                    lr.SetPosition(0, ge.transform.position); lr.SetPosition(1, ge.transform.position);
-                    lr.startColor = enemyColor; lr.endColor = enemyColor;
-                    if (ge is PlayerUnit) {
-                        lr.startColor = playerColor; lr.endColor = playerColor;
+                    if (!lineRenderers.ContainsKey(currentFloor.sqrs.Find(sqr => sqr.coord == ge.coord))) {
+                        LineRenderer lr = new GameObject().AddComponent<LineRenderer>();
+                        lr.gameObject.transform.parent = descentPreview.transform;
+                        lr.startWidth = 0.15f; lr.endWidth = 0.15f;
+                        lr.sortingLayerName = "UI";
+                        lr.material = previewMaterial;
+                        lr.positionCount = 2;
+                        lr.SetPosition(0, ge.transform.position); lr.SetPosition(1, ge.transform.position);
+                        lr.startColor = enemyColor; lr.endColor = enemyColor;
+                        if (ge is PlayerUnit) {
+                            lr.startColor = playerColor; lr.endColor = playerColor;
+                        }
+
+                        lineRenderers.Add(currentFloor.sqrs.Find(sqr => sqr.coord == ge.coord), lr);
+                        ge.ElementDestroyed += DestroyPreview;
+
+                        floors[currentFloor.index+1].sqrs.Find(sqr => sqr.coord == ge.coord).ToggleValidCoord(true,
+                        ge is PlayerUnit ? playerColor : enemyColor);
                     }
-
-                    lineRenderers.Add(currentFloor.sqrs.Find(sqr => sqr.coord == ge.coord), lr);
-                    ge.ElementDestroyed += DestroyPreview;
-
-                    floors[currentFloor.index+1].sqrs.Find(sqr => sqr.coord == ge.coord).ToggleValidCoord(true,
-                    ge is PlayerUnit ? playerColor : enemyColor);
                 }
             }
         }

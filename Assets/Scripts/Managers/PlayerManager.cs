@@ -16,14 +16,14 @@ public class PlayerManager : UnitManager {
     [Header("PLAYER MANAGER")]
     public LoadoutManager loadout;
     public Nail nail;
-    public EquipmentData hammerAction;
-
-    private GridElement prevCursorTarget = null;
-    private bool prevCursorTargetState = false;
+    public List<HammerData> hammerActions;
     [SerializeField] public GameObject nailPrefab, hammerPrefab, hammerPickupPrefab;
+
 
     public Dictionary<Unit, Vector2> undoableMoves = new Dictionary<Unit, Vector2>();
     public List<Unit> undoOrder;
+    private GridElement prevCursorTarget = null;
+    private bool prevCursorTargetState = false;
 
 // Get rid of this reference somehow
     [SerializeField] EndTurnBlinking turnBlink;
@@ -50,7 +50,7 @@ public class PlayerManager : UnitManager {
         };
         yield return StartCoroutine(loadout.Initialize(initU));
 
-        SpawnHammer((PlayerUnit)units[0], (HammerData)hammerAction);
+        SpawnHammer((PlayerUnit)units[0], hammerActions);
         foreach (Unit u in initU) {
             StartCoroutine(floorManager.DropUnit(u, u.transform.position, currentGrid.PosFromCoord(u.coord)));
         }
@@ -65,41 +65,39 @@ public class PlayerManager : UnitManager {
     }
 
 // Spawn a new instance of a hammer and update hammer actions
-    public virtual void SpawnHammer(PlayerUnit unit, HammerData equip) {
+    public virtual void SpawnHammer(PlayerUnit unit, List<HammerData> hammerData) {
         GameObject h = Instantiate(hammerPrefab, unit.transform.position, Quaternion.identity, unit.transform);
         h.GetComponentInChildren<SpriteRenderer>().sortingOrder = unit.gfx[0].sortingOrder;
         unit.gfx.Add(h.GetComponentInChildren<SpriteRenderer>());
-        unit.equipment.Insert(unit.equipment.Count, equip);
-        equip.EquipEquipment(unit);
-        equip.AssignHammer(h, nail);
-        
+        foreach(HammerData equip in hammerData) {
+            unit.equipment.Insert(unit.equipment.Count, equip);
+            equip.EquipEquipment(unit);
+            equip.AssignHammer(h, nail);
+        }        
         unit.ui.UpdateEquipmentButtons();
     }
 
 // Initializes or closes functions for turn start/end
-    public void StartEndTurn(bool start, bool newFloor = false) {
+    public void StartEndTurn(bool start) {
         for (int i = 0; i <= units.Count - 1; i++) {
             units[i].EnableSelection(start);
         }
         
-
+// Start Turn
         if (start) {
             StartCoroutine(pc.GridInput());
-            if (!newFloor) {
 // Reset unit energy if not continued turn
-                foreach(Unit u in units) {
-                    if (u is PlayerUnit) {
-                        u.energyCurrent = u.energyMax;
-                        u.moved = false;
-                        u.elementCanvas.UpdateStatsDisplay();
-                    }
+            foreach(Unit u in units) {
+                if (u is PlayerUnit) {
+                    u.energyCurrent = u.energyMax;
+                    u.moved = false;
+                    u.elementCanvas.UpdateStatsDisplay();
                 }
-                undoableMoves = new Dictionary<Unit, Vector2>();
-                undoOrder = new List<Unit>();
-                ResolveConditions();
-            } else {
-
             }
+            undoableMoves = new Dictionary<Unit, Vector2>();
+            undoOrder = new List<Unit>();
+            ResolveConditions();
+// End Turn
         } else {
             DeselectUnit();
             currentGrid.UpdateTargetCursor(false, Vector2.one * -32);
@@ -270,7 +268,7 @@ public class PlayerManager : UnitManager {
     public override void SelectUnit(Unit u)
     {
         base.SelectUnit(u);
-        if (u.energyCurrent > 0) u.ui.ToggleEquipmentPanel(true);
+        if (u.energyCurrent > 0) u.ui.ToggleEquipmentButtons();
         if (!u.moved && u is PlayerUnit) {
             u.selectedEquipment = u.equipment[0];
             u.UpdateAction(u.selectedEquipment, u.moveMod);

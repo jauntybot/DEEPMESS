@@ -82,7 +82,6 @@ public class UIManager : MonoBehaviour
         undoButton.interactable = state;
         Color c = state ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1);
         undoText.color = c;
-        Debug.Log(c.r);
     }
 
 }

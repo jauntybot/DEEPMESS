@@ -22,7 +22,7 @@ public class HammerData : EquipmentData
 
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this, targetTypes);
         user.grid.DisplayValidCoords(validCoords, gridColor);
-        if (user is PlayerUnit pu) pu.ui.ToggleEquipmentPanel(false);
+        if (user is PlayerUnit pu) pu.ui.ToggleEquipmentButtons();
         for (int i = validCoords.Count - 1; i >= 0; i--) {
             bool occupied = false;
             foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(validCoords[i])) {
@@ -104,18 +104,22 @@ public class HammerData : EquipmentData
     }
 
     public void PassHammer(PlayerUnit sender, PlayerUnit reciever) {
+        List<EquipmentData> toAdd = new List<EquipmentData>();
         for (int i = sender.equipment.Count - 1; i >= 0; i--) {
-                if (sender.equipment[i] is HammerData) {
-                    reciever.equipment.Add(sender.equipment[i]);
+            if (sender.equipment[i] is HammerData) {
+                toAdd.Add(sender.equipment[i]);
 
-                    sender.equipment.Remove(sender.equipment[i]);
-                }
+                sender.equipment.Remove(sender.equipment[i]);
             }
-            sender.gfx.Remove(hammer.GetComponentInChildren<SpriteRenderer>());
-            hammer.transform.parent = reciever.transform;
-            reciever.gfx.Add(hammer.GetComponentInChildren<SpriteRenderer>());
+        }
+        for (int i = toAdd.Count - 1; i >= 0; i--) 
+            reciever.equipment.Add(toAdd[i]);
 
-            reciever.ui.UpdateEquipmentButtons();
-            sender.ui.UpdateEquipmentButtons();
+        sender.gfx.Remove(hammer.GetComponentInChildren<SpriteRenderer>());
+        hammer.transform.parent = reciever.transform;
+        reciever.gfx.Add(hammer.GetComponentInChildren<SpriteRenderer>());
+
+        reciever.ui.UpdateEquipmentButtons();
+        sender.ui.UpdateEquipmentButtons();
     }
 }

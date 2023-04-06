@@ -34,7 +34,7 @@ public class PlayerUnit : Unit {
     {
         base.TargetElement(state);
         ui.ToggleEquipmentPanel(state);
-        if (energyCurrent == 0 || manager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
+        //if (energyCurrent == 0 || manager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
     }
 
     public override IEnumerator DestroyElement() {
@@ -51,7 +51,7 @@ public class PlayerUnit : Unit {
                     droppedHammer = true;
                 }
                 if (pickup != null) {
-                    pickup.equipment = equip;
+                    pickup.equipment[pickup.equipment.Count] = equip;
                 }
             }
         }

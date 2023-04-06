@@ -46,9 +46,13 @@ public class UnitUI : MonoBehaviour
     }
 
     public void ToggleEquipmentPanel(bool active) {
-
         equipmentPanel.SetActive(active);
 
+    }
+
+    public void ToggleEquipmentButtons() {
+        foreach (EquipmentButton b in equipment) 
+            b.gameObject.GetComponent<Button>().interactable = (unit.energyCurrent >= b.data.energyCost);
     }
 
     public void UpdateEquipmentButtons() {
@@ -82,6 +86,7 @@ public class UnitUI : MonoBehaviour
             }
         }
         UpdateEquipmentButtonMods();
+        ToggleEquipmentButtons();
     }
 
     private void UnitDestroyed(GridElement ge) {

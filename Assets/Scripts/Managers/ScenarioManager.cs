@@ -97,9 +97,7 @@ public class ScenarioManager : MonoBehaviour
         {
             case Turn.Enemy:
                 player.StartEndTurn(false);
-                if (turnCount >= turnsToDescend) {
-                    floorManager.Descend();
-                } else if (currentEnemy.units.Count > 0) {
+                if (currentEnemy.units.Count > 0) {
 // Decrease nail collision chance
                     player.nail.collisionChance -= 40;
                     UIManager.instance.UpdateDropChance(player.nail.collisionChance);
@@ -114,12 +112,7 @@ public class ScenarioManager : MonoBehaviour
                     StartCoroutine(currentEnemy.TakeTurn());
                 }
                 else if (currentEnemy.units.Count <= 0) {
-// Decrease nail collision chance
-                    player.nail.collisionChance -= 40;
-                    UIManager.instance.UpdateDropChance(player.nail.collisionChance);
-                    prevTurn = currentTurn; currentTurn = Turn.Enemy;
-                    yield return null;
-                    EndTurn();
+                   floorManager.Descend();
                 }
             break;
             case Turn.Player:
@@ -131,10 +124,8 @@ public class ScenarioManager : MonoBehaviour
 
                     prevTurn = currentTurn; currentTurn = Turn.Player;
                     endTurnButton.enabled = true;
-                    if (prevTurn == Turn.Descent)
-                        player.StartEndTurn(true, true);
-                    else
-                        player.StartEndTurn(true);
+                    
+                    player.StartEndTurn(true);
                 } else {
                     yield return StartCoroutine(Lose());
                 }
