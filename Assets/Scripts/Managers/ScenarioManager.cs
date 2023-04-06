@@ -109,7 +109,10 @@ public class ScenarioManager : MonoBehaviour
                         u.elementCanvas.UpdateStatsDisplay();
                     }
                     endTurnButton.enabled = false;
-                    StartCoroutine(currentEnemy.TakeTurn());
+                    if (prevTurn == Turn.Descent)
+                        StartCoroutine(currentEnemy.TakeTurn(true));
+                    else
+                        StartCoroutine(currentEnemy.TakeTurn(false));
                 }
                 else if (currentEnemy.units.Count <= 0) {
                    floorManager.Descend();
@@ -124,7 +127,7 @@ public class ScenarioManager : MonoBehaviour
 
                     prevTurn = currentTurn; currentTurn = Turn.Player;
                     endTurnButton.enabled = true;
-                    
+
                     player.StartEndTurn(true);
                 } else {
                     yield return StartCoroutine(Lose());

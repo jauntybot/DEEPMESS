@@ -35,11 +35,11 @@ public class HammerData : EquipmentData
                             ge.elementCanvas.ToggleStatsDisplay(true);
                     }
                 }
-                if (remove)
-                    validCoords.Remove(validCoords[i]);
+                if (remove || !occupied) {
+                    if (validCoords.Count >= i)
+                        validCoords.Remove(validCoords[i]);
+                }
             } 
-            if (!occupied)
-                validCoords.Remove(validCoords[i]);
         }
 
         return validCoords;

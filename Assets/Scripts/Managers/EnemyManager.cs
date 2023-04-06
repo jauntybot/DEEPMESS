@@ -16,15 +16,21 @@ public class EnemyManager : UnitManager {
         yield return null;
     }
 
-    public IEnumerator TakeTurn() {
+    public IEnumerator TakeTurn(bool scatter) {
 
         yield return new WaitForSecondsRealtime(1/Util.fps);
         for (int i = units.Count - 1; i >= 0; i--) 
         {
             EnemyUnit enemy = units[i] as EnemyUnit;
-            ongoingTurn = StartCoroutine(CalculateAction(enemy));
-            yield return ongoingTurn;
-            yield return new WaitForSecondsRealtime(0.125f);
+            if (!scatter) {
+                ongoingTurn = StartCoroutine(CalculateAction(enemy));
+                yield return ongoingTurn;
+                yield return new WaitForSecondsRealtime(0.125f);
+            } else {
+                ongoingTurn = StartCoroutine(ScatterTurn(enemy));
+                yield return ongoingTurn;
+                yield return new WaitForSecondsRealtime(0.125f);
+            }
             // for (int e = 1; e <= enemy.maxEnergy; e++) 
             // {
             //     yield return new WaitForSecondsRealtime(0.05f);
@@ -95,6 +101,21 @@ public class EnemyManager : UnitManager {
         }
         currentGrid.DisableGridHighlight();
         yield return new WaitForSecondsRealtime(1.25f);
+    }
+
+    public IEnumerator ScatterTurn(EnemyUnit input) {
+        input.UpdateAction(input.equipment[0], input.moveMod);
+        Vector2 targetCoord = input.SelectOptimalCoord(EnemyUnit.Pathfinding.Random);
+        if (Mathf.Sign(targetCoord.x) == 1) {
+            SelectUnit(input);
+            currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
+            yield return new WaitForSecondsRealtime(0.5f);
+            Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, currentGrid.sqrs.Find(sqr => sqr.coord == targetCoord)));
+            currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
+            currentGrid.DisableGridHighlight();
+            yield return co;
+            DeselectUnit();
+        }
     }
 
     public void EndTurn() {

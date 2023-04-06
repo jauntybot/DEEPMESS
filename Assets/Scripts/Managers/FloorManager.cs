@@ -181,13 +181,19 @@ public class FloorManager : MonoBehaviour
         if (floors.Count - 1 >= currentFloor.index + dir) // Checks if there is a floor in the direction transitioning
             toFloor = floors[currentFloor.index + dir];
 // Adjust sorting orders contextually
-        if (toFloor) toFloor.GetComponent<SortingGroup>().sortingOrder = 0;
+        Vector3 toFromScale = Vector3.one;
+        if (toFloor) {
+            toFloor.GetComponent<SortingGroup>().sortingOrder = 0;
+            toFromScale = toFloor.transform.localScale;
+        }
         if (!preview) currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
         else if (!down) currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
         else currentFloor.GetComponent<SortingGroup>().sortingOrder = 1;
 // Local params for animation
         Vector3 from = floorParent.transform.position;
         Vector3 to = new Vector3(from.x, from.y + floorOffset * dir, from.z);
+        Vector3 fromScale = currentFloor.transform.localScale;
+        Vector3 toScale = down? Vector3.one : Vector3.one * 0.75f;
 
         float currFromA = 1;
         float currToA = down? 0 : 1;
@@ -242,6 +248,9 @@ public class FloorManager : MonoBehaviour
         while (timer <= transitionDur) {
 // Lerp position of floor contatiner
             floorParent.transform.position = Vector3.Lerp(from, to, timer/transitionDur);
+            currentFloor.transform.localScale = Vector3.Lerp(fromScale, toScale, timer/transitionDur);
+            if (toFloor)
+                toFloor.transform.localScale = Vector3.Lerp(toFromScale, Vector3.one, timer/transitionDur);
 // Fade in destination floor if present
             if (toFade != null) {
                 foreach(NestedFadeGroup.NestedFadeGroup fade in toFade) 
@@ -351,7 +360,7 @@ public class FloorManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.75f);
         print("dropping nail");
         yield return StartCoroutine(scenario.player.DropNail());        
-        UIManager.instance.metaDisplay.UpdateTurnsToDescend(scenario.turnsToDescend - scenario.turnCount);
+        UIManager.instance.metaDisplay.UpdateTurnsToDescend(scenario.currentEnemy.units.Count);
 
 
         yield return new WaitForSecondsRealtime(.75f);
@@ -376,7 +385,7 @@ public class FloorManager : MonoBehaviour
             yield return StartCoroutine(PreviewFloor(false, false));
             yield return new WaitForSeconds(0.5f);
 
-            StartCoroutine(scenario.SwitchTurns(scenario.prevTurn));
+            StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
         }
     }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyUnit : Unit {
 
-    public enum Pathfinding { ClosestCoord, FurthestWithinAttackRange };
+    public enum Pathfinding { ClosestCoord, FurthestWithinAttackRange, Random };
 
     [Header("Enemy Unit")]
     public Pathfinding pathfinding;
@@ -67,6 +67,12 @@ public class EnemyUnit : Unit {
                 } else {
                     return SelectOptimalCoord(Pathfinding.ClosestCoord);
                 }
+            case Pathfinding.Random:
+                if (validActionCoords.Count > 0) {
+                    int rndIndex = Random.Range(0, validActionCoords.Count - 1);
+                    return validActionCoords[rndIndex];
+                } else
+                    return Vector2.one * -32;
         }
 
         return coord;
