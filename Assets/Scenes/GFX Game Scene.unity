@@ -1652,7 +1652,9 @@ MonoBehaviour:
   pc: {fileID: 0}
   loadout: {fileID: 1697000905}
   nail: {fileID: 0}
-  hammerAction: {fileID: 11400000, guid: f57be3308dd7a8c4d832a6af65097b7e, type: 2}
+  hammerActions:
+  - {fileID: 11400000, guid: f57be3308dd7a8c4d832a6af65097b7e, type: 2}
+  - {fileID: 11400000, guid: ab5e0f5f8ec1d8547a25d1b74d8d1509, type: 2}
   nailPrefab: {fileID: 2911188987296525511, guid: 5f7d1db180f0240849bf67b9fe916f3b, type: 3}
   hammerPrefab: {fileID: 3955549777479365904, guid: a8ad447d87fd54d3284fc69a0b042b16, type: 3}
   hammerPickupPrefab: {fileID: 447688835278664603, guid: c280a86d83b54064b8ac57b8732a317d, type: 3}
@@ -4344,11 +4346,11 @@ RectTransform:
   m_Father: {fileID: 1486707892}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 41.500046, y: 1.2382641}
-  m_SizeDelta: {x: 200, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: 5, y: 1}
+  m_SizeDelta: {x: 50, y: 50}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &2120423290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4369,7 +4371,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Turns
+  m_text: Elims
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4403,7 +4405,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0

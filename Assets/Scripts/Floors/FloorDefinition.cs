@@ -7,6 +7,8 @@ using System.IO;
 [System.Serializable]
 public class FloorDefinition : ScriptableObject
 {
+    public enum FloorType { Combat, SlotMachine, Reaper };
+    public FloorType floorType; 
 
     public FloorAtlas atlas;
     public int genPool;
