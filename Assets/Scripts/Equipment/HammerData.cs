@@ -84,11 +84,20 @@ public class HammerData : EquipmentData
                 target.StartCoroutine(target.TakeDamage(3));
             }
 // Assign a random unit to pass the hammer to
-            Unit passTo = manager.units[Random.Range(0, manager.units.Count - 1)];
-            while (passTo is not PlayerUnit) passTo = manager.units[Random.Range(0, manager.units.Count - 1)];
-            if (passTo.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
-                hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;    
-// Lerp hammer to random unit
+            Unit passTo = user;
+            List<Unit> possiblePasses = new List<Unit>();
+            foreach (Unit unit in manager.units) {
+                if (unit.energyCurrent > 0 && unit is PlayerUnit)
+                    possiblePasses.Add(unit);
+            }
+            if (possiblePasses.Count > 0) {
+                passTo = possiblePasses[0];
+                foreach(PlayerUnit unit in possiblePasses) {
+                    if (Vector2.Distance(unit.coord, target.coord) < Vector2.Distance(passTo.coord, target.coord))
+                        passTo = unit;
+                }
+            }
+// Lerp hammer to passTo unit
             timer = 0;
             while (timer < animDur) {
                 hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(passTo.coord), timer/animDur);
