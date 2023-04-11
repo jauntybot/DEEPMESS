@@ -9,10 +9,17 @@ public class FloorDefinition : ScriptableObject
 {
     public enum FloorType { Combat, SlotMachine, Reaper };
     public FloorType floorType; 
-
-    public FloorAtlas atlas;
     public int genPool;
+
+// Combat floor refs
+    public FloorAtlas atlas;
     public List<Spawn> initSpawns;
+
+// Slot machine floor refs
+    public enum SlotsType { Equipment, Upgrades };
+    public SlotsType slotsType;
+    public EquipmentTable equipmentTable;
+    //public List<UpgradeData> upgradeTable;
 
 }
 
@@ -24,3 +31,7 @@ public class Spawn {
 
 }
 
+[System.Serializable]
+public class EquipmentTable {
+    public List<EquipmentData> equipmentTable;    
+}

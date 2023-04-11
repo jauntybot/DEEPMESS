@@ -18,8 +18,11 @@ public class FloorDefinitionEditor : Editor
             } else {
                 GUILayout.Box("Serialize a FloorAtlas to open FloorEditor.");
             }    
-        } else {
-            
+        } else if (arg.floorType == FloorDefinition.FloorType.SlotMachine) {
+            arg.slotsType = (FloorDefinition.SlotsType)EditorGUILayout.EnumPopup("Slots Type", arg.slotsType);
+            if (arg.slotsType == FloorDefinition.SlotsType.Equipment) {
+                //arg.equipmentTable = EditorGUILayout.ObjectField(arg.equipmentTable, typeof(EquipmentTable), false) as EquipmentTable;
+            }
         }
         //base.OnInspectorGUI();
     }
