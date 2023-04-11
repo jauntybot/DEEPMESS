@@ -91,8 +91,9 @@ public class UnitManager : MonoBehaviour {
 
     public virtual void ResolveConditions() {
         foreach(Unit u in units) {
-            if (u.status != Unit.Status.Normal) {
-                u.RemoveCondition();
+            if (u.conditions != null) {
+                foreach (Unit.Status s in u.conditions) 
+                u.RemoveCondition(s);
             }
         }
     }

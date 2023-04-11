@@ -14,9 +14,9 @@ public class Unit : GridElement {
 
     public List<Vector2> validActionCoords;
     
-    public enum Status { Normal, Immobilized }
+    public enum Status { Normal, Immobilized, Restricted }
     [Header("Modifiers")]
-    public Status status;
+    public List<Status> conditions;
     private int prevMod;
     public int moveMod;
     public int attackMod;
@@ -55,6 +55,15 @@ public class Unit : GridElement {
         return true;
     }
 
+    public override void UpdateElement(Vector2 c) {
+        base.UpdateElement(c);
+        if (grid.sqrs.Find(sqr => sqr.coord == c) is BloodTile) {
+
+        } else {
+
+        }
+    }
+
 
 #endregion
 
@@ -64,56 +73,39 @@ public class Unit : GridElement {
     public virtual IEnumerator CollideFromAbove(GridElement subGE) {
 
         yield return StartCoroutine(TakeDamage(1));
-
-        // yield return new WaitForSecondsRealtime(1);
-        // float timer = 0;
-        // Vector3 bumpUp = transform.position + Vector3.up * 2;
-        // while (timer<animDur) {
-        //     yield return null;
-        //     transform.position = Vector3.Lerp(transform.position, bumpUp, timer/animDur);
-        //     timer += Time.deltaTime;
-        // }
-        // timer = 0;
-        // StartCoroutine(TakeDamage(1));
-        // while (timer<animDur) {
-        //     yield return null;
-        //     transform.position = Vector3.Lerp(transform.position, grid.PosFromCoord(moveTo), timer/animDur);
-
-        //     timer += Time.deltaTime;
-        // }   
-
-        // UpdateElement(moveTo);
-        
-
     }
 
     public virtual void ApplyCondition(Status s) {
-        status = s;
-        switch(status) {
-            default: return;
-            case Status.Normal: return;
-            case Status.Immobilized:
-                prevMod = moveMod;
-                moveMod -= 10;
-                ui.UpdateEquipmentButtonMods();
-            break;
+        if (!conditions.Contains(s)) {
+            conditions.Add(s);
+            switch(s) {
+                default: return;
+                case Status.Normal: return;
+                case Status.Immobilized:
+                    prevMod = moveMod;
+                    moveMod -= 10;
+                    ui.UpdateEquipmentButtonMods();
+                break;
+            }
         }
     }
 
-    public virtual void RemoveCondition() {
-        switch(status) {
-            default: return;
-            case Status.Normal: return;
-            case Status.Immobilized:
-                moveMod = prevMod;
-                ui.UpdateEquipmentButtonMods();
-                foreach(GridElement ge in grid.CoordContents(coord)) {
-                    if (ge is ImmobilizeGoo goo) {
-                        print("goo found");
-                        Destroy(goo.gameObject);
+    public virtual void RemoveCondition(Status s) {
+        if (conditions.Contains(s)) {
+            switch(s) {
+                default: return;
+                case Status.Normal: return;
+                case Status.Immobilized:
+                    moveMod = prevMod;
+                    ui.UpdateEquipmentButtonMods();
+                    foreach(GridElement ge in grid.CoordContents(coord)) {
+                        if (ge is ImmobilizeGoo goo) {
+                            print("goo found");
+                            Destroy(goo.gameObject);
+                        }
                     }
-                }
-            break;
+                break;
+            }
         }
     }
 

@@ -209,6 +209,7 @@ GameObject:
   - component: {fileID: 8484983104034085635}
   - component: {fileID: 2202044658481402577}
   - component: {fileID: 1723079959207389794}
+  - component: {fileID: 5369581075630390214}
   m_Layer: 6
   m_Name: highlight
   m_TagString: Untagged
@@ -296,6 +297,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alpha: 1
+  exclude: 0
+--- !u!114 &5369581075630390214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3392904112776953772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ee90040f786e6a47acff528e5821a3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alpha: 0.5
   exclude: 0
 --- !u!1 &7434674057565305676
 GameObject:
@@ -437,8 +452,10 @@ MonoBehaviour:
   targeted: 0
   hitbox: {fileID: 0}
   elementCanvas: {fileID: 0}
-  gfx: []
-  name: 
+  gfx:
+  - {fileID: 4548692920616438334}
+  - {fileID: 2202044658481402577}
+  name: Blood Tile
   hpMax: 0
   hpCurrent: 0
   defense: 0
@@ -447,8 +464,8 @@ MonoBehaviour:
   destroyed: 0
   spriteRenderers: []
   white: 0
-  blackColor: {r: 0, g: 0, b: 0, a: 0}
-  highlight: {fileID: 0}
+  blackColor: {r: 0.6226415, g: 0.51338553, b: 0.51338553, a: 1}
+  highlight: {fileID: 3392904112776953772}
 --- !u!60 &8517864744566959261
 PolygonCollider2D:
   m_ObjectHideFlags: 0
