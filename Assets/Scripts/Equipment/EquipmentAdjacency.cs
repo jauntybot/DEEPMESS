@@ -220,12 +220,12 @@ public class EquipmentAdjacency : MonoBehaviour
     }
 
     
-        protected static List<Vector2> OfTypeOnBoardAdjacency(GridElement from, List<GridElement> elements, Vector2 origin) {
+        public static List<Vector2> OfTypeOnBoardAdjacency(GridElement from, List<GridElement> elements, Vector2 origin) {
         List<Vector2> _coords = new List<Vector2>();
 
         foreach (GridElement ge in from.grid.gridElements) {
             foreach (GridElement type in elements) {
-                if (ge.GetType() == type.GetType() && ge.coord != origin) {
+                if (ge.GetType() == type.GetType()) {
                     _coords.Add(ge.coord);
                 }
             }

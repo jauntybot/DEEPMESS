@@ -171,13 +171,12 @@ public class PlayerManager : UnitManager {
             if (u.manager is PlayerManager) 
             {
                 if (selectedUnit) {
-                    if (u == selectedUnit) 
+                    if (u == selectedUnit && !selectedUnit.ValidCommand(u.coord)) 
                     {  
                         DeselectUnit();                 
                     }
                     else if (selectedUnit.ValidCommand(u.coord)) {
                         selectedUnit.ExecuteAction(u);
-                        DeselectUnit();
                     } else {
                         DeselectUnit();
                         SelectUnit(u);
@@ -193,7 +192,6 @@ public class PlayerManager : UnitManager {
 // Unit is a target of valid action adjacency
                     if (selectedUnit.ValidCommand(u.coord)) {
                         selectedUnit.ExecuteAction(u);
-                        DeselectUnit();
                     } 
                 }
             }
@@ -214,7 +212,6 @@ public class PlayerManager : UnitManager {
                     if (selectedUnit.ValidCommand(sqr.coord)) {
                         currentGrid.DisableGridHighlight();
                         selectedUnit.ExecuteAction(sqr);
-                        DeselectUnit();
                     } else 
                         DeselectUnit();
                 }
@@ -225,7 +222,6 @@ public class PlayerManager : UnitManager {
                 if (selectedUnit.ValidCommand(input.coord)) {
                     currentGrid.DisableGridHighlight();
                     selectedUnit.ExecuteAction(input);
-                    DeselectUnit();
                 } else
                     DeselectUnit();
             }
