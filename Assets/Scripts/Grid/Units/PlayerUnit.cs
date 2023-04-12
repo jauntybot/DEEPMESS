@@ -39,6 +39,7 @@ public class PlayerUnit : Unit {
         //if (energyCurrent == 0 || manager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
     }
 
+// Override destroy to account for dropping the hammer
     public override IEnumerator DestroyElement() {
 
         bool droppedHammer = false;

@@ -59,7 +59,6 @@ public class ScenarioManager : MonoBehaviour
 
     public IEnumerator FirstTurn() {
         yield return StartCoroutine(SwitchTurns(Turn.Descent));
-        UIManager.instance.UpdateDropChance(player.nail.collisionChance);
 
         yield return new WaitForSeconds(.75f);
         yield return StartCoroutine(floorManager.TransitionFloors(floorManager.currentFloor.gameObject, false));
@@ -100,7 +99,6 @@ public class ScenarioManager : MonoBehaviour
                 if (currentEnemy.units.Count > 0) {
 // Decrease nail collision chance
                     player.nail.collisionChance -= 40;
-                    UIManager.instance.UpdateDropChance(player.nail.collisionChance);
                     floorManager.upButton.GetComponent<Button>().enabled = false; floorManager.downButton.GetComponent<Button>().enabled = false;
                     prevTurn = currentTurn; currentTurn = Turn.Enemy;
                     yield return StartCoroutine(messagePanel.DisplayMessage("ANTIBODY RESPONSE", 2));
@@ -119,7 +117,7 @@ public class ScenarioManager : MonoBehaviour
                 }
             break;
             case Turn.Player:
-                currentEnemy.ResolveConditions();
+                //currentEnemy.ResolveConditions();
                 if (player.units.Count >= 2) {
                     turnCount++;
                     floorManager.upButton.GetComponent<Button>().enabled = true; floorManager.downButton.GetComponent<Button>().enabled = true;

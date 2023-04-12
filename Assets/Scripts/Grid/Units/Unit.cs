@@ -60,9 +60,9 @@ public class Unit : GridElement {
     public override void UpdateElement(Vector2 c) {
         base.UpdateElement(c);
         if (grid.sqrs.Find(sqr => sqr.coord == c) is BloodTile) {
-
+            ApplyCondition(Status.Restricted);
         } else {
-
+            RemoveCondition(Status.Restricted);
         }
     }
 
@@ -94,6 +94,7 @@ public class Unit : GridElement {
 
     public virtual void RemoveCondition(Status s) {
         if (conditions.Contains(s)) {
+            conditions.Remove(s);
             switch(s) {
                 default: return;
                 case Status.Normal: return;

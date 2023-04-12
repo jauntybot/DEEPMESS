@@ -74,10 +74,6 @@ public class UIManager : MonoBehaviour
             u.ui.UpdateEquipmentButtons();
     }
 
-    public void UpdateDropChance(int chance) {
-        metaDisplay.UpdateDropChance(chance);
-    }
-
     public void ToggleUndoButton(bool state) {
         undoButton.interactable = state;
         Color c = state ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1);

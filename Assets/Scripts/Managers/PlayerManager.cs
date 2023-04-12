@@ -96,7 +96,7 @@ public class PlayerManager : UnitManager {
             }
             undoableMoves = new Dictionary<Unit, Vector2>();
             undoOrder = new List<Unit>();
-            ResolveConditions();
+            //ResolveConditions();
 // End Turn
         } else {
             DeselectUnit();
@@ -144,7 +144,6 @@ public class PlayerManager : UnitManager {
         nail.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         yield return StartCoroutine(UpdateNail(spawn));
         nail.collisionChance = 90;
-        UIManager.instance.UpdateDropChance(nail.collisionChance);
     }
 
     public IEnumerator UpdateNail(Vector2 coord) {
