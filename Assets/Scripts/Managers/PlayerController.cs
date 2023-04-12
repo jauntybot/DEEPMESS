@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour {
                     if (Input.GetMouseButtonDown(0)) {
 // Pass call to contextualize click to manager
                         manager.GridInput(hit.transform.GetComponent<GridElement>());       
+                        yield return new WaitForSecondsRealtime(1/Util.fps);
                     }
                 }    
                 else

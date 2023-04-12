@@ -34,6 +34,8 @@ public class Unit : GridElement {
 // Clear data
         validActionCoords = null;
         grid.DisableGridHighlight();
+        if (selectedEquipment is BHammerData d)
+            d.target1 = null;
 // Assign new data if provided
         selectedEquipment = equipment;
         if (selectedEquipment) {

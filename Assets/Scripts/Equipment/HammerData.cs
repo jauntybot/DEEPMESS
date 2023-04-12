@@ -61,10 +61,10 @@ public class HammerData : EquipmentData
         base.EquipEquipment(user);
     }
 
-    public IEnumerator ThrowHammer(PlayerUnit user, GridElement target) {
+    public virtual IEnumerator ThrowHammer(PlayerUnit user, GridElement target, Unit passTo = null) {
         
         PlayerManager manager = (PlayerManager)user.manager;
-        if (target.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
+        if (target.gfx[0].sortingOrder > hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder)
             hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = target.gfx[0].sortingOrder;
         AudioManager.PlaySound(AudioAtlas.Sound.hammerPass, user.transform.position);
     
@@ -81,10 +81,10 @@ public class HammerData : EquipmentData
             AudioManager.PlaySound(AudioAtlas.Sound.attackStrike, user.transform.position);
 // Attack target if unit
             if (target is EnemyUnit) {
-                target.StartCoroutine(target.TakeDamage(3));
+                target.StartCoroutine(target.TakeDamage(1));
             }
 // Assign a random unit to pass the hammer to
-            Unit passTo = user;
+            passTo = user;
             List<Unit> possiblePasses = new List<Unit>();
             foreach (Unit unit in manager.units) {
                 if (unit.energyCurrent > 0 && unit is PlayerUnit)
@@ -98,6 +98,8 @@ public class HammerData : EquipmentData
                 }
             }
 // Lerp hammer to passTo unit
+            if (passTo.gfx[0].sortingOrder > hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder)
+                hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;
             timer = 0;
             while (timer < animDur) {
                 hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(passTo.coord), timer/animDur);
@@ -112,7 +114,7 @@ public class HammerData : EquipmentData
         }
     }
 
-    public void PassHammer(PlayerUnit sender, PlayerUnit reciever) {
+    public virtual void PassHammer(PlayerUnit sender, PlayerUnit reciever) {
         List<EquipmentData> toAdd = new List<EquipmentData>();
         for (int i = sender.equipment.Count - 1; i >= 0; i--) {
             if (sender.equipment[i] is HammerData) {

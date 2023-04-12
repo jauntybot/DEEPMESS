@@ -21,6 +21,8 @@ public class PlayerUnit : Unit {
         base.ExecuteAction(target);
         PlayerManager m = (PlayerManager)manager;
         UIManager.instance.ToggleUndoButton(m.undoOrder.Count > 0);
+        if (selectedEquipment is not BHammerData)
+            manager.DeselectUnit();
     }
 
 // Allow the player to click on this
