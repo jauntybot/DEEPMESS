@@ -135,6 +135,7 @@ public class EnemyManager : UnitManager {
             newGrid.enemy.SubscribeElement(units[i]);
 
             units[i].transform.parent = newGrid.enemy.transform;
+            units[i].manager = newGrid.enemy;
             units[i].StoreInGrid(newGrid);
             units[i].UpdateElement(units[i].coord);
             units.RemoveAt(i);
