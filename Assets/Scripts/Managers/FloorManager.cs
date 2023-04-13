@@ -329,7 +329,8 @@ public class FloorManager : MonoBehaviour
             yield return StartCoroutine(subElement.CollideFromBelow(unit));
             if (subElement is not GroundElement)
                 yield return StartCoroutine(unit.CollideFromAbove(subElement));
-        }
+        } else if (currentFloor.sqrs.Find(sqr => sqr.coord == unit.coord).tileType == GridSquare.TileType.Bile)
+            StartCoroutine(unit.DestroyElement());
     }
 
     public void Descend() {

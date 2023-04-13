@@ -133,12 +133,12 @@ public class EnemyManager : UnitManager {
         for (int i = units.Count - 1; i >= 0; i--) {
             newGrid.enemy.units.Add(units[i]);
             newGrid.enemy.SubscribeElement(units[i]);
+            units[i].manager = newGrid.enemy;
 
             units[i].transform.parent = newGrid.enemy.transform;
             units[i].StoreInGrid(newGrid);
             units[i].UpdateElement(units[i].coord);
             units.RemoveAt(i);
-            newGrid.enemy.units[newGrid.enemy.units.Count].manager = newGrid.enemy;
         }
         UIManager.instance.metaDisplay.UpdateTurnsToDescend(newGrid.enemy.units.Count);
         DestroyImmediate(this.gameObject);
