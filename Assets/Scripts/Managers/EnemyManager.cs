@@ -135,10 +135,10 @@ public class EnemyManager : UnitManager {
             newGrid.enemy.SubscribeElement(units[i]);
 
             units[i].transform.parent = newGrid.enemy.transform;
-            units[i].manager = newGrid.enemy;
             units[i].StoreInGrid(newGrid);
             units[i].UpdateElement(units[i].coord);
             units.RemoveAt(i);
+            newGrid.enemy.units[newGrid.enemy.units.Count].manager = newGrid.enemy;
         }
         UIManager.instance.metaDisplay.UpdateTurnsToDescend(newGrid.enemy.units.Count);
         DestroyImmediate(this.gameObject);
