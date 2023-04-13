@@ -59,8 +59,11 @@ public class Unit : GridElement {
 
     public override void UpdateElement(Vector2 c) {
         base.UpdateElement(c);
-        if (grid.sqrs.Find(sqr => sqr.coord == c) is BloodTile) {
+        GridSquare targetSqr = grid.sqrs.Find(sqr => sqr.coord == c);
+        if (targetSqr.tileType == GridSquare.TileType.Blood) {
             ApplyCondition(Status.Restricted);
+        } else if (targetSqr.tileType == GridSquare.TileType.Bile) {
+            StartCoroutine(DestroyElement());
         } else {
             RemoveCondition(Status.Restricted);
         }

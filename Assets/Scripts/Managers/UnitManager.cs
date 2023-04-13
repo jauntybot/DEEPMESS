@@ -13,9 +13,6 @@ public class UnitManager : MonoBehaviour {
     [HideInInspector] public ScenarioManager scenario;
 
     [Header("UNIT MANAGER")]
-// Unit vars
-    [SerializeField] GameObject[] unitPrefabs;
-    public List<Vector2> startingCoords;
     [SerializeField] protected GameObject unitParent;
     public List<Unit> units = new List<Unit>();    
     public Unit selectedUnit;
@@ -29,9 +26,6 @@ public class UnitManager : MonoBehaviour {
         if (FloorManager.instance) floorManager = FloorManager.instance;
         currentGrid = floorManager.currentFloor;
 
-        for (int i = 0; i <= startingCoords.Count - 1; i++) {
-            SpawnUnit(startingCoords[i], unitPrefabs[i].GetComponent<Unit>());
-        }
         yield return null;
     }
 

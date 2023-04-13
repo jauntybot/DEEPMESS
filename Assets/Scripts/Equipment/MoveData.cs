@@ -13,6 +13,10 @@ public class MoveData : EquipmentData
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0)
     {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this);
+        for (int i = validCoords.Count - 1; i >= 0; i--) {
+            if (user.grid.sqrs.Find(sqr => sqr.coord == validCoords[i]).tileType == GridSquare.TileType.Bile)
+                validCoords.RemoveAt(i);
+        }
         user.grid.DisplayValidCoords(validCoords, gridColor);
         return validCoords;
     }

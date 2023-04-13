@@ -54,7 +54,7 @@ public class PlayerUnit : Unit {
                     droppedHammer = true;
                 }
                 if (pickup != null) {
-                    pickup.equipment[pickup.equipment.Count] = equip;
+                    pickup.equipment.Add(equip);
                 }
             }
         }

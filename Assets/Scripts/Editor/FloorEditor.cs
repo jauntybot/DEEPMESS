@@ -20,6 +20,7 @@ public class FloorEditor : EditorWindow {
 
         lvl = _lvl;
         activeCoord = Vector2.zero;
+        ReloadAssetsFromAtlas();
         Dictionary<string, Texture> options = new Dictionary<string, Texture>();
         for (int i = 0; i < lvl.atlas.assets.Count; i++) {
             options.Add(lvl.atlas.assets[i].name, lvl.atlas.assets[i].icon);
@@ -95,6 +96,12 @@ public class FloorEditor : EditorWindow {
             EditorGUILayout.EndVertical();
         }
     } 
+
+    protected static void ReloadAssetsFromAtlas() {
+        for (int i = lvl.initSpawns.Count - 1; i >= 0; i--) {
+            lvl.initSpawns[i].asset = lvl.atlas.assets.Find(a => a.name == lvl.initSpawns[i].asset.name);
+        }
+    }
 
     public override void SaveChanges()
     {

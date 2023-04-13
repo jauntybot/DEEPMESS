@@ -137,6 +137,7 @@ public class PlayerManager : UnitManager {
                 foreach(Unit u in scenario.currentEnemy.units) {
                     if (u.coord == spawn) validCoord = false;
                 }
+                if (currentGrid.sqrs.Find(sqr => sqr.coord == spawn).tileType != GridSquare.TileType.Bone) validCoord = false;
             }
         }
 
@@ -318,11 +319,11 @@ public class PlayerManager : UnitManager {
         undoOrder = new List<Unit>();
         UIManager.instance.ToggleUndoButton(undoOrder.Count > 0);
 
-        foreach(Unit unit in units) {
-            currentGrid.RemoveElement(unit);
-            unit.StoreInGrid(newGrid);
-            if (unit is not Nail)
-                unit.UpdateElement(unit.coord);
+        for (int i = units.Count - 1; i >= 0; i--) {
+            currentGrid.RemoveElement(units[i]);
+            units[i].StoreInGrid(newGrid);
+            if (units[i] is not Nail)
+                units[i].UpdateElement(units[i].coord);
         }
         currentGrid = newGrid;
         transform.parent = newGrid.transform;
