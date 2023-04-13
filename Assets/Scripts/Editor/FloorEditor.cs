@@ -101,6 +101,7 @@ public class FloorEditor : EditorWindow {
         for (int i = lvl.initSpawns.Count - 1; i >= 0; i--) {
             lvl.initSpawns[i].asset = lvl.atlas.assets.Find(a => a.name == lvl.initSpawns[i].asset.name);
         }
+        window.SaveChanges();
     }
 
     public override void SaveChanges()

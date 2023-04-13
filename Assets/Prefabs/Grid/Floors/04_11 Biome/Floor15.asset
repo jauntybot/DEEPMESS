@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2f6d51c1e9f52f47b0a682683df3570, type: 3}
   m_Name: Floor15
   m_EditorClassIdentifier: 
-  atlas: {fileID: 11400000, guid: bd75c3133639f4604a4aa9a39c1ef6d0, type: 2}
+  floorType: 0
   genPool: 0
+  atlas: {fileID: 11400000, guid: bd75c3133639f4604a4aa9a39c1ef6d0, type: 2}
   initSpawns:
   - asset:
       name: Wall
@@ -145,5 +146,8 @@ MonoBehaviour:
       name: Healpad
       ge: {fileID: 1775423639595565206, guid: 1c52d00bb45f86d438ef854a76cf5db5, type: 3}
       prefab: {fileID: 2911188987296525511, guid: 1c52d00bb45f86d438ef854a76cf5db5, type: 3}
-      icon: {fileID: 2800000, guid: 7f7bbec07e3bc904e92a708d41b9894c, type: 3}
+      icon: {fileID: 2800000, guid: a92121814ee6d944487c9d29089165b3, type: 3}
     coord: {x: 6, y: 3}
+  slotsType: 0
+  equipmentTable:
+    equipmentTable: []

@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2f6d51c1e9f52f47b0a682683df3570, type: 3}
   m_Name: Floor07
   m_EditorClassIdentifier: 
-  atlas: {fileID: 11400000, guid: bd75c3133639f4604a4aa9a39c1ef6d0, type: 2}
+  floorType: 0
   genPool: 0
+  atlas: {fileID: 11400000, guid: bd75c3133639f4604a4aa9a39c1ef6d0, type: 2}
   initSpawns:
   - asset:
       name: Wall
@@ -177,3 +178,6 @@ MonoBehaviour:
       prefab: {fileID: 3908257913917299126, guid: d76049925455d44278c9e3b58ed31c3d, type: 3}
       icon: {fileID: 2800000, guid: 4b6f1e98e028c4b1eb9aaf25c1fe9b19, type: 3}
     coord: {x: 3, y: 2}
+  slotsType: 0
+  equipmentTable:
+    equipmentTable: []
