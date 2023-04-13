@@ -40,6 +40,8 @@ public class FloorEditor : EditorWindow {
             spawn.asset = lvl.atlas.assets.Find(a => a.name == content);
             lvl.initSpawns.Add(spawn);
         }
+        if (window)
+            window.hasUnsavedChanges = true;
     }
 
     string Notation(int x) {
@@ -62,13 +64,24 @@ public class FloorEditor : EditorWindow {
         if (lvl) {
             Event evt = Event.current;
             Rect h = (Rect)EditorGUILayout.BeginVertical();
+            using (new EditorGUI.DisabledScope(!hasUnsavedChanges))
+            {
+            GUILayout.BeginArea(new Rect(0,0, 400, 35));
+                if (GUILayout.Button("Discard Changes"))
+                    DiscardChanges();
+            GUILayout.EndArea();
+            GUILayout.BeginArea(new Rect(400,0, 400, 35));
+                if (GUILayout.Button("Save Floor"))
+                    SaveChanges();
+            GUILayout.EndArea();
+            }
             for (int y = 0; y < 8; y++) {
                 Rect r = (Rect)EditorGUILayout.BeginHorizontal();
                 for (int x = 7; x >= 0; x--) {
                     Spawn spawn = lvl.initSpawns.Find(s => s.coord == new Vector2(x, y));
                     Texture buttonSprite = lvl.atlas.assets[0].icon;
                     if (spawn != null) buttonSprite = spawn.asset.icon;
-                    GUILayout.BeginArea(new Rect(x*101, (7-y)*101, 100, 100));
+                    GUILayout.BeginArea(new Rect(x*101, (7-y)*101 + 35, 100, 100));
                     if (GUILayout.Button(buttonSprite, GUILayout.Width(100), GUILayout.Height(75))) {
                         Vector2 mousePos = GUIUtility.GUIToScreenPoint(Event.current.mousePosition);
                         activeCoord = new Vector2(x,y);
@@ -82,4 +95,20 @@ public class FloorEditor : EditorWindow {
             EditorGUILayout.EndVertical();
         }
     } 
+
+    public override void SaveChanges()
+    {
+        // Your custom save procedures here
+        EditorUtility.SetDirty(lvl);
+        Debug.Log($"{this} saved successfully!!!");
+        base.SaveChanges();
+    }
+
+    public override void DiscardChanges()
+    {
+        // Your custom procedures to discard changes
+
+        Debug.Log($"{this} discarded changes!!!");
+        base.DiscardChanges();
+    }
 }

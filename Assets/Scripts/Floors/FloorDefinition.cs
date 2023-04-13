@@ -13,6 +13,7 @@ public class FloorDefinition : ScriptableObject
 
 // Combat floor refs
     public FloorAtlas atlas;
+    [SerializeField]
     public List<Spawn> initSpawns;
 
 // Slot machine floor refs

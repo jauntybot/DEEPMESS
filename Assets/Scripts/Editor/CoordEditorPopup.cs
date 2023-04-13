@@ -32,10 +32,13 @@ class CoordEditorPopup : EditorWindow
         Rect h = EditorGUILayout.BeginVertical();
         for (int i = 0; i < buttons.Count; i++) {
             if (GUILayout.Button(buttons[i].icon, GUILayout.Width(100), GUILayout.Height(100))) {
+                Undo.RecordObject(lvl, "Setting Value");
                 FloorEditor.UpdateCoord(buttons[i].name);
-                if (i == 0) 
+                if (i == 0) {
                     FloorEditor.UpdateCoord();
+                }
                 EditorUtility.SetDirty(lvl);
+                PrefabUtility.RecordPrefabInstancePropertyModifications(lvl);
                 CloseWindow();
             }
         }

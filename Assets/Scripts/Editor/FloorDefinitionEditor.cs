@@ -8,6 +8,7 @@ public class FloorDefinitionEditor : Editor
 {
     public override void OnInspectorGUI() 
     {
+        //SerializedObject so = target;
         FloorDefinition arg = target as FloorDefinition;
         arg.floorType = (FloorDefinition.FloorType)EditorGUILayout.EnumPopup("Floor Type", arg.floorType);
         if (arg.floorType == FloorDefinition.FloorType.Combat) {
@@ -15,6 +16,7 @@ public class FloorDefinitionEditor : Editor
             if (arg.atlas) {
                 if (GUILayout.Button("Open FloorEditor"))
                     FloorEditor.Init(arg);
+                //EditorList.Show(arg.FindProperty("initSpawns"));
             } else {
                 GUILayout.Box("Serialize a FloorAtlas to open FloorEditor.");
             }    
