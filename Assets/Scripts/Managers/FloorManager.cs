@@ -101,23 +101,25 @@ public class FloorManager : MonoBehaviour
             lineRenderers = new Dictionary<GridElement, LineRenderer>();
             foreach (GridElement ge in currentFloor.gridElements) {
                 if (ge is Unit && ge is not Nail) {
-                    LineRenderer lr = new GameObject().AddComponent<LineRenderer>();
-                    lr.gameObject.transform.parent = descentPreview.transform;
-                    lr.startWidth = 0.15f; lr.endWidth = 0.15f;
-                    lr.sortingLayerName = "UI";
-                    lr.material = previewMaterial;
-                    lr.positionCount = 2;
-                    lr.SetPosition(0, ge.transform.position); lr.SetPosition(1, ge.transform.position);
-                    lr.startColor = enemyColor; lr.endColor = enemyColor;
-                    if (ge is PlayerUnit) {
-                        lr.startColor = playerColor; lr.endColor = playerColor;
+                    if (!lineRenderers.ContainsKey(currentFloor.sqrs.Find(sqr => sqr.coord == ge.coord))) {
+                        LineRenderer lr = new GameObject().AddComponent<LineRenderer>();
+                        lr.gameObject.transform.parent = descentPreview.transform;
+                        lr.startWidth = 0.15f; lr.endWidth = 0.15f;
+                        lr.sortingLayerName = "UI";
+                        lr.material = previewMaterial;
+                        lr.positionCount = 2;
+                        lr.SetPosition(0, ge.transform.position); lr.SetPosition(1, ge.transform.position);
+                        lr.startColor = enemyColor; lr.endColor = enemyColor;
+                        if (ge is PlayerUnit) {
+                            lr.startColor = playerColor; lr.endColor = playerColor;
+                        }
+
+                        lineRenderers.Add(currentFloor.sqrs.Find(sqr => sqr.coord == ge.coord), lr);
+                        ge.ElementDestroyed += DestroyPreview;
+
+                        floors[currentFloor.index+1].sqrs.Find(sqr => sqr.coord == ge.coord).ToggleValidCoord(true,
+                        ge is PlayerUnit ? playerColor : enemyColor);
                     }
-
-                    lineRenderers.Add(currentFloor.sqrs.Find(sqr => sqr.coord == ge.coord), lr);
-                    ge.ElementDestroyed += DestroyPreview;
-
-                    floors[currentFloor.index+1].sqrs.Find(sqr => sqr.coord == ge.coord).ToggleValidCoord(true,
-                    ge is PlayerUnit ? playerColor : enemyColor);
                 }
             }
         }
@@ -179,13 +181,19 @@ public class FloorManager : MonoBehaviour
         if (floors.Count - 1 >= currentFloor.index + dir) // Checks if there is a floor in the direction transitioning
             toFloor = floors[currentFloor.index + dir];
 // Adjust sorting orders contextually
-        if (toFloor) toFloor.GetComponent<SortingGroup>().sortingOrder = 0;
+        Vector3 toFromScale = Vector3.one;
+        if (toFloor) {
+            toFloor.GetComponent<SortingGroup>().sortingOrder = 0;
+            toFromScale = toFloor.transform.localScale;
+        }
         if (!preview) currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
         else if (!down) currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
         else currentFloor.GetComponent<SortingGroup>().sortingOrder = 1;
 // Local params for animation
         Vector3 from = floorParent.transform.position;
         Vector3 to = new Vector3(from.x, from.y + floorOffset * dir, from.z);
+        Vector3 fromScale = currentFloor.transform.localScale;
+        Vector3 toScale = down? Vector3.one : Vector3.one * 0.75f;
 
         float currFromA = 1;
         float currToA = down? 0 : 1;
@@ -240,6 +248,9 @@ public class FloorManager : MonoBehaviour
         while (timer <= transitionDur) {
 // Lerp position of floor contatiner
             floorParent.transform.position = Vector3.Lerp(from, to, timer/transitionDur);
+            currentFloor.transform.localScale = Vector3.Lerp(fromScale, toScale, timer/transitionDur);
+            if (toFloor)
+                toFloor.transform.localScale = Vector3.Lerp(toFromScale, Vector3.one, timer/transitionDur);
 // Fade in destination floor if present
             if (toFade != null) {
                 foreach(NestedFadeGroup.NestedFadeGroup fade in toFade) 
@@ -318,7 +329,8 @@ public class FloorManager : MonoBehaviour
             yield return StartCoroutine(subElement.CollideFromBelow(unit));
             if (subElement is not GroundElement)
                 yield return StartCoroutine(unit.CollideFromAbove(subElement));
-        }
+        } else if (currentFloor.sqrs.Find(sqr => sqr.coord == unit.coord).tileType == GridSquare.TileType.Bile)
+            StartCoroutine(unit.DestroyElement());
     }
 
     public void Descend() {
@@ -349,7 +361,7 @@ public class FloorManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.75f);
         print("dropping nail");
         yield return StartCoroutine(scenario.player.DropNail());        
-        UIManager.instance.metaDisplay.UpdateTurnsToDescend(scenario.turnsToDescend - scenario.turnCount);
+        UIManager.instance.metaDisplay.UpdateTurnsToDescend(scenario.currentEnemy.units.Count);
 
 
         yield return new WaitForSecondsRealtime(.75f);
@@ -374,7 +386,7 @@ public class FloorManager : MonoBehaviour
             yield return StartCoroutine(PreviewFloor(false, false));
             yield return new WaitForSeconds(0.5f);
 
-            StartCoroutine(scenario.SwitchTurns(scenario.prevTurn));
+            StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
         }
     }
 

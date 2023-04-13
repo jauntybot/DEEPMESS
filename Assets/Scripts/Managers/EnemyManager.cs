@@ -16,15 +16,21 @@ public class EnemyManager : UnitManager {
         yield return null;
     }
 
-    public IEnumerator TakeTurn() {
+    public IEnumerator TakeTurn(bool scatter) {
 
         yield return new WaitForSecondsRealtime(1/Util.fps);
         for (int i = units.Count - 1; i >= 0; i--) 
         {
             EnemyUnit enemy = units[i] as EnemyUnit;
-            ongoingTurn = StartCoroutine(CalculateAction(enemy));
-            yield return ongoingTurn;
-            yield return new WaitForSecondsRealtime(0.125f);
+            if (!scatter) {
+                ongoingTurn = StartCoroutine(CalculateAction(enemy));
+                yield return ongoingTurn;
+                yield return new WaitForSecondsRealtime(0.125f);
+            } else {
+                ongoingTurn = StartCoroutine(ScatterTurn(enemy));
+                yield return ongoingTurn;
+                yield return new WaitForSecondsRealtime(0.125f);
+            }
             // for (int e = 1; e <= enemy.maxEnergy; e++) 
             // {
             //     yield return new WaitForSecondsRealtime(0.05f);
@@ -97,6 +103,21 @@ public class EnemyManager : UnitManager {
         yield return new WaitForSecondsRealtime(1.25f);
     }
 
+    public IEnumerator ScatterTurn(EnemyUnit input) {
+        input.UpdateAction(input.equipment[0], input.moveMod);
+        Vector2 targetCoord = input.SelectOptimalCoord(EnemyUnit.Pathfinding.Random);
+        if (Mathf.Sign(targetCoord.x) == 1) {
+            SelectUnit(input);
+            currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
+            yield return new WaitForSecondsRealtime(0.5f);
+            Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, currentGrid.sqrs.Find(sqr => sqr.coord == targetCoord)));
+            currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
+            currentGrid.DisableGridHighlight();
+            yield return co;
+            DeselectUnit();
+        }
+    }
+
     public void EndTurn() {
         if (selectedUnit)
            DeselectUnit();
@@ -112,12 +133,20 @@ public class EnemyManager : UnitManager {
         for (int i = units.Count - 1; i >= 0; i--) {
             newGrid.enemy.units.Add(units[i]);
             newGrid.enemy.SubscribeElement(units[i]);
+            units[i].manager = newGrid.enemy;
 
             units[i].transform.parent = newGrid.enemy.transform;
             units[i].StoreInGrid(newGrid);
             units[i].UpdateElement(units[i].coord);
             units.RemoveAt(i);
         }
+        UIManager.instance.metaDisplay.UpdateTurnsToDescend(newGrid.enemy.units.Count);
         DestroyImmediate(this.gameObject);
+    }
+
+    protected override void RemoveUnit(GridElement ge)
+    {
+        base.RemoveUnit(ge);
+        UIManager.instance.metaDisplay.UpdateTurnsToDescend(units.Count);
     }
 }

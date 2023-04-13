@@ -6,7 +6,7 @@ public class EquipmentPickup : GroundElement
 {
     enum Pickup { Hammer, Consumable };
     [SerializeField] Pickup pickup;
-    public EquipmentData equipment;
+    public List<EquipmentData> equipment;
     [SerializeField] List<EquipmentData> consumableTable;
     [SerializeField] SpriteRenderer equipIcon;
 
@@ -14,8 +14,8 @@ public class EquipmentPickup : GroundElement
         base.Start();
         if (pickup is Pickup.Consumable) {
             int rndI = Random.Range(0, consumableTable.Count-1);
-            equipment = consumableTable[rndI];
-            equipIcon.sprite = equipment.icon;
+            equipment[0] = consumableTable[rndI];
+            equipIcon.sprite = equipment[0].icon;
         }
     }
     public override void OnSharedSpace(GridElement sharedWith)
@@ -27,7 +27,10 @@ public class EquipmentPickup : GroundElement
 // Spawn new hammer and assign it to equipment data
                 case Pickup.Hammer:
                     PlayerManager manager = (PlayerManager)pu.manager;
-                    manager.SpawnHammer(pu, (HammerData)equipment);
+                    List<HammerData> hData = new List<HammerData>();
+                    foreach (EquipmentData equip in equipment)
+                        hData.Add((HammerData)equip);
+                    manager.SpawnHammer(pu, hData);
                     StartCoroutine(DestroyElement());
                 break;
                 case Pickup.Consumable:
@@ -35,8 +38,8 @@ public class EquipmentPickup : GroundElement
                         if (pu.equipment[i] is ConsumableEquipmentData c)
                             pu.equipment.Remove(c);
                     }
-                    pu.equipment.Insert(2, equipment);
-                    pu.equipment[2].EquipEquipment(pu);
+                    pu.equipment.Insert(1, equipment[0]);
+                    pu.equipment[1].EquipEquipment(pu);
         
                     pu.ui.UpdateEquipmentButtons();
                     StartCoroutine(DestroyElement());

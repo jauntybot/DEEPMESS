@@ -21,6 +21,8 @@ public class PlayerUnit : Unit {
         base.ExecuteAction(target);
         PlayerManager m = (PlayerManager)manager;
         UIManager.instance.ToggleUndoButton(m.undoOrder.Count > 0);
+        if (selectedEquipment is not BHammerData)
+            manager.DeselectUnit();
     }
 
 // Allow the player to click on this
@@ -34,9 +36,10 @@ public class PlayerUnit : Unit {
     {
         base.TargetElement(state);
         ui.ToggleEquipmentPanel(state);
-        if (energyCurrent == 0 || manager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
+        //if (energyCurrent == 0 || manager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
     }
 
+// Override destroy to account for dropping the hammer
     public override IEnumerator DestroyElement() {
 
         bool droppedHammer = false;
@@ -51,7 +54,7 @@ public class PlayerUnit : Unit {
                     droppedHammer = true;
                 }
                 if (pickup != null) {
-                    pickup.equipment = equip;
+                    pickup.equipment.Add(equip);
                 }
             }
         }

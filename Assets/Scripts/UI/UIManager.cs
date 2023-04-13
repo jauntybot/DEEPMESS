@@ -70,17 +70,14 @@ public class UIManager : MonoBehaviour
             yield return null;
         }
         loadoutPanel.gameObject.SetActive(false);
-    }
-
-    public void UpdateDropChance(int chance) {
-        metaDisplay.UpdateDropChance(chance);
+        foreach(Unit u in scenario.player.units)
+            u.ui.UpdateEquipmentButtons();
     }
 
     public void ToggleUndoButton(bool state) {
         undoButton.interactable = state;
         Color c = state ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1);
         undoText.color = c;
-        Debug.Log(c.r);
     }
 
 }

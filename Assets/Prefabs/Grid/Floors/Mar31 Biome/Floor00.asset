@@ -12,6 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2f6d51c1e9f52f47b0a682683df3570, type: 3}
   m_Name: Floor00
   m_EditorClassIdentifier: 
-  atlas: {fileID: 11400000, guid: bd75c3133639f4604a4aa9a39c1ef6d0, type: 2}
+  floorType: 0
   genPool: 0
-  initSpawns: []
+  atlas: {fileID: 11400000, guid: bd75c3133639f4604a4aa9a39c1ef6d0, type: 2}
+  initSpawns:
+  - asset:
+      name: Blood Tile
+      ge: {fileID: 5484897824324588200, guid: 374761513af1edf49b612a39935ceb34, type: 3}
+      prefab: {fileID: 8989576065795441841, guid: 374761513af1edf49b612a39935ceb34, type: 3}
+      icon: {fileID: 2800000, guid: 528f3efc1bba8be45a236fde2376ed3f, type: 3}
+    coord: {x: 3, y: 2}
+  - asset:
+      name: Blood Tile
+      ge: {fileID: 5484897824324588200, guid: 374761513af1edf49b612a39935ceb34, type: 3}
+      prefab: {fileID: 8989576065795441841, guid: 374761513af1edf49b612a39935ceb34, type: 3}
+      icon: {fileID: 2800000, guid: 528f3efc1bba8be45a236fde2376ed3f, type: 3}
+    coord: {x: 4, y: 2}
+  slotsType: 0
+  equipmentTable:
+    equipmentTable: []

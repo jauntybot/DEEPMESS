@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42cda6d173eef2c4abd7421276a3540d, type: 3}
+  m_Name: PassHammer
+  m_EditorClassIdentifier: 
+  name: PASS HAMMER
+  icon: {fileID: 21300000, guid: a57101ff84e7e624088475ce44e0f04c, type: 3}
+  gridColor: 2
+  energyCost: 0
+  adjacency: 5
+  range: 8
+  animDur: 0.5
+  filters:
+  - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
+  filterValid: 0
+  targetTypes:
+  - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
+  hammer: {fileID: 0}
+  nail: {fileID: 0}
+  action: 1

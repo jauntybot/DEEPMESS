@@ -8,7 +8,8 @@ using UnityEngine;
 public class GridSquare : GroundElement {
 
     [SerializeField] SpriteRenderer[] spriteRenderers;
-
+    public enum TileType { Bone, Blood, Bile };
+    public TileType tileType;
     public bool white;
     [SerializeField] Color blackColor;
     [SerializeField] GameObject highlight;

@@ -22,7 +22,7 @@ public class HammerData : EquipmentData
 
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this, targetTypes);
         user.grid.DisplayValidCoords(validCoords, gridColor);
-        if (user is PlayerUnit pu) pu.ui.ToggleEquipmentPanel(false);
+        if (user is PlayerUnit pu) pu.ui.ToggleEquipmentButtons();
         for (int i = validCoords.Count - 1; i >= 0; i--) {
             bool occupied = false;
             foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(validCoords[i])) {
@@ -35,11 +35,11 @@ public class HammerData : EquipmentData
                             ge.elementCanvas.ToggleStatsDisplay(true);
                     }
                 }
-                if (remove)
-                    validCoords.Remove(validCoords[i]);
+                if (remove || !occupied) {
+                    if (validCoords.Count >= i)
+                        validCoords.Remove(validCoords[i]);
+                }
             } 
-            if (!occupied)
-                validCoords.Remove(validCoords[i]);
         }
 
         return validCoords;
@@ -61,10 +61,10 @@ public class HammerData : EquipmentData
         base.EquipEquipment(user);
     }
 
-    public IEnumerator ThrowHammer(PlayerUnit user, GridElement target) {
+    public virtual IEnumerator ThrowHammer(PlayerUnit user, GridElement target, Unit passTo = null) {
         
         PlayerManager manager = (PlayerManager)user.manager;
-        if (target.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
+        if (target.gfx[0].sortingOrder > hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder)
             hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = target.gfx[0].sortingOrder;
         AudioManager.PlaySound(AudioAtlas.Sound.hammerPass, user.transform.position);
     
@@ -81,14 +81,25 @@ public class HammerData : EquipmentData
             AudioManager.PlaySound(AudioAtlas.Sound.attackStrike, user.transform.position);
 // Attack target if unit
             if (target is EnemyUnit) {
-                target.StartCoroutine(target.TakeDamage(3));
+                target.StartCoroutine(target.TakeDamage(1));
             }
 // Assign a random unit to pass the hammer to
-            Unit passTo = manager.units[Random.Range(0, manager.units.Count - 1)];
-            while (passTo is not PlayerUnit) passTo = manager.units[Random.Range(0, manager.units.Count - 1)];
-            if (passTo.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
-                hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;    
-// Lerp hammer to random unit
+            passTo = user;
+            List<Unit> possiblePasses = new List<Unit>();
+            foreach (Unit unit in manager.units) {
+                if (unit.energyCurrent > 0 && unit is PlayerUnit)
+                    possiblePasses.Add(unit);
+            }
+            if (possiblePasses.Count > 0) {
+                passTo = possiblePasses[0];
+                foreach(PlayerUnit unit in possiblePasses) {
+                    if (Vector2.Distance(unit.coord, target.coord) < Vector2.Distance(passTo.coord, target.coord))
+                        passTo = unit;
+                }
+            }
+// Lerp hammer to passTo unit
+            if (passTo.gfx[0].sortingOrder > hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder)
+                hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;
             timer = 0;
             while (timer < animDur) {
                 hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(passTo.coord), timer/animDur);
@@ -103,19 +114,23 @@ public class HammerData : EquipmentData
         }
     }
 
-    public void PassHammer(PlayerUnit sender, PlayerUnit reciever) {
+    public virtual void PassHammer(PlayerUnit sender, PlayerUnit reciever) {
+        List<EquipmentData> toAdd = new List<EquipmentData>();
         for (int i = sender.equipment.Count - 1; i >= 0; i--) {
-                if (sender.equipment[i] is HammerData) {
-                    reciever.equipment.Insert(3, sender.equipment[i]);
+            if (sender.equipment[i] is HammerData) {
+                toAdd.Add(sender.equipment[i]);
 
-                    sender.equipment.Remove(sender.equipment[i]);
-                }
+                sender.equipment.Remove(sender.equipment[i]);
             }
-            sender.gfx.Remove(hammer.GetComponentInChildren<SpriteRenderer>());
-            hammer.transform.parent = reciever.transform;
-            reciever.gfx.Add(hammer.GetComponentInChildren<SpriteRenderer>());
+        }
+        for (int i = toAdd.Count - 1; i >= 0; i--) 
+            reciever.equipment.Add(toAdd[i]);
 
-            reciever.ui.UpdateEquipmentButtons();
-            sender.ui.UpdateEquipmentButtons();
+        sender.gfx.Remove(hammer.GetComponentInChildren<SpriteRenderer>());
+        hammer.transform.parent = reciever.transform;
+        reciever.gfx.Add(hammer.GetComponentInChildren<SpriteRenderer>());
+
+        reciever.ui.UpdateEquipmentButtons();
+        sender.ui.UpdateEquipmentButtons();
     }
 }

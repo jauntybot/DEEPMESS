@@ -10,8 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2590438898875856828}
   - component: {fileID: 4548692920616438334}
-  - component: {fileID: 3597763259703875192}
-  - component: {fileID: 5763990174567675168}
   m_Layer: 6
   m_Name: GFX
   m_TagString: Untagged
@@ -27,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 86320390212167392}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.225, z: 0}
+  m_LocalPosition: {x: 0, y: -0.35, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -75,8 +73,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 0f9e74a75515fa24d98b222c711485be, type: 3}
-  m_Color: {r: 0.6792453, g: 0.66258454, b: 0.66258454, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 528f3efc1bba8be45a236fde2376ed3f, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -86,34 +84,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3597763259703875192
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 86320390212167392}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b850d124d92f3945b0abedf8ebd0b8d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alpha: 1
-  exclude: 0
---- !u!114 &5763990174567675168
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 86320390212167392}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ee90040f786e6a47acff528e5821a3d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  alpha: 1
-  exclude: 0
 --- !u!1 &1584112630451297120
 GameObject:
   m_ObjectHideFlags: 0
@@ -208,7 +178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8484983104034085635}
   - component: {fileID: 2202044658481402577}
-  - component: {fileID: 1723079959207389794}
+  - component: {fileID: 699505904151411024}
   m_Layer: 6
   m_Name: highlight
   m_TagString: Untagged
@@ -283,7 +253,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1723079959207389794
+--- !u!114 &699505904151411024
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -408,7 +378,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8989576065795441841}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.225, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -449,6 +419,8 @@ MonoBehaviour:
   destroyed: 0
   spriteRenderers:
   - {fileID: 4548692920616438334}
+  - {fileID: 2202044658481402577}
+  tileType: 1
   white: 0
   blackColor: {r: 0.745283, g: 0.7270025, b: 0.7270025, a: 1}
   highlight: {fileID: 3392904112776953772}

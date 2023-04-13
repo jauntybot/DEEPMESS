@@ -7,10 +7,20 @@ using System.IO;
 [System.Serializable]
 public class FloorDefinition : ScriptableObject
 {
-
-    public FloorAtlas atlas;
+    public enum FloorType { Combat, SlotMachine, Reaper };
+    public FloorType floorType; 
     public int genPool;
+
+// Combat floor refs
+    public FloorAtlas atlas;
+    [SerializeField]
     public List<Spawn> initSpawns;
+
+// Slot machine floor refs
+    public enum SlotsType { Equipment, Upgrades };
+    public SlotsType slotsType;
+    public EquipmentTable equipmentTable;
+    //public List<UpgradeData> upgradeTable;
 
 }
 
@@ -22,3 +32,7 @@ public class Spawn {
 
 }
 
+[System.Serializable]
+public class EquipmentTable {
+    public List<EquipmentData> equipmentTable;    
+}

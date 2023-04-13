@@ -13,9 +13,6 @@ public class UnitManager : MonoBehaviour {
     [HideInInspector] public ScenarioManager scenario;
 
     [Header("UNIT MANAGER")]
-// Unit vars
-    [SerializeField] GameObject[] unitPrefabs;
-    public List<Vector2> startingCoords;
     [SerializeField] protected GameObject unitParent;
     public List<Unit> units = new List<Unit>();    
     public Unit selectedUnit;
@@ -29,9 +26,6 @@ public class UnitManager : MonoBehaviour {
         if (FloorManager.instance) floorManager = FloorManager.instance;
         currentGrid = floorManager.currentFloor;
 
-        for (int i = 0; i <= startingCoords.Count - 1; i++) {
-            SpawnUnit(startingCoords[i], unitPrefabs[i].GetComponent<Unit>());
-        }
         yield return null;
     }
 
@@ -77,6 +71,8 @@ public class UnitManager : MonoBehaviour {
             UIManager.instance.UpdatePortrait(selectedUnit, false);
 // Clear action data
             selectedUnit.TargetElement(false);
+            if (selectedUnit.selectedEquipment is BHammerData d)
+                d.target1 = null;
 
             selectedUnit.selectedEquipment = null;
             selectedUnit.validActionCoords = null;
@@ -91,8 +87,9 @@ public class UnitManager : MonoBehaviour {
 
     public virtual void ResolveConditions() {
         foreach(Unit u in units) {
-            if (u.status != Unit.Status.Normal) {
-                u.RemoveCondition();
+            if (u.conditions != null) {
+                foreach (Unit.Status s in u.conditions) 
+                u.RemoveCondition(s);
             }
         }
     }

@@ -59,7 +59,6 @@ public class ScenarioManager : MonoBehaviour
 
     public IEnumerator FirstTurn() {
         yield return StartCoroutine(SwitchTurns(Turn.Descent));
-        UIManager.instance.UpdateDropChance(player.nail.collisionChance);
 
         yield return new WaitForSeconds(.75f);
         yield return StartCoroutine(floorManager.TransitionFloors(floorManager.currentFloor.gameObject, false));
@@ -97,12 +96,9 @@ public class ScenarioManager : MonoBehaviour
         {
             case Turn.Enemy:
                 player.StartEndTurn(false);
-                if (turnCount >= turnsToDescend) {
-                    floorManager.Descend();
-                } else if (currentEnemy.units.Count > 0) {
+                if (currentEnemy.units.Count > 0) {
 // Decrease nail collision chance
                     player.nail.collisionChance -= 40;
-                    UIManager.instance.UpdateDropChance(player.nail.collisionChance);
                     floorManager.upButton.GetComponent<Button>().enabled = false; floorManager.downButton.GetComponent<Button>().enabled = false;
                     prevTurn = currentTurn; currentTurn = Turn.Enemy;
                     yield return StartCoroutine(messagePanel.DisplayMessage("ANTIBODY RESPONSE", 2));
@@ -111,31 +107,26 @@ public class ScenarioManager : MonoBehaviour
                         u.elementCanvas.UpdateStatsDisplay();
                     }
                     endTurnButton.enabled = false;
-                    StartCoroutine(currentEnemy.TakeTurn());
+                    if (prevTurn == Turn.Descent)
+                        StartCoroutine(currentEnemy.TakeTurn(true));
+                    else
+                        StartCoroutine(currentEnemy.TakeTurn(false));
                 }
                 else if (currentEnemy.units.Count <= 0) {
-// Decrease nail collision chance
-                    player.nail.collisionChance -= 40;
-                    UIManager.instance.UpdateDropChance(player.nail.collisionChance);
-                    prevTurn = currentTurn; currentTurn = Turn.Enemy;
-                    yield return null;
-                    EndTurn();
+                   floorManager.Descend();
                 }
             break;
             case Turn.Player:
-                currentEnemy.ResolveConditions();
+                //currentEnemy.ResolveConditions();
                 if (player.units.Count >= 2) {
                     turnCount++;
                     floorManager.upButton.GetComponent<Button>().enabled = true; floorManager.downButton.GetComponent<Button>().enabled = true;
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN", 1));
-                    UIManager.instance.metaDisplay.UpdateTurnsToDescend(turnsToDescend - turnCount);
 
                     prevTurn = currentTurn; currentTurn = Turn.Player;
                     endTurnButton.enabled = true;
-                    if (prevTurn == Turn.Descent)
-                        player.StartEndTurn(true, true);
-                    else
-                        player.StartEndTurn(true);
+
+                    player.StartEndTurn(true);
                 } else {
                     yield return StartCoroutine(Lose());
                 }

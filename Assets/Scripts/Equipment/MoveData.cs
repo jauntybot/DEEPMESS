@@ -9,9 +9,21 @@ public class MoveData : EquipmentData
     enum AnimType { Lerp, Stepped }
     [SerializeField] AnimType animType;
 
+
+    public override List<Vector2> TargetEquipment(GridElement user, int mod = 0)
+    {
+        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this);
+        for (int i = validCoords.Count - 1; i >= 0; i--) {
+            if (user.grid.sqrs.Find(sqr => sqr.coord == validCoords[i]).tileType == GridSquare.TileType.Bile)
+                validCoords.RemoveAt(i);
+        }
+        user.grid.DisplayValidCoords(validCoords, gridColor);
+        return validCoords;
+    }
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
     {
-        user.energyCurrent -= energyCost;
+        if (user is Unit unit)
+            unit.moved = true;
         user.elementCanvas.UpdateStatsDisplay();
 
         yield return user.StartCoroutine(MoveToCoord((Unit)user, target.coord));
@@ -44,12 +56,12 @@ public class MoveData : EquipmentData
 // exposed UpdateElement() functionality to selectively update sort order
             if (unit.grid.SortOrderFromCoord(fromTo[current]) > unit.grid.SortOrderFromCoord(current))
                 unit.UpdateSortOrder(fromTo[current]);
-            current = fromTo[current];
             while (timer < animDur) {
                 yield return null;
                 unit.transform.position = Vector3.Lerp(unit.transform.position, toPos, timer/animDur);
                 timer += Time.deltaTime;
             }
+            current = fromTo[current];
         }        
         unit.UpdateElement(moveTo);
 // Check for shared space  

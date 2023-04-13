@@ -17,7 +17,7 @@ public class Grid : MonoBehaviour {
     [SerializeField] GameObject enemyPrefab;
 
     [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.1f, 0.5f);
-    [SerializeField] GameObject sqrPrefab, gridCursor, selectedCursor;
+    [SerializeField] GameObject sqrPrefab, bloodTilePrefab, bileTilePrefab, gridCursor, selectedCursor;
     [SerializeField] static float fadeInDur = 0.25f;
     public FloorDefinition lvlDef;
     [SerializeField] Color offWhite;
@@ -33,10 +33,26 @@ public class Grid : MonoBehaviour {
 
 // loop through grid x,y, generate sqr grid elements, update them and add to list
     public IEnumerator GenerateGrid(int i) {
+        List<Vector2> bloodTiles = new List<Vector2>();
+        List<Vector2> bileTiles = new List<Vector2>();
+        foreach (Spawn spawn in lvlDef.initSpawns) {
+            if (spawn.asset.ge is GridSquare s) {
+                if (s.tileType == GridSquare.TileType.Blood)
+                    bloodTiles.Add(spawn.coord);
+                else if (s.tileType == GridSquare.TileType.Bile)
+                    bileTiles.Add(spawn.coord);
+            }
+        }
         for (int y = 0; y < FloorManager.gridSize; y++) {
             for (int x = 0; x < FloorManager.gridSize; x++) {
+                GridSquare sqr = null;
+                if (bloodTiles.Contains(new Vector2(x,y)))
+                    sqr = Instantiate(bloodTilePrefab, this.transform).GetComponent<GridSquare>();
+                else if (bileTiles.Contains(new Vector2(x,y)))
+                    sqr = Instantiate(bileTilePrefab, this.transform).GetComponent<GridSquare>();
+                else
+                    sqr = Instantiate(sqrPrefab, this.transform).GetComponent<GridSquare>();
 //store bool for white sqrs
-                GridSquare sqr = Instantiate(sqrPrefab, this.transform).GetComponent<GridSquare>();
                 sqr.white=false;
                 if (x%2==0) { if (y%2==0) sqr.white=true; } 
                 else { if (y%2!=0) sqr.white=true; }
@@ -80,7 +96,7 @@ public class Grid : MonoBehaviour {
                 if (u is EnemyUnit e) {
                     enemy.SpawnUnit(spawn.coord, e);
                 }
-            } else {
+            } else if (spawn.asset.ge is not GridSquare) {
                 GridElement ge = Instantiate(spawn.asset.prefab, this.transform).GetComponent<GridElement>();
                 ge.transform.parent = neutralGEContainer.transform;
 

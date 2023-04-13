@@ -16,14 +16,14 @@ public class PlayerManager : UnitManager {
     [Header("PLAYER MANAGER")]
     public LoadoutManager loadout;
     public Nail nail;
-    public EquipmentData hammerAction;
-
-    private GridElement prevCursorTarget = null;
-    private bool prevCursorTargetState = false;
+    public List<HammerData> hammerActions;
     [SerializeField] public GameObject nailPrefab, hammerPrefab, hammerPickupPrefab;
+
 
     public Dictionary<Unit, Vector2> undoableMoves = new Dictionary<Unit, Vector2>();
     public List<Unit> undoOrder;
+    private GridElement prevCursorTarget = null;
+    private bool prevCursorTargetState = false;
 
 // Get rid of this reference somehow
     [SerializeField] EndTurnBlinking turnBlink;
@@ -50,7 +50,7 @@ public class PlayerManager : UnitManager {
         };
         yield return StartCoroutine(loadout.Initialize(initU));
 
-        SpawnHammer((PlayerUnit)units[0], (HammerData)hammerAction);
+        SpawnHammer((PlayerUnit)units[0], hammerActions);
         foreach (Unit u in initU) {
             StartCoroutine(floorManager.DropUnit(u, u.transform.position, currentGrid.PosFromCoord(u.coord)));
         }
@@ -65,38 +65,39 @@ public class PlayerManager : UnitManager {
     }
 
 // Spawn a new instance of a hammer and update hammer actions
-    public virtual void SpawnHammer(PlayerUnit unit, HammerData equip) {
+    public virtual void SpawnHammer(PlayerUnit unit, List<HammerData> hammerData) {
         GameObject h = Instantiate(hammerPrefab, unit.transform.position, Quaternion.identity, unit.transform);
         h.GetComponentInChildren<SpriteRenderer>().sortingOrder = unit.gfx[0].sortingOrder;
         unit.gfx.Add(h.GetComponentInChildren<SpriteRenderer>());
-        unit.equipment.Insert(3, equip);
-        equip.EquipEquipment(unit);
-        equip.AssignHammer(h, nail);
-        
+        foreach(HammerData equip in hammerData) {
+            unit.equipment.Insert(unit.equipment.Count, equip);
+            equip.EquipEquipment(unit);
+            equip.AssignHammer(h, nail);
+        }        
         unit.ui.UpdateEquipmentButtons();
     }
 
 // Initializes or closes functions for turn start/end
-    public void StartEndTurn(bool start, bool newFloor = false) {
+    public void StartEndTurn(bool start) {
         for (int i = 0; i <= units.Count - 1; i++) {
             units[i].EnableSelection(start);
         }
         
-
+// Start Turn
         if (start) {
             StartCoroutine(pc.GridInput());
-            if (!newFloor) {
 // Reset unit energy if not continued turn
-                foreach(Unit u in units) {
-                    if (u is PlayerUnit) {
-                        u.energyCurrent = u.energyMax;
-                        u.elementCanvas.UpdateStatsDisplay();
-                    }
+            foreach(Unit u in units) {
+                if (u is PlayerUnit) {
+                    u.energyCurrent = u.energyMax;
+                    u.moved = false;
+                    u.elementCanvas.UpdateStatsDisplay();
                 }
-                ResolveConditions();
-            } else {
-
             }
+            undoableMoves = new Dictionary<Unit, Vector2>();
+            undoOrder = new List<Unit>();
+            //ResolveConditions();
+// End Turn
         } else {
             DeselectUnit();
             currentGrid.UpdateTargetCursor(false, Vector2.one * -32);
@@ -136,6 +137,7 @@ public class PlayerManager : UnitManager {
                 foreach(Unit u in scenario.currentEnemy.units) {
                     if (u.coord == spawn) validCoord = false;
                 }
+                if (currentGrid.sqrs.Find(sqr => sqr.coord == spawn).tileType != GridSquare.TileType.Bone) validCoord = false;
             }
         }
 
@@ -143,7 +145,6 @@ public class PlayerManager : UnitManager {
         nail.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         yield return StartCoroutine(UpdateNail(spawn));
         nail.collisionChance = 90;
-        UIManager.instance.UpdateDropChance(nail.collisionChance);
     }
 
     public IEnumerator UpdateNail(Vector2 coord) {
@@ -170,13 +171,12 @@ public class PlayerManager : UnitManager {
             if (u.manager is PlayerManager) 
             {
                 if (selectedUnit) {
-                    if (u == selectedUnit) 
+                    if (u == selectedUnit && !selectedUnit.ValidCommand(u.coord)) 
                     {  
                         DeselectUnit();                 
                     }
                     else if (selectedUnit.ValidCommand(u.coord)) {
                         selectedUnit.ExecuteAction(u);
-                        DeselectUnit();
                     } else {
                         DeselectUnit();
                         SelectUnit(u);
@@ -192,7 +192,6 @@ public class PlayerManager : UnitManager {
 // Unit is a target of valid action adjacency
                     if (selectedUnit.ValidCommand(u.coord)) {
                         selectedUnit.ExecuteAction(u);
-                        DeselectUnit();
                     } 
                 }
             }
@@ -213,7 +212,6 @@ public class PlayerManager : UnitManager {
                     if (selectedUnit.ValidCommand(sqr.coord)) {
                         currentGrid.DisableGridHighlight();
                         selectedUnit.ExecuteAction(sqr);
-                        DeselectUnit();
                     } else 
                         DeselectUnit();
                 }
@@ -224,7 +222,6 @@ public class PlayerManager : UnitManager {
                 if (selectedUnit.ValidCommand(input.coord)) {
                     currentGrid.DisableGridHighlight();
                     selectedUnit.ExecuteAction(input);
-                    DeselectUnit();
                 } else
                     DeselectUnit();
             }
@@ -264,10 +261,14 @@ public class PlayerManager : UnitManager {
         }
     }
 
-    public override void SelectUnit(Unit t)
+    public override void SelectUnit(Unit u)
     {
-        base.SelectUnit(t);
-        if (t.energyCurrent > 0) t.ui.ToggleEquipmentPanel(true);
+        base.SelectUnit(u);
+        if (u.energyCurrent > 0) u.ui.ToggleEquipmentButtons();
+        if (!u.moved && u is PlayerUnit) {
+            u.selectedEquipment = u.equipment[0];
+            u.UpdateAction(u.selectedEquipment, u.moveMod);
+        }
         prevCursorTargetState = true;
     }
 
@@ -296,7 +297,7 @@ public class PlayerManager : UnitManager {
 
             MoveData move = (MoveData)lastMoved.equipment[0];
             StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved], true));
-            lastMoved.energyCurrent += 1;
+            lastMoved.moved = false;
             lastMoved.elementCanvas.UpdateStatsDisplay();
 
             undoOrder.Remove(lastMoved);
@@ -318,11 +319,11 @@ public class PlayerManager : UnitManager {
         undoOrder = new List<Unit>();
         UIManager.instance.ToggleUndoButton(undoOrder.Count > 0);
 
-        foreach(Unit unit in units) {
-            currentGrid.RemoveElement(unit);
-            unit.StoreInGrid(newGrid);
-            if (unit is not Nail)
-                unit.UpdateElement(unit.coord);
+        for (int i = units.Count - 1; i >= 0; i--) {
+            currentGrid.RemoveElement(units[i]);
+            units[i].StoreInGrid(newGrid);
+            if (units[i] is not Nail)
+                units[i].UpdateElement(units[i].coord);
         }
         currentGrid = newGrid;
         transform.parent = newGrid.transform;
