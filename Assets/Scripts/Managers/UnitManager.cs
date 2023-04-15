@@ -71,9 +71,9 @@ public class UnitManager : MonoBehaviour {
             UIManager.instance.UpdatePortrait(selectedUnit, false);
 // Clear action data
             selectedUnit.TargetElement(false);
-            if (selectedUnit.selectedEquipment is BHammerData d)
-                d.target1 = null;
-
+            if (selectedUnit.selectedEquipment)
+                selectedUnit.selectedEquipment.UntargetEquipment(selectedUnit);
+            
             selectedUnit.selectedEquipment = null;
             selectedUnit.validActionCoords = null;
             selectedUnit.selected = false;

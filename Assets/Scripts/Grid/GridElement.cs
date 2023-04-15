@@ -16,6 +16,8 @@ public class GridElement : MonoBehaviour{
     public PolygonCollider2D hitbox;
     public ElementCanvas elementCanvas;
 
+    Material originalMaterial;
+
     [Header("UI/UX")]
     public List<SpriteRenderer> gfx;
     new public string name;
@@ -25,6 +27,8 @@ public class GridElement : MonoBehaviour{
     public event OnElementUpdate ElementDestroyed;
 
     public int hpMax, hpCurrent, defense;
+    public bool shell;
+    [SerializeField] GameObject shellGFX;
     public int energyCurrent, energyMax;
     
     [Header("Audio")]
@@ -36,6 +40,8 @@ public class GridElement : MonoBehaviour{
 
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
+
+        originalMaterial = gfx[0].material;
 
         hpCurrent = hpMax;
         energyCurrent = energyMax;
@@ -59,8 +65,10 @@ public class GridElement : MonoBehaviour{
     }  
 
     public virtual void UpdateSortOrder(Vector2 c) {
+        int sort = grid.SortOrderFromCoord(c);
         foreach (SpriteRenderer sr in gfx)
-            sr.sortingOrder = grid.SortOrderFromCoord(c);
+            sr.sortingOrder = sort;
+        if (shellGFX) shellGFX.GetComponent<LineRenderer>().sortingOrder = sort;
     }
 
     public virtual void EnableSelection(bool state) {
@@ -71,12 +79,15 @@ public class GridElement : MonoBehaviour{
   
     public virtual IEnumerator TakeDamage(int dmg, GridElement source = null) 
     {
-
-        hpCurrent -= dmg;
-        
-        if (elementCanvas) {
-            yield return StartCoroutine(elementCanvas.DisplayDamageNumber(dmg));
-            elementCanvas.UpdateStatsDisplay();
+        if (!shell) {
+            hpCurrent -= dmg;
+            
+            if (elementCanvas) {
+                yield return StartCoroutine(elementCanvas.DisplayDamageNumber(dmg));
+                elementCanvas.UpdateStatsDisplay();
+            }
+        } else {
+            RemoveShell();
         }
         yield return new WaitForSecondsRealtime(.4f);
         TargetElement(false);
@@ -102,12 +113,26 @@ public class GridElement : MonoBehaviour{
     }
 
     public virtual IEnumerator CollideFromBelow(GridElement above) {
-        
+        RemoveShell();
         yield return StartCoroutine(TakeDamage(hpCurrent));
     }
 
     public virtual void OnSharedSpace(GridElement sharedWith) {
         
+    }
+
+    public virtual void ApplyShell() {
+        if (!shell) {
+            shellGFX.SetActive(true);
+            shell = true;
+        }
+    }
+
+    public virtual void RemoveShell() {
+        if (shell) {
+            shellGFX.SetActive(false);
+            shell = false;
+        }
     }
     
 }

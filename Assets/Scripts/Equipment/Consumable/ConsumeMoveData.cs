@@ -6,16 +6,88 @@ using UnityEngine;
 [System.Serializable]
 public class ConsumeMoveData : ConsumableEquipmentData
 {
-    enum MoveType { Swap, MoveAll};
+    enum MoveType { Swap, MoveAll, Throw };
     [SerializeField] MoveType moveType;
     Vector2 dir;
+    [SerializeField] List<GridElement> firstTargets;
+
+    public override List<Vector2> TargetEquipment(GridElement user, int mod = 0)
+    {
+
+        switch(moveType) {
+            default:
+            case MoveType.Swap:
+            case MoveType.MoveAll:
+                return base.TargetEquipment(user, mod);
+            case MoveType.Throw:
+                if (firstTarget == null) {
+                    Debug.Log("Target Grab");
+                    List<Vector2> validCoords = EquipmentAdjacency.OrthagonalAdjacency(user, 1, firstTargets, firstTargets);
+                    user.grid.DisplayValidCoords(validCoords, gridColor);
+                    for (int i = validCoords.Count - 1; i >= 0; i--) {
+                        bool occupied = false;
+                        foreach(GridElement ge in user.grid.CoordContents(validCoords[i])) {
+                            if (ge is not GroundElement) occupied = true;
+                            bool remove = true;
+                            foreach(GridElement target in firstTargets)
+                            if (ge.GetType() == target.GetType()) {
+                                remove = false;
+                                if (ge is EnemyUnit)
+                                    ge.elementCanvas.ToggleStatsDisplay(true);
+                            }
+                            if (remove || !occupied) {
+                                if (validCoords.Count >= i)
+                                    validCoords.Remove(validCoords[i]);
+                            }
+                        }
+                    }
+                    return validCoords;
+                } else {
+                    Debug.Log("Target Throw");
+                    List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this);
+                    user.grid.DisplayValidCoords(validCoords, gridColor);
+                    if (user is PlayerUnit u) u.ui.ToggleEquipmentButtons();
+                    return validCoords;
+                }           
+        }
+    }
+
+    public override void UntargetEquipment(GridElement user)
+    {
+        base.UntargetEquipment(user);
+        if (multiselect && firstTarget) {
+            firstTarget.UpdateElement(firstTarget.coord);
+            firstTarget = null;
+        }
+    }
 
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
-        yield return base.UseEquipment(user);
         switch (moveType) {
-            default: yield return user.StartCoroutine(SwapUnits((Unit)user, (Unit)target)); break;
-            case MoveType.Swap: yield return user.StartCoroutine(SwapUnits((Unit)user, (Unit)target)); break;
-            case MoveType.MoveAll: yield return user.StartCoroutine(MoveAllUnits(user, target.coord)); break;
+            default: 
+                yield return base.UseEquipment(user);
+                yield return user.StartCoroutine(SwapUnits((Unit)user, (Unit)target)); 
+                break;
+            case MoveType.Swap: 
+                yield return base.UseEquipment(user);
+                yield return user.StartCoroutine(SwapUnits((Unit)user, (Unit)target)); 
+                break;
+            case MoveType.MoveAll:
+                yield return base.UseEquipment(user);
+                yield return user.StartCoroutine(MoveAllUnits(user, target.coord)); 
+                break;
+            case MoveType.Throw: 
+                if (firstTarget == null) {
+                    firstTarget = target;
+                    Unit unit = (Unit)user;
+                    unit.grid.DisableGridHighlight();
+                    unit.validActionCoords = TargetEquipment(user);
+                    unit.grid.DisplayValidCoords(unit.validActionCoords, gridColor);
+                    yield return user.StartCoroutine(GrabUnit((Unit)user, (Unit)firstTarget));
+                } else {
+                    yield return base.UseEquipment(user);
+                    yield return user.StartCoroutine(ThrowUnit((Unit)user, (Unit)firstTarget, target.coord));
+                }
+            break;
         }
 
         
@@ -27,6 +99,37 @@ public class ConsumeMoveData : ConsumableEquipmentData
         yield return null;
         unit1.UpdateElement(to1); unit2.UpdateElement(to2);
 
+    }
+
+    public IEnumerator GrabUnit(Unit grabber, Unit grabbed) {
+        Vector3 origin = grabber.grid.PosFromCoord(grabber.coord);
+        Vector3 target = grabbed.grid.PosFromCoord(grabbed.coord);
+        Vector3 dif = target + (origin - target)/2;
+        float timer = 0;
+        while (timer < animDur/2) {
+
+            grabbed.transform.position = Vector3.Lerp(target, dif, timer/(animDur/2));
+
+            yield return null;
+            timer += Time.deltaTime;
+        }
+
+    }
+
+    public IEnumerator ThrowUnit(Unit thrower, Unit thrown, Vector2 coord) {
+        Vector3 to = thrower.grid.PosFromCoord(coord);
+        Vector3 origin = thrown.transform.position;
+
+        float timer = 0;
+        while (timer < animDur) {
+
+            thrown.transform.position = Vector3.Lerp(origin, to, timer/animDur);
+
+            yield return null;
+            timer += Time.deltaTime;
+        }
+        thrown.UpdateElement(coord);
+        thrown.StartCoroutine(thrown.TakeDamage(1));
     }
 
     public IEnumerator MoveAllUnits(GridElement user, Vector2 selection) {

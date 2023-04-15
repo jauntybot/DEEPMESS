@@ -19,7 +19,7 @@ public class EquipmentAdjacency : MonoBehaviour
             _coords = DiamondAdjacency(from, range, data, targetLast);
         break;
         case EquipmentData.AdjacencyType.Orthogonal:
-            _coords = OrthagonalAdjacency(from, range, data, targetLast);
+            _coords = OrthagonalAdjacency(from, range, data.filters, targetLast);
         break;
         case EquipmentData.AdjacencyType.OfType:
             _coords = OfTypeOnBoardAdjacency(from, data.filters, from.coord);
@@ -176,7 +176,7 @@ public class EquipmentAdjacency : MonoBehaviour
         return _fromTo;
     }
 
-    protected static List<Vector2> OrthagonalAdjacency(GridElement from, int range, EquipmentData data, List<GridElement> targetLast) 
+    public static List<Vector2> OrthagonalAdjacency(GridElement from, int range, List<GridElement> filters, List<GridElement> targetLast) 
     {
         List<Vector2> _coords = new List<Vector2>();
         Vector2 dir = Vector2.zero;
@@ -197,8 +197,8 @@ public class EquipmentAdjacency : MonoBehaviour
                 foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                     occupied = true;
 // Valid coord if element is not filtered
-                    if (!data.filters.Find(f => f.GetType() == ge.GetType())
-                    || data.filters == null) {
+                    if (!filters.Find(f => f.GetType() == ge.GetType())
+                    || filters == null) {
                         _coords.Add(coord);
 // Valid coord if element is target, but stops frontier
                     } else if (targetLast != null) {
@@ -222,17 +222,28 @@ public class EquipmentAdjacency : MonoBehaviour
     
         public static List<Vector2> OfTypeOnBoardAdjacency(GridElement from, List<GridElement> elements, Vector2 origin) {
         List<Vector2> _coords = new List<Vector2>();
-
+        
+        foreach (GridElement type in elements) {
+            if (type is GridSquare) {
+                foreach(GridSquare sqr in from.grid.sqrs) {
+                    bool occupied = false;
+                    foreach (GridElement ge in from.grid.CoordContents(sqr.coord)) {
+                        if (ge is not GroundElement) occupied = true;
+                    }
+                    if (!occupied && !_coords.Contains(sqr.coord)) _coords.Add(sqr.coord);
+                }
+            }
+        }
         foreach (GridElement ge in from.grid.gridElements) {
             foreach (GridElement type in elements) {
-                if (ge.GetType() == type.GetType()) {
+                if (ge.GetType() == type.GetType() && !_coords.Contains(ge.coord)) {
                     _coords.Add(ge.coord);
                 }
             }
         }
         foreach(Vector2 coord in _coords) {
 
-        Debug.Log(coord);
+            Debug.Log(coord);
         }
         return _coords;
     } 

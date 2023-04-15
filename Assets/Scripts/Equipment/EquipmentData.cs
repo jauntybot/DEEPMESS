@@ -15,10 +15,13 @@ public class EquipmentData : ScriptableObject {
     public AdjacencyType adjacency;
     public int range;
     [SerializeField] protected float animDur = 0.5f;
-    public List<GridElement> filters; 
+
+    public bool multiselect;
 // When false, filters out listed elements from adjacenecy checks, when true, only allows listed elements in adjacency checks
     public bool filterValid;
+    public List<GridElement> filters; 
     public List<GridElement> targetTypes;
+    public GridElement firstTarget;
 
 // The following variables are dependent on the card Action, hidden with custom editor
 
@@ -29,6 +32,10 @@ public class EquipmentData : ScriptableObject {
         user.grid.DisplayValidCoords(validCoords, gridColor);
         if (user is PlayerUnit u) u.ui.ToggleEquipmentButtons();
         return validCoords;
+    }
+
+    public virtual void UntargetEquipment(GridElement user) {
+        
     }
 
     public virtual IEnumerator UseEquipment(GridElement user, GridElement target = null) {

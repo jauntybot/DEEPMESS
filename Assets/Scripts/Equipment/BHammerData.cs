@@ -7,14 +7,10 @@ using UnityEngine;
 public class BHammerData : HammerData
 {
 
-    public GridElement target1 = null;
-
-
-    
+   
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
 
-        if (target1 == null) {
-            Debug.Log("Target strike");
+        if (firstTarget == null) {
             List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this, targetTypes);
             user.grid.DisplayValidCoords(validCoords, gridColor);
             if (user is PlayerUnit pu) pu.ui.ToggleEquipmentButtons();
@@ -38,15 +34,20 @@ public class BHammerData : HammerData
             }
             return validCoords;
         } else {
-            Debug.Log("Target lob");
             List<GridElement> targets = new List<GridElement>(); targets.Add(user);
             return EquipmentAdjacency.OfTypeOnBoardAdjacency(user, targets, user.coord);        
         }        
     }
 
+    public override void UntargetEquipment(GridElement user)
+    {
+        base.UntargetEquipment(user);
+        firstTarget = null;
+    }
+
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
     {
-        if (target1 != null) {
+        if (firstTarget != null) {
             Debug.Log("Click lob");
         // REPLACE w/ BASE.USEEQUIPMENT IF BROUGHT BACK INTO WORKING SCRIPTS
             user.energyCurrent -= energyCost;
@@ -56,10 +57,10 @@ public class BHammerData : HammerData
                     manager.undoOrder = new List<Unit>();
                 }
             user.elementCanvas.UpdateStatsDisplay();
-            yield return user.StartCoroutine(ThrowHammer((PlayerUnit)user, target1, (PlayerUnit)target));
+            yield return user.StartCoroutine(ThrowHammer((PlayerUnit)user, firstTarget, (PlayerUnit)target));
         } else {
             Debug.Log("Click strike");
-            target1 = target;
+            firstTarget = target;
             Unit unit = (Unit)user;
             unit.grid.DisableGridHighlight();
             unit.validActionCoords = TargetEquipment(user);
