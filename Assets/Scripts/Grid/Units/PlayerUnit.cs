@@ -21,10 +21,12 @@ public class PlayerUnit : Unit {
         base.ExecuteAction(target);
         PlayerManager m = (PlayerManager)manager;
         UIManager.instance.ToggleUndoButton(m.undoOrder.Count > 0);
-        if (!selectedEquipment.multiselect)
-            manager.DeselectUnit();
-        else if (selectedEquipment.firstTarget == null)
-            manager.DeselectUnit();
+        if (selectedEquipment) {
+            if (!selectedEquipment.multiselect)
+                manager.DeselectUnit();
+            else if (selectedEquipment.firstTarget == null)
+                manager.DeselectUnit();
+        }
     }
 
 // Allow the player to click on this
