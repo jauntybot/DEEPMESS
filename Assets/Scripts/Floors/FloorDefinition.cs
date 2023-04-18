@@ -19,20 +19,15 @@ public class FloorDefinition : ScriptableObject
 // Slot machine floor refs
     public enum SlotsType { Equipment, Upgrades };
     public SlotsType slotsType;
-    public EquipmentTable equipmentTable;
+    public List<EquipmentData> equipmentTable;
     //public List<UpgradeData> upgradeTable;
 
+    [System.Serializable]
+    public class Spawn {
+
+        public FloorAsset asset;
+        public Vector2 coord;
+
+    }
 }
 
-[System.Serializable]
-public class Spawn {
-
-    public FloorAsset asset;
-    public Vector2 coord;
-
-}
-
-[System.Serializable]
-public class EquipmentTable {
-    public List<EquipmentData> equipmentTable;    
-}

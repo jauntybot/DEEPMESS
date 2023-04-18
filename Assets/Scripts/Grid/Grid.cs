@@ -35,7 +35,7 @@ public class Grid : MonoBehaviour {
     public IEnumerator GenerateGrid(int i) {
         List<Vector2> bloodTiles = new List<Vector2>();
         List<Vector2> bileTiles = new List<Vector2>();
-        foreach (Spawn spawn in lvlDef.initSpawns) {
+        foreach (FloorDefinition.Spawn spawn in lvlDef.initSpawns) {
             if (spawn.asset.ge is GridSquare s) {
                 if (s.tileType == GridSquare.TileType.Blood)
                     bloodTiles.Add(spawn.coord);
@@ -90,7 +90,7 @@ public class Grid : MonoBehaviour {
         enemy = Instantiate(enemyPrefab, this.transform).GetComponent<EnemyManager>(); 
         enemy.transform.SetSiblingIndex(2);
         yield return StartCoroutine(enemy.Initialize());
-        foreach (Spawn spawn in lvlDef.initSpawns) {
+        foreach (FloorDefinition.Spawn spawn in lvlDef.initSpawns) {
             if (spawn.asset.ge is Unit u) 
             {
                 if (u is EnemyUnit e) {

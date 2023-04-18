@@ -6,27 +6,39 @@ using UnityEditor;
 [CustomEditor(typeof(FloorDefinition))]
 public class FloorDefinitionEditor : Editor
 {
+    FloorDefinition t;
+    SerializedObject getTarget;
+    SerializedProperty equipmentGenList;
+
+ 
+    void OnEnable(){
+        t = target as FloorDefinition;
+        getTarget = new SerializedObject(t);
+        equipmentGenList = getTarget.FindProperty("equipmentTable"); // Find the List in our script and create a refrence of it
+        
+    }
     public override void OnInspectorGUI() 
     {
-        //SerializedObject so = target;
-        FloorDefinition arg = target as FloorDefinition;
-        arg.floorType = (FloorDefinition.FloorType)EditorGUILayout.EnumPopup("Floor Type", arg.floorType);
-        if (arg.floorType == FloorDefinition.FloorType.Combat) {
-            arg.atlas = EditorGUILayout.ObjectField("Atlas", arg.atlas, typeof(FloorAtlas), false) as FloorAtlas;
-            if (arg.atlas) {
+        //getTarget.Update();
+
+        t.floorType = (FloorDefinition.FloorType)EditorGUILayout.EnumPopup("Floor Type", t.floorType);
+        if (t.floorType == FloorDefinition.FloorType.Combat) {
+            t.atlas = EditorGUILayout.ObjectField("Atlas", t.atlas, typeof(FloorAtlas), false) as FloorAtlas;
+            if (t.atlas) {
                 if (GUILayout.Button("Open FloorEditor"))
-                    FloorEditor.Init(arg);
-                //EditorList.Show(arg.FindProperty("initSpawns"));
+                    FloorEditor.Init(t);
+                //EditorList.Show(t.FindProperty("initSpawns"));
             } else {
-                GUILayout.Box("Serialize a FloorAtlas to open FloorEditor.");
+                GUILayout.Label("Serialize a FloorAtlas to open FloorEditor.");
             }    
-        } else if (arg.floorType == FloorDefinition.FloorType.SlotMachine) {
-            arg.slotsType = (FloorDefinition.SlotsType)EditorGUILayout.EnumPopup("Slots Type", arg.slotsType);
-            if (arg.slotsType == FloorDefinition.SlotsType.Equipment) {
-                //arg.equipmentTable = EditorGUILayout.ObjectField(arg.equipmentTable, typeof(EquipmentTable), false) as EquipmentTable;
+        } else if (t.floorType == FloorDefinition.FloorType.SlotMachine) {
+            t.slotsType = (FloorDefinition.SlotsType)EditorGUILayout.EnumPopup("Slots Type", t.slotsType);
+            if (t.slotsType == FloorDefinition.SlotsType.Equipment) {
+                EditorList.Show(equipmentGenList, EditorList.EditorListOption.ListLabel);
             }
         }
         //base.OnInspectorGUI();
     }
-
+ 
 }
+

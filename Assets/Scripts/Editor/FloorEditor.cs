@@ -29,14 +29,14 @@ public class FloorEditor : EditorWindow {
     }
 
     public static void UpdateCoord(string content = null) {
-        Spawn spawn = lvl.initSpawns.Find(s => s.coord == activeCoord);
+        FloorDefinition.Spawn spawn = lvl.initSpawns.Find(s => s.coord == activeCoord);
         if (spawn != null) {
             if (content == null)
                 lvl.initSpawns.Remove(spawn);
             else
                 spawn.asset = lvl.atlas.assets.Find(a => a.name == content);
         } else {
-            spawn = new Spawn();
+            spawn = new FloorDefinition.Spawn();
             spawn.coord = activeCoord;
             spawn.asset = lvl.atlas.assets.Find(a => a.name == content);
             lvl.initSpawns.Add(spawn);
@@ -79,7 +79,7 @@ public class FloorEditor : EditorWindow {
             for (int y = 0; y < 8; y++) {
                 Rect r = (Rect)EditorGUILayout.BeginHorizontal();
                 for (int x = 7; x >= 0; x--) {
-                    Spawn spawn = lvl.initSpawns.Find(s => s.coord == new Vector2(x, y));
+                    FloorDefinition.Spawn spawn = lvl.initSpawns.Find(s => s.coord == new Vector2(x, y));
                     Texture buttonSprite = lvl.atlas.assets[0].icon;
                     if (spawn != null) buttonSprite = spawn.asset.icon;
                     GUILayout.BeginArea(new Rect(x*101, (7-y)*101 + 35, 100, 100));
