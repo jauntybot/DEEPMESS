@@ -7,13 +7,13 @@ public class FloorManager : MonoBehaviour
 {
 
     ScenarioManager scenario;
-    [SerializeField] GameObject floorPrefab;
     
-    public Color moveColor, attackColor, hammerColor;
+    [Header("Floor Serialization")]
+    [SerializeField] GameObject floorPrefab;
+    [SerializeField] Transform floorParent;
     [SerializeField] List<FloorDefinition> floorDefinitions;
 
     public Grid currentFloor;
-    [SerializeField] Transform floorParent;
     public List<Grid> floors;
 
     [SerializeField] int _gridSize;
@@ -21,15 +21,19 @@ public class FloorManager : MonoBehaviour
     [SerializeField] float _sqrSize;
     public static float sqrSize;
 
+    [Header("Floor Transitioning")]
     [SerializeField] Transform transitionParent;
     public float floorOffset, transitionDur;
     private bool transitioning;
-    private bool notation = false;
-    [SerializeField] private GameObject descentPreview;
-    [SerializeField] private Dictionary<GridElement, LineRenderer> lineRenderers;
-    [SerializeField] private Material previewMaterial;
-    [SerializeField] private Color playerColor, enemyColor;
     [SerializeField] public GameObject upButton, downButton;
+    
+    [Header("Grid Viz")]
+    [SerializeField] private GameObject descentPreview;
+    [SerializeField] private Material previewMaterial;
+    [SerializeField] private Dictionary<GridElement, LineRenderer> lineRenderers;
+    public Color moveColor, attackColor, hammerColor;
+    [SerializeField] private Color playerColor, enemyColor;
+    private bool notation = false;
 
     #region Singleton (and Awake)
     public static FloorManager instance;
@@ -310,7 +314,7 @@ public class FloorManager : MonoBehaviour
             }
         }
         //yield return finalCoroutine;
-        Debug.Log("final coroutine");
+        //Debug.Log("final coroutine");
     }
 
     public IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
