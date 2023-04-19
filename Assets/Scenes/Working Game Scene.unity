@@ -3025,7 +3025,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &983332554
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3098,9 +3098,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 983332553}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea50ca065e2af4849a772902433aed51, type: 3}
+  m_Script: {fileID: 11500000, guid: 12ae08389bd80d649a8a0a6e5dc07158, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  equipmentTable:
+  - {fileID: 11400000, guid: 1c7fe50e3ed5c444fab58cb8f0ebb79b, type: 2}
+  - {fileID: 11400000, guid: d6b47fd9c3f432243a830a8cd6465170, type: 2}
+  - {fileID: 11400000, guid: 1bcc8cbb776ab164f9e1348446f94aa9, type: 2}
+  - {fileID: 11400000, guid: fdae265c7dbc1d944bbbabea4a5f3960, type: 2}
+  - {fileID: 11400000, guid: 20a9e7c2a0575b44f8040600e4ab6bc9, type: 2}
+  - {fileID: 11400000, guid: 117d51cb441b29f49b1417ea1d6961f4, type: 2}
+  slots:
+  - {fileID: 5594411970597252180}
+  - {fileID: 2125123183}
+  - {fileID: 1844840575}
 --- !u!1 &1007648288
 GameObject:
   m_ObjectHideFlags: 0
@@ -5669,9 +5680,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1272466584}
-        m_TargetAssemblyTypeName: ScenarioManager, Assembly-CSharp
-        m_MethodName: InitialDescent
+      - m_Target: {fileID: 983332557}
+        m_TargetAssemblyTypeName: SlotMachine, Assembly-CSharp
+        m_MethodName: SpinSlots
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5901,10 +5912,10 @@ RectTransform:
   m_Father: {fileID: 769176577}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 445, y: -89.948685}
-  m_SizeDelta: {x: 174, y: 169.89737}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1844840575
 MonoBehaviour:
@@ -5915,16 +5926,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1844840573}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 961b6997fbf6b124b9526eae860bf2eb, type: 3}
+  m_Script: {fileID: 11500000, guid: fb02445f2a2ecf945931943cdcca6d6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  equipmentTable:
-  - {fileID: 11400000, guid: 1c7fe50e3ed5c444fab58cb8f0ebb79b, type: 2}
-  - {fileID: 11400000, guid: d6b47fd9c3f432243a830a8cd6465170, type: 2}
-  - {fileID: 11400000, guid: 1bcc8cbb776ab164f9e1348446f94aa9, type: 2}
-  - {fileID: 11400000, guid: fdae265c7dbc1d944bbbabea4a5f3960, type: 2}
-  - {fileID: 11400000, guid: 20a9e7c2a0575b44f8040600e4ab6bc9, type: 2}
-  - {fileID: 11400000, guid: 117d51cb441b29f49b1417ea1d6961f4, type: 2}
   slotSpin1: {fileID: 1891700758}
   slotSpin2: {fileID: 2019255373}
   fastSpinCount: 25
@@ -6984,10 +6988,10 @@ RectTransform:
   m_Father: {fileID: 769176577}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 266, y: -89.948685}
-  m_SizeDelta: {x: 174, y: 169.89737}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2125123183
 MonoBehaviour:
@@ -6998,16 +7002,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2125123181}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 961b6997fbf6b124b9526eae860bf2eb, type: 3}
+  m_Script: {fileID: 11500000, guid: fb02445f2a2ecf945931943cdcca6d6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  equipmentTable:
-  - {fileID: 11400000, guid: 1c7fe50e3ed5c444fab58cb8f0ebb79b, type: 2}
-  - {fileID: 11400000, guid: d6b47fd9c3f432243a830a8cd6465170, type: 2}
-  - {fileID: 11400000, guid: 1bcc8cbb776ab164f9e1348446f94aa9, type: 2}
-  - {fileID: 11400000, guid: fdae265c7dbc1d944bbbabea4a5f3960, type: 2}
-  - {fileID: 11400000, guid: 20a9e7c2a0575b44f8040600e4ab6bc9, type: 2}
-  - {fileID: 11400000, guid: 117d51cb441b29f49b1417ea1d6961f4, type: 2}
   slotSpin1: {fileID: 477092449}
   slotSpin2: {fileID: 188097787}
   fastSpinCount: 20
@@ -7993,10 +7990,10 @@ RectTransform:
   m_Father: {fileID: 769176577}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 87, y: -89.948685}
-  m_SizeDelta: {x: 174, y: 169.89737}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5594411970597252180
 MonoBehaviour:
@@ -8007,16 +8004,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 5594411970597252178}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 961b6997fbf6b124b9526eae860bf2eb, type: 3}
+  m_Script: {fileID: 11500000, guid: fb02445f2a2ecf945931943cdcca6d6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  equipmentTable:
-  - {fileID: 11400000, guid: 1c7fe50e3ed5c444fab58cb8f0ebb79b, type: 2}
-  - {fileID: 11400000, guid: d6b47fd9c3f432243a830a8cd6465170, type: 2}
-  - {fileID: 11400000, guid: 1bcc8cbb776ab164f9e1348446f94aa9, type: 2}
-  - {fileID: 11400000, guid: fdae265c7dbc1d944bbbabea4a5f3960, type: 2}
-  - {fileID: 11400000, guid: 20a9e7c2a0575b44f8040600e4ab6bc9, type: 2}
-  - {fileID: 11400000, guid: 117d51cb441b29f49b1417ea1d6961f4, type: 2}
   slotSpin1: {fileID: 8674791}
   slotSpin2: {fileID: 520357220}
   fastSpinCount: 15
