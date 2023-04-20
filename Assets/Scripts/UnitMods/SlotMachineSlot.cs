@@ -6,8 +6,9 @@ using UnityEngine.UI;
 public class SlotMachineSlot : MonoBehaviour
 {
 
+    SlotMachine slotMachine;
     List<EquipmentData> equipmentTable;
-    int index = 0;
+    int index = 0, finalIndex;
     Animator anim;
     [SerializeField] Image slotSpin1, slotSpin2;
     int fastSpins;
@@ -18,19 +19,17 @@ public class SlotMachineSlot : MonoBehaviour
         anim.StopPlayback();
     }
 
-    public void Initialize(List<EquipmentData> table, int finalIndex) {
-
+    public void Initialize(SlotMachine slot, List<EquipmentData> table, int _finalIndex) {
+        slotMachine = slot;
         equipmentTable = table;
-        index = finalIndex;
-        fastSpins = 0;
-        
+        GetComponent<Button>().interactable = false;
     }
 
 
-    public void Spin() {
+    public void Spin(int _finalIndex) {
         anim.SetTrigger("startSpin");
-        Debug.Log(equipmentTable[index].name);
-        index = index - ((fastSpinCount * 2) % equipmentTable.Count) - 2;
+        fastSpins = 0;
+        finalIndex = _finalIndex;
         RestartSpin(1);
     }
     
@@ -45,13 +44,22 @@ public class SlotMachineSlot : MonoBehaviour
     }
 
     public void SlowSpin() {
-        if (fastSpins >= fastSpinCount && fastSpins%2 == 0) 
-           anim.speed -= 0.25f;
-        else if (anim.speed <= 0.25f) {
-            anim.SetTrigger("spunOut");
-            anim.speed = 1;
-        }
+        if (fastSpins >= fastSpinCount) 
+           anim.SetTrigger("slow");
         else
             fastSpins++;
+    }
+
+    public void LastSpin() {
+        int prevIndex = index;
+        slotSpin2.sprite = equipmentTable[prevIndex].icon;
+        index = finalIndex;
+        slotSpin1.sprite = equipmentTable[index].icon;
+        GetComponent<Button>().interactable = true;
+    }
+
+    public void SelectSlot() {
+        slotMachine.LoadOutEquipment();
+
     }
 }

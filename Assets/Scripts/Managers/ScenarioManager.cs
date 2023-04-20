@@ -33,7 +33,7 @@ public class ScenarioManager : MonoBehaviour
 // State machines
     public enum GameState { Null, Setup, Battle, End }
     public GameState gameState;
-    public enum Turn { Null, Player, Enemy, Descent }
+    public enum Turn { Null, Player, Enemy, Descent, Loadout, Slots }
     public Turn currentTurn, prevTurn;
     public int turnCount, turnsToDescend;
 

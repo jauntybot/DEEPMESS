@@ -29,11 +29,11 @@ public class MusicController : MonoBehaviour
     public void PlayAudio()
     {
         musicAudioSource.Play();
-        playing = StartCoroutine(WaitToSkip());
+        playing = StartCoroutine(EndOfTrack());
     }
 
-    private IEnumerator WaitToSkip() {
-        while (musicAudioSource.isPlaying) {
+    private IEnumerator EndOfTrack() {
+        while (musicAudioSource.time < musicAudioSource.clip.length) {
             yield return null;
         }
         SkipForward();

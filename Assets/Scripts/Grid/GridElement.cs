@@ -66,7 +66,10 @@ public class GridElement : MonoBehaviour{
         int sort = grid.SortOrderFromCoord(c);
         foreach (SpriteRenderer sr in gfx)
             sr.sortingOrder = sort;
-        if (shellGFX) shellGFX.GetComponent<LineRenderer>().sortingOrder = sort;
+        if (shellGFX) {
+            if (shellGFX.GetComponent<LineRenderer>()) shellGFX.GetComponent<LineRenderer>().sortingOrder = sort;
+            else if (shellGFX.GetComponent<SpriteRenderer>()) shellGFX.GetComponent<SpriteRenderer>().sortingOrder = sort;
+        }
     }
 
     public virtual void EnableSelection(bool state) {

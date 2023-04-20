@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+[RequireComponent(typeof(BetweenFloorManager))]
 public class FloorManager : MonoBehaviour
 {
 
@@ -22,6 +23,7 @@ public class FloorManager : MonoBehaviour
     public static float sqrSize;
 
     [Header("Floor Transitioning")]
+    [HideInInspector] public BetweenFloorManager betweenFloor;
     [SerializeField] Transform transitionParent;
     public float floorOffset, transitionDur;
     private bool transitioning;
@@ -50,6 +52,7 @@ public class FloorManager : MonoBehaviour
     void Start() {
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
         lineRenderers = new Dictionary<GridElement, LineRenderer>();
+        betweenFloor = GetComponent<BetweenFloorManager>();
     }
 
     public IEnumerator GenerateFloor() {
@@ -204,7 +207,7 @@ public class FloorManager : MonoBehaviour
         float partialFrom = scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf;
         float partialA = down? 0.25f : 1;
 
-// All this code should be refactored into the stencil buffer alpha, NestedFadeGroup should go
+// All this code should be refactored into the stencil buffer alpha, NestedFadeGroup should be removed from project
 // Store references to which groups of grid objects will be faded with the transition contextually by preview
         List<NestedFadeGroup.NestedFadeGroup> currentFade = new List<NestedFadeGroup.NestedFadeGroup> {
             currentFloor.gridContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
@@ -353,7 +356,11 @@ public class FloorManager : MonoBehaviour
         yield return StartCoroutine(TransitionFloors(true, false));
 
         yield return new WaitForSecondsRealtime(0.25f);
-
+        if (betweenFloor.InbetweenTrigger(currentFloor.index-1)) {
+            yield return StartCoroutine(betweenFloor.BetweenFloorSegment(currentFloor.index-1));
+            
+            yield return new WaitForSecondsRealtime(0.25f);
+        }
         yield return StartCoroutine(DropUnits(floors[currentFloor.index-1], currentFloor));
 
         scenario.player.DescendGrids(currentFloor);

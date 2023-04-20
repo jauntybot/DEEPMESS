@@ -114,8 +114,10 @@ public class HammerData : EquipmentData
             PassHammer((PlayerUnit)user, (PlayerUnit)passTo);
             hammer.SetActive(true);
 
-            if (target is Nail)
+            if (target is Nail) {
+                yield return new WaitForSecondsRealtime(0.25f);
                 manager.TriggerDescent();
+            }
         }
     }
 
