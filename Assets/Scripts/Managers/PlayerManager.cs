@@ -75,6 +75,8 @@ public class PlayerManager : UnitManager {
             equip.AssignHammer(h, nail);
         }        
         unit.ui.UpdateEquipmentButtons();
+        unit.SwitchAnim(PlayerUnit.AnimState.Hammer);
+        h.SetActive(false);
     }
 
 // Initializes or closes functions for turn start/end

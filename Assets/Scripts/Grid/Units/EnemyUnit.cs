@@ -81,6 +81,7 @@ public class EnemyUnit : Unit {
     public override IEnumerator DestroyElement() 
     {
         if (manager.units.Count <= 1 && manager.scenario.currentTurn == ScenarioManager.Turn.Player) {
+            yield return new WaitForSecondsRealtime(0.25f);
             manager.scenario.player.TriggerDescent();
         }
         yield return base.DestroyElement();

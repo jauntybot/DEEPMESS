@@ -19,6 +19,7 @@ public class UnitUI : MonoBehaviour
     public List<EquipmentButton> equipment; 
     [SerializeField] GameObject equipmentPanel, equipmentButtonPrefab;
     [SerializeField] GameObject equipmentOptions;
+    public GameObject initialLoadoutButton, slotsLoadoutButton;
 
     
     public UnitUI Initialize(Unit u) {
@@ -33,6 +34,9 @@ public class UnitUI : MonoBehaviour
             ToggleEquipmentPanel(false);
         }
         ToggleUnitPanel(false);
+        if (initialLoadoutButton != null) {
+            initialLoadoutButton.SetActive(true); slotsLoadoutButton.SetActive(false);
+        }
 
         u.ElementDestroyed += UnitDestroyed;
 
@@ -120,6 +124,10 @@ public class UnitUI : MonoBehaviour
                 Destroy(b.gameObject);
             }
         }
+    }
+
+    public void SwapEquipmentFromSlots() {
+        UpdateLoadout(FloorManager.instance.betweenFloor.currentBetween.slotMachine.selectedReward);
     }
 
 }

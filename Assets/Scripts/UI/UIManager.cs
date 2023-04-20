@@ -21,6 +21,7 @@ public class UIManager : MonoBehaviour
     bool unitDisplayed;
 
     [Header("Loadouts")]
+    [SerializeField] LoadoutManager loadoutManager;
     [SerializeField] GameObject loadoutPrefab;
     [SerializeField] Transform loadoutPanel, loadoutUIParent;
     List<UnitUI> loadoutUIs = new List<UnitUI>();
@@ -63,9 +64,10 @@ public class UIManager : MonoBehaviour
     }
     
 
-    public IEnumerator InitialLoadOutScreen() {
+    public IEnumerator LoadOutScreen(bool first = false) {
         loadoutPanel.gameObject.SetActive(true);
-        while (scenario.currentTurn != ScenarioManager.Turn.Descent) {
+        loadoutManager.DisplayLoadout(first);
+        while (scenario.currentTurn == ScenarioManager.Turn.Loadout) {
 
             yield return null;
         }

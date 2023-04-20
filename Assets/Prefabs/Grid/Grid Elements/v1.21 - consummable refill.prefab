@@ -60,15 +60,21 @@ MonoBehaviour:
   hpMax: 0
   hpCurrent: 0
   defense: 0
+  shell: 0
+  shellGFX: {fileID: 0}
   energyCurrent: 0
   energyMax: 0
   destroyed: 0
   pickup: 1
-  equipment: {fileID: 0}
+  equipment:
+  - {fileID: 0}
   consumableTable:
   - {fileID: 11400000, guid: 1c7fe50e3ed5c444fab58cb8f0ebb79b, type: 2}
   - {fileID: 11400000, guid: 1bcc8cbb776ab164f9e1348446f94aa9, type: 2}
   - {fileID: 11400000, guid: 20a9e7c2a0575b44f8040600e4ab6bc9, type: 2}
+  - {fileID: 11400000, guid: d6b47fd9c3f432243a830a8cd6465170, type: 2}
+  - {fileID: 11400000, guid: 117d51cb441b29f49b1417ea1d6961f4, type: 2}
+  - {fileID: 11400000, guid: fdae265c7dbc1d944bbbabea4a5f3960, type: 2}
   equipIcon: {fileID: 5080983560589744669}
 --- !u!60 &3063837829245977038
 PolygonCollider2D:

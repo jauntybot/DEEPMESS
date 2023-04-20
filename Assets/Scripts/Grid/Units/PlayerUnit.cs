@@ -7,7 +7,16 @@ using UnityEngine;
 public class PlayerUnit : Unit {
 
     public int consumableCount;
+
+    public enum AnimState { Idle, Hammer };
+    public AnimState animState;
+    protected Animator gfxAnim;
     
+    protected override void Start() {
+        base.Start();
+        gfxAnim = gfx[0].GetComponent<Animator>();
+    }
+
 // Called when an action is applied to a unit or to clear it's actions
     public override void UpdateAction(EquipmentData equipment = null, int mod = 0) 
     {
@@ -21,8 +30,12 @@ public class PlayerUnit : Unit {
         base.ExecuteAction(target);
         PlayerManager m = (PlayerManager)manager;
         UIManager.instance.ToggleUndoButton(m.undoOrder.Count > 0);
-        if (selectedEquipment is not BHammerData)
-            manager.DeselectUnit();
+        if (selectedEquipment) {
+            if (!selectedEquipment.multiselect)
+                manager.DeselectUnit();
+            else if (selectedEquipment.firstTarget == null)
+                manager.DeselectUnit();
+        }
     }
 
 // Allow the player to click on this
@@ -37,6 +50,15 @@ public class PlayerUnit : Unit {
         base.TargetElement(state);
         ui.ToggleEquipmentPanel(state);
         //if (energyCurrent == 0 || manager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
+    }
+
+    public virtual void SwitchAnim(AnimState toState) {
+        animState = toState;
+        switch (toState) {
+            default: gfxAnim.SetBool("Hammer", false); break;
+            case AnimState.Idle: gfxAnim.SetBool("Hammer", false); break;
+            case AnimState.Hammer: gfxAnim.SetBool("Hammer", true); break;
+        }
     }
 
 // Override destroy to account for dropping the hammer

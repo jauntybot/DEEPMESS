@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+[RequireComponent(typeof(BetweenFloorManager))]
 public class FloorManager : MonoBehaviour
 {
 
     ScenarioManager scenario;
-    [SerializeField] GameObject floorPrefab;
     
-    public Color moveColor, attackColor, hammerColor;
+    [Header("Floor Serialization")]
+    [SerializeField] GameObject floorPrefab;
+    [SerializeField] Transform floorParent;
     [SerializeField] List<FloorDefinition> floorDefinitions;
 
     public Grid currentFloor;
-    [SerializeField] Transform floorParent;
     public List<Grid> floors;
 
     [SerializeField] int _gridSize;
@@ -21,15 +22,20 @@ public class FloorManager : MonoBehaviour
     [SerializeField] float _sqrSize;
     public static float sqrSize;
 
+    [Header("Floor Transitioning")]
+    [HideInInspector] public BetweenFloorManager betweenFloor;
     [SerializeField] Transform transitionParent;
     public float floorOffset, transitionDur;
     private bool transitioning;
-    private bool notation = false;
-    [SerializeField] private GameObject descentPreview;
-    [SerializeField] private Dictionary<GridElement, LineRenderer> lineRenderers;
-    [SerializeField] private Material previewMaterial;
-    [SerializeField] private Color playerColor, enemyColor;
     [SerializeField] public GameObject upButton, downButton;
+    
+    [Header("Grid Viz")]
+    [SerializeField] private GameObject descentPreview;
+    [SerializeField] private Material previewMaterial;
+    [SerializeField] private Dictionary<GridElement, LineRenderer> lineRenderers;
+    public Color moveColor, attackColor, hammerColor;
+    [SerializeField] private Color playerColor, enemyColor;
+    private bool notation = false;
 
     #region Singleton (and Awake)
     public static FloorManager instance;
@@ -46,6 +52,7 @@ public class FloorManager : MonoBehaviour
     void Start() {
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
         lineRenderers = new Dictionary<GridElement, LineRenderer>();
+        betweenFloor = GetComponent<BetweenFloorManager>();
     }
 
     public IEnumerator GenerateFloor() {
@@ -200,7 +207,7 @@ public class FloorManager : MonoBehaviour
         float partialFrom = scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf;
         float partialA = down? 0.25f : 1;
 
-// All this code should be refactored into the stencil buffer alpha, NestedFadeGroup should go
+// All this code should be refactored into the stencil buffer alpha, NestedFadeGroup should be removed from project
 // Store references to which groups of grid objects will be faded with the transition contextually by preview
         List<NestedFadeGroup.NestedFadeGroup> currentFade = new List<NestedFadeGroup.NestedFadeGroup> {
             currentFloor.gridContainer.GetComponent<NestedFadeGroup.NestedFadeGroup>(),
@@ -310,7 +317,7 @@ public class FloorManager : MonoBehaviour
             }
         }
         //yield return finalCoroutine;
-        Debug.Log("final coroutine");
+        //Debug.Log("final coroutine");
     }
 
     public IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
@@ -349,7 +356,11 @@ public class FloorManager : MonoBehaviour
         yield return StartCoroutine(TransitionFloors(true, false));
 
         yield return new WaitForSecondsRealtime(0.25f);
-
+        if (betweenFloor.InbetweenTrigger(currentFloor.index-1)) {
+            yield return StartCoroutine(betweenFloor.BetweenFloorSegment(currentFloor.index-1));
+            
+            yield return new WaitForSecondsRealtime(0.25f);
+        }
         yield return StartCoroutine(DropUnits(floors[currentFloor.index-1], currentFloor));
 
         scenario.player.DescendGrids(currentFloor);
