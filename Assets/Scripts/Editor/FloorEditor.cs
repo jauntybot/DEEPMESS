@@ -100,8 +100,10 @@ public class FloorEditor : EditorWindow {
     } 
 
     protected static void ReloadAssetsFromAtlas() {
-        for (int i = lvl.initSpawns.Count - 1; i >= 0; i--) {
-            lvl.initSpawns[i].asset = lvl.atlas.assets.Find(a => a.name == lvl.initSpawns[i].asset.name);
+        if (lvl.initSpawns.Count > 0) {
+            for (int i = lvl.initSpawns.Count - 1; i >= 0; i--) {
+                lvl.initSpawns[i].asset = lvl.atlas.assets.Find(a => a.name == lvl.initSpawns[i].asset.name);
+            }
         }
         window.SaveChanges();
     }
