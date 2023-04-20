@@ -8,7 +8,6 @@ public class EquipmentButton : MonoBehaviour
     public EquipmentData data;
     PlayerUnit unit;
 
-    [SerializeField] TMPro.TMP_Text equipmentNameText;
     Image bg;
     public delegate void OnEquipmentUpdate(EquipmentData equipment, int rangeMod);
     private int rangeMod;
@@ -20,7 +19,6 @@ public class EquipmentButton : MonoBehaviour
 
     public void Initialize(EquipmentData d, GridElement ge) {
         data = d;
-        equipmentNameText.text = data.name;
         unit = (PlayerUnit)ge;
         EquipmentSelected += unit.UpdateAction;
         bg = GetComponent<Image>();

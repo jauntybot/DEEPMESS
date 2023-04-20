@@ -41,8 +41,6 @@ public class GridElement : MonoBehaviour{
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
 
-        originalMaterial = gfx[0].material;
-
         hpCurrent = hpMax;
         energyCurrent = energyMax;
         elementCanvas = GetComponentInChildren<ElementCanvas>();

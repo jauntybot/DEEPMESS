@@ -67,11 +67,14 @@ public class HammerData : EquipmentData
         if (target.gfx[0].sortingOrder > hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder)
             hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = target.gfx[0].sortingOrder;
         AudioManager.PlaySound(AudioAtlas.Sound.hammerPass, user.transform.position);
+        user.SwitchAnim(PlayerUnit.AnimState.Idle);
+        hammer.SetActive(true);
     
 // Lerp hammer to target
         float timer = 0;
-        while (timer < animDur / 2) {
-            hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(target.coord), timer/animDur);
+        float throwDur = animDur * Vector2.Distance(user.coord, target.coord);
+        while (timer < throwDur) {
+            hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(target.coord), timer/throwDur);
             yield return null;
             timer += Time.deltaTime;
         }
@@ -101,13 +104,15 @@ public class HammerData : EquipmentData
             if (passTo.gfx[0].sortingOrder > hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder)
                 hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;
             timer = 0;
-            while (timer < animDur) {
-                hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(passTo.coord), timer/animDur);
+            throwDur = animDur * Vector2.Distance(target.coord, passTo.coord);
+            while (timer < throwDur) {
+                hammer.transform.position = Vector3.Lerp(hammer.transform.position, FloorManager.instance.currentFloor.PosFromCoord(passTo.coord), timer/throwDur);
                 yield return null;
                 timer += Time.deltaTime;
             }
         
             PassHammer((PlayerUnit)user, (PlayerUnit)passTo);
+            hammer.SetActive(true);
 
             if (target is Nail)
                 manager.TriggerDescent();
@@ -129,6 +134,7 @@ public class HammerData : EquipmentData
         sender.gfx.Remove(hammer.GetComponentInChildren<SpriteRenderer>());
         hammer.transform.parent = reciever.transform;
         reciever.gfx.Add(hammer.GetComponentInChildren<SpriteRenderer>());
+        reciever.SwitchAnim(PlayerUnit.AnimState.Hammer);
 
         reciever.ui.UpdateEquipmentButtons();
         sender.ui.UpdateEquipmentButtons();
