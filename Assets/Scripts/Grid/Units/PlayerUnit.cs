@@ -7,7 +7,16 @@ using UnityEngine;
 public class PlayerUnit : Unit {
 
     public int consumableCount;
+
+    public enum AnimState { Idle, Hammer };
+    public AnimState animState;
+    protected Animator gfxAnim;
     
+    protected override void Start() {
+        base.Start();
+        gfxAnim = gfx[0].GetComponent<Animator>();
+    }
+
 // Called when an action is applied to a unit or to clear it's actions
     public override void UpdateAction(EquipmentData equipment = null, int mod = 0) 
     {
@@ -41,6 +50,15 @@ public class PlayerUnit : Unit {
         base.TargetElement(state);
         ui.ToggleEquipmentPanel(state);
         //if (energyCurrent == 0 || manager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
+    }
+
+    public virtual void SwitchAnim(AnimState toState) {
+        animState = toState;
+        switch (toState) {
+            default: gfxAnim.SetBool("Hammer", false); break;
+            case AnimState.Idle: gfxAnim.SetBool("Hammer", false); break;
+            case AnimState.Hammer: gfxAnim.SetBool("Hammer", true); break;
+        }
     }
 
 // Override destroy to account for dropping the hammer
