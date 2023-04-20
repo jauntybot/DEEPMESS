@@ -14,7 +14,7 @@ public class FloorDefinition : ScriptableObject
 // Combat floor refs
     public FloorAtlas atlas;
     [SerializeField]
-    public List<Spawn> initSpawns;
+    public List<Spawn> initSpawns = new List<Spawn>();
 
 // Slot machine floor refs
     public enum SlotsType { Equipment, Upgrades };
