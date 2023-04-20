@@ -79,7 +79,9 @@ public class FloorEditor : EditorWindow {
             for (int y = 0; y < 8; y++) {
                 Rect r = (Rect)EditorGUILayout.BeginHorizontal();
                 for (int x = 7; x >= 0; x--) {
-                    FloorDefinition.Spawn spawn = lvl.initSpawns.Find(s => s.coord == new Vector2(x, y));
+                    FloorDefinition.Spawn spawn = null;
+                    if (lvl.initSpawns.Count > 0)
+                        spawn = lvl.initSpawns.Find(s => s.coord == new Vector2(x, y));
                     Texture buttonSprite = lvl.atlas.assets[0].icon;
                     if (spawn != null) buttonSprite = spawn.asset.icon;
                     GUILayout.BeginArea(new Rect(x*101, (7-y)*101 + 35, 100, 100));
