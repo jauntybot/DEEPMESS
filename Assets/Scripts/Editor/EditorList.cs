@@ -25,8 +25,8 @@
                 if (showListSize)
                     EditorGUILayout.PropertyField(list.FindPropertyRelative("Array.size"));
                 if (!showListLabel) {
-                for (int i = 0; i < list.arraySize; i++)
-                    EditorGUILayout.PropertyField(list.GetArrayElementAtIndex(i));
+                    for (int i = 0; i < list.arraySize; i++)
+                        EditorGUILayout.PropertyField(list.GetArrayElementAtIndex(i));
                 }
             }
      
