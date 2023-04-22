@@ -103,6 +103,10 @@ public class PlayerManager : UnitManager {
         } else {
             DeselectUnit();
             currentGrid.UpdateTargetCursor(false, Vector2.one * -32);
+            if (scenario.prevTurn != ScenarioManager.Turn.Descent) {
+                if (nail.nailState == Nail.NailState.Buried)
+                    nail.ToggleNailState(Nail.NailState.Primed);
+            }
         }
     }
 
@@ -142,10 +146,12 @@ public class PlayerManager : UnitManager {
                 if (currentGrid.sqrs.Find(sqr => sqr.coord == spawn).tileType != GridSquare.TileType.Bone) validCoord = false;
             }
         }
-
+        if (nail.nailState == Nail.NailState.Buried)
+            nail.ToggleNailState(Nail.NailState.Primed);
         nail.transform.position = currentGrid.PosFromCoord(spawn) + new Vector3(0, floorManager.floorOffset, 0);
         nail.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         yield return StartCoroutine(UpdateNail(spawn));
+        nail.ToggleNailState(Nail.NailState.Buried);
         nail.collisionChance = 90;
     }
 

@@ -112,7 +112,7 @@ public class FloorManager : MonoBehaviour
                         LineRenderer lr = new GameObject().AddComponent<LineRenderer>();
                         lr.gameObject.transform.parent = descentPreview.transform;
                         lr.startWidth = 0.15f; lr.endWidth = 0.15f;
-                        lr.sortingLayerName = "UI";
+                        lr.sortingLayerName = "Floor";
                         lr.material = previewMaterial;
                         lr.positionCount = 2;
                         lr.SetPosition(0, ge.transform.position); lr.SetPosition(1, ge.transform.position);
@@ -340,6 +340,10 @@ public class FloorManager : MonoBehaviour
             StartCoroutine(unit.DestroyElement());
     }
 
+    public IEnumerator ChooseLandingPositions() {
+        yield return null;
+    }
+
     public void Descend() {
         StartCoroutine(DescendFloors());
         
@@ -361,6 +365,8 @@ public class FloorManager : MonoBehaviour
             
             yield return new WaitForSecondsRealtime(0.25f);
         }
+
+
         yield return StartCoroutine(DropUnits(floors[currentFloor.index-1], currentFloor));
 
         scenario.player.DescendGrids(currentFloor);

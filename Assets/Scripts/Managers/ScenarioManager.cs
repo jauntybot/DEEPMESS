@@ -31,8 +31,6 @@ public class ScenarioManager : MonoBehaviour
 
 
 // State machines
-    public enum GameState { Null, Setup, Battle, End }
-    public GameState gameState;
     public enum Turn { Null, Player, Enemy, Descent, Loadout, Slots }
     public Turn currentTurn, prevTurn;
     public int turnCount, turnsToDescend;
@@ -76,11 +74,6 @@ public class ScenarioManager : MonoBehaviour
 
 #endregion
 
-    public void SwitchStates(GameState fromState = GameState.Null) 
-    {
-
-    }
-
 // Overload allows you to specify which turn to switch to, otherwise inverts the binary
     public IEnumerator SwitchTurns(Turn toTurn = default) 
     {
@@ -95,12 +88,12 @@ public class ScenarioManager : MonoBehaviour
         switch(toTurn) 
         {
             case Turn.Enemy:
-                player.StartEndTurn(false);
                 if (currentEnemy.units.Count > 0) {
 // Decrease nail collision chance
                     player.nail.collisionChance -= 40;
                     floorManager.upButton.GetComponent<Button>().enabled = false; floorManager.downButton.GetComponent<Button>().enabled = false;
                     prevTurn = currentTurn; currentTurn = Turn.Enemy;
+                    player.StartEndTurn(false);
                     yield return StartCoroutine(messagePanel.DisplayMessage("ANTIBODY RESPONSE", 2));
                     foreach(Unit u in currentEnemy.units) {
                         u.energyCurrent = u.energyMax;
@@ -114,6 +107,7 @@ public class ScenarioManager : MonoBehaviour
                 }
                 else if (currentEnemy.units.Count <= 0) {
                    floorManager.Descend();
+                   Debug.Log("Empty floor descent");
                 }
             break;
             case Turn.Player:
@@ -133,8 +127,8 @@ public class ScenarioManager : MonoBehaviour
             break;
             case Turn.Descent:
                 turnCount = 0;
-                //player.StartEndTurn(false);
                 prevTurn = currentTurn; currentTurn = Turn.Descent;
+                player.StartEndTurn(false);
                 endTurnButton.enabled = false;
                 yield return StartCoroutine(messagePanel.DisplayMessage("DESCENDING", 0));
             break;

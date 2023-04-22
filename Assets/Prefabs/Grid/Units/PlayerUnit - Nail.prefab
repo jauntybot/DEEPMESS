@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 631266515453856563}
   - component: {fileID: 3029829164182793549}
   - component: {fileID: 2444370742946600307}
+  - component: {fileID: 3824274960761762058}
   m_Layer: 6
   m_Name: GFX
   m_TagString: Untagged
@@ -75,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: -1674473361
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: d44a75eb84d050e40b4846275861ab13, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e87951fca7662cc43ab8f39edb13f832, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -100,6 +101,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   alpha: 1
   exclude: 0
+--- !u!95 &3824274960761762058
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327620312189480074}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6594b28472ca1c249b44874dc67ea75b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &2911188987296525511
 GameObject:
   m_ObjectHideFlags: 0
@@ -180,6 +201,8 @@ MonoBehaviour:
   animDur: 1
   collisionChance: 90
   nailDrop: {fileID: 11400000, guid: af1dca810e8d7d6488875275fc4d3ac3, type: 2}
+  nailState: 0
+  gfxAnim: {fileID: 0}
 --- !u!114 &7285201812217589880
 MonoBehaviour:
   m_ObjectHideFlags: 0
