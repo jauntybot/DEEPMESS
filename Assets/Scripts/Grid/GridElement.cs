@@ -102,7 +102,7 @@ public class GridElement : MonoBehaviour{
         ElementDestroyed?.Invoke(this);
         AudioManager.PlaySound(destroyed, transform.position);
         yield return new WaitForSecondsRealtime(.25f);
-        if (this.gameObject)
+        if (this.gameObject != null)
             Destroy(this.gameObject);
         StopAllCoroutines();
     }
