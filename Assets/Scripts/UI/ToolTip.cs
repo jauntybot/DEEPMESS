@@ -1,69 +1,67 @@
-using UnityEngine.EventSystems;
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Text;
-using System.IO;
 using TMPro;
+using UnityEngine.UI;
 
-public class ToolTip : MonoBehaviour
+[ExecuteInEditMode()]
+public class Tooltip : MonoBehaviour
 {
-    [SerializeField] TMPro.TMP_Text elementName;
-    [SerializeField] TMPro.TMP_Text description;
-    [SerializeField] TMPro.TMP_Text damage;
 
-    public GridElement testGE;
-    public static ToolTip _instance;
+    public TextMeshProUGUI headerField;
+    public TextMeshProUGUI contentField;
+    public LayoutElement layoutElement;
 
-    //Singleton to make sure there is only one tool tip at a time
-    public void Awake()
+    public int textWrapLimit;
+
+    private RectTransform rectTransform;
+
+
+    private void Awake()
     {
-        if (_instance != null && _instance == this)
+        rectTransform = GetComponent<RectTransform>();
+    }
+
+    public void SetText(string content, string header = "")
+    {
+        if (string.IsNullOrEmpty(header))
         {
-            Destroy(this.gameObject);
+            headerField.gameObject.SetActive(false);
         }
         else
         {
-            _instance = this;
+            headerField.gameObject.SetActive(true);
+            headerField.text = header;
         }
+
+        contentField.text = content;
+
+        //limit text width
+        int headerLength = headerField.text.Length;
+        int contentLength = contentField.text.Length;
+
+        //ternary operator
+        layoutElement.enabled = (headerLength > textWrapLimit || contentLength > textWrapLimit) ? true : false;
     }
 
-    void Start()
+    private void Update()
     {
-        CreateCSVList(testGE);
-    }
-
-    void CreateCSVList(GridElement geTest)
-    {
-        //get game object tag
-        string goName = geTest.name;
-        TextAsset data = Resources.Load<TextAsset>("Database - " + geTest.GetType().Name);
-
-        //create rows
-        string[] textData = data.text.Split(new char[] { '\n' });
-
-        Debug.Log(textData[2]);
-
-        int nameLength = goName.Length;
-        int index = 0;
-
-        //create columns
-        for (int i = 1; i < textData.Length; i++)
+        if (Application.isEditor)
         {
-            string refName = "";
-            for (int l = 0; l < nameLength; l++)
-                refName += textData[i][l];
+            //limit text width
+            int headerLength = headerField.text.Length;
+            int contentLength = contentField.text.Length;
 
-            if (goName == refName)
-            {
-                index = i;
-                Debug.Log(goName + " is at index " + i);
-
-                string[] column = textData[i].Split(new char[] { ',' });
-                elementName.text = column[0];
-                description.text = column[1];
-                damage.text = column[2];
-            }
+            //ternary operator
+            layoutElement.enabled = (headerLength > textWrapLimit || contentLength > textWrapLimit) ? true : false;
         }
+
+        Vector2 position = Input.mousePosition;
+
+        float pivotX = position.x / Screen.width;
+        float pivotY = position.y / Screen.height;
+
+        rectTransform.pivot = new Vector2(pivotX, pivotY);
+        transform.position = position;
     }
 }
