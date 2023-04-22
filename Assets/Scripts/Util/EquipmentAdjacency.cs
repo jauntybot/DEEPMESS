@@ -24,6 +24,9 @@ public class EquipmentAdjacency : MonoBehaviour
         case EquipmentData.AdjacencyType.OfType:
             _coords = OfTypeOnBoardAdjacency(from, data.filters, from.coord);
         break;
+        case EquipmentData.AdjacencyType.OfTypeInRange:
+            _coords = OfTypeInRangeAdjacency(from, range, data, targetLast);
+        break;
         
         }
 
@@ -45,14 +48,13 @@ public class EquipmentAdjacency : MonoBehaviour
                     Vector2 coord = new Vector2(current.x + x, current.y);
                     if (!_coords.Contains(coord)) {
 // If there is something already occupying this coord  
-                        bool occupied = false;
+                        bool valid = true;
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
-                            occupied = true;
+                            valid = false;
 // Valid coord if element is not filtered
                             if (!data.filters.Find(f => f.GetType() == ge.GetType())
                             || data.filters == null) {
-                                frontier.Add(coord);
-                                _coords.Add(coord);
+                                valid = true;
                             } else if (targetLast != null) {
                                 foreach(GridElement target in targetLast) {
                                     if (ge.GetType() == target.GetType()) {
@@ -61,8 +63,20 @@ public class EquipmentAdjacency : MonoBehaviour
                                 }
                             }
                         }
-// Coord is empty
-                        if (!occupied) {
+// Check if GridSquare is valid
+                        foreach (GridElement ge in data.filters) {
+                            if (ge is GridSquare sqr) {
+                                GridSquare target = FloorManager.instance.currentFloor.sqrs.Find(sqr => sqr.coord == coord);
+                                if (target != null) {
+                                    if (target.tileType == sqr.tileType) {
+                                        valid = false;
+                                        Debug.Log(target.tileType + " @" + target.coord);
+                                    }
+                                }
+                            }
+                        }
+// Coord is valid
+                        if (valid) {
                             frontier.Add(coord);
                             _coords.Add(coord);
                         }
@@ -73,14 +87,13 @@ public class EquipmentAdjacency : MonoBehaviour
                     Vector2 coord = new Vector2(current.x, current.y + y);
                     if (!_coords.Contains(coord)) {
 // If there is something already occupying this coord                        
-                        bool occupied = false;
+                        bool valid = true;
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
-                            occupied = true;
+                            valid = false;
 // Valid coord if element is not filtered
                             if (!data.filters.Find(f => f.GetType() == ge.GetType())
                             || data.filters == null) {
-                                frontier.Add(coord);
-                                _coords.Add(coord);
+                                valid = true;
 // Valid coord if element is target, but stops frontier
                             } else if (targetLast != null) {
                                 foreach(GridElement target in targetLast) {
@@ -90,8 +103,20 @@ public class EquipmentAdjacency : MonoBehaviour
                                 }
                             }
                         }
+// Check if GridSquare is valid
+                        foreach (GridElement ge in data.filters) {
+                            if (ge is GridSquare sqr) {
+                                GridSquare target = FloorManager.instance.currentFloor.sqrs.Find(sqr => sqr.coord == coord);
+                                if (target != null) {
+                                    if (target.tileType == sqr.tileType) {
+                                        valid = false;
+                                        Debug.Log(target.tileType + " @" + target.coord);
+                                    }
+                                }
+                            }
+                        }
 // Coord is empty
-                        if (!occupied) {
+                        if (valid) {
                             frontier.Add(coord);
                             _coords.Add(coord);
                         }
@@ -247,6 +272,101 @@ public class EquipmentAdjacency : MonoBehaviour
         }
         return _coords;
     } 
+
+    public static List<Vector2> OfTypeInRangeAdjacency(GridElement from, int range, EquipmentData data, List<GridElement> targetLast) {
+        List<Vector2> _coords = new List<Vector2>();
+        List<Vector2> frontier = new List<Vector2>();
+        frontier.Add(from.coord);
+
+        for (int r = 1; r <= range; r++) {
+            for (int f = frontier.Count - 1; f >= 0; f--) {
+                Vector2 current = frontier[f];
+                frontier.Remove(frontier[f]);
+// X Axis adjacency
+                for (int x = -1; x < 2; x+=2) {
+                    Vector2 coord = new Vector2(current.x + x, current.y);
+                    if (!_coords.Contains(coord)) {
+// If there is something already occupying this coord  
+                        bool valid = true;
+                        foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
+                            valid = false;
+// Valid coord if element is not filtered
+                            if (!data.filters.Find(f => f.GetType() == ge.GetType())
+                            || data.filters == null) {
+                                valid = true;
+                            } else if (targetLast != null) {
+                                foreach(GridElement target in targetLast) {
+                                    if (ge.GetType() == target.GetType()) {
+                                        _coords.Add(coord);
+                                    }
+                                }
+                            }
+                        }
+// Check if GridSquare is valid
+                        foreach (GridElement ge in data.filters) {
+                            if (ge is GridSquare sqr) {
+                                GridSquare target = FloorManager.instance.currentFloor.sqrs.Find(sqr => sqr.coord == coord);
+                                if (target != null) {
+                                    if (target.tileType == sqr.tileType) {
+                                        valid = false;
+                                        Debug.Log(target.tileType + " @" + target.coord);
+                                    }
+                                }
+                            }
+                        }
+// Coord is valid
+                        frontier.Add(coord);
+
+                        if (valid) {
+                            _coords.Add(coord);
+                        }
+                    }
+                }
+// Y Axis adjacency
+                for (int y = -1; y < 2; y+=2) {    
+                    Vector2 coord = new Vector2(current.x, current.y + y);
+                    if (!_coords.Contains(coord)) {
+// If there is something already occupying this coord                        
+                        bool valid = true;
+                        foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
+                            valid = false;
+// Valid coord if element is not filtered
+                            if (!data.filters.Find(f => f.GetType() == ge.GetType())
+                            || data.filters == null) {
+                                valid = true;
+// Valid coord if element is target, but stops frontier
+                            } else if (targetLast != null) {
+                                foreach(GridElement target in targetLast) {
+                                    if (ge.GetType() == target.GetType()) {
+                                        _coords.Add(coord);
+                                    }
+                                }
+                            }
+                        }
+// Check if GridSquare is valid
+                        foreach (GridElement ge in data.filters) {
+                            if (ge is GridSquare sqr) {
+                                GridSquare target = FloorManager.instance.currentFloor.sqrs.Find(sqr => sqr.coord == coord);
+                                if (target != null) {
+                                    if (target.tileType == sqr.tileType) {
+                                        valid = false;
+                                        Debug.Log(target.tileType + " @" + target.coord);
+                                    }
+                                }
+                            }
+                        }
+// Coord is empty
+                        frontier.Add(coord);
+                        if (valid) {
+                            _coords.Add(coord);
+                        }
+                    }
+                }
+            }            
+        }
+        _coords = RemoveOffGridCoords(_coords);
+        return _coords;
+    }   
 
     protected static List<Vector2> RemoveOffGridCoords(List<Vector2> list) {
         // check if coords are off the board

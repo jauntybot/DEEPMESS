@@ -129,7 +129,7 @@ public class ConsumeMoveData : ConsumableEquipmentData
             timer += Time.deltaTime;
         }
         thrown.UpdateElement(coord);
-        thrown.StartCoroutine(thrown.TakeDamage(1));
+        //thrown.StartCoroutine(thrown.TakeDamage(1));
     }
 
     public IEnumerator MoveAllUnits(GridElement user, Vector2 selection) {
@@ -138,7 +138,7 @@ public class ConsumeMoveData : ConsumableEquipmentData
         List<Unit> unitsToMove = new List<Unit>();
         foreach (GridElement ge in user.grid.gridElements) {
             if (ge is Unit u) {
-                if (u is not Nail) 
+                if (u is not Nail && u is not PlayerUnit) 
                     unitsToMove.Add(u);
             }
         }
