@@ -20,6 +20,10 @@ public class UIManager : MonoBehaviour
     List<UnitUI> unitPortraits = new List<UnitUI>();
     bool unitDisplayed;
 
+    [Header("Overviews")]
+    [SerializeField] Transform overviewParent;
+    [SerializeField] GameObject overviewPrefab;
+
     [Header("Loadouts")]
     [SerializeField] LoadoutManager loadoutManager;
     [SerializeField] GameObject loadoutPrefab;

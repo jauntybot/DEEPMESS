@@ -193,6 +193,7 @@ public class FloorManager : MonoBehaviour
         if (toFloor) {
             toFloor.GetComponent<SortingGroup>().sortingOrder = 0;
             toFromScale = toFloor.transform.localScale;
+            toFloor.gameObject.SetActive(true);
         }
         if (!preview) currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
         else if (!down) currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
@@ -287,6 +288,7 @@ public class FloorManager : MonoBehaviour
                 fade.AlphaSelf = 1;
         }
 // Update floor manager current floor... preview next floor untis stats?
+        if (down) currentFloor.gameObject.SetActive(false);
         if (toFloor) currentFloor = toFloor;
         UIManager.instance.metaDisplay.UpdateCurrentFloor(currentFloor.index);
     }

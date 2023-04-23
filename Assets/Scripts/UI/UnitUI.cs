@@ -10,7 +10,7 @@ public class UnitUI : MonoBehaviour
     public Unit unit;
 
     [Header("Canvas Elements")]
-    public GameObject unitPanel;
+    public GameObject portraitPanel;
     public TMPro.TMP_Text unitName;
     public Image portrait;
     public Image gfx;
@@ -21,6 +21,9 @@ public class UnitUI : MonoBehaviour
     [SerializeField] GameObject equipmentOptions;
     public GameObject initialLoadoutButton, slotsLoadoutButton;
 
+    [Header("Overview")]
+
+    [SerializeField] public UnitOverview overview;
     
     public UnitUI Initialize(Unit u) {
 
@@ -45,7 +48,7 @@ public class UnitUI : MonoBehaviour
 
     public void ToggleUnitPanel(bool active) {
 
-        unitPanel.SetActive(active);
+        portraitPanel.SetActive(active);
 
     }
 
