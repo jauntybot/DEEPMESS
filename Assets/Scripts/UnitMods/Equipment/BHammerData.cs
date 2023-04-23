@@ -112,7 +112,10 @@ public class BHammerData : HammerData
 // Attack target if unit
         if (target is EnemyUnit) 
             target.StartCoroutine(target.TakeDamage(1));
-        
+        else if (target is Nail n) {
+            if (n.nailState == Nail.NailState.Primed)
+                n.ToggleNailState(Nail.NailState.Buried);
+        }
 // Lerp hammer to passTo unit
         if (passTo.gfx[0].sortingOrder > hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder)  
             hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;

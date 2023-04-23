@@ -130,6 +130,8 @@ public class ScenarioManager : MonoBehaviour
             case Turn.Descent:
                 currentTurn = Turn.Descent;
                 player.StartEndTurn(false);
+                foreach(Unit u in player.units)
+                    u.usedEquip = false;
                 endTurnButton.enabled = false;
                 yield return StartCoroutine(messagePanel.DisplayMessage("DESCENDING", 0));
             break;

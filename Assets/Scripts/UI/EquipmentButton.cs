@@ -23,7 +23,7 @@ public class EquipmentButton : MonoBehaviour
         EquipmentSelected += unit.UpdateAction;
         bg = GetComponent<Image>();
         bg.sprite = data.icon;
-        badge.SetActive(d is ConsumableEquipmentData);
+        //badge.SetActive(d is ConsumableEquipmentData);
         UpdateMod();
     }
 

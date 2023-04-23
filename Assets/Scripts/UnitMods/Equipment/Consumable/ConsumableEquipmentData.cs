@@ -20,7 +20,8 @@ public class ConsumableEquipmentData : EquipmentData
     {
         yield return base.UseEquipment(user, target);
         PlayerUnit pu = (PlayerUnit)user;
-        pu.consumableCount--;
+        //pu.consumableCount--;
+        pu.usedEquip = true;
         pu.ui.UpdateEquipmentButtons();
     }
 

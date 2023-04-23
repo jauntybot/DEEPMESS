@@ -52,7 +52,7 @@ public class EnemyManager : UnitManager {
         input.UpdateAction(input.equipment[1]);
         foreach (Vector2 coord in input.validActionCoords) 
         {
-            if (input.ValidCommand(coord)) {
+            if (input.ValidCommand(coord, input.selectedEquipment)) {
                 SelectUnit(input);
                 GridElement target = null;
                 foreach (GridElement ge in selectedUnit.grid.CoordContents(coord))
@@ -85,7 +85,7 @@ public class EnemyManager : UnitManager {
         input.UpdateAction(input.equipment[1]);
         foreach (Vector2 coord in input.validActionCoords) 
         {
-            if (input.ValidCommand(coord)) {       
+            if (input.ValidCommand(coord, input.selectedEquipment)) {       
                 SelectUnit(input);   
                 GridElement target = null;
                 foreach (GridElement ge in selectedUnit.grid.CoordContents(coord))

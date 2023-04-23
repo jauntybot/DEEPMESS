@@ -105,7 +105,7 @@ public class PlayerManager : UnitManager {
         } else {
             DeselectUnit();
             currentGrid.UpdateTargetCursor(false, Vector2.one * -32);
-            if (scenario.prevTurn != ScenarioManager.Turn.Descent) {
+            if (scenario.prevTurn != ScenarioManager.Turn.Descent && scenario.currentTurn != ScenarioManager.Turn.Descent) {
                 if (nail.nailState == Nail.NailState.Buried)
                     nail.ToggleNailState(Nail.NailState.Primed);
             }
@@ -181,11 +181,11 @@ public class PlayerManager : UnitManager {
             if (u.manager is PlayerManager) 
             {
                 if (selectedUnit) {
-                    if (u == selectedUnit && !selectedUnit.ValidCommand(u.coord)) 
+                    if (u == selectedUnit && !selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) 
                     {  
                         DeselectUnit();                 
                     }
-                    else if (selectedUnit.ValidCommand(u.coord)) {
+                    else if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
                         selectedUnit.ExecuteAction(u);
                     } else {
                         DeselectUnit();
@@ -200,7 +200,7 @@ public class PlayerManager : UnitManager {
                 if (selectedUnit) 
                 {
 // Unit is a target of valid action adjacency
-                    if (selectedUnit.ValidCommand(u.coord)) {
+                    if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
                         selectedUnit.ExecuteAction(u);
                     } 
                 }
@@ -219,7 +219,7 @@ public class PlayerManager : UnitManager {
             else {
                 if (selectedUnit) {
 // Square is a target of valid action adjacency
-                    if (selectedUnit.ValidCommand(sqr.coord)) {
+                    if (selectedUnit.ValidCommand(sqr.coord, selectedUnit.selectedEquipment)) {
                         currentGrid.DisableGridHighlight();
                         selectedUnit.ExecuteAction(sqr);
                     } else 
@@ -229,7 +229,7 @@ public class PlayerManager : UnitManager {
         }
         else {
             if (selectedUnit) {
-                if (selectedUnit.ValidCommand(input.coord)) {
+                if (selectedUnit.ValidCommand(input.coord, selectedUnit.selectedEquipment)) {
                     currentGrid.DisableGridHighlight();
                     selectedUnit.ExecuteAction(input);
                 } else

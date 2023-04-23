@@ -55,8 +55,11 @@ public class UnitUI : MonoBehaviour
     }
 
     public void ToggleEquipmentButtons() {
-        foreach (EquipmentButton b in equipment) 
+        foreach (EquipmentButton b in equipment) {
             b.gameObject.GetComponent<Button>().interactable = (unit.energyCurrent >= b.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted));
+            if (b.data is ConsumableEquipmentData && unit.usedEquip)
+                b.gameObject.GetComponent<Button>().interactable = false;
+        }
     }
 
     public void UpdateEquipmentButtons() {
