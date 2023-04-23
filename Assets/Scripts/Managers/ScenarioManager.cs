@@ -31,7 +31,7 @@ public class ScenarioManager : MonoBehaviour
 
 
 // State machines
-    public enum Turn { Null, Player, Enemy, Descent, Loadout, Slots }
+    public enum Turn { Null, Player, Enemy, Descent, Cascade, Loadout, Slots }
     public Turn currentTurn, prevTurn;
     public int turnCount, turnsToDescend;
 
@@ -83,8 +83,10 @@ public class ScenarioManager : MonoBehaviour
                 case Turn.Player: toTurn = Turn.Enemy; break;
                 case Turn.Enemy: toTurn = Turn.Player; break;
                 case Turn.Descent: toTurn = prevTurn; break;
+                case Turn.Cascade: toTurn = Turn.Descent; break;
             }
         }
+        prevTurn = currentTurn;
         switch(toTurn) 
         {
             case Turn.Enemy:
@@ -92,7 +94,7 @@ public class ScenarioManager : MonoBehaviour
 // Decrease nail collision chance
                     player.nail.collisionChance -= 40;
                     floorManager.upButton.GetComponent<Button>().enabled = false; floorManager.downButton.GetComponent<Button>().enabled = false;
-                    prevTurn = currentTurn; currentTurn = Turn.Enemy;
+                    currentTurn = Turn.Enemy;
                     player.StartEndTurn(false);
                     yield return StartCoroutine(messagePanel.DisplayMessage("ANTIBODY RESPONSE", 2));
                     foreach(Unit u in currentEnemy.units) {
@@ -106,7 +108,7 @@ public class ScenarioManager : MonoBehaviour
                         StartCoroutine(currentEnemy.TakeTurn(false));
                 }
                 else if (currentEnemy.units.Count <= 0) {
-                   floorManager.Descend();
+                   floorManager.Descend(prevTurn == Turn.Descent);
                    Debug.Log("Empty floor descent");
                 }
             break;
@@ -117,7 +119,7 @@ public class ScenarioManager : MonoBehaviour
                     floorManager.upButton.GetComponent<Button>().enabled = true; floorManager.downButton.GetComponent<Button>().enabled = true;
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN", 1));
 
-                    prevTurn = currentTurn; currentTurn = Turn.Player;
+                    currentTurn = Turn.Player;
                     endTurnButton.enabled = true;
 
                     player.StartEndTurn(true);
@@ -126,11 +128,17 @@ public class ScenarioManager : MonoBehaviour
                 }
             break;
             case Turn.Descent:
-                turnCount = 0;
-                prevTurn = currentTurn; currentTurn = Turn.Descent;
+                currentTurn = Turn.Descent;
                 player.StartEndTurn(false);
                 endTurnButton.enabled = false;
                 yield return StartCoroutine(messagePanel.DisplayMessage("DESCENDING", 0));
+            break;
+            case Turn.Cascade:
+                currentTurn = Turn.Cascade;
+                player.StartEndTurn(true);
+                endTurnButton.enabled = true;
+                yield return StartCoroutine(messagePanel.DisplayMessage("REPOSITION UNITS", 1));
+                player.currentGrid = floorManager.currentFloor;
             break;
         }
     }

@@ -21,9 +21,16 @@ public class BHammerData : HammerData
                     bool remove = true;
                     foreach(GridElement target in targetTypes) {
                         if (ge.GetType() == target.GetType()) {
-                            remove = false;
-                            if (ge is EnemyUnit)
-                                ge.elementCanvas.ToggleStatsDisplay(true);
+                            if (ge is Nail n) {
+                                if (n.nailState == Nail.NailState.Primed)
+                                    remove = false;
+                                else
+                                    user.grid.sqrs.Find(sqr => sqr.coord == n.coord).ToggleValidCoord(false);
+                            } else {
+                                remove = false;
+                                if (ge is EnemyUnit)
+                                    ge.elementCanvas.ToggleStatsDisplay(true);
+                            }
                         }
                     }
                     if (remove || !occupied) {

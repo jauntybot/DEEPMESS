@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour {
 
 // Coroutine that runs while the player is allowed to select elements on the grid
     public IEnumerator GridInput() {
-        while (manager.scenario.currentTurn == ScenarioManager.Turn.Player) {
+        while (manager.scenario.currentTurn == ScenarioManager.Turn.Player || manager.scenario.currentTurn == ScenarioManager.Turn.Cascade) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             RaycastHit2D hit = ClickInput();
 // On mouseover

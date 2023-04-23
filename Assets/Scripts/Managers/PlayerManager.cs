@@ -17,6 +17,8 @@ public class PlayerManager : UnitManager {
     public LoadoutManager loadout;
     public Nail nail;
     public List<HammerData> hammerActions;
+    [SerializeField] EquipmentData cascadeMovement;
+    EquipmentData overrideEquipment = null;
     [SerializeField] public GameObject nailPrefab, hammerPrefab, hammerPickupPrefab;
 
 

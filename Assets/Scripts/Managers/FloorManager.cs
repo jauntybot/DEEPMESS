@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Rendering;
 
 [RequireComponent(typeof(BetweenFloorManager))]
@@ -341,15 +342,21 @@ public class FloorManager : MonoBehaviour
     }
 
     public IEnumerator ChooseLandingPositions() {
-        yield return null;
+        yield return new WaitForSecondsRealtime(.2f);
+        yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Cascade));
+        while (scenario.currentTurn == ScenarioManager.Turn.Cascade)
+            yield return null;
+        StartCoroutine(ToggleDescentPreview(false));
+        currentFloor.DisableGridHighlight();
+
     }
 
-    public void Descend() {
-        StartCoroutine(DescendFloors());
+    public void Descend(bool cascade = false) {
+        StartCoroutine(DescendFloors(cascade));
         
     }
 
-    public IEnumerator DescendFloors() {
+    public IEnumerator DescendFloors(bool cascade = false) {
 
 
         EnemyManager enemy = (EnemyManager)currentFloor.enemy;
@@ -357,7 +364,15 @@ public class FloorManager : MonoBehaviour
         currentFloor.DisableGridHighlight();
         currentFloor.LockGrid(true);
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
-        yield return StartCoroutine(TransitionFloors(true, false));
+        downButton.GetComponent<Button>().interactable = false;
+        
+        if (cascade) {
+            yield return StartCoroutine(PreviewFloor(true, true));
+            currentFloor.LockGrid(false);
+            SetButtonActive(downButton, true); SetButtonActive(upButton, false);
+        }
+        else
+            yield return StartCoroutine(TransitionFloors(true, false));
 
         yield return new WaitForSecondsRealtime(0.25f);
         if (betweenFloor.InbetweenTrigger(currentFloor.index-1)) {
@@ -366,6 +381,10 @@ public class FloorManager : MonoBehaviour
             yield return new WaitForSecondsRealtime(0.25f);
         }
 
+        if (cascade) {
+            yield return StartCoroutine(ChooseLandingPositions());
+            yield return new WaitForSecondsRealtime(1.25f);
+        }
 
         yield return StartCoroutine(DropUnits(floors[currentFloor.index-1], currentFloor));
 
@@ -405,6 +424,7 @@ public class FloorManager : MonoBehaviour
 
             StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
         }
+        downButton.GetComponent<Button>().interactable = true;
     }
 
 }
