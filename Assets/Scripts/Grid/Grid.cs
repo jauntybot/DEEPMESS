@@ -132,8 +132,9 @@ public class Grid : MonoBehaviour {
     }
 
 // Toggle GridSquare highlights, apply color by index
-    public void DisplayValidCoords(List<Vector2> coords, int? index = null) {
-        DisableGridHighlight();
+    public void DisplayValidCoords(List<Vector2> coords, int? index = null, bool stack = false) {
+        if (!stack)
+            DisableGridHighlight();
 
         Color c = floorManager.moveColor;
         if (index is int i) {
@@ -146,6 +147,9 @@ public class Grid : MonoBehaviour {
              break;
              case 2:
                 c = floorManager.hammerColor;
+            break;
+            case 3:
+                c = floorManager.playerColor;
             break;
             }
         }

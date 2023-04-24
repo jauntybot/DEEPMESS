@@ -6,8 +6,8 @@ using UnityEngine;
 [System.Serializable]
 public class MoveData : EquipmentData
 {
-    enum AnimType { Lerp, Stepped }
-    [SerializeField] AnimType animType;
+    protected enum AnimType { Lerp, Stepped }
+    [SerializeField] protected AnimType animType;
 
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0)
@@ -30,11 +30,15 @@ public class MoveData : EquipmentData
         
     }
 
-    public IEnumerator MoveToCoord(Unit unit, Vector2 moveTo, bool undo = false) 
+    public virtual IEnumerator MoveToCoord(Unit unit, Vector2 moveTo, bool undo = false) 
     {       
 // Add move to undo dictionary if player unit
         if (unit is PlayerUnit pu && !undo) {
             PlayerManager manager = (PlayerManager)pu.manager;
+            if (manager.undoableMoves.ContainsKey(unit)) {
+                manager.undoableMoves.Remove(unit);
+                manager.undoOrder.Remove(unit);
+            }
             manager.undoableMoves.Add(unit, unit.coord);
             manager.undoOrder.Add(unit);
         }

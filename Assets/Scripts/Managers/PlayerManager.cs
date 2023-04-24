@@ -17,6 +17,8 @@ public class PlayerManager : UnitManager {
     public LoadoutManager loadout;
     public Nail nail;
     public List<HammerData> hammerActions;
+    [SerializeField] EquipmentData cascadeMovement;
+    [HideInInspector] public EquipmentData overrideEquipment = null;
     [SerializeField] public GameObject nailPrefab, hammerPrefab, hammerPickupPrefab;
 
 
@@ -80,10 +82,8 @@ public class PlayerManager : UnitManager {
     }
 
 // Initializes or closes functions for turn start/end
-    public void StartEndTurn(bool start) {
-        for (int i = 0; i <= units.Count - 1; i++) {
-            units[i].EnableSelection(start);
-        }
+    public void StartEndTurn(bool start, bool cascade = false) {
+        ToggleUnitSelectability(start);
         
 // Start Turn
         if (start) {
@@ -103,6 +103,23 @@ public class PlayerManager : UnitManager {
         } else {
             DeselectUnit();
             currentGrid.UpdateTargetCursor(false, Vector2.one * -32);
+            if (scenario.prevTurn != ScenarioManager.Turn.Descent && scenario.currentTurn != ScenarioManager.Turn.Descent) {
+                if (nail.nailState == Nail.NailState.Buried)
+                    nail.ToggleNailState(Nail.NailState.Primed);
+            }
+        }
+        if (cascade) {
+            overrideEquipment = cascadeMovement;
+            foreach (Unit u in units) {
+                u.grid = currentGrid;
+            }
+        } else
+            overrideEquipment = null;
+    }
+
+    public void ToggleUnitSelectability(bool state) {
+        for (int i = 0; i <= units.Count - 1; i++) {
+            units[i].EnableSelection(state);
         }
     }
 
@@ -142,10 +159,12 @@ public class PlayerManager : UnitManager {
                 if (currentGrid.sqrs.Find(sqr => sqr.coord == spawn).tileType != GridSquare.TileType.Bone) validCoord = false;
             }
         }
-
+        if (nail.nailState == Nail.NailState.Buried)
+            nail.ToggleNailState(Nail.NailState.Primed);
         nail.transform.position = currentGrid.PosFromCoord(spawn) + new Vector3(0, floorManager.floorOffset, 0);
         nail.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         yield return StartCoroutine(UpdateNail(spawn));
+        nail.ToggleNailState(Nail.NailState.Buried);
         nail.collisionChance = 90;
     }
 
@@ -173,11 +192,11 @@ public class PlayerManager : UnitManager {
             if (u.manager is PlayerManager) 
             {
                 if (selectedUnit) {
-                    if (u == selectedUnit && !selectedUnit.ValidCommand(u.coord)) 
+                    if (u == selectedUnit && !selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) 
                     {  
                         DeselectUnit();                 
                     }
-                    else if (selectedUnit.ValidCommand(u.coord)) {
+                    else if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
                         selectedUnit.ExecuteAction(u);
                     } else {
                         DeselectUnit();
@@ -192,7 +211,7 @@ public class PlayerManager : UnitManager {
                 if (selectedUnit) 
                 {
 // Unit is a target of valid action adjacency
-                    if (selectedUnit.ValidCommand(u.coord)) {
+                    if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
                         selectedUnit.ExecuteAction(u);
                     } 
                 }
@@ -211,7 +230,7 @@ public class PlayerManager : UnitManager {
             else {
                 if (selectedUnit) {
 // Square is a target of valid action adjacency
-                    if (selectedUnit.ValidCommand(sqr.coord)) {
+                    if (selectedUnit.ValidCommand(sqr.coord, selectedUnit.selectedEquipment)) {
                         currentGrid.DisableGridHighlight();
                         selectedUnit.ExecuteAction(sqr);
                     } else 
@@ -221,7 +240,7 @@ public class PlayerManager : UnitManager {
         }
         else {
             if (selectedUnit) {
-                if (selectedUnit.ValidCommand(input.coord)) {
+                if (selectedUnit.ValidCommand(input.coord, selectedUnit.selectedEquipment)) {
                     currentGrid.DisableGridHighlight();
                     selectedUnit.ExecuteAction(input);
                 } else
@@ -265,13 +284,15 @@ public class PlayerManager : UnitManager {
 
     public override void SelectUnit(Unit u)
     {
-        base.SelectUnit(u);
-        if (u.energyCurrent > 0) u.ui.ToggleEquipmentButtons();
-        if (!u.moved && u is PlayerUnit) {
-            u.selectedEquipment = u.equipment[0];
-            u.UpdateAction(u.selectedEquipment, u.moveMod);
+        if (u.selectable) {
+            base.SelectUnit(u);
+            if (u.energyCurrent > 0) u.ui.ToggleEquipmentButtons();
+            if (!u.moved && u is PlayerUnit) {
+                u.selectedEquipment = u.equipment[0];
+                u.UpdateAction(u.selectedEquipment, u.moveMod);
+            }
+            prevCursorTargetState = true;
         }
-        prevCursorTargetState = true;
     }
 
     public override void DeselectUnit()

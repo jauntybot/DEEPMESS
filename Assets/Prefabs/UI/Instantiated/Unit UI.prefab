@@ -273,7 +273,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiType: 0
   unit: {fileID: 0}
-  unitPanel: {fileID: 7666888908783843748}
+  portraitPanel: {fileID: 7666888908783843748}
   unitName: {fileID: 4293906538103855586}
   portrait: {fileID: 7666888908878882727}
   gfx: {fileID: 6601378072240088351}
@@ -281,6 +281,9 @@ MonoBehaviour:
   equipmentPanel: {fileID: 7666888907524514899}
   equipmentButtonPrefab: {fileID: 7665423317416184923, guid: 85d6d13e9b053eb47809426e6ba30490, type: 3}
   equipmentOptions: {fileID: 0}
+  initialLoadoutButton: {fileID: 0}
+  slotsLoadoutButton: {fileID: 0}
+  overview: {fileID: 0}
 --- !u!1 &7666888907524514899
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,7 +381,7 @@ MonoBehaviour:
   m_ChildAlignment: 6
   m_StartCorner: 2
   m_StartAxis: 1
-  m_CellSize: {x: 60, y: 60}
+  m_CellSize: {x: 60, y: 50}
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 2
   m_ConstraintCount: 2
@@ -392,7 +395,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7666888908783843751}
   m_Layer: 5
-  m_Name: Unit Panel
+  m_Name: Portrait Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

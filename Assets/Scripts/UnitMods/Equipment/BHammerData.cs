@@ -21,9 +21,16 @@ public class BHammerData : HammerData
                     bool remove = true;
                     foreach(GridElement target in targetTypes) {
                         if (ge.GetType() == target.GetType()) {
-                            remove = false;
-                            if (ge is EnemyUnit)
-                                ge.elementCanvas.ToggleStatsDisplay(true);
+                            if (ge is Nail n) {
+                                if (n.nailState == Nail.NailState.Primed)
+                                    remove = false;
+                                else
+                                    user.grid.sqrs.Find(sqr => sqr.coord == n.coord).ToggleValidCoord(false);
+                            } else {
+                                remove = false;
+                                if (ge is EnemyUnit)
+                                    ge.elementCanvas.ToggleStatsDisplay(true);
+                            }
                         }
                     }
                     if (remove || !occupied) {
@@ -105,7 +112,10 @@ public class BHammerData : HammerData
 // Attack target if unit
         if (target is EnemyUnit) 
             target.StartCoroutine(target.TakeDamage(1));
-        
+        else if (target is Nail n) {
+            if (n.nailState == Nail.NailState.Primed)
+                n.ToggleNailState(Nail.NailState.Buried);
+        }
 // Lerp hammer to passTo unit
         if (passTo.gfx[0].sortingOrder > hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder)  
             hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;

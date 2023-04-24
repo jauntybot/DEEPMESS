@@ -104,6 +104,7 @@ public class GridElement : MonoBehaviour{
         yield return new WaitForSecondsRealtime(.25f);
         if (this.gameObject != null)
             Destroy(this.gameObject);
+        StopAllCoroutines();
     }
 
     public virtual void TargetElement(bool state) 

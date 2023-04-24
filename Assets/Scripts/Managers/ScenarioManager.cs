@@ -31,9 +31,7 @@ public class ScenarioManager : MonoBehaviour
 
 
 // State machines
-    public enum GameState { Null, Setup, Battle, End }
-    public GameState gameState;
-    public enum Turn { Null, Player, Enemy, Descent, Loadout, Slots }
+    public enum Turn { Null, Player, Enemy, Descent, Cascade, Loadout, Slots }
     public Turn currentTurn, prevTurn;
     public int turnCount, turnsToDescend;
 
@@ -76,11 +74,6 @@ public class ScenarioManager : MonoBehaviour
 
 #endregion
 
-    public void SwitchStates(GameState fromState = GameState.Null) 
-    {
-
-    }
-
 // Overload allows you to specify which turn to switch to, otherwise inverts the binary
     public IEnumerator SwitchTurns(Turn toTurn = default) 
     {
@@ -90,17 +83,19 @@ public class ScenarioManager : MonoBehaviour
                 case Turn.Player: toTurn = Turn.Enemy; break;
                 case Turn.Enemy: toTurn = Turn.Player; break;
                 case Turn.Descent: toTurn = prevTurn; break;
+                case Turn.Cascade: toTurn = Turn.Descent; break;
             }
         }
+        prevTurn = currentTurn;
         switch(toTurn) 
         {
             case Turn.Enemy:
-                player.StartEndTurn(false);
                 if (currentEnemy.units.Count > 0) {
 // Decrease nail collision chance
                     player.nail.collisionChance -= 40;
                     floorManager.upButton.GetComponent<Button>().enabled = false; floorManager.downButton.GetComponent<Button>().enabled = false;
-                    prevTurn = currentTurn; currentTurn = Turn.Enemy;
+                    currentTurn = Turn.Enemy;
+                    player.StartEndTurn(false);
                     yield return StartCoroutine(messagePanel.DisplayMessage("ANTIBODY RESPONSE", 2));
                     foreach(Unit u in currentEnemy.units) {
                         u.energyCurrent = u.energyMax;
@@ -113,7 +108,8 @@ public class ScenarioManager : MonoBehaviour
                         StartCoroutine(currentEnemy.TakeTurn(false));
                 }
                 else if (currentEnemy.units.Count <= 0) {
-                   floorManager.Descend();
+                   floorManager.Descend(prevTurn == Turn.Descent);
+                   Debug.Log("Empty floor descent");
                 }
             break;
             case Turn.Player:
@@ -123,7 +119,7 @@ public class ScenarioManager : MonoBehaviour
                     floorManager.upButton.GetComponent<Button>().enabled = true; floorManager.downButton.GetComponent<Button>().enabled = true;
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN", 1));
 
-                    prevTurn = currentTurn; currentTurn = Turn.Player;
+                    currentTurn = Turn.Player;
                     endTurnButton.enabled = true;
 
                     player.StartEndTurn(true);
@@ -132,11 +128,36 @@ public class ScenarioManager : MonoBehaviour
                 }
             break;
             case Turn.Descent:
-                turnCount = 0;
-                //player.StartEndTurn(false);
-                prevTurn = currentTurn; currentTurn = Turn.Descent;
+                if (prevTurn == Turn.Cascade) {
+                    player.currentGrid = floorManager.floors[player.currentGrid.index-1];
+                    for (int i = player.units.Count - 1; i >= 0; i--) {
+                        if (player.units[i] is not Nail) {
+                            floorManager.currentFloor.RemoveElement(player.units[i]);
+                        }
+                    }
+                }
+                currentTurn = Turn.Descent;
+                player.StartEndTurn(false);
+                foreach(Unit u in player.units)
+                    u.usedEquip = false;
                 endTurnButton.enabled = false;
                 yield return StartCoroutine(messagePanel.DisplayMessage("DESCENDING", 0));
+            break;
+            case Turn.Cascade:
+                currentTurn = Turn.Cascade;
+                player.currentGrid = floorManager.currentFloor;
+                player.StartEndTurn(true, true);
+                foreach (Unit u in player.units) {
+                    if (u is not Nail) {
+                        u.energyCurrent = 0;
+                        u.usedEquip = true;
+                        u.elementCanvas.UpdateStatsDisplay();
+                        u.ui.UpdateEquipmentButtons();
+                        u.StoreInGrid(player.currentGrid);
+                    }
+                }
+                endTurnButton.enabled = true;
+                yield return StartCoroutine(messagePanel.DisplayMessage("REPOSITION UNITS", 1));
             break;
         }
     }

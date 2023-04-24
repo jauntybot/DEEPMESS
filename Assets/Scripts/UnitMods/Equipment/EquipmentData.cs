@@ -25,7 +25,7 @@ public class EquipmentData : ScriptableObject {
 
 // The following variables are dependent on the card Action, hidden with custom editor
 
-    public enum AdjacencyType { Diamond, Orthogonal, Diagonal, Star, Box, OfType };
+    public enum AdjacencyType { Diamond, Orthogonal, Diagonal, Star, Box, OfType, OfTypeInRange };
 
     public virtual List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this);

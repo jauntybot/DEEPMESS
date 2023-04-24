@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Rendering;
 
 [RequireComponent(typeof(BetweenFloorManager))]
@@ -33,8 +34,7 @@ public class FloorManager : MonoBehaviour
     [SerializeField] private GameObject descentPreview;
     [SerializeField] private Material previewMaterial;
     [SerializeField] private Dictionary<GridElement, LineRenderer> lineRenderers;
-    public Color moveColor, attackColor, hammerColor;
-    [SerializeField] private Color playerColor, enemyColor;
+    public Color moveColor, attackColor, hammerColor, playerColor, enemyColor;
     private bool notation = false;
 
     #region Singleton (and Awake)
@@ -90,6 +90,7 @@ public class FloorManager : MonoBehaviour
         }
         else {
             StartCoroutine(ToggleDescentPreview(false));
+            currentFloor.DisableGridHighlight();
             if (draw) {
                 SetButtonActive(downButton, true); SetButtonActive(upButton, false);
             }
@@ -110,11 +111,12 @@ public class FloorManager : MonoBehaviour
                 if (ge is Unit && ge is not Nail) {
                     if (!lineRenderers.ContainsKey(currentFloor.sqrs.Find(sqr => sqr.coord == ge.coord))) {
                         LineRenderer lr = new GameObject().AddComponent<LineRenderer>();
-                        lr.gameObject.transform.parent = descentPreview.transform;
+                        lr.gameObject.transform.parent = ge.transform;
                         lr.startWidth = 0.15f; lr.endWidth = 0.15f;
-                        lr.sortingLayerName = "UI";
+                        lr.sortingLayerName = "Floor";
                         lr.material = previewMaterial;
                         lr.positionCount = 2;
+                        lr.useWorldSpace = false;
                         lr.SetPosition(0, ge.transform.position); lr.SetPosition(1, ge.transform.position);
                         lr.startColor = enemyColor; lr.endColor = enemyColor;
                         if (ge is PlayerUnit) {
@@ -151,7 +153,7 @@ public class FloorManager : MonoBehaviour
             foreach (KeyValuePair<GridElement, LineRenderer> lr in lineRenderers)
                 DestroyImmediate(lr.Value.gameObject);
             lineRenderers = new Dictionary<GridElement, LineRenderer>();
-            floors[currentFloor.index+1].DisableGridHighlight();
+            floors[currentFloor.index-1].DisableGridHighlight();
         }        
     }
 
@@ -185,6 +187,9 @@ public class FloorManager : MonoBehaviour
         int dir = down? 1 : -1;
         Grid toFloor = null; // After a descent the next floor hasn't generated before panning to it
 
+// Lock player from selecting units
+        scenario.player.ToggleUnitSelectability(dir == -1);
+
         if (floors.Count - 1 >= currentFloor.index + dir) // Checks if there is a floor in the direction transitioning
             toFloor = floors[currentFloor.index + dir];
 // Adjust sorting orders contextually
@@ -192,6 +197,7 @@ public class FloorManager : MonoBehaviour
         if (toFloor) {
             toFloor.GetComponent<SortingGroup>().sortingOrder = 0;
             toFromScale = toFloor.transform.localScale;
+            toFloor.gameObject.SetActive(true);
         }
         if (!preview) currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
         else if (!down) currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
@@ -286,6 +292,7 @@ public class FloorManager : MonoBehaviour
                 fade.AlphaSelf = 1;
         }
 // Update floor manager current floor... preview next floor untis stats?
+        if (down && currentFloor.index-1 >= 0) floors[currentFloor.index-1].gameObject.SetActive(false);
         if (toFloor) currentFloor = toFloor;
         UIManager.instance.metaDisplay.UpdateCurrentFloor(currentFloor.index);
     }
@@ -340,12 +347,22 @@ public class FloorManager : MonoBehaviour
             StartCoroutine(unit.DestroyElement());
     }
 
-    public void Descend() {
-        StartCoroutine(DescendFloors());
+    public IEnumerator ChooseLandingPositions() {
+        yield return new WaitForSecondsRealtime(.2f);
+        yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Cascade));
+        while (scenario.currentTurn == ScenarioManager.Turn.Cascade)
+            yield return null;
+        StartCoroutine(ToggleDescentPreview(false));
+        currentFloor.DisableGridHighlight();
+
+    }
+
+    public void Descend(bool cascade = false) {
+        StartCoroutine(DescendFloors(cascade));
         
     }
 
-    public IEnumerator DescendFloors() {
+    public IEnumerator DescendFloors(bool cascade = false) {
 
 
         EnemyManager enemy = (EnemyManager)currentFloor.enemy;
@@ -353,7 +370,15 @@ public class FloorManager : MonoBehaviour
         currentFloor.DisableGridHighlight();
         currentFloor.LockGrid(true);
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
-        yield return StartCoroutine(TransitionFloors(true, false));
+        downButton.GetComponent<Button>().interactable = false;
+        
+        if (cascade) {
+            yield return StartCoroutine(PreviewFloor(true, true));
+            currentFloor.LockGrid(false);
+            SetButtonActive(downButton, true); SetButtonActive(upButton, false);
+        }
+        else
+            yield return StartCoroutine(TransitionFloors(true, false));
 
         yield return new WaitForSecondsRealtime(0.25f);
         if (betweenFloor.InbetweenTrigger(currentFloor.index-1)) {
@@ -361,6 +386,12 @@ public class FloorManager : MonoBehaviour
             
             yield return new WaitForSecondsRealtime(0.25f);
         }
+
+        if (cascade) {
+            yield return StartCoroutine(ChooseLandingPositions());
+            yield return new WaitForSecondsRealtime(1.25f);
+        }
+
         yield return StartCoroutine(DropUnits(floors[currentFloor.index-1], currentFloor));
 
         scenario.player.DescendGrids(currentFloor);
@@ -399,6 +430,7 @@ public class FloorManager : MonoBehaviour
 
             StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
         }
+        downButton.GetComponent<Button>().interactable = true;
     }
 
 }
