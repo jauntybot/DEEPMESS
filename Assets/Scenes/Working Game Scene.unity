@@ -456,8 +456,8 @@ SortingGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 89655878}
   m_Enabled: 1
-  m_SortingLayerID: -1434539209
-  m_SortingLayer: 2
+  m_SortingLayerID: 536337883
+  m_SortingLayer: 1
   m_SortingOrder: 0
 --- !u!114 &89655881
 MonoBehaviour:
@@ -3083,7 +3083,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1272466583}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!210 &803065750
 SortingGroup:
@@ -3441,7 +3441,8 @@ MonoBehaviour:
   nail: {fileID: 0}
   hammerActions:
   - {fileID: 11400000, guid: a4375cd6c7930d04393ffb6fa42b069e, type: 2}
-  cascadeMovement: {fileID: 0}
+  cascadeMovement: {fileID: 11400000, guid: cfb129f02c32c39469e9cb8361751f64, type: 2}
+  overrideEquipment: {fileID: 0}
   nailPrefab: {fileID: 2911188987296525511, guid: 3c53f14dfc3e6174e874415021915958, type: 3}
   hammerPrefab: {fileID: 3955549777479365904, guid: a8ad447d87fd54d3284fc69a0b042b16, type: 3}
   hammerPickupPrefab: {fileID: 447688835278664603, guid: c280a86d83b54064b8ac57b8732a317d, type: 3}
@@ -4441,7 +4442,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1272466583}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1260230829 stripped
 MonoBehaviour:
@@ -4485,9 +4486,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1736529076}
   - {fileID: 803065749}
   - {fileID: 1255669751}
-  - {fileID: 1736529076}
   - {fileID: 89655879}
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -7140,7 +7141,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1272466583}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1829318997
 GameObject:

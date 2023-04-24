@@ -20,10 +20,16 @@ public class PlayerUnit : Unit {
 // Called when an action is applied to a unit or to clear it's actions
     public override void UpdateAction(EquipmentData equipment = null, int mod = 0) 
     {
-        if (equipment is ConsumableEquipmentData && consumableCount > 0)
-            base.UpdateAction(equipment, mod);
-        else if (equipment is not ConsumableEquipmentData)
-            base.UpdateAction(equipment, mod);
+        PlayerManager m = (PlayerManager)manager;
+        if (m.overrideEquipment == null) {
+            if (equipment is ConsumableEquipmentData && consumableCount > 0)
+                base.UpdateAction(equipment, mod);
+            else if (equipment is not ConsumableEquipmentData)
+                base.UpdateAction(equipment, mod);
+        }
+        else {
+            base.UpdateAction(m.overrideEquipment, mod);
+        }
     }
 
     public override void ExecuteAction(GridElement target = null) {

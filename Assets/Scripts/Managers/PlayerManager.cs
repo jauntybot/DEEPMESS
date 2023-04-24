@@ -18,7 +18,7 @@ public class PlayerManager : UnitManager {
     public Nail nail;
     public List<HammerData> hammerActions;
     [SerializeField] EquipmentData cascadeMovement;
-    EquipmentData overrideEquipment = null;
+    [HideInInspector] public EquipmentData overrideEquipment = null;
     [SerializeField] public GameObject nailPrefab, hammerPrefab, hammerPickupPrefab;
 
 
@@ -82,10 +82,8 @@ public class PlayerManager : UnitManager {
     }
 
 // Initializes or closes functions for turn start/end
-    public void StartEndTurn(bool start) {
-        for (int i = 0; i <= units.Count - 1; i++) {
-            units[i].EnableSelection(start);
-        }
+    public void StartEndTurn(bool start, bool cascade = false) {
+        ToggleUnitSelectability(start);
         
 // Start Turn
         if (start) {
@@ -109,6 +107,19 @@ public class PlayerManager : UnitManager {
                 if (nail.nailState == Nail.NailState.Buried)
                     nail.ToggleNailState(Nail.NailState.Primed);
             }
+        }
+        if (cascade) {
+            overrideEquipment = cascadeMovement;
+            foreach (Unit u in units) {
+                u.grid = currentGrid;
+            }
+        } else
+            overrideEquipment = null;
+    }
+
+    public void ToggleUnitSelectability(bool state) {
+        for (int i = 0; i <= units.Count - 1; i++) {
+            units[i].EnableSelection(state);
         }
     }
 
@@ -273,13 +284,15 @@ public class PlayerManager : UnitManager {
 
     public override void SelectUnit(Unit u)
     {
-        base.SelectUnit(u);
-        if (u.energyCurrent > 0) u.ui.ToggleEquipmentButtons();
-        if (!u.moved && u is PlayerUnit) {
-            u.selectedEquipment = u.equipment[0];
-            u.UpdateAction(u.selectedEquipment, u.moveMod);
+        if (u.selectable) {
+            base.SelectUnit(u);
+            if (u.energyCurrent > 0) u.ui.ToggleEquipmentButtons();
+            if (!u.moved && u is PlayerUnit) {
+                u.selectedEquipment = u.equipment[0];
+                u.UpdateAction(u.selectedEquipment, u.moveMod);
+            }
+            prevCursorTargetState = true;
         }
-        prevCursorTargetState = true;
     }
 
     public override void DeselectUnit()

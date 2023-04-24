@@ -128,6 +128,14 @@ public class ScenarioManager : MonoBehaviour
                 }
             break;
             case Turn.Descent:
+                if (prevTurn == Turn.Cascade) {
+                    player.currentGrid = floorManager.floors[player.currentGrid.index-1];
+                    for (int i = player.units.Count - 1; i >= 0; i--) {
+                        if (player.units[i] is not Nail) {
+                            floorManager.currentFloor.RemoveElement(player.units[i]);
+                        }
+                    }
+                }
                 currentTurn = Turn.Descent;
                 player.StartEndTurn(false);
                 foreach(Unit u in player.units)
@@ -137,10 +145,19 @@ public class ScenarioManager : MonoBehaviour
             break;
             case Turn.Cascade:
                 currentTurn = Turn.Cascade;
-                player.StartEndTurn(true);
+                player.currentGrid = floorManager.currentFloor;
+                player.StartEndTurn(true, true);
+                foreach (Unit u in player.units) {
+                    if (u is not Nail) {
+                        u.energyCurrent = 0;
+                        u.usedEquip = true;
+                        u.elementCanvas.UpdateStatsDisplay();
+                        u.ui.UpdateEquipmentButtons();
+                        u.StoreInGrid(player.currentGrid);
+                    }
+                }
                 endTurnButton.enabled = true;
                 yield return StartCoroutine(messagePanel.DisplayMessage("REPOSITION UNITS", 1));
-                player.currentGrid = floorManager.currentFloor;
             break;
         }
     }

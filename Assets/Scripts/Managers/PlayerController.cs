@@ -45,6 +45,8 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    
+
 //MOBILE CONTROL FLAG
     public RaycastHit2D ClickInput() {
         Vector2 pos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);

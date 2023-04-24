@@ -34,8 +34,7 @@ public class FloorManager : MonoBehaviour
     [SerializeField] private GameObject descentPreview;
     [SerializeField] private Material previewMaterial;
     [SerializeField] private Dictionary<GridElement, LineRenderer> lineRenderers;
-    public Color moveColor, attackColor, hammerColor;
-    [SerializeField] private Color playerColor, enemyColor;
+    public Color moveColor, attackColor, hammerColor, playerColor, enemyColor;
     private bool notation = false;
 
     #region Singleton (and Awake)
@@ -111,11 +110,12 @@ public class FloorManager : MonoBehaviour
                 if (ge is Unit && ge is not Nail) {
                     if (!lineRenderers.ContainsKey(currentFloor.sqrs.Find(sqr => sqr.coord == ge.coord))) {
                         LineRenderer lr = new GameObject().AddComponent<LineRenderer>();
-                        lr.gameObject.transform.parent = descentPreview.transform;
+                        lr.gameObject.transform.parent = ge.transform;
                         lr.startWidth = 0.15f; lr.endWidth = 0.15f;
                         lr.sortingLayerName = "Floor";
                         lr.material = previewMaterial;
                         lr.positionCount = 2;
+                        lr.useWorldSpace = false;
                         lr.SetPosition(0, ge.transform.position); lr.SetPosition(1, ge.transform.position);
                         lr.startColor = enemyColor; lr.endColor = enemyColor;
                         if (ge is PlayerUnit) {
@@ -152,7 +152,7 @@ public class FloorManager : MonoBehaviour
             foreach (KeyValuePair<GridElement, LineRenderer> lr in lineRenderers)
                 DestroyImmediate(lr.Value.gameObject);
             lineRenderers = new Dictionary<GridElement, LineRenderer>();
-            floors[currentFloor.index+1].DisableGridHighlight();
+            floors[currentFloor.index].DisableGridHighlight();
         }        
     }
 
@@ -185,6 +185,9 @@ public class FloorManager : MonoBehaviour
 // Orients the animation
         int dir = down? 1 : -1;
         Grid toFloor = null; // After a descent the next floor hasn't generated before panning to it
+
+// Lock player from selecting units
+        scenario.player.ToggleUnitSelectability(dir == -1);
 
         if (floors.Count - 1 >= currentFloor.index + dir) // Checks if there is a floor in the direction transitioning
             toFloor = floors[currentFloor.index + dir];
@@ -288,7 +291,7 @@ public class FloorManager : MonoBehaviour
                 fade.AlphaSelf = 1;
         }
 // Update floor manager current floor... preview next floor untis stats?
-        if (down) currentFloor.gameObject.SetActive(false);
+        if (down && currentFloor.index-1 >= 0) floors[currentFloor.index-1].gameObject.SetActive(false);
         if (toFloor) currentFloor = toFloor;
         UIManager.instance.metaDisplay.UpdateCurrentFloor(currentFloor.index);
     }
