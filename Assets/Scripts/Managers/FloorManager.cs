@@ -90,6 +90,7 @@ public class FloorManager : MonoBehaviour
         }
         else {
             StartCoroutine(ToggleDescentPreview(false));
+            currentFloor.DisableGridHighlight();
             if (draw) {
                 SetButtonActive(downButton, true); SetButtonActive(upButton, false);
             }
@@ -152,7 +153,7 @@ public class FloorManager : MonoBehaviour
             foreach (KeyValuePair<GridElement, LineRenderer> lr in lineRenderers)
                 DestroyImmediate(lr.Value.gameObject);
             lineRenderers = new Dictionary<GridElement, LineRenderer>();
-            floors[currentFloor.index].DisableGridHighlight();
+            floors[currentFloor.index-1].DisableGridHighlight();
         }        
     }
 
