@@ -15,10 +15,9 @@ public class AttackData : EquipmentData
         user.grid.DisplayValidCoords(validCoords, gridColor);
         if (user is PlayerUnit pu) pu.ui.ToggleEquipmentPanel(false);
         for (int i = validCoords.Count - 1; i >= 0; i--) {
-            bool occupied = false;
+            bool remove = false;
             foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(validCoords[i])) {
-                if (ge is not GroundElement) occupied = true;
-                bool remove = true;
+                remove = true;
                 foreach(GridElement target in targetTypes) {
                     if (ge.GetType() == target.GetType()) {
                         remove = false;
@@ -26,10 +25,8 @@ public class AttackData : EquipmentData
                         Debug.Log(ge.name);
                     }
                 }
-                if (remove) 
-                    validCoords.Remove(validCoords[i]);
             } 
-            if (!occupied)
+            if (remove)
                 validCoords.Remove(validCoords[i]);
         }
         return validCoords;
