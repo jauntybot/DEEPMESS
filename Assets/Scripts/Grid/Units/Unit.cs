@@ -43,8 +43,12 @@ public class Unit : GridElement {
         }
     }
 
-    public virtual void ExecuteAction(GridElement target = null) {
-        if (selectedEquipment) StartCoroutine(selectedEquipment.UseEquipment(this, target));
+    public virtual IEnumerator ExecuteAction(GridElement target = null) {
+        if (selectedEquipment) {
+            yield return StartCoroutine(selectedEquipment.UseEquipment(this, target));
+        }
+        PlayerManager m = (PlayerManager)manager;
+        m.unitActing = false;
     }
 
     public bool ValidCommand(Vector2 target, EquipmentData equip) {

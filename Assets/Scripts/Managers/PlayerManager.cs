@@ -21,7 +21,7 @@ public class PlayerManager : UnitManager {
     [HideInInspector] public EquipmentData overrideEquipment = null;
     [SerializeField] public GameObject nailPrefab, hammerPrefab, hammerPickupPrefab;
 
-
+    public bool unitActing = false;
     public Dictionary<Unit, Vector2> undoableMoves = new Dictionary<Unit, Vector2>();
     public List<Unit> undoOrder;
     private GridElement prevCursorTarget = null;
@@ -171,7 +171,7 @@ public class PlayerManager : UnitManager {
         }
         yield return StartCoroutine(nail.nailDrop.MoveToCoord(nail, coord));
         nail.ToggleNailState(Nail.NailState.Buried);
-        
+
         if (!currentGrid.gridElements.Contains(nail))
             nail.StoreInGrid(currentGrid);
 
@@ -191,7 +191,7 @@ public class PlayerManager : UnitManager {
                         DeselectUnit();                 
                     }
                     else if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
-                        selectedUnit.ExecuteAction(u);
+                        StartCoroutine(selectedUnit.ExecuteAction(u));
                     } else {
                         DeselectUnit();
                         SelectUnit(u);
@@ -206,7 +206,7 @@ public class PlayerManager : UnitManager {
                 {
 // Unit is a target of valid action adjacency
                     if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
-                        selectedUnit.ExecuteAction(u);
+                        StartCoroutine(selectedUnit.ExecuteAction(u));
                     } 
                 }
             }
@@ -226,7 +226,7 @@ public class PlayerManager : UnitManager {
 // Square is a target of valid action adjacency
                     if (selectedUnit.ValidCommand(sqr.coord, selectedUnit.selectedEquipment)) {
                         currentGrid.DisableGridHighlight();
-                        selectedUnit.ExecuteAction(sqr);
+                        StartCoroutine(selectedUnit.ExecuteAction(sqr));
                     } else 
                         DeselectUnit();
                 }
@@ -236,7 +236,7 @@ public class PlayerManager : UnitManager {
             if (selectedUnit) {
                 if (selectedUnit.ValidCommand(input.coord, selectedUnit.selectedEquipment)) {
                     currentGrid.DisableGridHighlight();
-                    selectedUnit.ExecuteAction(input);
+                    StartCoroutine(selectedUnit.ExecuteAction(input));
                 } else
                     DeselectUnit();
             }

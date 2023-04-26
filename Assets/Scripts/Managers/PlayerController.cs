@@ -19,28 +19,31 @@ public class PlayerController : MonoBehaviour {
     public IEnumerator GridInput() {
         while (manager.scenario.currentTurn == ScenarioManager.Turn.Player || manager.scenario.currentTurn == ScenarioManager.Turn.Cascade) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            RaycastHit2D hit = ClickInput();
+// Disable input under these conditions
+            if (!manager.unitActing) {
+                RaycastHit2D hit = ClickInput();
 // On mouseover
-            if (hit != default(RaycastHit2D)) {
-                if (hit.transform.GetComponent<GridElement>()) {
+                if (hit != default(RaycastHit2D)) {
+                    if (hit.transform.GetComponent<GridElement>()) {
 // On click
-                    manager.GridMouseOver(hit.transform.GetComponent<GridElement>().coord, true);
-                    if (Input.GetMouseButtonDown(0)) {
+                        manager.GridMouseOver(hit.transform.GetComponent<GridElement>().coord, true);
+                        if (Input.GetMouseButtonDown(0)) {
 // Pass call to contextualize click to manager
-                        manager.GridInput(hit.transform.GetComponent<GridElement>());       
-                        yield return new WaitForSecondsRealtime(1/Util.fps);
-                    }
-                }    
-                else
+                            manager.GridInput(hit.transform.GetComponent<GridElement>());       
+                            yield return new WaitForSecondsRealtime(1/Util.fps);
+                        }
+                    }    
+                    else
+                        manager.GridMouseOver(new Vector2(-32, -32), false);
+                } else
                     manager.GridMouseOver(new Vector2(-32, -32), false);
-            } else
-                manager.GridMouseOver(new Vector2(-32, -32), false);
 
-            if (Input.GetKeyDown(KeyCode.Tab)) {
-                manager.DisplayAllHP(true);
-            } 
-            if (Input.GetKeyUp(KeyCode.Tab)) {
-                manager.DisplayAllHP(false);
+                if (Input.GetKeyDown(KeyCode.Tab)) {
+                    manager.DisplayAllHP(true);
+                } 
+                if (Input.GetKeyUp(KeyCode.Tab)) {
+                    manager.DisplayAllHP(false);
+                }
             }
         }
     }

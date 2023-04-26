@@ -72,7 +72,6 @@ public class EquipmentAdjacency : MonoBehaviour
                                 if (target != null) {
                                     if (target.tileType == sqr.tileType) {
                                         valid = false;
-                                        Debug.Log(target.tileType + " @" + target.coord);
                                     }
                                 }
                             }
@@ -92,6 +91,7 @@ public class EquipmentAdjacency : MonoBehaviour
                     if (!_coords.Contains(coord)) {
 // If there is something already occupying this coord                        
                         bool valid = true;
+                        if (data is HammerData || data is AttackData) valid = false;
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             valid = false;
 // Valid coord if element is not filtered
@@ -114,7 +114,6 @@ public class EquipmentAdjacency : MonoBehaviour
                                 if (target != null) {
                                     if (target.tileType == sqr.tileType) {
                                         valid = false;
-                                        Debug.Log(target.tileType + " @" + target.coord);
                                     }
                                 }
                             }
@@ -124,6 +123,9 @@ public class EquipmentAdjacency : MonoBehaviour
                             frontier.Add(coord);
                             _coords.Add(coord);
                         }
+                        else if (ofType)
+                            frontier.Add(coord);
+                        
                     }
                 }
             }            

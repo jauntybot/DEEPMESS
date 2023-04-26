@@ -32,16 +32,20 @@ public class PlayerUnit : Unit {
         }
     }
 
-    public override void ExecuteAction(GridElement target = null) {
-        base.ExecuteAction(target);
-        PlayerManager m = (PlayerManager)manager;
-        UIManager.instance.ToggleUndoButton(m.undoOrder.Count > 0);
+    public override IEnumerator ExecuteAction(GridElement target = null) {
+        Coroutine co = StartCoroutine(base.ExecuteAction(target));
         if (selectedEquipment) {
             if (!selectedEquipment.multiselect)
                 manager.DeselectUnit();
             else if (selectedEquipment.firstTarget == null)
                 manager.DeselectUnit();
-        }
+        } else
+            manager.DeselectUnit();
+        
+        yield return co;
+        
+        PlayerManager m = (PlayerManager)manager;
+        UIManager.instance.ToggleUndoButton(m.undoOrder.Count > 0);
     }
 
 // Allow the player to click on this
