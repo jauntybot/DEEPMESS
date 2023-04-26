@@ -5,9 +5,6 @@ using UnityEngine;
 
 public class Nail : Unit
 {
-    [Range(10,100)]
-    public int collisionChance;
-
     FloorManager floorManager;
     public MoveData nailDrop;
 

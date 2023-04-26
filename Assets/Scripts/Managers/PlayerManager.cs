@@ -138,34 +138,27 @@ public class PlayerManager : UnitManager {
     }
 
     public IEnumerator DropNail() {
-        yield return null;
-        bool validCoord = false;
-        Vector2 spawn = Vector2.zero;
-// Drop on an enemy
-        if (Random.Range(0,100) <= nail.collisionChance && scenario.currentEnemy.units.Count > 0) {
-            spawn = scenario.currentEnemy.units[Random.Range(0,scenario.currentEnemy.units.Count - 1)].coord;    
-// Drop on a neutral tile
-        } else {
-// Find a valid coord that a player is not in
-            while (!validCoord) {
-                validCoord = true;
-                spawn = new Vector2(Random.Range(1,6), Random.Range(1,6));
-                foreach(Unit u in units) {
-                    if (u.coord == spawn) validCoord = false;
-                }
-                foreach(Unit u in scenario.currentEnemy.units) {
-                    if (u.coord == spawn) validCoord = false;
-                }
-                if (currentGrid.sqrs.Find(sqr => sqr.coord == spawn).tileType != GridSquare.TileType.Bone) validCoord = false;
-            }
-        }
         if (nail.nailState == Nail.NailState.Buried)
             nail.ToggleNailState(Nail.NailState.Primed);
+            
+        yield return null;
+
+        bool validCoord = false;
+        Vector2 spawn = Vector2.zero;
+// Find a valid coord that a player is not in
+        while (!validCoord) {
+            validCoord = true;
+            spawn = new Vector2(Random.Range(1,6), Random.Range(1,6));
+            foreach(Unit u in units) {
+                if (u.coord == spawn) validCoord = false;
+            }
+            if (currentGrid.sqrs.Find(sqr => sqr.coord == spawn).tileType == GridSquare.TileType.Bile) validCoord = false;
+        }
+        
         nail.transform.position = currentGrid.PosFromCoord(spawn) + new Vector3(0, floorManager.floorOffset, 0);
         nail.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
+        
         yield return StartCoroutine(UpdateNail(spawn));
-        nail.ToggleNailState(Nail.NailState.Buried);
-        nail.collisionChance = 90;
     }
 
     public IEnumerator UpdateNail(Vector2 coord) {
@@ -177,6 +170,7 @@ public class PlayerManager : UnitManager {
 
         }
         yield return StartCoroutine(nail.nailDrop.MoveToCoord(nail, coord));
+        nail.ToggleNailState(Nail.NailState.Buried);
         
         if (!currentGrid.gridElements.Contains(nail))
             nail.StoreInGrid(currentGrid);
@@ -315,10 +309,13 @@ public class PlayerManager : UnitManager {
     }
 
     public void UndoMove() {
+        foreach (Unit u in units) 
+            u.UpdateAction();
+
         if (undoableMoves.Count > 0 && undoOrder.Count > 0) {
             Unit lastMoved = undoOrder[undoOrder.Count - 1];
 
-            MoveData move = (MoveData)lastMoved.equipment[0];
+            MoveData move = (MoveData)cascadeMovement;
             StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved], true));
             lastMoved.moved = false;
             lastMoved.elementCanvas.UpdateStatsDisplay();

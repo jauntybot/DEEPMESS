@@ -91,14 +91,13 @@ public class ScenarioManager : MonoBehaviour
         {
             case Turn.Enemy:
                 if (currentEnemy.units.Count > 0) {
-// Decrease nail collision chance
-                    player.nail.collisionChance -= 40;
                     floorManager.upButton.GetComponent<Button>().enabled = false; floorManager.downButton.GetComponent<Button>().enabled = false;
                     currentTurn = Turn.Enemy;
                     player.StartEndTurn(false);
                     yield return StartCoroutine(messagePanel.DisplayMessage("ANTIBODY RESPONSE", 2));
                     foreach(Unit u in currentEnemy.units) {
                         u.energyCurrent = u.energyMax;
+                        u.moved = false;
                         u.elementCanvas.UpdateStatsDisplay();
                     }
                     endTurnButton.enabled = false;

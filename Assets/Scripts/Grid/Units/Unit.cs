@@ -50,7 +50,7 @@ public class Unit : GridElement {
     public bool ValidCommand(Vector2 target, EquipmentData equip) {
         if (equip == null) return false;
         if (validActionCoords.Count == 0) return false;
-        if (validActionCoords.Find(coord => coord == target) == default) return false;
+        if (!validActionCoords.Contains(target)) return false;
         if (energyCurrent < equip.energyCost && equip is not MoveData) return false;
         else if (moved && equip is MoveData) return false;
         else if (usedEquip && (equip is ConsumableEquipmentData && equip is not HammerData)) return false;
