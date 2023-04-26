@@ -13,19 +13,22 @@ MonoBehaviour:
   m_Name: Anvil
   m_EditorClassIdentifier: 
   name: PLACE MINE
-  icon: {fileID: 21300000, guid: ca4ee3d585ea19446808881232420ab6, type: 3}
+  icon: {fileID: 21300000, guid: 6d7556aedd8f548989edaf21ee52c6fd, type: 3}
   gridColor: 0
   energyCost: 1
   adjacency: 0
   range: 2
+  animDur: 0.5
+  multiselect: 0
+  filterValid: 0
   filters:
   - {fileID: 125915573521978910, guid: d76049925455d44278c9e3b58ed31c3d, type: 3}
   - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
   - {fileID: 2897877390811545440, guid: d00e722c41845a742aba65c37f6e0450, type: 3}
   - {fileID: 1124182531442868255, guid: 5f7d1db180f0240849bf67b9fe916f3b, type: 3}
   - {fileID: 4634978180570587290, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
-  filterValid: 0
   targetTypes: []
+  firstTarget: {fileID: 0}
   startCount: 5
   placementType: 0
   prefab: {fileID: 3908257913917299126, guid: d00e722c41845a742aba65c37f6e0450, type: 3}
