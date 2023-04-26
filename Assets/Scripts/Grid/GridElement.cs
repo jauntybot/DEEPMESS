@@ -24,7 +24,7 @@ public class GridElement : MonoBehaviour{
 
 
     public delegate void OnElementUpdate(GridElement ge);
-    public event OnElementUpdate ElementDestroyed;
+    public virtual event OnElementUpdate ElementDestroyed;
 
     public int hpMax, hpCurrent, defense;
     public bool shell;

@@ -12,7 +12,6 @@ public class ConsumableEquipmentData : EquipmentData
     {
         base.EquipEquipment(user);
         PlayerUnit pu = (PlayerUnit)user;
-        pu.consumableCount = startCount;
         pu.ui.UpdateEquipmentButtons();
     }
 

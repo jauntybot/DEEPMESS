@@ -61,7 +61,7 @@ public class HammerData : EquipmentData
         base.EquipEquipment(user);
     }
 
-    public virtual IEnumerator ThrowHammer(PlayerUnit user, GridElement target, Unit passTo = null) {
+    public virtual IEnumerator ThrowHammer(PlayerUnit user, GridElement target = null, Unit passTo = null) {
         
         PlayerManager manager = (PlayerManager)user.manager;
         if (target.gfx[0].sortingOrder > hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder)

@@ -14,7 +14,7 @@ public class Unit : GridElement {
 
     public List<Vector2> validActionCoords;
     
-    public enum Status { Normal, Immobilized, Restricted }
+    public enum Status { Normal, Immobilized, Restricted, Disabled }
     [Header("Modifiers")]
     public List<Status> conditions;
     private int prevMod;
@@ -90,9 +90,14 @@ public class Unit : GridElement {
                 default: return;
                 case Status.Normal: return;
                 case Status.Immobilized:
-                    prevMod = moveMod;
-                    moveMod -= 10;
+                    moved = true;
                     ui.UpdateEquipmentButtonMods();
+                break;
+                case Status.Disabled:
+                    energyCurrent = 0;
+                    moved = true;
+                    ui.UpdateEquipmentButtons();
+                    elementCanvas.UpdateStatsDisplay();
                 break;
             }
         }
@@ -105,14 +110,19 @@ public class Unit : GridElement {
                 default: return;
                 case Status.Normal: return;
                 case Status.Immobilized:
-                    moveMod = prevMod;
+                    moved = false;
                     ui.UpdateEquipmentButtonMods();
                     foreach(GridElement ge in grid.CoordContents(coord)) {
                         if (ge is ImmobilizeGoo goo) {
-                            print("goo found");
                             Destroy(goo.gameObject);
                         }
                     }
+                break;
+                case Status.Disabled:
+                    hpCurrent = 0;
+                    StartCoroutine(TakeDamage(-1));
+                    moved = false;
+                    energyCurrent = 1;
                 break;
             }
         }

@@ -91,8 +91,11 @@ public class PlayerManager : UnitManager {
 // Reset unit energy if not continued turn
             foreach(Unit u in units) {
                 if (u is PlayerUnit) {
-                    u.energyCurrent = u.energyMax;
-                    u.moved = false;
+                    if (!u.conditions.Contains(Unit.Status.Disabled)) {
+                        u.energyCurrent = u.energyMax;
+                        if (!u.conditions.Contains(Unit.Status.Immobilized))
+                            u.moved = false;
+                    }
                     u.elementCanvas.UpdateStatsDisplay();
                 }
             }

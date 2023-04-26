@@ -21,6 +21,9 @@ public class AttackData : EquipmentData
                 foreach(GridElement target in targetTypes) {
                     if (ge.GetType() == target.GetType()) {
                         remove = false;
+                        if (ge is Unit u) {
+                            if (u.conditions.Contains(Unit.Status.Disabled)) remove = true;
+                        }
                         ge.elementCanvas.ToggleStatsDisplay(true);
                         Debug.Log(ge.name);
                     }

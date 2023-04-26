@@ -53,7 +53,6 @@ public class EnemyManager : UnitManager {
         foreach (Vector2 coord in input.validActionCoords) 
         {
             if (input.ValidCommand(coord, input.selectedEquipment)) {
-                print("valid command " + coord);
                 SelectUnit(input);
                 GridElement target = null;
                 foreach (GridElement ge in selectedUnit.grid.CoordContents(coord))

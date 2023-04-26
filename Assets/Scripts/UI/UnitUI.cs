@@ -90,7 +90,6 @@ public class UnitUI : MonoBehaviour
                 if (unit.equipment[i] is ConsumableEquipmentData consume) {
                     EquipmentButton b = equipment.Find(b => b.data == consume);
                     PlayerUnit pu = (PlayerUnit)unit;
-                    b.UpdateBadge(pu.consumableCount);
                     //if (place.count <= 0) b.
                 }
             }

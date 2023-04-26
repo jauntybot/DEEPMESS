@@ -19,8 +19,10 @@ public class EnemyUnit : Unit {
                 closestTkn = manager.scenario.player.units[0];
                 if (closestTkn) {
                     foreach (Unit tkn in manager.scenario.player.units) {
-                        if (Vector2.Distance(tkn.coord, coord) < Vector2.Distance(closestTkn.coord, coord))
-                            closestTkn = tkn;
+                        if (!tkn.conditions.Contains(Status.Disabled)) {
+                            if (Vector2.Distance(tkn.coord, coord) < Vector2.Distance(closestTkn.coord, coord))
+                                closestTkn = tkn;
+                        }
                     }
                     Vector2 closestCoord = Vector2.one * -32;
                     foreach(Vector2 c in validActionCoords) {
@@ -38,8 +40,10 @@ public class EnemyUnit : Unit {
                 closestTkn = manager.scenario.player.units[0];
                 if (closestTkn) {
                     foreach (Unit tkn in manager.scenario.player.units) {
-                        if (Vector2.Distance(tkn.coord, coord) < Vector2.Distance(closestTkn.coord, coord))
-                            closestTkn = tkn;
+                        if (!tkn.conditions.Contains(Status.Disabled)) {
+                            if (Vector2.Distance(tkn.coord, coord) < Vector2.Distance(closestTkn.coord, coord))
+                                closestTkn = tkn;
+                        }
                     }
                     Vector2 furthestCoord = closestTkn.coord;
                     foreach(Vector2 c in validActionCoords) {
