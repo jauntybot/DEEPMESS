@@ -47,8 +47,6 @@ public class Unit : GridElement {
         if (selectedEquipment) {
             yield return StartCoroutine(selectedEquipment.UseEquipment(this, target));
         }
-        PlayerManager m = (PlayerManager)manager;
-        m.unitActing = false;
     }
 
     public bool ValidCommand(Vector2 target, EquipmentData equip) {

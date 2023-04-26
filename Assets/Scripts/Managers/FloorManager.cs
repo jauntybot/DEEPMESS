@@ -153,7 +153,8 @@ public class FloorManager : MonoBehaviour
             foreach (KeyValuePair<GridElement, LineRenderer> lr in lineRenderers)
                 DestroyImmediate(lr.Value.gameObject);
             lineRenderers = new Dictionary<GridElement, LineRenderer>();
-            floors[currentFloor.index-1].DisableGridHighlight();
+            if (currentFloor.index-1 >= 0)
+                floors[currentFloor.index-1].DisableGridHighlight();
         }        
     }
 

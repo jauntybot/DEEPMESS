@@ -33,7 +33,11 @@ public class PlayerUnit : Unit {
     }
 
     public override IEnumerator ExecuteAction(GridElement target = null) {
+        PlayerManager m = (PlayerManager)manager;
+        m.unitActing = true;
+        
         Coroutine co = StartCoroutine(base.ExecuteAction(target));
+
         if (selectedEquipment) {
             if (!selectedEquipment.multiselect)
                 manager.DeselectUnit();
@@ -43,9 +47,9 @@ public class PlayerUnit : Unit {
             manager.DeselectUnit();
         
         yield return co;
-        
-        PlayerManager m = (PlayerManager)manager;
+
         UIManager.instance.ToggleUndoButton(m.undoOrder.Count > 0);
+        m.unitActing = false;
     }
 
 // Allow the player to click on this
