@@ -17,15 +17,15 @@ public class UnitUI : MonoBehaviour
 
     [Header("Equipment")]
     public List<EquipmentButton> equipment; 
-    [SerializeField] GameObject equipmentPanel, equipmentButtonPrefab;
+    [SerializeField] GameObject equipmentPanel, hammerPanel, equipmentButtonPrefab, hammerButtonPrefab;
     [SerializeField] GameObject equipmentOptions;
     public GameObject initialLoadoutButton, slotsLoadoutButton;
 
     [Header("Overview")]
-
     [SerializeField] public UnitOverview overview;
-    
-    public UnitUI Initialize(Unit u) {
+    [SerializeField] GameObject overviewPrefab;
+
+    public UnitUI Initialize(Unit u, Transform overviewParent = null, Transform overviewLayoutParent = null) {
 
         unit = u;
         unitName.text = u.name;
@@ -33,6 +33,10 @@ public class UnitUI : MonoBehaviour
         gfx.sprite = u.gfx[0].sprite;
 
         if (u is PlayerUnit) {
+            if (overviewParent != null) {
+                UnitOverview view = Instantiate(overviewPrefab, overviewParent).GetComponent<UnitOverview>();
+                overview = view.Initialize(u, overviewLayoutParent);
+            }
             UpdateEquipmentButtons();
             ToggleEquipmentPanel(false);
         }
@@ -49,7 +53,8 @@ public class UnitUI : MonoBehaviour
     public void ToggleUnitPanel(bool active) {
 
         portraitPanel.SetActive(active);
-
+        if (overview != null && unit is not Nail)
+            overview.ToggleOverview(!active);
     }
 
     public void ToggleEquipmentPanel(bool active) {
@@ -63,6 +68,8 @@ public class UnitUI : MonoBehaviour
             if (b.data is ConsumableEquipmentData && unit.usedEquip)
                 b.gameObject.GetComponent<Button>().interactable = false;
         }
+        if (overview != null )
+            overview.UpdateOverview();
     }
 
     public void UpdateEquipmentButtons() {
@@ -82,19 +89,17 @@ public class UnitUI : MonoBehaviour
         for (int i = unit.equipment.Count - 1; i >= 0; i--) {
             if (unit.equipment[i] is not MoveData) {
                 if (equipment.Find(b => b.data == unit.equipment[i]) == null) {
-                    EquipmentButton newButt = Instantiate(equipmentButtonPrefab, equipmentPanel.transform).GetComponent<EquipmentButton>();
+                    EquipmentButton newButt = Instantiate(equipmentButtonPrefab).GetComponent<EquipmentButton>();
+                    newButt.transform.SetParent(unit.equipment[i] is HammerData ? hammerPanel.transform : equipmentPanel.transform);
+                    newButt.transform.localScale = Vector3.one;
                     newButt.Initialize(unit.equipment[i], unit);
                     equipment.Add(newButt);
-                    newButt.transform.parent.SetSiblingIndex(i);
-                }
-                if (unit.equipment[i] is ConsumableEquipmentData consume) {
-                    EquipmentButton b = equipment.Find(b => b.data == consume);
-                    PlayerUnit pu = (PlayerUnit)unit;
-                    //if (place.count <= 0) b.
                 }
             }
         }
         UpdateEquipmentButtonMods();
+        if (overview != null )
+            overview.UpdateOverview();
         ToggleEquipmentButtons();
     }
 
@@ -129,6 +134,8 @@ public class UnitUI : MonoBehaviour
                 Destroy(b.gameObject);
             }
         }
+        if (overview != null )  
+            overview.UpdateOverview();
     }
 
     public void SwapEquipmentFromSlots() {

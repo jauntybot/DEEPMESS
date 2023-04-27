@@ -5,11 +5,11 @@ using TMPro;
 
 public class MetaDisplay : MonoBehaviour
 {
-    [SerializeField] TMPro.TMP_Text turnsLeftText;
+    [SerializeField] TMPro.TMP_Text enemiesRemainingText;
     [SerializeField] TMPro.TMP_Text floorNumberText;
 
-    public void UpdateTurnsToDescend(int turnsToDescend) {    
-        turnsLeftText.text = turnsToDescend.ToString();
+    public void UpdateEnemiesRemaining(int enemiesRemaining) {    
+        enemiesRemainingText.text = enemiesRemaining.ToString();
     }
 
     public void UpdateCurrentFloor(int currentFloor) {

@@ -33,6 +33,7 @@ public class Nail : Unit
             break;
         }
         nailState = toState;
+        ui.overview.UpdateOverview();
     }
 
     

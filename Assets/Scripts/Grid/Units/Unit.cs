@@ -128,6 +128,9 @@ public class Unit : GridElement {
         }
     }
 
+    public void SelectUnitButton() {
+        manager.SelectUnit(this);
+    }
 
 #endregion
 

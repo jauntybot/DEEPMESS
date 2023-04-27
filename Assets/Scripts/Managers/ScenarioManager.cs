@@ -33,7 +33,6 @@ public class ScenarioManager : MonoBehaviour
 // State machines
     public enum Turn { Null, Player, Enemy, Descent, Cascade, Loadout, Slots }
     public Turn currentTurn, prevTurn;
-    public int turnCount, turnsToDescend;
 
 
 
@@ -114,7 +113,6 @@ public class ScenarioManager : MonoBehaviour
             case Turn.Player:
                 //currentEnemy.ResolveConditions();
                 if (player.units.Count >= 2) {
-                    turnCount++;
                     floorManager.upButton.GetComponent<Button>().enabled = true; floorManager.downButton.GetComponent<Button>().enabled = true;
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN", 1));
 

@@ -12,7 +12,7 @@ public class UIManager : MonoBehaviour
     [Header("Top UIs")]
     public MetaDisplay metaDisplay;
     public Button undoButton;
-    public TextMeshProUGUI undoText;
+
 
     [Header("Portraits")]
     [SerializeField] Transform portraitParent;
@@ -22,7 +22,8 @@ public class UIManager : MonoBehaviour
 
     [Header("Overviews")]
     [SerializeField] Transform overviewParent;
-    [SerializeField] GameObject overviewPrefab;
+    [SerializeField] Transform overviewLayoutParent;
+    [SerializeField] UnitOverview nailOverview;
 
     [Header("Loadouts")]
     [SerializeField] LoadoutManager loadoutManager;
@@ -54,7 +55,10 @@ public class UIManager : MonoBehaviour
     public UnitUI CreateUnitUI(Unit u) {
 
         UnitUI ui = Instantiate(portraitPrefab, portraitParent).GetComponent<UnitUI>();
-        u.ui = ui.Initialize(u);
+        u.ui = ui.Initialize(u, overviewParent, overviewLayoutParent);
+        if (u is Nail) {
+            u.ui.overview = nailOverview.Initialize(u, nailOverview.transform.parent);
+        }
         unitPortraits.Add(ui);
         return ui;
 
@@ -83,7 +87,6 @@ public class UIManager : MonoBehaviour
     public void ToggleUndoButton(bool state) {
         undoButton.interactable = state;
         Color c = state ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1);
-        undoText.color = c;
     }
 
 }

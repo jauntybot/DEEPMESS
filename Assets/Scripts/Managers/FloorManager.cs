@@ -404,7 +404,7 @@ public class FloorManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.75f);
         print("dropping nail");
         yield return StartCoroutine(scenario.player.DropNail());        
-        UIManager.instance.metaDisplay.UpdateTurnsToDescend(scenario.currentEnemy.units.Count);
+        UIManager.instance.metaDisplay.UpdateEnemiesRemaining(scenario.currentEnemy.units.Count);
 
 
         yield return new WaitForSecondsRealtime(.75f);

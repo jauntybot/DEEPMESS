@@ -8,42 +8,58 @@ public class ElementCanvas : MonoBehaviour
 {
     [SerializeField] protected bool disable;
     protected GridElement element;
-    public GameObject statDisplay, hpPips, hpInt, apPips;
-    [SerializeField] GameObject hpPipPrefab, apPipPrefab, dmgPipPrefab;
+    int trackedHP;
+    public GameObject statDisplay, hpContainer, hpPips, emptyHPPips,  hpInt, apPips;
+    [SerializeField] GameObject hpPipPrefab, apPipPrefab, dmgPipPrefab, emptyPipPrefab;
     [SerializeField] TMPro.TMP_Text hpText;
 
     public GameObject dmgPanel;
     [SerializeField] Animator dmgAnim;
+
+    UnitOverview overview = null;
 
     public virtual void Initialize(GridElement ge) 
     {
         if (!disable) {
             element = ge;
 
+            InstantiateMaxPips();
             UpdateStatsDisplay();
             ToggleStatsDisplay(false);
         }
-        if (element is PlayerUnit) {
+        if (element is PlayerUnit u) {
             apPips.SetActive(true);
+            overview = u.ui.overview;
+        } else if (element is Nail n) {
+            overview = n.ui.overview;
+        }
+    }
+
+    public virtual void InstantiateMaxPips() {
+        if (!disable) {
+            for (int i = element.hpMax - 1; i >= 0; i--) {
+                Instantiate(emptyPipPrefab, emptyHPPips.transform);
+                Instantiate(hpPipPrefab, hpPips.transform);
+                RectTransform rect = hpPips.GetComponent<RectTransform>();
+                rect.sizeDelta = new Vector2((float)(0.2f * element.hpMax + 0.02 * (element.hpMax - 1)), 0.333f);
+                rect.anchorMin = new Vector2(0.5f, 0.5f); rect.anchorMax = new Vector2(0.5f, 0.5f);
+                rect.anchoredPosition = Vector2.zero;
+            }
+            Instantiate(apPipPrefab, apPips.transform);
+            hpPips.SetActive(true);
         }
     }
 
     public virtual void UpdateStatsDisplay() {
         if (!disable) {
-            if (element.hpCurrent <= 5) {
-                hpPips.SetActive(true); hpInt.SetActive(false);
-                int dif = element.hpCurrent - hpPips.transform.childCount;
-                for (int i = Mathf.Abs(dif); i > 0; i--) {
-                    if (dif < 0) {
-                        if (hpPips.transform.childCount - i >= 0)
-                        DestroyImmediate(hpPips.transform.GetChild(hpPips.transform.childCount - i).gameObject);
-                    } else if (dif > 0) {
-                        Instantiate(hpPipPrefab, hpPips.transform);
-                    }
+            if (element.hpCurrent <= 10) {
+                hpContainer.SetActive(true); hpInt.SetActive(false);
+                for (int i = 0; i <= element.hpMax - 1; i++) {
+                    hpPips.transform.GetChild(i).gameObject.SetActive(i <= element.hpCurrent - 1);
                 }
             } else {
-                hpPips.SetActive(false); hpInt.SetActive(true);
-                hpText.text = element.hpCurrent.ToString();
+                hpContainer.SetActive(false); hpInt.SetActive(true);
+                hpText.text = element.hpCurrent.ToString() + "x";
             }
             if (element is PlayerUnit) {
                 int dif = element.energyCurrent - apPips.transform.childCount;
@@ -56,6 +72,8 @@ public class ElementCanvas : MonoBehaviour
                     }
                 }
             }
+            if (overview)
+                overview.UpdateOverview();
         }
     }
 
@@ -66,7 +84,7 @@ public class ElementCanvas : MonoBehaviour
         
         dmgAnim.gameObject.SetActive(true);
         
-        int r = hpPips.transform.childCount > 0? hpPips.transform.childCount - 1: 0;   
+        int r = element.hpCurrent > 0 ? element.hpCurrent - 1 : 0;   
 // Element is damaged
         if (dmg > 0) {           
             for (int i = 0; i <= r; i++)
