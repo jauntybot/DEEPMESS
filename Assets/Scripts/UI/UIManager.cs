@@ -28,7 +28,7 @@ public class UIManager : MonoBehaviour
     [Header("Loadouts")]
     [SerializeField] LoadoutManager loadoutManager;
     [SerializeField] GameObject loadoutPrefab;
-    [SerializeField] Transform loadoutPanel, loadoutUIParent;
+    [SerializeField] Transform loadoutBG, loadoutPanel, loadoutUIParent;
     List<UnitUI> loadoutUIs = new List<UnitUI>();
     
 
@@ -73,12 +73,14 @@ public class UIManager : MonoBehaviour
     
 
     public IEnumerator LoadOutScreen(bool first = false) {
+        loadoutBG.gameObject.SetActive(true);
         loadoutPanel.gameObject.SetActive(true);
         loadoutManager.DisplayLoadout(first);
         while (scenario.currentTurn == ScenarioManager.Turn.Loadout) {
 
             yield return null;
         }
+        loadoutBG.gameObject.SetActive(false);
         loadoutPanel.gameObject.SetActive(false);
         foreach(Unit u in scenario.player.units)
             u.ui.UpdateEquipmentButtons();

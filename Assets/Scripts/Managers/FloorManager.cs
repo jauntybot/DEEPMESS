@@ -381,6 +381,8 @@ public class FloorManager : MonoBehaviour
         else
             yield return StartCoroutine(TransitionFloors(true, false));
 
+        scenario.player.nail.ToggleNailState(Nail.NailState.Primed);
+
         yield return new WaitForSecondsRealtime(0.25f);
         if (betweenFloor.InbetweenTrigger(currentFloor.index-1)) {
             yield return StartCoroutine(betweenFloor.BetweenFloorSegment(currentFloor.index-1));
@@ -402,7 +404,7 @@ public class FloorManager : MonoBehaviour
         currentFloor.LockGrid(false);
         
         yield return new WaitForSecondsRealtime(0.75f);
-        print("dropping nail");
+        
         yield return StartCoroutine(scenario.player.DropNail());        
         UIManager.instance.metaDisplay.UpdateEnemiesRemaining(scenario.currentEnemy.units.Count);
 

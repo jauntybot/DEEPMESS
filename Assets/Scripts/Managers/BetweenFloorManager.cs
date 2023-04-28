@@ -10,26 +10,18 @@ public class BetweenFloorManager : MonoBehaviour
         public int floorTrigger;
     }
 
-    public List<BetweenFloor> betweenFloors;
-    public BetweenFloor currentBetween;
+    [SerializeField] public SlotMachine slotMachine;
+    [SerializeField] int slotMachineInterval;
 
     public bool InbetweenTrigger(int index) {
-        bool trigger = false;
-        foreach (BetweenFloor bw in betweenFloors) {
-            if (bw.floorTrigger == index) {
-                trigger = true;
-                break;
-            }
-        }
-
-        return trigger;
+        return index%slotMachineInterval == 0;
     }
 
     public IEnumerator BetweenFloorSegment(int currentFloorIndex) {
-        BetweenFloor seg = betweenFloors.Find(bw => bw.floorTrigger == currentFloorIndex);
-        currentBetween = seg;
-        ScenarioManager.instance.currentTurn = ScenarioManager.Turn.Slots;
-        seg.slotMachine.gameObject.SetActive(true);
+        ScenarioManager.instance.currentTurn = ScenarioManager.Turn.Loadout;
+        StartCoroutine(UIManager.instance.LoadOutScreen());
+        slotMachine.gameObject.SetActive(true);
+        slotMachine.Initialize(slotMachine.equipmentTable);
 
         while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Descent) {
             yield return null;

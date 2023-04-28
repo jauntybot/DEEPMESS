@@ -143,7 +143,12 @@ public class UnitUI : MonoBehaviour
     }
 
     public void SwapEquipmentFromSlots() {
-        UpdateLoadout(FloorManager.instance.betweenFloor.currentBetween.slotMachine.selectedReward);
+        EquipmentData reward = FloorManager.instance.betweenFloor.slotMachine.selectedReward;
+        if (reward != null)
+            UpdateLoadout(reward);
+        ToggleEquipmentButtons();
+        foreach (EquipmentButton b in equipment) 
+            b.gameObject.GetComponent<Button>().interactable = true;
     }
 
 }

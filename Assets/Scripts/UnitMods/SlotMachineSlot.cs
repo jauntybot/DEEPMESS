@@ -59,7 +59,7 @@ public class SlotMachineSlot : MonoBehaviour
     }
 
     public void SelectSlot() {
-        slotMachine.LoadOutEquipment();
+        slotMachine.SelectReward(finalIndex, this);
 
     }
 }

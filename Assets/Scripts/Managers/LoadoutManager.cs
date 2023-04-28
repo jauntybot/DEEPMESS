@@ -8,8 +8,7 @@ public class LoadoutManager : MonoBehaviour
 
 
     public Unit[] unitPrefabs;
-    List<UnitUI> unitUI;
-    [SerializeField] TMPro.TMP_Text titleText;
+    public List<UnitUI> unitUI;
     [SerializeField] Button initialDescentButton;
 
     public IEnumerator Initialize(List<Unit> units) {
@@ -38,6 +37,8 @@ public class LoadoutManager : MonoBehaviour
             for (int e = 0; e <= unitUI.Count - 1; e++) {
                 if (unitUI[e] != ui)
                     ui.initialLoadoutButton.GetComponent<Button>().onClick.AddListener(unitUI[e].ToggleEquipmentOptionsOff);
+                initialDescentButton.onClick.AddListener(unitUI[e].ToggleEquipmentOptionsOff);
+                
             }
         }
         yield return StartCoroutine(UIManager.instance.LoadOutScreen(true));
@@ -45,7 +46,6 @@ public class LoadoutManager : MonoBehaviour
 
     public void DisplayLoadout(bool first) {
         if (first) {
-            titleText.text = "Select Equipment";
             initialDescentButton.gameObject.SetActive(true);
             foreach (UnitUI ui in unitUI) {
                 ui.initialLoadoutButton.SetActive(first);
@@ -53,7 +53,6 @@ public class LoadoutManager : MonoBehaviour
             }
         }
         else {
-            titleText.text = "Equip to Unit";
             initialDescentButton.gameObject.SetActive(false);
             foreach (UnitUI ui in unitUI) {
                 ui.initialLoadoutButton.SetActive(first);
