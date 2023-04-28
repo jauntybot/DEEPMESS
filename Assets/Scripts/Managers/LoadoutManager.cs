@@ -29,6 +29,17 @@ public class LoadoutManager : MonoBehaviour
             ui.ToggleEquipmentPanel(true);
             unitUI.Add(ui);
         }
+        foreach (UnitUI ui in unitUI) {
+            for (int i = 0; i <= ui.equipmentOptions.transform.childCount - 1; i++) {
+                Button b = ui.equipmentOptions.transform.GetChild(i).GetComponent<Button>();
+                for (int e = 0; e <= unitUI.Count - 1; e++) 
+                    b.onClick.AddListener(unitUI[e].ToggleEquipmentOptionsOff);
+            }
+            for (int e = 0; e <= unitUI.Count - 1; e++) {
+                if (unitUI[e] != ui)
+                    ui.initialLoadoutButton.GetComponent<Button>().onClick.AddListener(unitUI[e].ToggleEquipmentOptionsOff);
+            }
+        }
         yield return StartCoroutine(UIManager.instance.LoadOutScreen(true));
     }
 

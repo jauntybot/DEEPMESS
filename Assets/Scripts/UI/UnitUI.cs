@@ -18,7 +18,7 @@ public class UnitUI : MonoBehaviour
     [Header("Equipment")]
     public List<EquipmentButton> equipment; 
     [SerializeField] GameObject equipmentPanel, hammerPanel, equipmentButtonPrefab, hammerButtonPrefab;
-    [SerializeField] GameObject equipmentOptions;
+    [SerializeField] public GameObject equipmentOptions;
     public GameObject initialLoadoutButton, slotsLoadoutButton;
 
     [Header("Overview")]
@@ -107,8 +107,12 @@ public class UnitUI : MonoBehaviour
         DestroyImmediate(this.gameObject);
     }
 
-    public void ToggleEquipmentOptions() {
-        equipmentOptions.SetActive(!equipmentOptions.activeSelf);
+    public void ToggleEquipmentOptionsOn() {
+        equipmentOptions.SetActive(true);
+    }
+
+    public void ToggleEquipmentOptionsOff() {
+        equipmentOptions.SetActive(false);
     }
 
     public void UpdateEquipmentButtonMods() {

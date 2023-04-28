@@ -11,7 +11,7 @@ public class UnitOverview : MonoBehaviour
     public GameObject overviewPanel;
     protected Button selectButton;
     public Image mini, equipment;
-    [SerializeField] protected GameObject moveDisable, equipmentDisable;
+    [SerializeField] protected GameObject moveDisable, equipmentDisable, hammerPossession, hammerDisable;
     [SerializeField] protected Transform hpPips, emptyHpPips;
     [SerializeField] protected GameObject hpPipPrefab, emptyPipPrefab;
 
@@ -43,8 +43,9 @@ public class UnitOverview : MonoBehaviour
 
     public virtual void UpdateOverview() {
 
-        mini.sprite = unit.gfx[0].sprite;
         mini.color = unit.conditions.Contains(Unit.Status.Disabled) ? new Color(0.5f, 0.5f, 0.5f) : Color.white;
+        hammerPossession.SetActive(unit.equipment.Find(e => e is HammerData) != null);
+        hammerDisable.SetActive(unit.energyCurrent <= 0);
         
         moveDisable.SetActive(unit.moved);
 

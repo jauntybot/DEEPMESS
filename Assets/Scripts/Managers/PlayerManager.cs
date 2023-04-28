@@ -50,6 +50,7 @@ public class PlayerManager : UnitManager {
             SpawnUnit(new Vector2(4,4), loadout.unitPrefabs[1]),
             SpawnUnit(new Vector2(3,3), loadout.unitPrefabs[2])
         };
+
         yield return StartCoroutine(loadout.Initialize(initU));
 
         SpawnHammer((PlayerUnit)units[0], hammerActions);
@@ -273,7 +274,6 @@ public class PlayerManager : UnitManager {
                     prevCursorTargetState = ge.targeted;
                     ge.TargetElement(true);
                     prevCursorTarget = ge;
-                    update = true;
                 }
             }
         }

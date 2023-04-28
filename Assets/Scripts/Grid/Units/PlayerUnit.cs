@@ -50,6 +50,9 @@ public class PlayerUnit : Unit {
 
         UIManager.instance.ToggleUndoButton(m.undoOrder.Count > 0);
         m.unitActing = false;
+// Untarget every unit
+        foreach(GridElement ge in m.currentGrid.gridElements) 
+            ge.TargetElement(false);
     }
 
 // Allow the player to click on this

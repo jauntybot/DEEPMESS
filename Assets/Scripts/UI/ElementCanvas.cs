@@ -37,19 +37,25 @@ public class ElementCanvas : MonoBehaviour
 
     public virtual void InstantiateMaxPips() {
         if (!disable) {
+            SizePipContainer(hpPips.GetComponent<RectTransform>());
+            SizePipContainer(dmgPanel.GetComponent<RectTransform>());
+            
             for (int i = element.hpMax - 1; i >= 0; i--) {
                 Instantiate(emptyPipPrefab, emptyHPPips.transform);
                 Instantiate(hpPipPrefab, hpPips.transform);
-                RectTransform rect = hpPips.GetComponent<RectTransform>();
-                rect.sizeDelta = new Vector2((float)(0.2f * element.hpMax + 0.02 * (element.hpMax - 1)), 0.333f);
-                rect.anchorMin = new Vector2(0.5f, 0.5f); rect.anchorMax = new Vector2(0.5f, 0.5f);
-                rect.anchoredPosition = Vector2.zero;
+                Instantiate(dmgPipPrefab, dmgPanel.transform);
             }
             Instantiate(apPipPrefab, apPips.transform);
             hpPips.SetActive(true);
         }
     }
 
+    protected virtual void SizePipContainer(RectTransform rect) {
+        rect.anchorMin = new Vector2(0.5f, 0.5f); rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = Vector2.zero;
+        Vector3 delta = (element.hpMax <= 5) ? new Vector2((float)(0.2f * element.hpMax + 0.02 * (element.hpMax - 1)), 0.333f) : new Vector2((float)(0.2f * 5 + 0.02 * 4), 0.333f);
+        rect.sizeDelta = (delta);
+    }
     public virtual void UpdateStatsDisplay() {
         if (!disable) {
             if (element.hpCurrent <= 10) {
@@ -84,27 +90,24 @@ public class ElementCanvas : MonoBehaviour
         
         dmgAnim.gameObject.SetActive(true);
         
-        int r = element.hpCurrent > 0 ? element.hpCurrent - 1 : 0;   
+        int r = element.hpCurrent - dmg;
 // Element is damaged
         if (dmg > 0) {           
-            for (int i = 0; i <= r; i++)
-                Instantiate(dmgPipPrefab, dmgPanel.transform);
+            for (int i = 0; i <= element.hpMax - 1; i++) {
+                GameObject pip = Instantiate(dmgPipPrefab, dmgPanel.transform);
+                pip.GetComponent<Image>().enabled = i > r;
+                pip.gameObject.SetActive(i <= element.hpCurrent);
+            }
             dmgAnim.SetBool("dmg", true);         
-            for (int i = 0; i <= r; i++)
-                if (i <= r - dmg)
-                    dmgPanel.transform.GetChild(i).GetComponent<Image>().enabled = false;
-                else 
-                    dmgPanel.transform.GetChild(i).GetComponent<Image>().enabled = true;
 // Element is healed
         } else if (dmg < 0) {
-            for (int i = 0; i <= r + Mathf.Abs(dmg); i++)
-                Instantiate(hpPipPrefab, dmgPanel.transform);
+            for (int i = 0; i <= element.hpMax - 1; i++) {
+                GameObject pip = Instantiate(dmgPipPrefab, dmgPanel.transform);
+                pip.GetComponent<Image>().enabled = i > element.hpCurrent;
+                pip.gameObject.SetActive(i <= r);
+            }
             dmgAnim.SetBool("dmg", false);
-            for (int i = 0; i <= r; i++)
-                dmgPanel.transform.GetChild(i).GetComponent<Image>().enabled = false;
         }
-        
-        
         
         while (dmgAnim.gameObject.activeSelf) {
             yield return null;

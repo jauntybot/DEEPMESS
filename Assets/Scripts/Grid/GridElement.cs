@@ -82,10 +82,12 @@ public class GridElement : MonoBehaviour{
     {
         if (!shell) {
             hpCurrent -= dmg;
-            
+            hpCurrent = hpCurrent < 0 ? 0 : hpCurrent;
+            hpCurrent = hpCurrent > hpMax ? hpMax : hpCurrent;
+
             if (elementCanvas) {
-                yield return StartCoroutine(elementCanvas.DisplayDamageNumber(dmg));
                 elementCanvas.UpdateStatsDisplay();
+                yield return StartCoroutine(elementCanvas.DisplayDamageNumber(dmg));
             }
         } else {
             RemoveShell();
