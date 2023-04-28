@@ -14,7 +14,7 @@ public class BetweenFloorManager : MonoBehaviour
     [SerializeField] int slotMachineInterval;
 
     public bool InbetweenTrigger(int index) {
-        return index%slotMachineInterval == 0;
+        return index%slotMachineInterval == 0 && index != 0;
     }
 
     public IEnumerator BetweenFloorSegment(int currentFloorIndex) {

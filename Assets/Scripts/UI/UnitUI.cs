@@ -43,6 +43,8 @@ public class UnitUI : MonoBehaviour
         ToggleUnitPanel(false);
         if (initialLoadoutButton != null) {
             initialLoadoutButton.SetActive(true); slotsLoadoutButton.SetActive(false);
+            foreach (EquipmentButton b in equipment) 
+                b.gameObject.GetComponent<Button>().interactable = true;
         }
 
         u.ElementDestroyed += UnitDestroyed;
@@ -131,6 +133,9 @@ public class UnitUI : MonoBehaviour
         unit.equipment.Insert(1, equip);
 
         UpdateEquipmentButtons();
+        foreach (EquipmentButton b in equipment) 
+            b.gameObject.GetComponent<Button>().interactable = true;
+
         for(int i = equipment.Count - 1; i >= 0; i--) {
             if (equipment[i].data is not ConsumableEquipmentData) {
                 EquipmentButton b = equipment[i];
