@@ -31,8 +31,10 @@ public class BHammerData : HammerData
                                 if (ge is Nail n) {
                                     if (n.nailState == Nail.NailState.Primed)
                                         remove = false;
-                                    else
+                                    else {
                                         user.grid.sqrs.Find(sqr => sqr.coord == n.coord).ToggleValidCoord(false);
+                                        remove = true;
+                                    }
                                 } else {
                                     remove = false;
                                     if (ge is EnemyUnit)

@@ -47,6 +47,8 @@ public class ScenarioManager : MonoBehaviour
             currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
             player.transform.parent = floorManager.currentFloor.transform;
         }
+        resetSceneString = SceneManager.GetActiveScene().name;
+        
         yield return StartCoroutine(player.Initialize());
     }
 
@@ -112,7 +114,14 @@ public class ScenarioManager : MonoBehaviour
             break;
             case Turn.Player:
                 //currentEnemy.ResolveConditions();
-                if (player.units.Count >= 2) {
+                bool lose = true;
+                foreach (Unit u in player.units) {
+                    if (u is not Nail && !u.conditions.Contains(Unit.Status.Disabled)) {
+                        lose = false;
+                        break;
+                    }
+                }
+                if (!lose && player.units.Find(u => u is Nail) != null) {
                     floorManager.upButton.GetComponent<Button>().enabled = true; floorManager.downButton.GetComponent<Button>().enabled = true;
                     yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN", 1));
 

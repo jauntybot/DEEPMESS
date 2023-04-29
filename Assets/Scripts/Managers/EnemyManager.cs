@@ -21,6 +21,17 @@ public class EnemyManager : UnitManager {
         yield return new WaitForSecondsRealtime(1/Util.fps);
         for (int i = units.Count - 1; i >= 0; i--) 
         {
+            bool lose = true;
+            foreach (Unit u in scenario.player.units) {
+                if (u is not Nail && !u.conditions.Contains(Unit.Status.Disabled)) {
+                    lose = false;
+                    break;
+                }
+            }
+            if (lose || scenario.player.units.Find(u => u is Nail) == null) {
+                EndTurnEarly();
+                break;
+            }
             EnemyUnit enemy = units[i] as EnemyUnit;
             if (!scatter) {
                 ongoingTurn = StartCoroutine(CalculateAction(enemy));

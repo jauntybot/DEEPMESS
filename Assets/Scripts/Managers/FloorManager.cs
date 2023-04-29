@@ -295,7 +295,7 @@ public class FloorManager : MonoBehaviour
 // Update floor manager current floor... preview next floor untis stats?
         if (down && currentFloor.index-1 >= 0) floors[currentFloor.index-1].gameObject.SetActive(false);
         if (toFloor) currentFloor = toFloor;
-        UIManager.instance.metaDisplay.UpdateCurrentFloor(currentFloor.index);
+        UIManager.instance.metaDisplay.UpdateCurrentFloor(floorDefinitions.Count - currentFloor.index);
     }
 
     public IEnumerator DropUnits(Grid fromFloor, Grid toFloor) {
