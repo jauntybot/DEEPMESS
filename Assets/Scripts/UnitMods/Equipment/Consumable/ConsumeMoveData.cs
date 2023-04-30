@@ -11,9 +11,7 @@ public class ConsumeMoveData : ConsumableEquipmentData
     Vector2 dir;
     [SerializeField] List<GridElement> firstTargets;
 
-    public override List<Vector2> TargetEquipment(GridElement user, int mod = 0)
-    {
-
+    public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         switch(moveType) {
             default:
             case MoveType.Swap:
@@ -120,11 +118,11 @@ public class ConsumeMoveData : ConsumableEquipmentData
         Vector3 to = thrower.grid.PosFromCoord(coord);
         Vector3 origin = thrown.transform.position;
 
+        float throwDur = animDur * Vector2.Distance(thrower.coord, coord) * 2;
         float timer = 0;
-        while (timer < animDur) {
+        while (timer < throwDur) {
 
-            thrown.transform.position = Vector3.Lerp(origin, to, timer/animDur);
-
+            thrown.transform.position = Util.SampleParabola(origin, to, timer/throwDur);
             yield return null;
             timer += Time.deltaTime;
         }

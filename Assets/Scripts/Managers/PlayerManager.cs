@@ -19,14 +19,20 @@ public class PlayerManager : UnitManager {
     public List<HammerData> hammerActions;
     [SerializeField] EquipmentData cascadeMovement;
     [HideInInspector] public EquipmentData overrideEquipment = null;
-    [SerializeField] public GameObject nailPrefab, hammerPrefab, hammerPickupPrefab;
+    [SerializeField] GridContextuals contextuals;
 
+    [Header("PREFABS")]
+    [SerializeField] public GameObject nailPrefab;
+    [SerializeField] public GameObject hammerPrefab, hammerPickupPrefab;
+
+    [Header("UNDO")]
     public bool unitActing = false;
     public Dictionary<Unit, Vector2> undoableMoves = new Dictionary<Unit, Vector2>();
     public List<Unit> undoOrder;
     private GridElement prevCursorTarget = null;
     private bool prevCursorTargetState = false;
 
+    [Header("MISC.")]
 // Get rid of this reference somehow
     [SerializeField] EndTurnBlinking turnBlink;
 
@@ -44,6 +50,8 @@ public class PlayerManager : UnitManager {
     public override IEnumerator Initialize()
     {
         yield return base.Initialize();
+
+        contextuals.Initialize(this);
 
         List<Unit> initU = new List<Unit>() {
             SpawnUnit(new Vector2(3,4), loadout.unitPrefabs[0]),
@@ -72,6 +80,7 @@ public class PlayerManager : UnitManager {
         GameObject h = Instantiate(hammerPrefab, unit.transform.position, Quaternion.identity, unit.transform);
         h.GetComponentInChildren<SpriteRenderer>().sortingOrder = unit.gfx[0].sortingOrder;
         unit.gfx.Add(h.GetComponentInChildren<SpriteRenderer>());
+        h.transform.GetChild(0).transform.localPosition = new Vector3(0.5f, 0, 0);
         foreach(HammerData equip in hammerData) {
             unit.equipment.Insert(unit.equipment.Count, equip);
             equip.EquipEquipment(unit);
@@ -249,8 +258,20 @@ public class PlayerManager : UnitManager {
 
     public void GridMouseOver(Vector2 pos, bool state) {
         currentGrid.UpdateTargetCursor(state, pos);
+        if (contextuals.displaying) {
+            if (selectedUnit != null) {
+                if (selectedUnit.validActionCoords.Count > 0) {
+                    if (selectedUnit.validActionCoords.Contains(pos)) 
+                        contextuals.UpdateElement(pos);
+                    else
+                        contextuals.ToggleValid(false);
+                }
+            }
+        }
         bool update = false;
+// if cursor is on grid
         if (prevCursorTarget) {
+// player has moved the cursor to another coord
             if (pos != prevCursorTarget.coord) {
                 prevCursorTarget.TargetElement(prevCursorTargetState);
                 update = false;
@@ -267,6 +288,7 @@ public class PlayerManager : UnitManager {
                     prevCursorTargetState = false;
                 }
             }
+// first grid mouseOver if cursor not on grid
         } else {
             update = false;
             foreach(GridElement ge in currentGrid.CoordContents(pos)) {
@@ -292,23 +314,22 @@ public class PlayerManager : UnitManager {
         }
     }
 
+    public void SelectEquipment(EquipmentData equip = null) {
+        if (equip) {
+            if (equip.contextualAnimGO != null) {
+                StartCoroutine(contextuals.DisplayGridContextuals(selectedUnit, equip.contextualAnimGO, equip.contextDisplay));
+            } else {
+                StartCoroutine(contextuals.DisplayGridContextuals(selectedUnit, selectedUnit.gameObject, equip.contextDisplay));
+            }
+        }
+    }
+
     public override void DeselectUnit()
     {
         base.DeselectUnit();
         turnBlink.BlinkEndTurn();
         prevCursorTargetState = false;
-    }
-
-    protected override void RemoveUnit(GridElement ge)
-    {
-        base.RemoveUnit(ge);
-        float pu = 0;
-        foreach (Unit unit in units) {
-            if (unit is PlayerUnit) pu++;
-        }
-        if (pu <= 0) {
-            StartCoroutine(scenario.Lose());            
-        }
+        contextuals.displaying = false;
     }
 
     public void UndoMove() {
@@ -349,6 +370,7 @@ public class PlayerManager : UnitManager {
                 units[i].UpdateElement(units[i].coord);
         }
         currentGrid = newGrid;
+        contextuals.grid = newGrid;
         transform.parent = newGrid.transform;
         transform.SetSiblingIndex(3);
     }

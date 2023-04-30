@@ -7,6 +7,7 @@ using UnityEngine;
 public class PlayerUnit : Unit {
 
 
+    PlayerManager pManager;
     public enum AnimState { Idle, Hammer, Disabled };
     public AnimState prevAnimState, animState;
     protected Animator gfxAnim;
@@ -15,26 +16,26 @@ public class PlayerUnit : Unit {
     protected override void Start() {
         base.Start();
         gfxAnim = gfx[0].GetComponent<Animator>();
+        pManager = (PlayerManager) manager;
     }
 
 // Called when an action is applied to a unit or to clear it's actions
     public override void UpdateAction(EquipmentData equipment = null, int mod = 0) 
     {
-        PlayerManager m = (PlayerManager)manager;
-        if (m.overrideEquipment == null) {
+        if (pManager.overrideEquipment == null) {
             if (equipment is ConsumableEquipmentData && !usedEquip)
                 base.UpdateAction(equipment, mod);
             else if (equipment is not ConsumableEquipmentData)
                 base.UpdateAction(equipment, mod);
         }
         else {
-            base.UpdateAction(m.overrideEquipment, mod);
+            base.UpdateAction(pManager.overrideEquipment, mod);
         }
+        pManager.SelectEquipment(equipment);
     }
 
     public override IEnumerator ExecuteAction(GridElement target = null) {
-        PlayerManager m = (PlayerManager)manager;
-        m.unitActing = true;
+        pManager.unitActing = true;
         
         Coroutine co = StartCoroutine(base.ExecuteAction(target));
 
@@ -48,10 +49,10 @@ public class PlayerUnit : Unit {
         
         yield return co;
 
-        UIManager.instance.ToggleUndoButton(m.undoOrder.Count > 0);
-        m.unitActing = false;
+        UIManager.instance.ToggleUndoButton(pManager.undoOrder.Count > 0);
+        pManager.unitActing = false;
 // Untarget every unit
-        foreach(GridElement ge in m.currentGrid.gridElements) 
+        foreach(GridElement ge in pManager.currentGrid.gridElements) 
             ge.TargetElement(false);
     }
 

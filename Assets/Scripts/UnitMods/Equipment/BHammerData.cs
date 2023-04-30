@@ -152,11 +152,11 @@ public class BHammerData : HammerData
             if (passTo.gfx[0].sortingOrder > hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder)  
                 hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;
             float timer = 0;
-            float throwDur = animDur * Vector2.Distance(prevCoord, passTo.coord);
+            float throwDur = animDur * Vector2.Distance(prevCoord, passTo.coord) * 2;
             Vector3 startPos = hammer.transform.position;
             Vector3 endPos = FloorManager.instance.currentFloor.PosFromCoord(passTo.coord);
             while (timer < throwDur) {
-                hammer.transform.position = Vector3.Lerp(startPos, endPos, timer/throwDur);
+                hammer.transform.position = Util.SampleParabola(startPos, endPos, timer/throwDur);
                 yield return null;
                 timer += Time.deltaTime;
             }
@@ -171,4 +171,6 @@ public class BHammerData : HammerData
             manager.TriggerDescent();
         }
     }
+
+
 }

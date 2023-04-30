@@ -40,9 +40,22 @@ public class PlacementData : ConsumableEquipmentData
                 yield return user.StartCoroutine(MoveToCoord(pu, target.coord));
             break;
             case PlacementType.PlaceAdjacent:
+                placed.UpdateElement(user.coord);
+                Vector3 origin = user.grid.PosFromCoord(user.coord);
+                Vector3 dest = user.grid.PosFromCoord(target.coord);
+                
+                float throwDur = animDur * Vector2.Distance(user.coord, target.coord) * 2;
+                float timer = 0;
+                while (timer < throwDur) {
+                    placed.transform.position = Util.SampleParabola(origin, dest, timer/throwDur);
+
+                    yield return new WaitForSecondsRealtime(1/Util.fps);
+                    timer += Time.deltaTime;    
+                }
                 placed.UpdateElement(target.coord);
                 if (target != null)
                     placed.OnSharedSpace(target);
+                
             break;
         }
     }

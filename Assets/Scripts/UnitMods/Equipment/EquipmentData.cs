@@ -10,18 +10,25 @@ public class EquipmentData : ScriptableObject {
 
     new public string name;
     public Sprite icon;
+
+    [Header("GRID DISPLAY")]
+    public GameObject contextualAnimGO;
+    public GridContextuals.ContextDisplay contextDisplay;
     public int gridColor;
-    public int energyCost;
+    
+    [Header("MODIFIERS")]
     public AdjacencyType adjacency;
+    public bool multiselect;
+    public GridElement firstTarget;
+    public int energyCost;
     public int range;
     [SerializeField] protected float animDur = 0.5f;
 
-    public bool multiselect;
+    [Header("FILTERS")]
 // When false, filters out listed elements from adjacenecy checks, when true, only allows listed elements in adjacency checks
     public bool filterValid;
     public List<GridElement> filters; 
     public List<GridElement> targetTypes;
-    public GridElement firstTarget;
 
 // The following variables are dependent on the card Action, hidden with custom editor
 

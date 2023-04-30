@@ -5,9 +5,6 @@ using UnityEngine;
 [System.Serializable]   
 public class ConsumableEquipmentData : EquipmentData
 {
-
-    [SerializeField] private int startCount;
-
     public override void EquipEquipment(GridElement user)
     {
         base.EquipEquipment(user);

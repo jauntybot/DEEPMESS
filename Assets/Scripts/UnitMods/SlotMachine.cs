@@ -85,7 +85,10 @@ public class SlotMachine : MonoBehaviour
     }
     public void HealAllUnits() {
         foreach (Unit u in ScenarioManager.instance.player.units) {
-            StartCoroutine(u.TakeDamage(-1));
+            if (u is Nail) 
+                StartCoroutine(u.TakeDamage(-3));
+            else
+                StartCoroutine(u.TakeDamage(-1));
         }
         Invoke("SkipSlots", 1f);
     }

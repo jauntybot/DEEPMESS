@@ -66,7 +66,7 @@ public class Unit : GridElement {
         if (targetSqr.tileType == GridSquare.TileType.Blood) {
             ApplyCondition(Status.Restricted);
         } else if (targetSqr.tileType == GridSquare.TileType.Bile) {
-            StartCoroutine(DestroyElement());
+            StartCoroutine(TakeDamage(hpMax));
         } else {
             RemoveCondition(Status.Restricted);
         }
