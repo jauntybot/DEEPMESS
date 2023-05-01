@@ -8,7 +8,7 @@ public class GridContextuals : MonoBehaviour
     PlayerManager manager;
     public Grid grid;
 
-    public enum ContextDisplay { None, Linear, Stepped, Parabolic };
+    public enum ContextDisplay { None, IconOnly, Linear, Stepped, Parabolic };
     private ContextDisplay currentContext = ContextDisplay.None;
 
     [HideInInspector] public bool displaying;
@@ -16,7 +16,8 @@ public class GridContextuals : MonoBehaviour
     Animator cursorAnimator;
     [SerializeField] List<Vector2> targetCoords;
     [SerializeField] LineRenderer lr;
-
+    int lrI = 0;
+    GridElement fromOverride = null;
 
     public void Initialize(PlayerManager m) {
         manager = m;
@@ -26,19 +27,25 @@ public class GridContextuals : MonoBehaviour
     }
 
 
-    public IEnumerator DisplayGridContextuals(GridElement origin, GameObject refTrans, ContextDisplay context) {
+    public IEnumerator DisplayGridContextuals(GridElement origin, GameObject refTrans, ContextDisplay context, bool multi = false) {
+
         displaying = true;
         ToggleValid(true);
         UpdateCursorAnim(refTrans.transform);
-        UpdateElement(origin.coord);
-
-        lr.SetPosition(0, grid.PosFromCoord(origin.coord));
+        lr.positionCount = 0;
+        UpdateContext(context);        
+        
+        UpdateCursor((Unit)origin, origin.coord);
+        Debug.Log("co start");
         while (manager.selectedUnit != null && !manager.unitActing && displaying) {
             
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
+        Debug.Log("co end");
+        lrI = 0;
         ToggleValid(false);
         displaying = false;
+        currentContext = ContextDisplay.None;
     }
 
     public void UpdateCursorAnim(Transform refTrans) {
@@ -50,17 +57,59 @@ public class GridContextuals : MonoBehaviour
     }
 
     // Update grid position and coordinate
-    public void UpdateElement(Vector2 c) {
+    public void UpdateCursor(Unit from, Vector2 to) {
         if (currentContext != ContextDisplay.None)
             ToggleValid(true);
 
-        Vector3 pos = grid.PosFromCoord(c);
-        contextCursor.transform.position = pos;
+        Vector2 fromCoord = from.coord;
+        if (fromOverride != null)
+            fromCoord = fromOverride.coord;
 
-        UpdateSortOrder(c);
+        contextCursor.transform.position = grid.PosFromCoord(to);
+        UpdateSortOrder(to);
 
+        lr.positionCount += 3;
+        lr.SetPosition(lrI, grid.PosFromCoord(fromCoord));
+        lr.SetPosition(lrI + 1, grid.PosFromCoord(fromCoord));
+        lr.SetPosition(lrI + 2, grid.PosFromCoord(fromCoord));
+        switch(currentContext) {
+            default:
+            case ContextDisplay.None:
+            case ContextDisplay.IconOnly:
+                lr.positionCount = 0;
+            break;
+            case ContextDisplay.Linear:
+                lr.positionCount = lrI + 6;
+                lr.SetPosition(lrI + 3, grid.PosFromCoord(to));
+                lr.SetPosition( lrI + 4, grid.PosFromCoord(to));
+                lr.SetPosition(lrI + 5, grid.PosFromCoord(to));
+            break;
+            case ContextDisplay.Stepped:
+                Dictionary<Vector2, Vector2> fromTo = EquipmentAdjacency.SteppedCoordAdjacency(fromCoord, to, from.selectedEquipment);
+                Vector2 prev = fromCoord;
+                lr.positionCount = lrI + (fromTo.Count + 1) * 3;
+                for (int i = 1; i <= fromTo.Count; i++) {
+                    Vector3 linePos = grid.PosFromCoord(fromTo[prev]);
+                    lr.SetPosition(lrI + 3*i, linePos); lr.SetPosition(lrI + 3*i + 1, linePos); lr.SetPosition(lrI + 3*i + 2, linePos);
+                    prev = fromTo[prev];
+                }
+            
+            break;
+            case ContextDisplay.Parabolic:
+                List<Vector3> points = Util.SampledParabola(grid.PosFromCoord(fromCoord), grid.PosFromCoord(to), 24);
+                lr.positionCount = lrI + points.Count * 3;
+                for (int i = 1; i < points.Count; i++) {
+                    lr.SetPosition(lrI + 3*i, points[i]); lr.SetPosition(lrI + 3*i + 1, points[i]); lr.SetPosition(lrI + 3*i + 2, points[i]);
+                }
+            break;
+        }        
+    }
+
+    public void UpdateContext(ContextDisplay context, GridElement target = null) {
+        currentContext = context;
+        lrI = lr.positionCount;
         
-        lr.SetPosition(lr.positionCount-1, pos);
+        fromOverride = target;
     }  
 
     public virtual void UpdateSortOrder(Vector2 c) {

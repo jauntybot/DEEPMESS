@@ -15,12 +15,15 @@ MonoBehaviour:
   name: Hammer
   icon: {fileID: 21300000, guid: af3e58da37d9d4597bced332e5c2862a, type: 3}
   contextualAnimGO: {fileID: 3955549777479365904, guid: a8ad447d87fd54d3284fc69a0b042b16, type: 3}
+  contextDisplay: 2
+  multiContext: 4
   gridColor: 2
-  energyCost: 1
+  multiselect: 1
   adjacency: 1
+  firstTarget: {fileID: 0}
+  energyCost: 1
   range: 8
   animDur: 0.1
-  multiselect: 1
   filterValid: 0
   filters:
   - {fileID: 2016796106260804354, guid: b12bed586f9b98a4b9f6045893aeb48a, type: 3}
@@ -33,7 +36,6 @@ MonoBehaviour:
   - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
   - {fileID: 2016796106260804354, guid: b12bed586f9b98a4b9f6045893aeb48a, type: 3}
   - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
-  firstTarget: {fileID: 0}
   hammer: {fileID: 0}
   nail: {fileID: 0}
   action: 1

@@ -29,4 +29,32 @@ public class Util : MonoBehaviour
         }
     }
 
+    public static List<Vector3> SampledParabola ( Vector3 start, Vector3 end, int segments ) {
+        List<Vector3> pts = new List<Vector3>();        
+        float time = 0;
+
+        for (float i = 0; i < segments; i+=1) {
+            time = i/segments;
+            float parabolicT = time * 2 - 1;
+            Vector3 result = Vector3.zero;
+            if ( Mathf.Abs( start.y - end.y ) < 0.1f ) {
+                //start and end are roughly level, pretend they are - simpler solution with less steps
+                Vector3 travelDirection = end - start;
+                result = start + time * travelDirection;
+                result.y += ( -parabolicT * parabolicT + 1 ) * 3;
+            } else {
+                //start and end are not level, gets more complicated
+                Vector3 travelDirection = end - start;
+                Vector3 levelDirecteion = end - new Vector3( start.x, end.y, start.z );
+                Vector3 right = Vector3.Cross( travelDirection, levelDirecteion );
+                result = start + time * travelDirection;
+                result += ( ( -parabolicT * parabolicT + 1 ) * 3 ) * Vector3.up;
+            }
+
+            pts.Add(result);
+        }
+        
+        return pts;
+    }
+
 }

@@ -76,6 +76,7 @@ public class ConsumeMoveData : ConsumableEquipmentData
             case MoveType.Throw: 
                 if (firstTarget == null) {
                     firstTarget = target;
+                    contextualAnimGO = target.gameObject;
                     Unit unit = (Unit)user;
                     unit.grid.DisableGridHighlight();
                     unit.validActionCoords = TargetEquipment(user);

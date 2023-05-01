@@ -15,12 +15,15 @@ MonoBehaviour:
   name: Big Grab
   icon: {fileID: 21300000, guid: a0a27e7aad2ab48b9aaa4dd975ba8db7, type: 3}
   contextualAnimGO: {fileID: 0}
+  contextDisplay: 0
+  multiContext: 4
   gridColor: 1
-  energyCost: 1
+  multiselect: 1
   adjacency: 6
+  firstTarget: {fileID: 0}
+  energyCost: 1
   range: 4
   animDur: 0.1
-  multiselect: 1
   filterValid: 0
   filters:
   - {fileID: 2016796106260804354, guid: b12bed586f9b98a4b9f6045893aeb48a, type: 3}
@@ -29,8 +32,6 @@ MonoBehaviour:
   - {fileID: 4634978180570587290, guid: c7249e601f4730c4999df2560c657aac, type: 3}
   - {fileID: 2897877390811545440, guid: d00e722c41845a742aba65c37f6e0450, type: 3}
   targetTypes: []
-  firstTarget: {fileID: 0}
-  startCount: 5
   moveType: 2
   firstTargets:
   - {fileID: 2016796106260804354, guid: b12bed586f9b98a4b9f6045893aeb48a, type: 3}

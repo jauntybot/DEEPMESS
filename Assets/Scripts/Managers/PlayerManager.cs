@@ -19,7 +19,7 @@ public class PlayerManager : UnitManager {
     public List<HammerData> hammerActions;
     [SerializeField] EquipmentData cascadeMovement;
     [HideInInspector] public EquipmentData overrideEquipment = null;
-    [SerializeField] GridContextuals contextuals;
+    [SerializeField] public GridContextuals contextuals;
 
     [Header("PREFABS")]
     [SerializeField] public GameObject nailPrefab;
@@ -262,7 +262,7 @@ public class PlayerManager : UnitManager {
             if (selectedUnit != null) {
                 if (selectedUnit.validActionCoords.Count > 0) {
                     if (selectedUnit.validActionCoords.Contains(pos)) 
-                        contextuals.UpdateElement(pos);
+                        contextuals.UpdateCursor(selectedUnit, pos);
                     else
                         contextuals.ToggleValid(false);
                 }
@@ -329,7 +329,6 @@ public class PlayerManager : UnitManager {
         base.DeselectUnit();
         turnBlink.BlinkEndTurn();
         prevCursorTargetState = false;
-        contextuals.displaying = false;
     }
 
     public void UndoMove() {

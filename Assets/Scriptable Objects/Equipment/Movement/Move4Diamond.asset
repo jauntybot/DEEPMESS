@@ -14,12 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: MOVE 4 SQRS
   icon: {fileID: 21300000, guid: 714f589680e6b10478abbca99a184d85, type: 3}
+  contextualAnimGO: {fileID: 0}
+  contextDisplay: 3
+  multiContext: 0
   gridColor: 0
-  energyCost: 1
+  multiselect: 0
   adjacency: 0
+  firstTarget: {fileID: 0}
+  energyCost: 1
   range: 4
   animDur: 0.2
-  multiselect: 0
   filterValid: 0
   filters:
   - {fileID: 4634978180570587290, guid: c7249e601f4730c4999df2560c657aac, type: 3}
@@ -28,5 +32,4 @@ MonoBehaviour:
   - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
   - {fileID: 2897877390811545440, guid: d00e722c41845a742aba65c37f6e0450, type: 3}
   targetTypes: []
-  firstTarget: {fileID: 0}
   animType: 1

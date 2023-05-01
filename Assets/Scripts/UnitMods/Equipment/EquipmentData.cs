@@ -14,11 +14,13 @@ public class EquipmentData : ScriptableObject {
     [Header("GRID DISPLAY")]
     public GameObject contextualAnimGO;
     public GridContextuals.ContextDisplay contextDisplay;
+    public GridContextuals.ContextDisplay multiContext;
     public int gridColor;
     
     [Header("MODIFIERS")]
-    public AdjacencyType adjacency;
     public bool multiselect;
+    public AdjacencyType adjacency;
+    public enum AdjacencyType { Diamond, Orthogonal, Diagonal, Star, Box, OfType, OfTypeInRange };
     public GridElement firstTarget;
     public int energyCost;
     public int range;
@@ -30,9 +32,8 @@ public class EquipmentData : ScriptableObject {
     public List<GridElement> filters; 
     public List<GridElement> targetTypes;
 
-// The following variables are dependent on the card Action, hidden with custom editor
 
-    public enum AdjacencyType { Diamond, Orthogonal, Diagonal, Star, Box, OfType, OfTypeInRange };
+
 
     public virtual List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this);

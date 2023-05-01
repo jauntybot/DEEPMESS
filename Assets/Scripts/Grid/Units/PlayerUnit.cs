@@ -16,7 +16,7 @@ public class PlayerUnit : Unit {
     protected override void Start() {
         base.Start();
         gfxAnim = gfx[0].GetComponent<Animator>();
-        pManager = (PlayerManager) manager;
+        pManager = (PlayerManager)manager;
     }
 
 // Called when an action is applied to a unit or to clear it's actions
@@ -35,17 +35,20 @@ public class PlayerUnit : Unit {
     }
 
     public override IEnumerator ExecuteAction(GridElement target = null) {
-        pManager.unitActing = true;
         
         Coroutine co = StartCoroutine(base.ExecuteAction(target));
 
         if (selectedEquipment) {
-            if (!selectedEquipment.multiselect)
-                manager.DeselectUnit();
-            else if (selectedEquipment.firstTarget == null)
-                manager.DeselectUnit();
+            if (!selectedEquipment.multiselect) {
+                pManager.DeselectUnit();
+                pManager.unitActing = true;
+            }
+            else if (selectedEquipment.firstTarget != null) {
+                pManager.contextuals.UpdateContext(selectedEquipment.multiContext, selectedEquipment.firstTarget);
+                //selectedEquipment.firstTarget.coord
+            }
         } else
-            manager.DeselectUnit();
+            pManager.DeselectUnit();
         
         yield return co;
 
@@ -67,7 +70,7 @@ public class PlayerUnit : Unit {
     {
         base.TargetElement(state);
         ui.ToggleEquipmentPanel(state);
-        //if (energyCurrent == 0 || manager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
+        //if (energyCurrent == 0 || pManager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
     }
 
     public virtual void SwitchAnim(AnimState toState) {
@@ -96,7 +99,7 @@ public class PlayerUnit : Unit {
             if (equipment[i] is HammerData hammer) {
                 if (!droppedHammer) {
                     List<Unit> possiblePasses = new List<Unit>();
-                    foreach (Unit u in manager.units) {
+                    foreach (Unit u in pManager.units) {
                         if (u is not Nail && !u.conditions.Contains(Status.Disabled) && u != this)
                             possiblePasses.Add(u);
                     }
@@ -116,7 +119,7 @@ public class PlayerUnit : Unit {
         
         SwitchAnim(AnimState.Idle);
         RemoveCondition(Status.Disabled);
-        PlayerManager m = (PlayerManager)manager;
+        PlayerManager m = (PlayerManager)pManager;
         StartCoroutine(m.nail.TakeDamage(1));
     }
 }
