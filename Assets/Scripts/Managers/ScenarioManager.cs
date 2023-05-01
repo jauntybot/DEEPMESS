@@ -96,12 +96,9 @@ public class ScenarioManager : MonoBehaviour
                     currentTurn = Turn.Enemy;
                     player.StartEndTurn(false);
                     yield return StartCoroutine(messagePanel.DisplayMessage("ANTIBODY RESPONSE", 2));
-                    foreach(Unit u in currentEnemy.units) {
-                        u.energyCurrent = u.energyMax;
-                        u.moved = false;
-                        u.elementCanvas.UpdateStatsDisplay();
-                    }
+
                     endTurnButton.enabled = false;
+                    
                     if (prevTurn == Turn.Descent)
                         StartCoroutine(currentEnemy.TakeTurn(true));
                     else

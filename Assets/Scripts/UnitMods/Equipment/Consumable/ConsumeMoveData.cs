@@ -83,8 +83,10 @@ public class ConsumeMoveData : ConsumableEquipmentData
                     unit.grid.DisplayValidCoords(unit.validActionCoords, gridColor);
                     yield return user.StartCoroutine(GrabUnit((Unit)user, (Unit)firstTarget));
                 } else {
+                    Coroutine co = user.StartCoroutine(ThrowUnit((Unit)user, (Unit)firstTarget, target.coord));
+                    firstTarget = null;
                     yield return base.UseEquipment(user);
-                    yield return user.StartCoroutine(ThrowUnit((Unit)user, (Unit)firstTarget, target.coord));
+                    yield return co;
                 }
             break;
         }
@@ -118,12 +120,13 @@ public class ConsumeMoveData : ConsumableEquipmentData
     public IEnumerator ThrowUnit(Unit thrower, Unit thrown, Vector2 coord) {
         Vector3 to = thrower.grid.PosFromCoord(coord);
         Vector3 origin = thrown.transform.position;
+        float h = 0.25f + Vector2.Distance(thrower.coord, thrown.coord) / 2;
 
-        float throwDur = animDur * Vector2.Distance(thrower.coord, coord) * 2;
+        float throwDur = 0.25f + animDur * Vector2.Distance(thrower.coord, coord) * 2;
         float timer = 0;
         while (timer < throwDur) {
 
-            thrown.transform.position = Util.SampleParabola(origin, to, timer/throwDur);
+            thrown.transform.position = Util.SampleParabola(origin, to, h, timer/throwDur);
             yield return null;
             timer += Time.deltaTime;
         }

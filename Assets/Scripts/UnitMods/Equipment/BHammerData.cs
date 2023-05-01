@@ -136,7 +136,7 @@ public class BHammerData : HammerData
 
             AudioManager.PlaySound(AudioAtlas.Sound.attackStrike, user.transform.position);
 
-    // Attack target if unit
+// Attack target if unit
             if (target is EnemyUnit) 
                 target.StartCoroutine(target.TakeDamage(1));
             else if (target is Nail n) {
@@ -152,11 +152,12 @@ public class BHammerData : HammerData
             if (passTo.gfx[0].sortingOrder > hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder)  
                 hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = passTo.gfx[0].sortingOrder;
             float timer = 0;
-            float throwDur = animDur * Vector2.Distance(prevCoord, passTo.coord) * 2;
+            float throwDur = 0.25f + animDur * Vector2.Distance(prevCoord, passTo.coord);
             Vector3 startPos = hammer.transform.position;
             Vector3 endPos = FloorManager.instance.currentFloor.PosFromCoord(passTo.coord);
+            float h = 0.25f + Vector2.Distance(prevCoord, passTo.coord) / 2;
             while (timer < throwDur) {
-                hammer.transform.position = Util.SampleParabola(startPos, endPos, timer/throwDur);
+                hammer.transform.position = Util.SampleParabola(startPos, endPos, h, timer/throwDur);
                 yield return null;
                 timer += Time.deltaTime;
             }

@@ -31,7 +31,7 @@ public class PlayerUnit : Unit {
         else {
             base.UpdateAction(pManager.overrideEquipment, mod);
         }
-        pManager.SelectEquipment(equipment);
+        pManager.EquipmentSelected(equipment);
     }
 
     public override IEnumerator ExecuteAction(GridElement target = null) {
@@ -44,12 +44,19 @@ public class PlayerUnit : Unit {
                 pManager.unitActing = true;
             }
             else if (selectedEquipment.firstTarget != null) {
-                pManager.contextuals.UpdateContext(selectedEquipment.multiContext, selectedEquipment.firstTarget);
-                //selectedEquipment.firstTarget.coord
+                GridElement anim = selectedEquipment.contextualAnimGO ? selectedEquipment.contextualAnimGO.GetComponent<GridElement>() : null;
+                pManager.contextuals.UpdateContext(selectedEquipment.multiContext, anim, target);
+                Debug.Log("First selection");
+            } else if (selectedEquipment.firstTarget == null) {
+                pManager.DeselectUnit();
+                pManager.unitActing = true;
+                Debug.Log("Unit acts");
             }
-        } else
+        } else {
             pManager.DeselectUnit();
-        
+            pManager.unitActing = true;
+        }
+
         yield return co;
 
         UIManager.instance.ToggleUndoButton(pManager.undoOrder.Count > 0);

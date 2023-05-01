@@ -9,12 +9,12 @@ public class GridContextuals : MonoBehaviour
     public Grid grid;
 
     public enum ContextDisplay { None, IconOnly, Linear, Stepped, Parabolic };
-    private ContextDisplay currentContext = ContextDisplay.None;
+    [SerializeField] private ContextDisplay currentContext = ContextDisplay.None;
 
-    [HideInInspector] public bool displaying;
+    public bool displaying;
     [SerializeField] GameObject contextCursor;
     Animator cursorAnimator;
-    [SerializeField] List<Vector2> targetCoords;
+    
     [SerializeField] LineRenderer lr;
     int lrI = 0;
     GridElement fromOverride = null;
@@ -23,29 +23,42 @@ public class GridContextuals : MonoBehaviour
         manager = m;
         grid = manager.currentGrid;
         cursorAnimator = contextCursor.GetComponentInChildren<Animator>();
+        
         ToggleValid(false);
     }
 
-
-    public IEnumerator DisplayGridContextuals(GridElement origin, GameObject refTrans, ContextDisplay context, bool multi = false) {
-
-        displaying = true;
+    public void DisplayGridContextuals(GridElement origin, GameObject refTrans, ContextDisplay context) {
         ToggleValid(true);
+
         UpdateCursorAnim(refTrans.transform);
-        lr.positionCount = 0;
         UpdateContext(context);        
         
-        UpdateCursor((Unit)origin, origin.coord);
+        //UpdateCursor((Unit)origin, origin.coord);
+    }
+
+    public void StartUpdateCoroutine() {
+        StopAllCoroutines();
+        ResetLR();
+        StartCoroutine(UpdateCoroutine());
+    }
+
+    public IEnumerator UpdateCoroutine() {
+        displaying = true;
         Debug.Log("co start");
         while (manager.selectedUnit != null && !manager.unitActing && displaying) {
             
-            yield return new WaitForSecondsRealtime(1/Util.fps);
+            yield return null;
         }
         Debug.Log("co end");
+        ResetLR();
+    }
+
+    void ResetLR() {
         lrI = 0;
+        lr.positionCount = lrI;
+        fromOverride = null;
         ToggleValid(false);
         displaying = false;
-        currentContext = ContextDisplay.None;
     }
 
     public void UpdateCursorAnim(Transform refTrans) {
@@ -68,7 +81,7 @@ public class GridContextuals : MonoBehaviour
         contextCursor.transform.position = grid.PosFromCoord(to);
         UpdateSortOrder(to);
 
-        lr.positionCount += 3;
+        lr.positionCount = lrI + 3;
         lr.SetPosition(lrI, grid.PosFromCoord(fromCoord));
         lr.SetPosition(lrI + 1, grid.PosFromCoord(fromCoord));
         lr.SetPosition(lrI + 2, grid.PosFromCoord(fromCoord));
@@ -96,7 +109,8 @@ public class GridContextuals : MonoBehaviour
             
             break;
             case ContextDisplay.Parabolic:
-                List<Vector3> points = Util.SampledParabola(grid.PosFromCoord(fromCoord), grid.PosFromCoord(to), 24);
+                float h = 0.25f + Vector2.Distance(fromCoord, to) / 2;
+                List<Vector3> points = Util.SampledParabola(grid.PosFromCoord(fromCoord), grid.PosFromCoord(to), h, 24);
                 lr.positionCount = lrI + points.Count * 3;
                 for (int i = 1; i < points.Count; i++) {
                     lr.SetPosition(lrI + 3*i, points[i]); lr.SetPosition(lrI + 3*i + 1, points[i]); lr.SetPosition(lrI + 3*i + 2, points[i]);
@@ -105,11 +119,16 @@ public class GridContextuals : MonoBehaviour
         }        
     }
 
-    public void UpdateContext(ContextDisplay context, GridElement target = null) {
+    public void UpdateContext(ContextDisplay context, GridElement newAnim = null, GridElement newFrom = null) {
         currentContext = context;
         lrI = lr.positionCount;
-        
-        fromOverride = target;
+
+        if (newAnim != null) {
+            UpdateCursorAnim(newAnim.transform);
+        }
+        if (newFrom != null) {
+            fromOverride = newFrom;  
+        }
     }  
 
     public virtual void UpdateSortOrder(Vector2 c) {

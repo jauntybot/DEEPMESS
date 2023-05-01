@@ -51,19 +51,19 @@ public class EquipmentAdjacency : MonoBehaviour
                         if (data is HammerData || data is AttackData) valid = false;
 // If there is something already occupying this coord  
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
-                            valid = false;
 // Valid coord if element is not filtered
-                            if (!data.filters.Find(f => f.GetType() == ge.GetType())
+                            if (data.filters.Find(f => f.GetType() == ge.GetType())
                             || data.filters == null) {
-                                valid = true;
-                            } 
-                            if (targetLast != null) {
-                                foreach(GridElement target in targetLast) {
-                                    if (ge.GetType() == target.GetType()) {
-                                        _coords.Add(coord);
+                                valid = false;
+                                if (targetLast != null) {
+                                    foreach(GridElement target in targetLast) {
+                                        if (ge.GetType() == target.GetType()) {
+                                            _coords.Add(coord);
+                                        }
                                     }
                                 }
-                            }
+                                break;
+                            } 
                         }
 // Check if GridSquare is valid
                         foreach (GridElement ge in data.filters) {
@@ -271,10 +271,6 @@ public class EquipmentAdjacency : MonoBehaviour
                     _coords.Add(ge.coord);
                 }
             }
-        }
-        foreach(Vector2 coord in _coords) {
-
-            Debug.Log(coord);
         }
         return _coords;
     } 

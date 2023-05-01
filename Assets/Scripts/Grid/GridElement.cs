@@ -80,7 +80,7 @@ public class GridElement : MonoBehaviour{
   
     public virtual IEnumerator TakeDamage(int dmg, GridElement source = null) 
     {
-        if (!shell) {
+        if (!shell || Mathf.Sign(dmg) == -1) {
             hpCurrent -= dmg;
             hpCurrent = hpCurrent < 0 ? 0 : hpCurrent;
             hpCurrent = hpCurrent > hpMax ? hpMax : hpCurrent;
@@ -119,7 +119,7 @@ public class GridElement : MonoBehaviour{
 
     public virtual IEnumerator CollideFromBelow(GridElement above) {
         RemoveShell();
-        yield return StartCoroutine(TakeDamage(hpCurrent));
+        yield return StartCoroutine(DestroyElement());
     }
 
     public virtual void OnSharedSpace(GridElement sharedWith) {

@@ -258,8 +258,8 @@ public class PlayerManager : UnitManager {
 
     public void GridMouseOver(Vector2 pos, bool state) {
         currentGrid.UpdateTargetCursor(state, pos);
-        if (contextuals.displaying) {
-            if (selectedUnit != null) {
+        if (selectedUnit != null) {
+            if (contextuals.displaying) {
                 if (selectedUnit.validActionCoords.Count > 0) {
                     if (selectedUnit.validActionCoords.Contains(pos)) 
                         contextuals.UpdateCursor(selectedUnit, pos);
@@ -314,12 +314,15 @@ public class PlayerManager : UnitManager {
         }
     }
 
-    public void SelectEquipment(EquipmentData equip = null) {
-        if (equip) {
+    public void EquipmentSelected(EquipmentData equip = null) {
+        if (equip && equip != overrideEquipment) {
+            if (!equip.multiselect || equip.firstTarget == null) {
+                contextuals.StartUpdateCoroutine();
+            }
             if (equip.contextualAnimGO != null) {
-                StartCoroutine(contextuals.DisplayGridContextuals(selectedUnit, equip.contextualAnimGO, equip.contextDisplay));
+                contextuals.DisplayGridContextuals(selectedUnit, equip.contextualAnimGO, equip.contextDisplay);
             } else {
-                StartCoroutine(contextuals.DisplayGridContextuals(selectedUnit, selectedUnit.gameObject, equip.contextDisplay));
+                contextuals.DisplayGridContextuals(selectedUnit, selectedUnit.gameObject, equip.contextDisplay);
             }
         }
     }
@@ -329,9 +332,12 @@ public class PlayerManager : UnitManager {
         base.DeselectUnit();
         turnBlink.BlinkEndTurn();
         prevCursorTargetState = false;
+        contextuals.displaying = false;
     }
 
     public void UndoMove() {
+        if (selectedUnit)
+            DeselectUnit();
         foreach (Unit u in units) 
             u.UpdateAction();
 
@@ -367,6 +373,8 @@ public class PlayerManager : UnitManager {
             units[i].StoreInGrid(newGrid);
             if (units[i] is not Nail)
                 units[i].UpdateElement(units[i].coord);
+            if (units[i].conditions.Contains(Unit.Status.Immobilized))
+                units[i].RemoveCondition(Unit.Status.Immobilized);
         }
         currentGrid = newGrid;
         contextuals.grid = newGrid;

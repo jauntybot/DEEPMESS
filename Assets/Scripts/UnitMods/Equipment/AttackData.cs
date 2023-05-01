@@ -61,8 +61,10 @@ public class AttackData : EquipmentData
             timer += Time.deltaTime;
         }
 
-        if (target is Nail) user.StartCoroutine(user.TakeDamage(1));
-        yield return target.StartCoroutine(target.TakeDamage(dmg));
+        Coroutine co = null;
+        if (target is Nail) co = user.StartCoroutine(user.TakeDamage(1));
+        target.StartCoroutine(target.TakeDamage(dmg));
+        yield return co;
     }
 
 }
