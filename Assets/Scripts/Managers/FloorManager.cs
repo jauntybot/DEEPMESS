@@ -169,6 +169,7 @@ public class FloorManager : MonoBehaviour
     public void PreviewButton(bool down) {
         if (!transitioning)
             StartCoroutine(PreviewFloor(down, true));
+        UIManager.instance.PlaySound(down ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
     }
 
     public void ChessNotationToggle() {
@@ -295,7 +296,7 @@ public class FloorManager : MonoBehaviour
 // Update floor manager current floor... preview next floor untis stats?
         if (down && currentFloor.index-1 >= 0) floors[currentFloor.index-1].gameObject.SetActive(false);
         if (toFloor) currentFloor = toFloor;
-        UIManager.instance.metaDisplay.UpdateCurrentFloor(floorDefinitions.Count - currentFloor.index);
+        UIManager.instance.metaDisplay.UpdateCurrentFloor(currentFloor.index);
     }
 
     public IEnumerator DropUnits(Grid fromFloor, Grid toFloor) {
@@ -339,6 +340,9 @@ public class FloorManager : MonoBehaviour
         }
         unit.transform.position = to;
         fade.AlphaSelf = 1;
+
+        if (unit.landingSFX)
+            unit.PlaySound(unit.landingSFX.Get());
 
         if (subElement) {
             yield return StartCoroutine(subElement.CollideFromBelow(unit));

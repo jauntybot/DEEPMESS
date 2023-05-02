@@ -10,17 +10,39 @@ public class EnemyManager : UnitManager {
 
     public override IEnumerator Initialize()
     {
-        if (ScenarioManager.instance) scenario = ScenarioManager.instance;
-        if (FloorManager.instance) floorManager = FloorManager.instance;
-        currentGrid = floorManager.currentFloor;
-        yield return null;
+        yield return base.Initialize();
+    }
+
+    public override Unit SpawnUnit(Vector2 coord, Unit unit)
+    {
+        Unit u = base.SpawnUnit(coord, unit);
+        u.ElementDestroyed += DescentTriggerCheck;
+        return u;
+    }
+
+    public void DescentTriggerCheck(GridElement ge) {
+        if (units.Count <= 0) {
+            Debug.Log("Trigger descent");
+            EndTurnEarly();
+            scenario.player.TriggerDescent();
+        }
     }
 
     public IEnumerator TakeTurn(bool scatter) {
 
+// Reset manager and units for turn
+        foreach(Unit u in units) {
+            u.energyCurrent = u.energyMax;
+            if (!u.conditions.Contains(Unit.Status.Immobilized))
+                u.moved = false;
+            u.elementCanvas.UpdateStatsDisplay();
+        }
+
         yield return new WaitForSecondsRealtime(1/Util.fps);
+// Loop through each unit to take it's action
         for (int i = units.Count - 1; i >= 0; i--) 
         {
+// Check if the player loses before continuing turn
             bool lose = true;
             foreach (Unit u in scenario.player.units) {
                 if (u is not Nail && !u.conditions.Contains(Unit.Status.Disabled)) {
@@ -32,6 +54,7 @@ public class EnemyManager : UnitManager {
                 EndTurnEarly();
                 break;
             }
+// Take either scatter action or normal action
             EnemyUnit enemy = units[i] as EnemyUnit;
             if (!scatter) {
                 ongoingTurn = StartCoroutine(CalculateAction(enemy));
@@ -42,11 +65,6 @@ public class EnemyManager : UnitManager {
                 yield return ongoingTurn;
                 yield return new WaitForSecondsRealtime(0.125f);
             }
-            // for (int e = 1; e <= enemy.maxEnergy; e++) 
-            // {
-            //     yield return new WaitForSecondsRealtime(0.05f);
-            //     yield return StartCoroutine(CalculateAction(enemy));
-            // }
         }
         EndTurn();
     }
@@ -75,21 +93,24 @@ public class EnemyManager : UnitManager {
                 currentGrid.DisableGridHighlight();
                 yield return co;
                 DeselectUnit();
+                yield return new WaitForSecondsRealtime(1.25f);
                 yield break;
             }
         }
 // Move scan
-        input.UpdateAction(input.equipment[0], input.moveMod);
-        Vector2 targetCoord = input.SelectOptimalCoord(input.pathfinding);
-        if (Mathf.Sign(targetCoord.x) == 1) {
-            SelectUnit(input);
-            currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
-            yield return new WaitForSecondsRealtime(0.5f);
-            Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, currentGrid.sqrs.Find(sqr => sqr.coord == targetCoord)));
-            currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
-            currentGrid.DisableGridHighlight();
-            yield return co;
-            DeselectUnit();
+        if (!input.moved) {
+            input.UpdateAction(input.equipment[0], input.moveMod);
+            Vector2 targetCoord = input.SelectOptimalCoord(input.pathfinding);
+            if (Mathf.Sign(targetCoord.x) == 1) {
+                SelectUnit(input);
+                currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
+                yield return new WaitForSecondsRealtime(0.5f);
+                Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, currentGrid.sqrs.Find(sqr => sqr.coord == targetCoord)));
+                currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
+                currentGrid.DisableGridHighlight();
+                yield return co;
+                DeselectUnit();
+            }
         }
 
 // Second attack scan
@@ -108,10 +129,11 @@ public class EnemyManager : UnitManager {
                 currentGrid.DisableGridHighlight();
                 yield return co;            
                 DeselectUnit();
+                yield return new WaitForSecondsRealtime(1.25f);
             }
         }
         currentGrid.DisableGridHighlight();
-        yield return new WaitForSecondsRealtime(1.25f);
+        Debug.Log("Enemy finished");
     }
 
     public IEnumerator ScatterTurn(EnemyUnit input) {
@@ -143,8 +165,14 @@ public class EnemyManager : UnitManager {
     public virtual void SeedUnits(Grid newGrid) {
         for (int i = units.Count - 1; i >= 0; i--) {
             newGrid.enemy.units.Add(units[i]);
+
+// Update subscriptions
             newGrid.enemy.SubscribeElement(units[i]);
-            units[i].manager = newGrid.enemy;
+            EnemyManager eManager = (EnemyManager) newGrid.enemy;
+            units[i].manager = eManager;
+            units[i].ElementDestroyed += eManager.DescentTriggerCheck;
+            units[i].ElementDestroyed -= DescentTriggerCheck;
+            units[i].ElementDestroyed -= currentGrid.RemoveElement;
 
             units[i].transform.parent = newGrid.enemy.transform;
             units[i].StoreInGrid(newGrid);

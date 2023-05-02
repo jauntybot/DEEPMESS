@@ -7,6 +7,7 @@ using UnityEngine;
 public class PlayerUnit : Unit {
 
 
+    PlayerManager pManager;
     public enum AnimState { Idle, Hammer, Disabled };
     public AnimState prevAnimState, animState;
     protected Animator gfxAnim;
@@ -15,43 +16,53 @@ public class PlayerUnit : Unit {
     protected override void Start() {
         base.Start();
         gfxAnim = gfx[0].GetComponent<Animator>();
+        pManager = (PlayerManager)manager;
     }
 
 // Called when an action is applied to a unit or to clear it's actions
     public override void UpdateAction(EquipmentData equipment = null, int mod = 0) 
     {
-        PlayerManager m = (PlayerManager)manager;
-        if (m.overrideEquipment == null) {
+        if (pManager.overrideEquipment == null) {
             if (equipment is ConsumableEquipmentData && !usedEquip)
                 base.UpdateAction(equipment, mod);
             else if (equipment is not ConsumableEquipmentData)
                 base.UpdateAction(equipment, mod);
         }
         else {
-            base.UpdateAction(m.overrideEquipment, mod);
+            base.UpdateAction(pManager.overrideEquipment, mod);
         }
+        pManager.EquipmentSelected(equipment);
     }
 
     public override IEnumerator ExecuteAction(GridElement target = null) {
-        PlayerManager m = (PlayerManager)manager;
-        m.unitActing = true;
         
         Coroutine co = StartCoroutine(base.ExecuteAction(target));
 
         if (selectedEquipment) {
-            if (!selectedEquipment.multiselect)
-                manager.DeselectUnit();
-            else if (selectedEquipment.firstTarget == null)
-                manager.DeselectUnit();
-        } else
-            manager.DeselectUnit();
-        
+            if (!selectedEquipment.multiselect) {
+                pManager.DeselectUnit();
+                pManager.unitActing = true;
+            }
+            else if (selectedEquipment.firstTarget != null) {
+                GridElement anim = selectedEquipment.contextualAnimGO ? selectedEquipment.contextualAnimGO.GetComponent<GridElement>() : null;
+                pManager.contextuals.UpdateContext(selectedEquipment.multiContext, anim, target);
+                Debug.Log("First selection");
+            } else if (selectedEquipment.firstTarget == null) {
+                pManager.DeselectUnit();
+                pManager.unitActing = true;
+                Debug.Log("Unit acts");
+            }
+        } else {
+            pManager.DeselectUnit();
+            pManager.unitActing = true;
+        }
+
         yield return co;
 
-        UIManager.instance.ToggleUndoButton(m.undoOrder.Count > 0);
-        m.unitActing = false;
+        UIManager.instance.ToggleUndoButton(pManager.undoOrder.Count > 0);
+        pManager.unitActing = false;
 // Untarget every unit
-        foreach(GridElement ge in m.currentGrid.gridElements) 
+        foreach(GridElement ge in pManager.currentGrid.gridElements) 
             ge.TargetElement(false);
     }
 
@@ -66,7 +77,7 @@ public class PlayerUnit : Unit {
     {
         base.TargetElement(state);
         ui.ToggleEquipmentPanel(state);
-        //if (energyCurrent == 0 || manager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
+        //if (energyCurrent == 0 || pManager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
     }
 
     public virtual void SwitchAnim(AnimState toState) {
@@ -88,14 +99,15 @@ public class PlayerUnit : Unit {
 // Override destroy so that player units are disabled instead
     public override IEnumerator DestroyElement() {
         
-        AudioManager.PlaySound(destroyed, transform.position);
+        if (destroyedSFX)
+            PlaySound(destroyedSFX.Get());
 
         bool droppedHammer = false;
         for (int i = equipment.Count - 1; i >= 0; i--) {
             if (equipment[i] is HammerData hammer) {
                 if (!droppedHammer) {
                     List<Unit> possiblePasses = new List<Unit>();
-                    foreach (Unit u in manager.units) {
+                    foreach (Unit u in pManager.units) {
                         if (u is not Nail && !u.conditions.Contains(Status.Disabled) && u != this)
                             possiblePasses.Add(u);
                     }
@@ -115,7 +127,7 @@ public class PlayerUnit : Unit {
         
         SwitchAnim(AnimState.Idle);
         RemoveCondition(Status.Disabled);
-        PlayerManager m = (PlayerManager)manager;
+        PlayerManager m = (PlayerManager)pManager;
         StartCoroutine(m.nail.TakeDamage(1));
     }
 }

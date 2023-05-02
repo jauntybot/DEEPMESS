@@ -10,27 +10,41 @@ public class EquipmentData : ScriptableObject {
 
     new public string name;
     public Sprite icon;
+
+    [Header("GRID DISPLAY")]
+    public GameObject contextualAnimGO;
+    public GridContextuals.ContextDisplay contextDisplay;
+    public GridContextuals.ContextDisplay multiContext;
     public int gridColor;
-    public int energyCost;
+    
+    [Header("MODIFIERS")]
+    public bool multiselect;
     public AdjacencyType adjacency;
+    public enum AdjacencyType { Diamond, Orthogonal, Diagonal, Star, Box, OfType, OfTypeInRange };
+    public GridElement firstTarget;
+    public int energyCost;
     public int range;
     [SerializeField] protected float animDur = 0.5f;
 
-    public bool multiselect;
+    [Header("FILTERS")]
 // When false, filters out listed elements from adjacenecy checks, when true, only allows listed elements in adjacency checks
     public bool filterValid;
     public List<GridElement> filters; 
     public List<GridElement> targetTypes;
-    public GridElement firstTarget;
 
-// The following variables are dependent on the card Action, hidden with custom editor
+    [Header("AUDIO")]
+    public SFX selectSFX;
+    public SFX useSFX;
 
-    public enum AdjacencyType { Diamond, Orthogonal, Diagonal, Star, Box, OfType, OfTypeInRange };
+
 
     public virtual List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this);
         user.grid.DisplayValidCoords(validCoords, gridColor);
         if (user is PlayerUnit u) u.ui.ToggleEquipmentButtons();
+        if (selectSFX)
+            user.PlaySound(selectSFX.Get());
+
         return validCoords;
     }
 
@@ -46,6 +60,9 @@ public class EquipmentData : ScriptableObject {
             manager.undoOrder = new List<Unit>();
         }
         user.elementCanvas.UpdateStatsDisplay();
+
+        if (useSFX)
+            user.PlaySound(useSFX.Get());
 
         yield return null;
     }

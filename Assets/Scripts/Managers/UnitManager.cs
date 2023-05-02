@@ -58,7 +58,9 @@ public class UnitManager : MonoBehaviour {
         UIManager.instance.UpdatePortrait(u);
 
         currentGrid.UpdateSelectedCursor(true, u.coord);
-        AudioManager.PlaySound(AudioAtlas.Sound.selectionUnit, u.gameObject.transform.position);
+        
+        if (u.selectedSFX)
+            u.PlaySound(u.selectedSFX.Get());
     }
     public virtual void DeselectUnit() {     
         if (selectedUnit) {

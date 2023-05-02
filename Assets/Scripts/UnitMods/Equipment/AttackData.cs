@@ -53,7 +53,7 @@ public class AttackData : EquipmentData
             user.transform.position = Vector3.Lerp(user.transform.position, target.transform.position, timer/animDur);
             timer += Time.deltaTime;
         }
-        AudioManager.PlaySound(AudioAtlas.Sound.attackStrike, target.transform.position);
+
         timer = 0;
         while (timer < animDur/2) {
             yield return null;
@@ -61,8 +61,10 @@ public class AttackData : EquipmentData
             timer += Time.deltaTime;
         }
 
-        if (target is Nail) user.StartCoroutine(user.TakeDamage(1));
-        yield return target.StartCoroutine(target.TakeDamage(dmg));
+        Coroutine co = null;
+        if (target is Nail) co = user.StartCoroutine(user.TakeDamage(1));
+        target.StartCoroutine(target.TakeDamage(dmg));
+        yield return co;
     }
 
 }

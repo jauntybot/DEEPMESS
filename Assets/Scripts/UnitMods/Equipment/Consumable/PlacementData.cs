@@ -40,9 +40,22 @@ public class PlacementData : ConsumableEquipmentData
                 yield return user.StartCoroutine(MoveToCoord(pu, target.coord));
             break;
             case PlacementType.PlaceAdjacent:
+                placed.UpdateElement(user.coord);
+                Vector3 origin = user.grid.PosFromCoord(user.coord);
+                Vector3 dest = user.grid.PosFromCoord(target.coord);
+                float h = 0.25f + Vector2.Distance(user.coord, target.coord) / 2;
+                float throwDur = 0.25f + animDur * Vector2.Distance(user.coord, target.coord) * 2;
+                float timer = 0;
+                while (timer < throwDur) {
+                    placed.transform.position = Util.SampleParabola(origin, dest, h, timer/throwDur);
+
+                    yield return new WaitForSecondsRealtime(1/Util.fps);
+                    timer += Time.deltaTime;    
+                }
                 placed.UpdateElement(target.coord);
                 if (target != null)
                     placed.OnSharedSpace(target);
+                
             break;
         }
     }
@@ -61,7 +74,6 @@ public IEnumerator MoveToCoord(Unit unit, Vector2 moveTo)
             unit.UpdateSortOrder(moveTo);
         unit.coord = moveTo;
 
-        AudioManager.PlaySound(AudioAtlas.Sound.moveSlide,moveTo);
 // Lerp units position to target
         Vector3 toPos = FloorManager.instance.currentFloor.PosFromCoord(moveTo);
         while (timer < animDur) {

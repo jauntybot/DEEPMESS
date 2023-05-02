@@ -53,10 +53,10 @@ public static class AudioManager
     }
 
     private static AudioClip GetAudioClip(AudioAtlas.Sound sound) {
-        AudioAtlas.SFX sfx = AudioAtlas.instance.serializedSFX.Find(sfx => sfx.sound == sound);
-        if (sfx != null) {
-            return sfx.GetAudioClip();
-        }
+        //AudioAtlas.SFX sfx = AudioAtlas.instance.serializedSFX.Find(sfx => sfx.sound == sound);
+        // if (sfx != null) {
+        //     return sfx.GetAudioClip();
+        // }
         Debug.LogError("SFX " + sound + " not serialized in atlas.");
         return null;
     }

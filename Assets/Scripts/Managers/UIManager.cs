@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+[RequireComponent(typeof(AudioSource))]
 public class UIManager : MonoBehaviour
 {
     
@@ -30,7 +31,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject loadoutPrefab;
     [SerializeField] Transform loadoutBG, loadoutPanel, loadoutUIParent;
     List<UnitUI> loadoutUIs = new List<UnitUI>();
+
+    [Header("UI AUDIO")]
+    [SerializeField] public SFX peekBelowSFX;
+    [SerializeField] public SFX peekAboveSFX, genSelectSFX, genDeselectSFX;
+
     
+    private AudioSource audioSource;
 
     public static UIManager instance;
     private void Awake() {
@@ -41,6 +48,7 @@ public class UIManager : MonoBehaviour
     void Start() {
         scenario = ScenarioManager.instance;
         ToggleUndoButton(false);
+        audioSource = GetComponent<AudioSource>();
     }
 
     public void UpdatePortrait(Unit u = null, bool active = true) {
@@ -90,5 +98,16 @@ public class UIManager : MonoBehaviour
         undoButton.interactable = state;
         Color c = state ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1);
     }
+
+    
+    public virtual void PlaySound(AudioClip clip) {
+        if (clip)
+            audioSource.PlayOneShot(clip);
+    }
+
+    public virtual void GenericMenu(bool positive) {
+        audioSource.PlayOneShot(positive ? genSelectSFX.Get() : genDeselectSFX.Get());
+    }
+
 
 }

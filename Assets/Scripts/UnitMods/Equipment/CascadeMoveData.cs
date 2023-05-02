@@ -40,7 +40,7 @@ public class CascadeMoveData : MoveData
         Vector2 current = unit.coord;
         unit.coord = moveTo;
 
-        AudioManager.PlaySound(AudioAtlas.Sound.moveSlide,moveTo);
+        
 // Lerp units position to target
         while (!Vector2.Equals(current, moveTo)) {
             float timer = 0;
