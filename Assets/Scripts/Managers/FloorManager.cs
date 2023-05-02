@@ -26,7 +26,7 @@ public class FloorManager : MonoBehaviour
     [Header("Floor Transitioning")]
     [HideInInspector] public BetweenFloorManager betweenFloor;
     [SerializeField] Transform transitionParent;
-    public float floorOffset, transitionDur;
+    public float floorOffset, transitionDur, unitDropDur;
     private bool transitioning;
     [SerializeField] public GameObject upButton, downButton;
     
@@ -299,58 +299,6 @@ public class FloorManager : MonoBehaviour
         UIManager.instance.metaDisplay.UpdateCurrentFloor(currentFloor.index);
     }
 
-    public IEnumerator DropUnits(Grid fromFloor, Grid toFloor) {
-        
-        scenario.player.transform.parent = transitionParent;
-        scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
-        scenario.player.nail.transform.parent = currentFloor.transform;
-        scenario.currentEnemy.transform.parent = transitionParent;
-        scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
-
-        foreach (GridElement ge in fromFloor.gridElements) {
-            if (ge is Unit)
-                ge.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
-        }
-
-        Coroutine finalCoroutine = null;
-
-        for (int i = fromFloor.gridElements.Count - 1; i >= 0; i--) {
-            if (fromFloor.gridElements[i] is Unit u) {
-                u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
-                if (fromFloor.gridElements[i] is not Nail) {
-                    GridElement subElement = null;
-                    foreach (GridElement ge in toFloor.CoordContents(u.coord)) subElement = ge;
-                    yield return StartCoroutine(DropUnit(u, fromFloor.PosFromCoord(u.coord), toFloor.PosFromCoord(u.coord), subElement));
-                    yield return new WaitForSeconds(0.1f);
-                }
-            }
-        }
-        //yield return finalCoroutine;
-        //Debug.Log("final coroutine");
-    }
-
-    public IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
-        float timer = 0;
-        NestedFadeGroup.NestedFadeGroup fade = unit.GetComponent<NestedFadeGroup.NestedFadeGroup>();
-        while (timer <= transitionDur) {
-            unit.transform.position = Vector3.Lerp(from, to, timer/transitionDur);
-            fade.AlphaSelf = Mathf.Lerp(0, 1, timer/transitionDur/3);
-            yield return null;
-            timer += Time.deltaTime;
-        }
-        unit.transform.position = to;
-        fade.AlphaSelf = 1;
-
-        if (unit.landingSFX)
-            unit.PlaySound(unit.landingSFX.Get());
-
-        if (subElement) {
-            yield return StartCoroutine(subElement.CollideFromBelow(unit));
-            if (subElement is not GroundElement)
-                yield return StartCoroutine(unit.CollideFromAbove(subElement));
-        } else if (currentFloor.sqrs.Find(sqr => sqr.coord == unit.coord).tileType == GridSquare.TileType.Bile)
-            StartCoroutine(unit.DestroyElement());
-    }
 
     public IEnumerator ChooseLandingPositions() {
         yield return new WaitForSecondsRealtime(.2f);
@@ -399,11 +347,13 @@ public class FloorManager : MonoBehaviour
             yield return new WaitForSecondsRealtime(1.25f);
         }
 
-        yield return StartCoroutine(DropUnits(floors[currentFloor.index-1], currentFloor));
+        Coroutine drop = StartCoroutine(DropUnits(floors[currentFloor.index-1], currentFloor));
+        scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
+        yield return drop;
+        enemy.SeedUnits(currentFloor);
+
 
         scenario.player.DescendGrids(currentFloor);
-        enemy.SeedUnits(currentFloor);
-        scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
         
         currentFloor.LockGrid(false);
         
@@ -414,10 +364,6 @@ public class FloorManager : MonoBehaviour
 
 
         yield return new WaitForSecondsRealtime(.75f);
-        // for (int i = currentFloor.gridElements.Count - 1; i >= 0; i--) {
-        //     if (currentFloor.gridElements[i] is LandingBuff b)
-        //         StartCoroutine(b.DestroyElement()); 
-        // }
         yield return new WaitForSecondsRealtime(.75f);
 
 // Check if player wins
@@ -438,6 +384,56 @@ public class FloorManager : MonoBehaviour
             StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
         }
         downButton.GetComponent<Button>().interactable = true;
+    }
+    public IEnumerator DropUnits(Grid fromFloor, Grid toFloor) {
+        
+        scenario.player.transform.parent = transitionParent;
+        scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
+        scenario.player.nail.transform.parent = currentFloor.transform;
+        scenario.currentEnemy.transform.parent = transitionParent;
+        scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
+
+        foreach (GridElement ge in fromFloor.gridElements) {
+            if (ge is Unit)
+                ge.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
+        }
+
+        for (int i = fromFloor.gridElements.Count - 1; i >= 0; i--) {
+            if (fromFloor.gridElements[i] is Unit u) {
+                u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
+                if (fromFloor.gridElements[i] is not Nail) {
+                    GridElement subElement = null;
+                    foreach (GridElement ge in toFloor.CoordContents(u.coord)) subElement = ge;
+                    yield return StartCoroutine(DropUnit(u, fromFloor.PosFromCoord(u.coord), toFloor.PosFromCoord(u.coord), subElement));
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
+        }
+    }
+
+    public IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
+        float timer = 0;
+        NestedFadeGroup.NestedFadeGroup fade = unit.GetComponent<NestedFadeGroup.NestedFadeGroup>();
+        while (timer <= unitDropDur) {
+            unit.transform.position = Vector3.Lerp(from, to, timer/unitDropDur);
+            fade.AlphaSelf = Mathf.Lerp(0, 1, timer/(unitDropDur/3));
+            yield return null;
+            timer += Time.deltaTime;
+        }
+        unit.transform.position = to;
+        fade.AlphaSelf = 1;
+
+        if (unit.landingSFX)
+            unit.PlaySound(unit.landingSFX.Get());
+
+        if (subElement) {
+            StartCoroutine(subElement.CollideFromBelow(unit));
+            if (subElement is not GroundElement)
+                yield return StartCoroutine(unit.CollideFromAbove(subElement));
+        } else if (currentFloor.sqrs.Find(sqr => sqr.coord == unit.coord).tileType == GridSquare.TileType.Bile) {
+            yield return new WaitForSecondsRealtime(0.1f);
+            StartCoroutine(unit.DestroyElement());
+        }   
     }
 
 }

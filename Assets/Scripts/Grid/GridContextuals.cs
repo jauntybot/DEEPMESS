@@ -44,12 +44,10 @@ public class GridContextuals : MonoBehaviour
 
     public IEnumerator UpdateCoroutine() {
         displaying = true;
-        Debug.Log("co start");
         while (manager.selectedUnit != null && !manager.unitActing && displaying) {
             
             yield return null;
         }
-        Debug.Log("co end");
         ResetLR();
     }
 

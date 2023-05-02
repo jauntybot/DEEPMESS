@@ -20,11 +20,13 @@ public class EnemyManager : UnitManager {
         return u;
     }
 
-    public void DescentTriggerCheck(GridElement ge) {
-        if (units.Count <= 0) {
-            Debug.Log("Trigger descent");
-            EndTurnEarly();
-            scenario.player.TriggerDescent();
+    public void DescentTriggerCheck(GridElement ge = null) {
+        if (scenario.currentEnemy == this) {
+            if (units.Count <= 0) {
+                Debug.Log("Trigger descent");
+                EndTurnEarly();
+                scenario.player.TriggerDescent();
+            }
         }
     }
 
@@ -163,12 +165,12 @@ public class EnemyManager : UnitManager {
     }
 
     public virtual void SeedUnits(Grid newGrid) {
+        EnemyManager eManager = (EnemyManager) newGrid.enemy;
         for (int i = units.Count - 1; i >= 0; i--) {
             newGrid.enemy.units.Add(units[i]);
 
 // Update subscriptions
             newGrid.enemy.SubscribeElement(units[i]);
-            EnemyManager eManager = (EnemyManager) newGrid.enemy;
             units[i].manager = eManager;
             units[i].ElementDestroyed += eManager.DescentTriggerCheck;
             units[i].ElementDestroyed -= DescentTriggerCheck;
@@ -179,8 +181,9 @@ public class EnemyManager : UnitManager {
             units[i].UpdateElement(units[i].coord);
             units.RemoveAt(i);
         }
+        eManager.DescentTriggerCheck();
         UIManager.instance.metaDisplay.UpdateEnemiesRemaining(newGrid.enemy.units.Count);
-        DestroyImmediate(this.gameObject);
+        Destroy(this);
     }
 
     protected override void RemoveUnit(GridElement ge)

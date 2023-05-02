@@ -75,6 +75,15 @@ public class Unit : GridElement {
         }
     }
 
+    public override IEnumerator TakeDamage(int dmg, GridElement source = null) {
+
+        bool prevTargeted = targeted;
+        TargetElement(true);
+
+        yield return base.TakeDamage(dmg, source);
+
+        TargetElement(targeted);
+    }
 
 #endregion
 
