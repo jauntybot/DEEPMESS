@@ -32,6 +32,9 @@ public class EquipmentData : ScriptableObject {
     public List<GridElement> filters; 
     public List<GridElement> targetTypes;
 
+    [Header("AUDIO")]
+    public SFX selectSFX;
+    public SFX useSFX;
 
 
 
@@ -39,6 +42,9 @@ public class EquipmentData : ScriptableObject {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this);
         user.grid.DisplayValidCoords(validCoords, gridColor);
         if (user is PlayerUnit u) u.ui.ToggleEquipmentButtons();
+        if (selectSFX)
+            user.PlaySound(selectSFX.Get());
+
         return validCoords;
     }
 
@@ -54,6 +60,9 @@ public class EquipmentData : ScriptableObject {
             manager.undoOrder = new List<Unit>();
         }
         user.elementCanvas.UpdateStatsDisplay();
+
+        if (useSFX)
+            user.PlaySound(useSFX.Get());
 
         yield return null;
     }

@@ -340,6 +340,9 @@ public class FloorManager : MonoBehaviour
         unit.transform.position = to;
         fade.AlphaSelf = 1;
 
+        if (unit.landingSFX)
+            unit.PlaySound(unit.landingSFX.Get());
+
         if (subElement) {
             yield return StartCoroutine(subElement.CollideFromBelow(unit));
             if (subElement is not GroundElement)

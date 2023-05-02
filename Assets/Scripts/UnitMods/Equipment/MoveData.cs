@@ -26,6 +26,9 @@ public class MoveData : EquipmentData
             unit.moved = true;
         user.elementCanvas.UpdateStatsDisplay();
 
+        if (useSFX)
+            user.PlaySound(useSFX.Get());
+
         yield return user.StartCoroutine(MoveToCoord((Unit)user, target.coord));
         
     }
@@ -52,7 +55,6 @@ public class MoveData : EquipmentData
         Vector2 current = unit.coord;
         unit.coord = moveTo;
 
-        AudioManager.PlaySound(AudioAtlas.Sound.moveSlide,moveTo);
 // Lerp units position to target
         while (!Vector2.Equals(current, moveTo)) {
             float timer = 0;

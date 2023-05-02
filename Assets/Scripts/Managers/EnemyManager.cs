@@ -165,8 +165,14 @@ public class EnemyManager : UnitManager {
     public virtual void SeedUnits(Grid newGrid) {
         for (int i = units.Count - 1; i >= 0; i--) {
             newGrid.enemy.units.Add(units[i]);
+
+// Update subscriptions
             newGrid.enemy.SubscribeElement(units[i]);
-            units[i].manager = newGrid.enemy;
+            EnemyManager eManager = (EnemyManager) newGrid.enemy;
+            units[i].manager = eManager;
+            units[i].ElementDestroyed += eManager.DescentTriggerCheck;
+            units[i].ElementDestroyed -= DescentTriggerCheck;
+            units[i].ElementDestroyed -= currentGrid.RemoveElement;
 
             units[i].transform.parent = newGrid.enemy.transform;
             units[i].StoreInGrid(newGrid);

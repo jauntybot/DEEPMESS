@@ -99,7 +99,8 @@ public class PlayerUnit : Unit {
 // Override destroy so that player units are disabled instead
     public override IEnumerator DestroyElement() {
         
-        AudioManager.PlaySound(destroyed, transform.position);
+        if (destroyedSFX)
+            PlaySound(destroyedSFX.Get());
 
         bool droppedHammer = false;
         for (int i = equipment.Count - 1; i >= 0; i--) {

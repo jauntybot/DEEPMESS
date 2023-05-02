@@ -74,7 +74,6 @@ public IEnumerator MoveToCoord(Unit unit, Vector2 moveTo)
             unit.UpdateSortOrder(moveTo);
         unit.coord = moveTo;
 
-        AudioManager.PlaySound(AudioAtlas.Sound.moveSlide,moveTo);
 // Lerp units position to target
         Vector3 toPos = FloorManager.instance.currentFloor.PosFromCoord(moveTo);
         while (timer < animDur) {

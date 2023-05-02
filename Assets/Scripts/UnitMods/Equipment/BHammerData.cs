@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public class BHammerData : HammerData
 {
-
+    public SFX throwSFX, nailSFX, shellSFX;
    
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
 
@@ -110,8 +110,10 @@ public class BHammerData : HammerData
     public override IEnumerator ThrowHammer(PlayerUnit user, GridElement target = null, Unit passTo = null) {
         
         user.manager.DeselectUnit();
+    
+        if (throwSFX)
+            user.PlaySound(throwSFX.Get());
 
-        AudioManager.PlaySound(AudioAtlas.Sound.hammerPass, user.transform.position);
         user.SwitchAnim(PlayerUnit.AnimState.Idle);
         hammer.SetActive(true);
 
@@ -132,14 +134,24 @@ public class BHammerData : HammerData
                 timer += Time.deltaTime;
             }
             hammer.transform.position = endPos;
-            prevCoord = target.coord;
-
-            AudioManager.PlaySound(AudioAtlas.Sound.attackStrike, user.transform.position);
+            prevCoord = target.coord;                  
 
 // Attack target if unit
-            if (target is EnemyUnit) 
+            if (target is EnemyUnit) {
+                if (target.shell) {
+                    if (shellSFX)
+                        target.PlaySound(shellSFX.Get());
+                }
+                else {
+                    if (useSFX)
+                        target.PlaySound(useSFX.Get());
+                }
                 target.StartCoroutine(target.TakeDamage(1));
+            }
+// Trigger descent if nail
             else if (target is Nail n) {
+                if (nailSFX)
+                    target.PlaySound(nailSFX.Get());
                 if (n.nailState == Nail.NailState.Primed)
                     n.ToggleNailState(Nail.NailState.Buried);
             } else if (target is PlayerUnit pu) {
@@ -147,6 +159,10 @@ public class BHammerData : HammerData
                     pu.Stabilize();
             }
         }
+
+        if (throwSFX)
+            user.PlaySound(throwSFX.Get());
+            
 // Lerp hammer to passTo unit
         if (passTo != null) {
             if (passTo.gfx[0].sortingOrder > hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder)  
