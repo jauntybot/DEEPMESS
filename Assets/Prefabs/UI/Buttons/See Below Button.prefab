@@ -13,12 +13,12 @@ GameObject:
   - component: {fileID: 3059756568002358827}
   - component: {fileID: 3059756568002358826}
   m_Layer: 5
-  m_Name: See Below Button
+  m_Name: Prev Floor Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3059756568002358829
 RectTransform:
   m_ObjectHideFlags: 0
@@ -34,11 +34,11 @@ RectTransform:
   m_Father: {fileID: 3059756568910181930}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -214, y: 152}
-  m_SizeDelta: {x: -214, y: -152}
-  m_Pivot: {x: 1, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 214, y: 152}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3059756568002358824
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -69,7 +69,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 02c49b396858241dcab229042cf8646d, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -131,7 +131,7 @@ MonoBehaviour:
           m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 1
+          m_BoolArgument: 0
         m_CallState: 2
 --- !u!1 &3059756568489891336
 GameObject:
@@ -146,12 +146,12 @@ GameObject:
   - component: {fileID: 3059756568489891319}
   - component: {fileID: 3059756568489891318}
   m_Layer: 5
-  m_Name: Prev Floor Button
+  m_Name: Next Floor Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3059756568489891337
 RectTransform:
   m_ObjectHideFlags: 0
@@ -202,7 +202,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 453ccfeb20d52489f9328b62c40b10df, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -264,7 +264,7 @@ MonoBehaviour:
           m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!1 &3059756568910181933
 GameObject:
@@ -277,6 +277,8 @@ GameObject:
   - component: {fileID: 3059756568910181930}
   - component: {fileID: 3059756568910181928}
   - component: {fileID: 3059756568910181931}
+  - component: {fileID: 1816851130228505064}
+  - component: {fileID: 4390547792413956396}
   m_Layer: 5
   m_Name: See Below Button
   m_TagString: Untagged
@@ -344,3 +346,43 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1816851130228505064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3059756568910181933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b01bde0979a9d496ba73760143bcd52a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  header: 
+  content: 
+--- !u!61 &4390547792413956396
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3059756568910181933}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0

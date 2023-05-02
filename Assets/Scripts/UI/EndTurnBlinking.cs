@@ -12,7 +12,7 @@ public class EndTurnBlinking : MonoBehaviour
     private bool outOfEnergy;
     private Image endTurnButton;
     private Color startColor = Color.white;
-    private Color endColor = new Color(0.27f, 0.49f, 0.76f, 1);
+    private Color endColor = new Color(1, 1, 0, 1);
     private float speed = 1;
     private bool blinking = false;
 

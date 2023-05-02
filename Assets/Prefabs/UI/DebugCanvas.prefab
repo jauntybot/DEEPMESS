@@ -541,6 +541,8 @@ GameObject:
   - component: {fileID: 1539751409987804763}
   - component: {fileID: 1539751409987804761}
   - component: {fileID: 1539751409987804762}
+  - component: {fileID: 728630646179197252}
+  - component: {fileID: 6177277730586399970}
   m_Layer: 5
   m_Name: Undo Move Button
   m_TagString: Untagged
@@ -607,6 +609,46 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!61 &728630646179197252
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1539751409987804764}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
+--- !u!114 &6177277730586399970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1539751409987804764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b01bde0979a9d496ba73760143bcd52a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  header: Undo
+  content: Undo move actions. Cannot undo attack or equipment actions.
 --- !u!1 &1994800932163242425
 GameObject:
   m_ObjectHideFlags: 0
@@ -1185,6 +1227,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 691534638046590298}
+  - component: {fileID: 3106465961294220694}
+  - component: {fileID: 1614291054354038222}
   m_Layer: 5
   m_Name: Enemies Left
   m_TagString: Untagged
@@ -1215,6 +1259,46 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 106, y: 62}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!61 &3106465961294220694
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2988032775548564965}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
+--- !u!114 &1614291054354038222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2988032775548564965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b01bde0979a9d496ba73760143bcd52a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  header: Enemies
+  content: Displays how many enemies are on the current floor.
 --- !u!1 &3097228436660871215
 GameObject:
   m_ObjectHideFlags: 0
@@ -3918,6 +4002,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4826984002785045110}
+  - component: {fileID: 9140973787569542945}
+  - component: {fileID: 6542949707309657726}
   m_Layer: 5
   m_Name: Floor
   m_TagString: Untagged
@@ -3948,6 +4034,46 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 106, y: 62}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!61 &9140973787569542945
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8258094856301639983}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
+--- !u!114 &6542949707309657726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8258094856301639983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b01bde0979a9d496ba73760143bcd52a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  header: Floors
+  content: Displays how many floors are left on this current run.
 --- !u!1 &8337578737058323533
 GameObject:
   m_ObjectHideFlags: 0
@@ -3959,6 +4085,8 @@ GameObject:
   - component: {fileID: 7808869800000814700}
   - component: {fileID: 2001095789}
   - component: {fileID: 2001095790}
+  - component: {fileID: 4774008953412541016}
+  - component: {fileID: 3263829495929958480}
   m_Layer: 5
   m_Name: Nail
   m_TagString: Untagged
@@ -4058,6 +4186,47 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!61 &4774008953412541016
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8337578737058323533}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -125.4119, y: -99.46454}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 249.8239, y: 199.92908}
+  m_EdgeRadius: 0
+--- !u!114 &3263829495929958480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8337578737058323533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b01bde0979a9d496ba73760143bcd52a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  header: Nail
+  content: The Nail needs one full turn to prime itself before it can be hit with
+    the hammer. It the Nail dies you lose.
 --- !u!1 &8444344142908148297
 GameObject:
   m_ObjectHideFlags: 0
@@ -8715,6 +8884,51 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ed1fbf5889db149aca476cabd43a2606, type: 3}
+--- !u!1 &5002903890005406416 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4143282109969617914, guid: ed1fbf5889db149aca476cabd43a2606, type: 3}
+  m_PrefabInstance: {fileID: 8940216681465733418}
+  m_PrefabAsset: {fileID: 0}
+--- !u!61 &4053167633378963029
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5002903890005406416}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
+--- !u!114 &7217586495550332669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5002903890005406416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b01bde0979a9d496ba73760143bcd52a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  header: End Turn
+  content: End your turn. Enemies go right after.
 --- !u!224 &5002903890005406417 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4143282109969617915, guid: ed1fbf5889db149aca476cabd43a2606, type: 3}
@@ -8727,93 +8941,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8940216680106533402}
     m_Modifications:
-    - target: {fileID: 3059756568002358826, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
+    - target: {fileID: 1816851130228505064, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
+      propertyPath: header
+      value: Peak
       objectReference: {fileID: 0}
-    - target: {fileID: 3059756568002358826, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568002358827, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 02c49b396858241dcab229042cf8646d, type: 3}
-    - target: {fileID: 3059756568002358827, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_PreserveAspect
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568002358828, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_Name
-      value: Prev Floor Button
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568002358828, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568002358829, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_Pivot.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568002358829, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_Pivot.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568002358829, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568002358829, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568002358829, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568002358829, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568002358829, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 214
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568002358829, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 152
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568002358829, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568002358829, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568489891318, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568489891318, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568489891319, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 453ccfeb20d52489f9328b62c40b10df, type: 3}
-    - target: {fileID: 3059756568489891319, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_PreserveAspect
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568489891336, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_Name
-      value: Next Floor Button
-      objectReference: {fileID: 0}
-    - target: {fileID: 3059756568489891336, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_IsActive
-      value: 1
+    - target: {fileID: 1816851130228505064, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
+      propertyPath: content
+      value: See the floor below. Press again to return to the current floor.
       objectReference: {fileID: 0}
     - target: {fileID: 3059756568910181930, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
       propertyPath: m_Pivot.x
@@ -8899,13 +9033,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3059756568910181931, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3059756568910181933, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
       propertyPath: m_Name
-      value: See Below Button
+      value: Peak Button
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce2d76617debb485dac1244da7bba13b, type: 3}
