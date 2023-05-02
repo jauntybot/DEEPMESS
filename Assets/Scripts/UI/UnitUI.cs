@@ -20,6 +20,7 @@ public class UnitUI : MonoBehaviour
     [SerializeField] GameObject equipmentPanel, hammerPanel, equipmentButtonPrefab, hammerButtonPrefab;
     [SerializeField] public GameObject equipmentOptions;
     public GameObject initialLoadoutButton, slotsLoadoutButton;
+    [SerializeField] public SFX equipSelectSFX, hammerSelectSFX;
 
     [Header("Overview")]
     [SerializeField] public UnitOverview overview;

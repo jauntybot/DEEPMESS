@@ -29,16 +29,4 @@ public class AudioAtlas : MonoBehaviour
 
     public List<SFX> serializedSFX;
 
-
-    [System.Serializable]
-    public class SFX {
-        public AudioAtlas.Sound sound;
-        public List<AudioClip> audioClips;
-
-        public AudioClip GetAudioClip() {
-            return audioClips[Random.Range(0, audioClips.Count - 1)];
-        }
-    
-    
-    }
 }

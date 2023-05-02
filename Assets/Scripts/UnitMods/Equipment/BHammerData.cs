@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public class BHammerData : HammerData
 {
-
+    public SFX throwSFX, catchSFX, nailSFX, shellSFX;
    
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
 
@@ -80,11 +80,11 @@ public class BHammerData : HammerData
             Debug.Log("Click lob");
         // REPLACE w/ BASE.USEEQUIPMENT IF BROUGHT BACK INTO WORKING SCRIPTS
             user.energyCurrent -= energyCost;
-                if (user is PlayerUnit pu) {
-                    PlayerManager manager = (PlayerManager)pu.manager;
-                    manager.undoableMoves = new Dictionary<Unit, Vector2>();
-                    manager.undoOrder = new List<Unit>();
-                }
+            if (user is PlayerUnit pu) {
+                PlayerManager manager = (PlayerManager)pu.manager;
+                manager.undoableMoves = new Dictionary<Unit, Vector2>();
+                manager.undoOrder = new List<Unit>();
+            }
             user.elementCanvas.UpdateStatsDisplay();
             yield return user.StartCoroutine(ThrowHammer((PlayerUnit)user, firstTarget, (PlayerUnit)target));
         } else {
@@ -98,6 +98,9 @@ public class BHammerData : HammerData
                 if (u is PlayerUnit)
                     u.TargetElement(true);
             }
+            if (selectSFX)
+                user.PlaySound(selectSFX.Get());
+                
             yield return null;
         }
     }
@@ -110,8 +113,10 @@ public class BHammerData : HammerData
     public override IEnumerator ThrowHammer(PlayerUnit user, GridElement target = null, Unit passTo = null) {
         
         user.manager.DeselectUnit();
+    
+        if (throwSFX)
+            user.PlaySound(throwSFX.Get());
 
-        AudioManager.PlaySound(AudioAtlas.Sound.hammerPass, user.transform.position);
         user.SwitchAnim(PlayerUnit.AnimState.Idle);
         hammer.SetActive(true);
 
@@ -132,21 +137,37 @@ public class BHammerData : HammerData
                 timer += Time.deltaTime;
             }
             hammer.transform.position = endPos;
-            prevCoord = target.coord;
-
-            AudioManager.PlaySound(AudioAtlas.Sound.attackStrike, user.transform.position);
+            prevCoord = target.coord;                  
 
 // Attack target if unit
-            if (target is EnemyUnit) 
+            if (target is EnemyUnit) {
+                if (target.shell) {
+                    if (shellSFX)
+                        target.PlaySound(shellSFX.Get());
+                }
+                else {
+                    if (useSFX)
+                        target.PlaySound(useSFX.Get());
+                }
                 target.StartCoroutine(target.TakeDamage(1));
+            }
+// Trigger descent if nail
             else if (target is Nail n) {
+                if (nailSFX)
+                    target.PlaySound(nailSFX.Get());
                 if (n.nailState == Nail.NailState.Primed)
                     n.ToggleNailState(Nail.NailState.Buried);
             } else if (target is PlayerUnit pu) {
+                if (catchSFX)
+                    user.PlaySound(catchSFX.Get());
                 if (pu.conditions.Contains(Unit.Status.Disabled))
                     pu.Stabilize();
             }
         }
+
+        if (throwSFX)
+            user.PlaySound(throwSFX.Get());
+
 // Lerp hammer to passTo unit
         if (passTo != null) {
             if (passTo.gfx[0].sortingOrder > hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder)  
@@ -162,7 +183,10 @@ public class BHammerData : HammerData
                 timer += Time.deltaTime;
             }
             hammer.transform.position = endPos;
-            
+
+            if (catchSFX)
+                user.PlaySound(catchSFX.Get());
+                 
             PassHammer((PlayerUnit)user, (PlayerUnit)passTo);
             hammer.SetActive(false);
         }
@@ -171,6 +195,7 @@ public class BHammerData : HammerData
             yield return new WaitForSecondsRealtime(0.25f);
             manager.TriggerDescent();
         }
+
     }
 
 

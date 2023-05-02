@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class EquipmentButton : MonoBehaviour
 {
     public EquipmentData data;
+    bool hammer = false;
     PlayerUnit unit;
 
     Image bg;
@@ -19,6 +20,7 @@ public class EquipmentButton : MonoBehaviour
 
     public void Initialize(EquipmentData d, GridElement ge) {
         data = d;
+        if (d is HammerData) hammer = true;
         unit = (PlayerUnit)ge;
         EquipmentSelected += unit.UpdateAction;
         bg = GetComponent<Image>();
@@ -41,6 +43,14 @@ public class EquipmentButton : MonoBehaviour
 
     public void SelectEquipment() {
         EquipmentSelected?.Invoke(data, rangeMod);
+        if (hammer) {
+            if (unit.ui.hammerSelectSFX)
+                UIManager.instance.PlaySound(unit.ui.hammerSelectSFX.Get());
+
+        } else {
+            if (unit.ui.equipSelectSFX)
+                UIManager.instance.PlaySound(unit.ui.equipSelectSFX.Get());
+        }
     }
 
     public void UpdateBadge(int num) {

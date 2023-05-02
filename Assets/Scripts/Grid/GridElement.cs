@@ -6,6 +6,7 @@ using UnityEngine.UI;
 // Universal data class derrived by any instance that occupies grid space
 
 //[RequireComponent(typeof(PolygonCollider2D))]
+[RequireComponent(typeof(AudioSource))]
 public class GridElement : MonoBehaviour{
 
     public Grid grid;
@@ -32,12 +33,14 @@ public class GridElement : MonoBehaviour{
     public int energyCurrent, energyMax;
     
     [Header("Audio")]
-    public AudioAtlas.Sound destroyed;
+    [HideInInspector] public AudioSource audioSource;
+    public SFX selectedSFX;
+    public SFX destroyedSFX;
 
 // Initialize references, scale to grid, subscribe onDeath event
     protected virtual void Start() 
     {
-
+        audioSource = GetComponent<AudioSource>();
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
 
@@ -102,11 +105,21 @@ public class GridElement : MonoBehaviour{
     public virtual IEnumerator DestroyElement() 
     {
         ElementDestroyed?.Invoke(this);
-        AudioManager.PlaySound(destroyed, transform.position);
-        yield return new WaitForSecondsRealtime(.25f);
-        if (this.gameObject != null)
+        AudioClip d = null;
+        if (destroyedSFX) {
+            d = destroyedSFX.Get();
+            PlaySound(d);
+        }
+
+        foreach (SpriteRenderer sr in gfx) 
+            sr.enabled = false;
+        if (elementCanvas)
+            elementCanvas.ToggleStatsDisplay(false);
+
+        yield return new WaitForSecondsRealtime(d.length);
+            if (this.gameObject != null)
             Destroy(this.gameObject);
-        StopAllCoroutines();
+        
     }
 
     public virtual void TargetElement(bool state) 
@@ -138,6 +151,11 @@ public class GridElement : MonoBehaviour{
             shellGFX.SetActive(false);
             shell = false;
         }
+    }
+
+    public virtual void PlaySound(AudioClip clip) {
+        if (clip)
+            audioSource.PlayOneShot(clip);
     }
     
 }

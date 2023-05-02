@@ -21,11 +21,13 @@ public class Unit : GridElement {
     public int moveMod;
     public int attackMod;
 
-    [Header("UI/UX")]
+    [Header("UNIT UI/UX")]
     public UnitUI ui;
     public Sprite portrait;
     [SerializeField] float animDur = 1f;
 
+    [Header("UNIT AUDIO")]
+    public SFX landingSFX;
 
 // Functions that will change depending on the class they're inherited from
 #region Inherited Functionality

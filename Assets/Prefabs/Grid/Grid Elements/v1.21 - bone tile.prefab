@@ -414,6 +414,8 @@ MonoBehaviour:
   hpMax: 0
   hpCurrent: 0
   defense: 0
+  shell: 0
+  shellGFX: {fileID: 0}
   energyCurrent: 0
   energyMax: 0
   destroyed: 0
@@ -467,12 +469,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   disable: 1
   statDisplay: {fileID: 0}
+  hpContainer: {fileID: 0}
   hpPips: {fileID: 0}
+  emptyHPPips: {fileID: 0}
   hpInt: {fileID: 0}
   apPips: {fileID: 0}
   hpPipPrefab: {fileID: 0}
   apPipPrefab: {fileID: 0}
   dmgPipPrefab: {fileID: 0}
+  emptyPipPrefab: {fileID: 0}
   hpText: {fileID: 0}
   dmgPanel: {fileID: 0}
   dmgAnim: {fileID: 0}
