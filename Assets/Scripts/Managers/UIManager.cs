@@ -31,6 +31,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject loadoutPrefab;
     [SerializeField] Transform loadoutBG, loadoutPanel, loadoutUIParent;
     List<UnitUI> loadoutUIs = new List<UnitUI>();
+
+    [Header("UI AUDIO")]
+    [SerializeField] public SFX peekBelowSFX;
+    [SerializeField] public SFX peekAboveSFX, genSelectSFX, genDeselectSFX;
+
     
     private AudioSource audioSource;
 
@@ -99,5 +104,10 @@ public class UIManager : MonoBehaviour
         if (clip)
             audioSource.PlayOneShot(clip);
     }
+
+    public virtual void GenericMenu(bool positive) {
+        audioSource.PlayOneShot(positive ? genSelectSFX.Get() : genDeselectSFX.Get());
+    }
+
 
 }

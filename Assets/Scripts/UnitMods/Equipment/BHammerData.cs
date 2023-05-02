@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public class BHammerData : HammerData
 {
-    public SFX throwSFX, nailSFX, shellSFX;
+    public SFX throwSFX, catchSFX, nailSFX, shellSFX;
    
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
 
@@ -80,11 +80,11 @@ public class BHammerData : HammerData
             Debug.Log("Click lob");
         // REPLACE w/ BASE.USEEQUIPMENT IF BROUGHT BACK INTO WORKING SCRIPTS
             user.energyCurrent -= energyCost;
-                if (user is PlayerUnit pu) {
-                    PlayerManager manager = (PlayerManager)pu.manager;
-                    manager.undoableMoves = new Dictionary<Unit, Vector2>();
-                    manager.undoOrder = new List<Unit>();
-                }
+            if (user is PlayerUnit pu) {
+                PlayerManager manager = (PlayerManager)pu.manager;
+                manager.undoableMoves = new Dictionary<Unit, Vector2>();
+                manager.undoOrder = new List<Unit>();
+            }
             user.elementCanvas.UpdateStatsDisplay();
             yield return user.StartCoroutine(ThrowHammer((PlayerUnit)user, firstTarget, (PlayerUnit)target));
         } else {
@@ -98,6 +98,9 @@ public class BHammerData : HammerData
                 if (u is PlayerUnit)
                     u.TargetElement(true);
             }
+            if (selectSFX)
+                user.PlaySound(selectSFX.Get());
+                
             yield return null;
         }
     }
@@ -155,6 +158,8 @@ public class BHammerData : HammerData
                 if (n.nailState == Nail.NailState.Primed)
                     n.ToggleNailState(Nail.NailState.Buried);
             } else if (target is PlayerUnit pu) {
+                if (catchSFX)
+                    user.PlaySound(catchSFX.Get());
                 if (pu.conditions.Contains(Unit.Status.Disabled))
                     pu.Stabilize();
             }
@@ -162,7 +167,7 @@ public class BHammerData : HammerData
 
         if (throwSFX)
             user.PlaySound(throwSFX.Get());
-            
+
 // Lerp hammer to passTo unit
         if (passTo != null) {
             if (passTo.gfx[0].sortingOrder > hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder)  
@@ -178,7 +183,10 @@ public class BHammerData : HammerData
                 timer += Time.deltaTime;
             }
             hammer.transform.position = endPos;
-            
+
+            if (catchSFX)
+                user.PlaySound(catchSFX.Get());
+                 
             PassHammer((PlayerUnit)user, (PlayerUnit)passTo);
             hammer.SetActive(false);
         }
@@ -187,6 +195,7 @@ public class BHammerData : HammerData
             yield return new WaitForSecondsRealtime(0.25f);
             manager.TriggerDescent();
         }
+
     }
 
 

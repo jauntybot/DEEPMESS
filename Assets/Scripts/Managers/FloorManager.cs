@@ -169,6 +169,7 @@ public class FloorManager : MonoBehaviour
     public void PreviewButton(bool down) {
         if (!transitioning)
             StartCoroutine(PreviewFloor(down, true));
+        UIManager.instance.PlaySound(down ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
     }
 
     public void ChessNotationToggle() {
