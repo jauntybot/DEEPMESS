@@ -11,7 +11,7 @@ public class GridSpacing : MonoBehaviour
     
     [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.15f, 0.35f);
 
-    [SerializeField] int gridSize;
+    [SerializeField] Vector2 gridSize;
     [SerializeField] float sqrSize;
     [SerializeField] float belowFlooroffset;
 
@@ -24,19 +24,19 @@ public class GridSpacing : MonoBehaviour
                 DestroyImmediate(gridContainer.GetChild(i).gameObject);
             }
             
-            for (int y = 0; y < gridSize; y++) {
-                for (int x = 0; x < gridSize; x++) {
+            for (int y = 0; y < gridSize.y; y++) {
+                for (int x = 0; x < gridSize.x; x++) {
                     GridSquare sqr = Instantiate(sqrPrefab, this.transform).GetComponent<GridSquare>();
                     sqr.transform.position = PosFromCoord(new Vector2(x,y));
                     sqr.transform.localScale = Vector3.one * sqrSize;
                     
                     sqr.gfx[0].sortingOrder = SortOrderFromCoord(new Vector2(x,y));
-                    if (x >= gridSize/2 - 4 && x <= gridSize/2 + 3 && y >= gridSize/2 - 4 && y <= gridSize/2 + 3) {
+                    if (x >= gridSize.x/2 - 4 && x <= gridSize.x/2 + 3 && y >= gridSize.y/2 - 4 && y <= gridSize.y/2 + 3) {
 
                     } else {
                         sqr.transform.position -= new Vector3(0, belowFlooroffset, 0);
                         sqr.gfx[0].color = new Color(.25f, .25f, .25f, 1);
-                        if (x <= gridSize/2 - 4 || y >= gridSize/2+3)
+                        if (x < gridSize.x/2 - 4 || y > gridSize.y/2+3)
                             sqr.gfx[0].sortingLayerName = "BG";
                         
                         if (Random.Range(0,100) >= 50) {
@@ -45,7 +45,7 @@ public class GridSpacing : MonoBehaviour
                             wall.transform.localScale = Vector3.one * sqrSize;
 
                             wall.gfx[0].sortingOrder = SortOrderFromCoord(new Vector2(x,y));
-                            if (x <= gridSize/2 - 4 || y >= gridSize/2+3)
+                            if (x < gridSize.x/2 - 4 || y > gridSize.y/2+3)
                                 wall.gfx[0].sortingLayerName = "BG";
                             wall.gfx[0].color = new Color(.25f, .25f, .25f, 1);
                         }
@@ -60,7 +60,7 @@ public class GridSpacing : MonoBehaviour
     public Vector3 PosFromCoord(Vector2 coord) {
         return new Vector3(
 // offset from scene origin + coord to pos conversion + ortho offset + center measure
-            transform.position.x - (sqrSize * gridSize * ORTHO_OFFSET.x/orthoXFactor1) + (coord.x * sqrSize * ORTHO_OFFSET.x/orthoXFactor2) + (ORTHO_OFFSET.x * sqrSize * coord.y) + (sqrSize * ORTHO_OFFSET.x), 
+            transform.position.x - (sqrSize * gridSize.x * ORTHO_OFFSET.x/orthoXFactor1) + (coord.x * sqrSize * ORTHO_OFFSET.x/orthoXFactor2) + (ORTHO_OFFSET.x * sqrSize * coord.y) + (sqrSize * ORTHO_OFFSET.x), 
             transform.position.y + (sqrSize * ySqrScale) + (coord.y * sqrSize * ORTHO_OFFSET.y/orthoYFactor2) - (ORTHO_OFFSET.y*orthoYFactor1 * sqrSize * coord.x),             
             0);
     }

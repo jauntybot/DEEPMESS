@@ -27,7 +27,7 @@ public class FloorManager : MonoBehaviour
     [HideInInspector] public BetweenFloorManager betweenFloor;
     [SerializeField] Transform transitionParent;
     public float floorOffset, transitionDur, unitDropDur;
-    private bool transitioning;
+    private bool transitioning, peeking;
     [SerializeField] public GameObject upButton, downButton;
     [SerializeField] ParallaxImageScroll parallax;
     
@@ -101,6 +101,16 @@ public class FloorManager : MonoBehaviour
             scenario.currentEnemy.transform.parent = currentFloor.transform;
             
             transitioning = false;
+        }
+    }
+
+    public IEnumerator CancelPreview() {
+        while (transitioning) {
+            yield return null;
+        }
+        if (peeking) {
+            UIManager.instance.PlaySound(UIManager.instance.peekAboveSFX.Get());
+            yield return PreviewFloor(false, true);
         }
     }
 
@@ -192,6 +202,7 @@ public class FloorManager : MonoBehaviour
 
 // Lock player from selecting units
         scenario.player.ToggleUnitSelectability(dir == -1);
+        downButton.GetComponent<Button>().enabled = false; upButton.GetComponent<Button>().enabled = false;
 
         if (floors.Count - 1 >= currentFloor.index + dir) // Checks if there is a floor in the direction transitioning
             toFloor = floors[currentFloor.index + dir];
@@ -258,6 +269,7 @@ public class FloorManager : MonoBehaviour
                 }
             }
         }
+        peeking = preview;
 
 // And the actual animation. Has become cluttered with NestedFadeGroup logic too.
         float timer = 0;
@@ -301,6 +313,8 @@ public class FloorManager : MonoBehaviour
         if (down && currentFloor.index-1 >= 0) floors[currentFloor.index-1].gameObject.SetActive(false);
         if (toFloor) currentFloor = toFloor;
         UIManager.instance.metaDisplay.UpdateCurrentFloor(currentFloor.index);
+
+        downButton.GetComponent<Button>().enabled = true; upButton.GetComponent<Button>().enabled = true;
     }
 
 
@@ -321,7 +335,7 @@ public class FloorManager : MonoBehaviour
 
     public IEnumerator DescendFloors(bool cascade = false) {
 
-
+        upButton.GetComponent<Button>().enabled = false; downButton.GetComponent<Button>().enabled = false;
         EnemyManager enemy = (EnemyManager)currentFloor.enemy;
         
         currentFloor.DisableGridHighlight();

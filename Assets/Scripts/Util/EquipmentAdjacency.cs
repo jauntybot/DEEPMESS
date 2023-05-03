@@ -62,8 +62,8 @@ public class EquipmentAdjacency : MonoBehaviour
                                         }
                                     }
                                 }
-                                break;
                             } 
+                            if (valid == false) break;
                         }
 // Check if GridSquare is valid
                         foreach (GridElement ge in data.filters) {
@@ -89,23 +89,23 @@ public class EquipmentAdjacency : MonoBehaviour
                 for (int y = -1; y < 2; y+=2) {    
                     Vector2 coord = new Vector2(current.x, current.y + y);
                     if (!_coords.Contains(coord)) {
-// If there is something already occupying this coord                        
                         bool valid = true;
                         if (data is HammerData || data is AttackData) valid = false;
+// If there is something already occupying this coord                        
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
-                            valid = false;
 // Valid coord if element is not filtered
-                            if (!data.filters.Find(f => f.GetType() == ge.GetType())
+                            if (data.filters.Find(f => f.GetType() == ge.GetType())
                             || data.filters == null) {
-                                valid = true;
-// Valid coord if element is target, but stops frontier
-                            } else if (targetLast != null) {
-                                foreach(GridElement target in targetLast) {
-                                    if (ge.GetType() == target.GetType()) {
-                                        _coords.Add(coord);
+                                valid = false;
+                                if (targetLast != null) {
+                                    foreach(GridElement target in targetLast) {
+                                        if (ge.GetType() == target.GetType()) {
+                                            _coords.Add(coord);
+                                        }
                                     }
                                 }
                             }
+                            if (valid == false) break;
                         }
 // Check if GridSquare is valid
                         foreach (GridElement ge in data.filters) {

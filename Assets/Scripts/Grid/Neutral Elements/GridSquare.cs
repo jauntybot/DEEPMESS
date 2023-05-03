@@ -13,10 +13,13 @@ public class GridSquare : GroundElement {
     public bool white;
     [SerializeField] Color blackColor;
     [SerializeField] GameObject highlight;
+    [SerializeField] List<Sprite> rndSprite;
 
 // Initialize refs
     protected override void Start() {
         hitbox = GetComponent<PolygonCollider2D>();
+        if (rndSprite.Count > 0)
+            gfx[0].sprite = rndSprite[Random.Range(0,rndSprite.Count)];
     }
 
 // Don't inherit base class initialization to avoid adding GridElement to wrong list

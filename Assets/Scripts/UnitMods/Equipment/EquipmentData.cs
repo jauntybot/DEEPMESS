@@ -74,4 +74,9 @@ public class EquipmentData : ScriptableObject {
     public virtual void UnequipEquipment(GridElement user) {
 
     }
+
+    public virtual IEnumerator UntargetDelay(Unit unit) {
+        yield return new WaitForSecondsRealtime(0.25f);
+        if (!unit.targeted) unit.TargetElement(false);
+    }
 }

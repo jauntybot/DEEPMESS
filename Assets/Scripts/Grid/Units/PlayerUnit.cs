@@ -39,8 +39,11 @@ public class PlayerUnit : Unit {
         Coroutine co = StartCoroutine(base.ExecuteAction(target));
 
         if (selectedEquipment) {
-            if (!selectedEquipment.multiselect) {
+            if (!selectedEquipment.multiselect && selectedEquipment is not MoveData) {
                 pManager.DeselectUnit();
+                pManager.unitActing = true;
+            }
+            else if (selectedEquipment is MoveData) {
                 pManager.unitActing = true;
             }
             else if (selectedEquipment.firstTarget != null) {

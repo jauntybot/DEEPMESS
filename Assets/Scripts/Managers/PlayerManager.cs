@@ -176,13 +176,17 @@ public class PlayerManager : UnitManager {
 
     public IEnumerator UpdateNail(Vector2 coord) {
         nail.transform.parent = unitParent.transform;
+
         GridElement subGE = currentGrid.gridElements.Find(ge => ge.coord == coord);
-        
         if (subGE != null) {
             StartCoroutine(subGE.CollideFromBelow(nail));
-
         }
+        
         yield return StartCoroutine(nail.nailDrop.MoveToCoord(nail, coord));
+
+        if (nail.landingSFX)
+            nail.PlaySound(nail.landingSFX.Get());
+
         nail.ToggleNailState(Nail.NailState.Buried);
 
         if (!currentGrid.gridElements.Contains(nail))

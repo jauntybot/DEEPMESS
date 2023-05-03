@@ -87,12 +87,12 @@ public class ScenarioManager : MonoBehaviour
                 case Turn.Cascade: toTurn = Turn.Descent; break;
             }
         }
+        floorManager.upButton.GetComponent<Button>().enabled = false; floorManager.downButton.GetComponent<Button>().enabled = false;
         prevTurn = currentTurn;
         switch(toTurn) 
         {
             case Turn.Enemy:
                 if (currentEnemy.units.Count > 0) {
-                    floorManager.upButton.GetComponent<Button>().enabled = false; floorManager.downButton.GetComponent<Button>().enabled = false;
                     currentTurn = Turn.Enemy;
                     player.StartEndTurn(false);
                     yield return StartCoroutine(messagePanel.DisplayMessage("ANTIBODY RESPONSE", 2));
@@ -140,6 +140,7 @@ public class ScenarioManager : MonoBehaviour
                     }
                 }
                 currentTurn = Turn.Descent;
+                yield return StartCoroutine(floorManager.CancelPreview());
                 player.StartEndTurn(false);
                 foreach(Unit u in player.units)
                     u.usedEquip = false;

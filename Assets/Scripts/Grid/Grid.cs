@@ -180,8 +180,8 @@ public class Grid : MonoBehaviour {
      public Vector3 PosFromCoord(Vector2 coord) {
         return new Vector3(
 // offset from scene origin + coord to pos conversion + ortho offset + center measure
-            transform.position.x - (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x/1.25f) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x/2.25f) + (ORTHO_OFFSET.x * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 
-            transform.position.y + (FloorManager.sqrSize * 1.75f) + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y/1.1f) - (ORTHO_OFFSET.y*2.25f * FloorManager.sqrSize * coord.x),             
+            transform.position.x - (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x/1.1f) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x/2.5f) + (ORTHO_OFFSET.x * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 
+            transform.position.y + (FloorManager.sqrSize * 1.75f) + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y/1.1f) - (ORTHO_OFFSET.y*2f * FloorManager.sqrSize * coord.x),             
             0);
     }
 

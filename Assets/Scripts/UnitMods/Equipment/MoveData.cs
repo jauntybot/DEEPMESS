@@ -73,9 +73,6 @@ public class MoveData : EquipmentData
         foreach (GridElement ge in unit.grid.CoordContents(moveTo)) {
             ge.OnSharedSpace(unit);
         }
-
-        yield return new WaitForSecondsRealtime(0.25f);
-        if (!unit.targeted) unit.TargetElement(false);
     }
 
 }
