@@ -21,7 +21,7 @@ public class EnemyManager : UnitManager {
     }
 
     public void DescentTriggerCheck(GridElement ge = null) {
-        if (scenario.currentEnemy == this) {
+        if (scenario.currentEnemy == this && scenario.currentTurn != ScenarioManager.Turn.Descent) {
             if (units.Count <= 0) {
                 Debug.Log("Trigger descent");
                 EndTurnEarly();
@@ -94,8 +94,8 @@ public class EnemyManager : UnitManager {
                 currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
                 currentGrid.DisableGridHighlight();
                 yield return co;
+                yield return new WaitForSecondsRealtime(0.125f);
                 DeselectUnit();
-                yield return new WaitForSecondsRealtime(1.25f);
                 yield break;
             }
         }
@@ -130,12 +130,11 @@ public class EnemyManager : UnitManager {
                 currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
                 currentGrid.DisableGridHighlight();
                 yield return co;            
+                yield return new WaitForSecondsRealtime(0.125f);
                 DeselectUnit();
-                yield return new WaitForSecondsRealtime(1.25f);
             }
         }
         currentGrid.DisableGridHighlight();
-        Debug.Log("Enemy finished");
     }
 
     public IEnumerator ScatterTurn(EnemyUnit input) {

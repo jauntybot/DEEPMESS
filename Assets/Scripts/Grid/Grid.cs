@@ -16,7 +16,7 @@ public class Grid : MonoBehaviour {
     public UnitManager enemy;
     [SerializeField] GameObject enemyPrefab;
 
-    [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.1f, 0.5f);
+    [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.15f, 0.35f);
     [SerializeField] GameObject sqrPrefab, bloodTilePrefab, bileTilePrefab, gridCursor, selectedCursor;
     [SerializeField] static float fadeInDur = 0.25f;
     public FloorDefinition lvlDef;
@@ -181,7 +181,7 @@ public class Grid : MonoBehaviour {
         return new Vector3(
 // offset from scene origin + coord to pos conversion + ortho offset + center measure
             transform.position.x - (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x/1.25f) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x/2.25f) + (ORTHO_OFFSET.x * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 
-            transform.position.y + (FloorManager.sqrSize * 1.75f) + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y) - (ORTHO_OFFSET.y*2.25f * FloorManager.sqrSize * coord.x),             
+            transform.position.y + (FloorManager.sqrSize * 1.75f) + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y/1.1f) - (ORTHO_OFFSET.y*2.25f * FloorManager.sqrSize * coord.x),             
             0);
     }
 

@@ -14,8 +14,8 @@ public class ParallaxImageScroll : MonoBehaviour
         //_image.material = new Material(_image.material);
     }
 
-    void Update()
+    public void ScrollParallax(int pos)
     {
-        _image.material.mainTextureOffset += scrollSpeed * Time.deltaTime;
+        _image.material.mainTextureOffset += scrollSpeed * pos;
     }
 }

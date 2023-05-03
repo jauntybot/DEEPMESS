@@ -29,6 +29,7 @@ public class FloorManager : MonoBehaviour
     public float floorOffset, transitionDur, unitDropDur;
     private bool transitioning;
     [SerializeField] public GameObject upButton, downButton;
+    [SerializeField] ParallaxImageScroll parallax;
     
     [Header("Grid Viz")]
     [SerializeField] private GameObject descentPreview;
@@ -276,6 +277,9 @@ public class FloorManager : MonoBehaviour
                 foreach(NestedFadeGroup.NestedFadeGroup fade in partialFade) 
                    fade.AlphaSelf = Mathf.Lerp(partialFrom, partialA, timer/transitionDur);
             }
+            if (parallax)
+                parallax.ScrollParallax(down ? -1 : 1);
+
 // Coroutine/animation lerp yield
             yield return null;
             timer += Time.deltaTime;
