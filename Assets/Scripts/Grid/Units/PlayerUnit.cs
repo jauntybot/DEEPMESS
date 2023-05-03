@@ -43,17 +43,15 @@ public class PlayerUnit : Unit {
                 pManager.DeselectUnit();
                 pManager.unitActing = true;
             }
-            else if (selectedEquipment is MoveData) {
+            else if (selectedEquipment is MoveData && energyCurrent > 0) {
                 pManager.unitActing = true;
             }
             else if (selectedEquipment.firstTarget != null) {
                 GridElement anim = selectedEquipment.contextualAnimGO ? selectedEquipment.contextualAnimGO.GetComponent<GridElement>() : null;
                 pManager.contextuals.UpdateContext(selectedEquipment.multiContext, anim, target);
-                Debug.Log("First selection");
-            } else if (selectedEquipment.firstTarget == null) {
+            } else {
                 pManager.DeselectUnit();
                 pManager.unitActing = true;
-                Debug.Log("Unit acts");
             }
         } else {
             pManager.DeselectUnit();
@@ -62,11 +60,12 @@ public class PlayerUnit : Unit {
 
         yield return co;
 
+        if (selectedEquipment is MoveData && energyCurrent > 0)
+            grid.UpdateSelectedCursor(true, coord);
+
         UIManager.instance.ToggleUndoButton(pManager.undoOrder.Count > 0);
         pManager.unitActing = false;
-// Untarget every unit
-        foreach(GridElement ge in pManager.currentGrid.gridElements) 
-            ge.TargetElement(false);
+
     }
 
 // Allow the player to click on this

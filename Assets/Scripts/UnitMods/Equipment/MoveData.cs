@@ -29,6 +29,8 @@ public class MoveData : EquipmentData
         if (useSFX)
             user.PlaySound(useSFX.Get());
 
+        user.grid.UpdateSelectedCursor(false, Vector2.one * -32);
+
         yield return user.StartCoroutine(MoveToCoord((Unit)user, target.coord));
         
     }

@@ -239,6 +239,104 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &148836116
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 148836119}
+  - component: {fileID: 148836118}
+  - component: {fileID: 148836117}
+  m_Layer: 0
+  m_Name: Parallax
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &148836117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 148836116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d64f48789156914a84bdb0ab37b0e01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scrollSpeed: {x: 0, y: 0.001}
+--- !u!212 &148836118
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 148836116}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: bfe16ded567689641a2876e81729bda3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 1584915141
+  m_SortingLayer: 1
+  m_SortingOrder: -10
+  m_Sprite: {fileID: 21300000, guid: f721a9ea798cd5345ba5f218df20f6b5, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 40.96, y: 40.96}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
+--- !u!4 &148836119
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 148836116}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.875, y: 0, z: 20}
+  m_LocalScale: {x: 0.6666, y: 0.6666, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &240713490 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8940216680739985877, guid: 578d591cdf9694298b8819611910b639, type: 3}
@@ -881,6 +979,7 @@ MonoBehaviour:
   floorParent: {fileID: 1736529076}
   floorDefinitions:
   - {fileID: 11400000, guid: 3fc7c663a3dfcbb46975ac62dc66a774, type: 2}
+  - {fileID: 11400000, guid: e946a4086f8f7584aacdc985a991814a, type: 2}
   - {fileID: 11400000, guid: f567bed50152b904ba28cb7c5e262eb2, type: 2}
   - {fileID: 11400000, guid: 46d0d5a4abc26d14f9596675fd2fc5ac, type: 2}
   - {fileID: 11400000, guid: 94b501f41408caa4ebdf80f8a93404c0, type: 2}
@@ -889,7 +988,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6b355e9f2c4774140a561845a9db43ad, type: 2}
   - {fileID: 11400000, guid: 72296e530ab29164cb84adc44cdd27de, type: 2}
   - {fileID: 11400000, guid: 952de758672c2be43bb0abd95970113a, type: 2}
-  - {fileID: 11400000, guid: e946a4086f8f7584aacdc985a991814a, type: 2}
   - {fileID: 11400000, guid: c71c029e301fe1b4ca8ada6f34cb8fb3, type: 2}
   - {fileID: 11400000, guid: 9ffb98ad443cd40aabb1f5cecfcc1714, type: 2}
   - {fileID: 11400000, guid: a3b9a4731bd744bc18248c69c5c6e972, type: 2}
@@ -924,7 +1022,7 @@ MonoBehaviour:
   unitDropDur: 0.15
   upButton: {fileID: 1543682455}
   downButton: {fileID: 1142055591}
-  parallax: {fileID: 0}
+  parallax: {fileID: 148836117}
   descentPreview: {fileID: 1255669750}
   previewMaterial: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   moveColor: {r: 0.87058824, g: 0.84733033, b: 0.32156864, a: 0.54901963}
