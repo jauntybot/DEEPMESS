@@ -6,7 +6,7 @@ public class TooltipSystem : MonoBehaviour
 {
 
     private static TooltipSystem current;
-    public Tooltip tooltip;
+    public ToolTip tooltip;
 
     public void Awake()
     {
@@ -16,12 +16,12 @@ public class TooltipSystem : MonoBehaviour
     public static void Show(string content, string header = "")
     {
         current.tooltip.SetText(content, header);
-        current.tooltip.gameObject.SetActive(true);
+        current.tooltip.transform.GetChild(0).gameObject.SetActive(true);
     }
 
     public static void Hide()
     {
-        current.tooltip.gameObject.SetActive(false);
+        current.tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 
 }

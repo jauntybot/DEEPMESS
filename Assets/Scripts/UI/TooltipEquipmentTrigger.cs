@@ -9,55 +9,32 @@ public class TooltipEquipmentTrigger : MonoBehaviour, IPointerEnterHandler, IPoi
 {
 
     private static LTDescr delay;
-    //get the equipment data
-    private Image image;
-    private GameObject hammerButton;
-    private string imageName;
-
+    [SerializeField] bool initSelf;
     public string header;
     [Multiline()]
     public string content;
 
-    private void Awake()
+    void Start() {
+        if (initSelf) Initialize(GetComponent<EquipmentButton>().data.name);
+    }
+
+    public void Initialize(string name)
     {
+        switch (name) {
+            case "ANVIL": Anvil(); break;
+            case "IMMOBILIZE": Immobilize(); break;
+            case "BIG WIND": BigWind(); break;
+            case "SHIELD": Shield(); break;
+            case "SWAP": Swap(); break;
+            case "BIG GRAB": BigGrab(); break;
+            case "HAMMER": Hammer(); break;
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-    
-        hammerButton = eventData.pointerEnter;
-        Debug.Log(hammerButton.name);
-        image = hammerButton.GetComponent<Image>();
-        imageName = image.sprite.name;
-        Debug.Log("image name is " + imageName);
-
         delay = LeanTween.delayedCall(1f, () =>
         {
-            switch (imageName)
-            {
-                case "eqp - anvil":
-                    Anvil();
-                    break;
-                case "eqp - immobilize":
-                    Immobilize();
-                    break;
-                case "eqp - big wind":
-                    BigWind();
-                    break;
-                case "eqp - shield":
-                    Shield();
-                    break;
-                case "eqp - swap":
-                    Swap();
-                    break;
-                case "eqp - big grab":
-                    BigGrab();
-                    break;
-                case "hammer - active new":
-                    Hammer();
-                    break;
-            }
-
             TooltipSystem.Show(content, header);
         });
     }

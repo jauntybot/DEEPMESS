@@ -16,6 +16,7 @@ public class EquipmentButton : MonoBehaviour
     [Header("Badge Count")]
     [SerializeField] GameObject badge;
     [SerializeField] TMPro.TMP_Text badgeNumber;
+    TooltipEquipmentTrigger tooltip;
     
 
     public void Initialize(EquipmentData d, GridElement ge) {
@@ -25,6 +26,9 @@ public class EquipmentButton : MonoBehaviour
         EquipmentSelected += unit.UpdateAction;
         bg = GetComponent<Image>();
         bg.sprite = data.icon;
+        tooltip = GetComponent<TooltipEquipmentTrigger>();
+        if (tooltip)
+            tooltip.Initialize(d.name);
         //badge.SetActive(d is ConsumableEquipmentData);
         UpdateMod();
     }

@@ -33,7 +33,7 @@ public class GridContextuals : MonoBehaviour
         UpdateCursorAnim(refTrans.transform);
         UpdateContext(context);        
         
-        //UpdateCursor((Unit)origin, origin.coord);
+        UpdateCursor((Unit)origin, origin.coord);
     }
 
     public void StartUpdateCoroutine() {

@@ -4,23 +4,16 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-[ExecuteInEditMode()]
-public class Tooltip : MonoBehaviour
+public class ToolTip : MonoBehaviour
 {
 
     public TextMeshProUGUI headerField;
     public TextMeshProUGUI contentField;
     public LayoutElement layoutElement;
-
+    
     public int textWrapLimit;
 
-    private RectTransform rectTransform;
-
-
-    private void Awake()
-    {
-        rectTransform = GetComponent<RectTransform>();
-    }
+    [SerializeField] RectTransform rectTransform;
 
     public void SetText(string content, string header = "")
     {
@@ -40,28 +33,20 @@ public class Tooltip : MonoBehaviour
         int headerLength = headerField.text.Length;
         int contentLength = contentField.text.Length;
 
-        //ternary operator
         layoutElement.enabled = (headerLength > textWrapLimit || contentLength > textWrapLimit) ? true : false;
     }
 
     private void Update()
     {
-        if (Application.isEditor)
-        {
-            //limit text width
-            int headerLength = headerField.text.Length;
-            int contentLength = contentField.text.Length;
-
-            //ternary operator
-            layoutElement.enabled = (headerLength > textWrapLimit || contentLength > textWrapLimit) ? true : false;
-        }
-
         Vector2 position = Input.mousePosition;
-
-        float pivotX = position.x / Screen.width;
-        float pivotY = position.y / Screen.height;
-
-        rectTransform.pivot = new Vector2(pivotX, pivotY);
         transform.position = position;
+
+        Vector2 anchor = Vector2.zero;
+        anchor.x = position.x < Screen.width/2 ? 0 : 1;
+        anchor.y = position.y < Screen.height/2 ? 0 : 1;
+
+        rectTransform.anchorMax = anchor; rectTransform.anchorMin = anchor; 
+        rectTransform.pivot = anchor;
+        rectTransform.anchoredPosition = new Vector2(25 - anchor.x * 50, 25 - anchor.y * 50);
     }
 }
