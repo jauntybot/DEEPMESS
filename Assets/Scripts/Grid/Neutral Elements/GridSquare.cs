@@ -32,7 +32,6 @@ public class GridSquare : GroundElement {
     public void ToggleValidCoord(bool state, Color? color = null) 
     {
         selectable = state;
-        
 
         highlight.SetActive(state);
         if (color is Color c) {

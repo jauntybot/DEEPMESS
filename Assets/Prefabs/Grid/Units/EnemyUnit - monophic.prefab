@@ -204,6 +204,8 @@ MonoBehaviour:
   energyMax: 2
   audioSource: {fileID: 0}
   selectedSFX: {fileID: 0}
+  dmgdSFX: {fileID: 0}
+  healedSFX: {fileID: 0}
   destroyedSFX: {fileID: 11400000, guid: f29e82bf2f6b7b047b42170d9cdf72ad, type: 2}
   manager: {fileID: 0}
   selected: 0
@@ -494,6 +496,10 @@ PrefabInstance:
       propertyPath: alpha
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4471381515458699348, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: af7b8d50c3452d94a8ddd7bb4f31fe14, type: 2}
     - target: {fileID: 4540997612109558425, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}
       propertyPath: m_Name
       value: Shell

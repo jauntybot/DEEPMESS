@@ -18,6 +18,10 @@ public class UnitUI : MonoBehaviour
     [Header("Equipment")]
     public List<EquipmentButton> equipment; 
     [SerializeField] GameObject equipmentPanel, hammerPanel, equipmentButtonPrefab, hammerButtonPrefab;
+
+    [SerializeField] Button disarmButton;
+
+    [Header("Loadout")]
     [SerializeField] public GameObject equipmentOptions;
     public GameObject initialLoadoutButton, slotsLoadoutButton;
     [SerializeField] public SFX equipSelectSFX, hammerSelectSFX;
@@ -71,8 +75,18 @@ public class UnitUI : MonoBehaviour
             if (b.data is ConsumableEquipmentData && unit.usedEquip)
                 b.gameObject.GetComponent<Button>().interactable = false;
         }
+
+        if (disarmButton)
+            disarmButton.gameObject.SetActive(unit.selectedEquipment != null);
+        
         if (overview != null )
             overview.UpdateOverview();
+    }
+
+    public void DisarmButton() {
+        unit.selectedEquipment = null;
+        unit.grid.DisableGridHighlight();
+        disarmButton.gameObject.SetActive(false);
     }
 
     public void UpdateEquipmentButtons() {

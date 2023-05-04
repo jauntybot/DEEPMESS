@@ -14,9 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: 
   icon: {fileID: 0}
-  gridColor: 0
-  energyCost: 0
+  contextualAnimGO: {fileID: 0}
+  contextDisplay: 0
+  multiContext: 0
+  gridColor: 2
+  multiselect: 0
   adjacency: 0
+  firstTarget: {fileID: 0}
+  energyCost: 0
   range: 0
-  filters: []
+  animDur: 0.5
   filterValid: 0
+  filters: []
+  targetTypes: []
+  selectSFX: {fileID: 0}
+  useSFX: {fileID: 0}
+  animType: 0

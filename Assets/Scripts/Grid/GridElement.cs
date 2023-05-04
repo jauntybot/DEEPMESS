@@ -35,7 +35,7 @@ public class GridElement : MonoBehaviour{
     [Header("Audio")]
     [HideInInspector] public AudioSource audioSource;
     public SFX selectedSFX;
-    public SFX destroyedSFX;
+    public SFX dmgdSFX, healedSFX, destroyedSFX;
 
 // Initialize references, scale to grid, subscribe onDeath event
     protected virtual void Start() 
@@ -87,6 +87,14 @@ public class GridElement : MonoBehaviour{
             hpCurrent -= dmg;
             hpCurrent = hpCurrent < 0 ? 0 : hpCurrent;
             hpCurrent = hpCurrent > hpMax ? hpMax : hpCurrent;
+
+            if (Mathf.Sign(dmg) == 1) {
+                if (dmgdSFX)
+                    PlaySound(dmgdSFX.Get());
+            } else {
+                if (healedSFX)
+                    PlaySound(healedSFX.Get());
+            }
 
             if (elementCanvas) {
                 elementCanvas.UpdateStatsDisplay();

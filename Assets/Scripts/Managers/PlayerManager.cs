@@ -324,9 +324,9 @@ public class PlayerManager : UnitManager {
                 contextuals.StartUpdateCoroutine();
             }
             if (equip.contextualAnimGO != null) {
-                contextuals.DisplayGridContextuals(selectedUnit, equip.contextualAnimGO, equip.contextDisplay);
+                contextuals.DisplayGridContextuals(selectedUnit, equip.contextualAnimGO, equip.contextDisplay, equip.gridColor);
             } else {
-                contextuals.DisplayGridContextuals(selectedUnit, selectedUnit.gameObject, equip.contextDisplay);
+                contextuals.DisplayGridContextuals(selectedUnit, selectedUnit.gameObject, equip.contextDisplay, equip.gridColor);
             }
         }
     }

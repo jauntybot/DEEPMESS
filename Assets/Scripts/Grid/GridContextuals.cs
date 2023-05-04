@@ -27,11 +27,11 @@ public class GridContextuals : MonoBehaviour
         ToggleValid(false);
     }
 
-    public void DisplayGridContextuals(GridElement origin, GameObject refTrans, ContextDisplay context) {
+    public void DisplayGridContextuals(GridElement origin, GameObject refTrans, ContextDisplay context, int gridColor) {
         ToggleValid(true);
 
         UpdateCursorAnim(refTrans.transform);
-        UpdateContext(context);        
+        UpdateContext(context, gridColor);        
         
         UpdateCursor((Unit)origin, origin.coord);
     }
@@ -117,9 +117,11 @@ public class GridContextuals : MonoBehaviour
         }        
     }
 
-    public void UpdateContext(ContextDisplay context, GridElement newAnim = null, GridElement newFrom = null) {
+    public void UpdateContext(ContextDisplay context, int highlightIndex, GridElement newAnim = null, GridElement newFrom = null) {
         currentContext = context;
         lrI = lr.positionCount;
+        Color gridColor = FloorManager.instance.GetFloorColor(highlightIndex);
+        //lr.startColor = gridColor; lr.endColor = gridColor;
 
         if (newAnim != null) {
             UpdateCursorAnim(newAnim.transform);

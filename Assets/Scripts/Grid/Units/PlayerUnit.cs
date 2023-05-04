@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 // Inherited Unit; unit functionality dependent on player input
 
@@ -48,7 +49,7 @@ public class PlayerUnit : Unit {
             }
             else if (selectedEquipment.firstTarget != null) {
                 GridElement anim = selectedEquipment.contextualAnimGO ? selectedEquipment.contextualAnimGO.GetComponent<GridElement>() : null;
-                pManager.contextuals.UpdateContext(selectedEquipment.multiContext, anim, target);
+                pManager.contextuals.UpdateContext(selectedEquipment.multiContext, selectedEquipment.gridColor, anim, target);
             } else {
                 pManager.DeselectUnit();
                 pManager.unitActing = true;
@@ -57,9 +58,9 @@ public class PlayerUnit : Unit {
             pManager.DeselectUnit();
             pManager.unitActing = true;
         }
-
+        FloorManager.instance.upButton.GetComponent<Button>().enabled = false; FloorManager.instance.downButton.GetComponent<Button>().enabled = false;
         yield return co;
-
+        FloorManager.instance.upButton.GetComponent<Button>().enabled = true; FloorManager.instance.downButton.GetComponent<Button>().enabled = true;
         if (selectedEquipment is MoveData && energyCurrent > 0)
             grid.UpdateSelectedCursor(true, coord);
 

@@ -39,6 +39,12 @@ public class TooltipEquipmentTrigger : MonoBehaviour, IPointerEnterHandler, IPoi
         });
     }
 
+    void OnDisable() {
+        if (delay != null)
+            LeanTween.cancel(delay.uniqueId);
+        TooltipSystem.Hide();
+    }
+
     public void OnPointerExit(PointerEventData eventData)
     {
         LeanTween.cancel(delay.uniqueId);

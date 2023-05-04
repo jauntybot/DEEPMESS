@@ -61,7 +61,7 @@ public class GridSpacing : MonoBehaviour
         return new Vector3(
 // offset from scene origin + coord to pos conversion + ortho offset + center measure
             transform.position.x - (sqrSize * gridSize.x * ORTHO_OFFSET.x/orthoXFactor1) + (coord.x * sqrSize * ORTHO_OFFSET.x/orthoXFactor2) + (ORTHO_OFFSET.x * sqrSize * coord.y) + (sqrSize * ORTHO_OFFSET.x), 
-            transform.position.y + (sqrSize * ySqrScale) + (coord.y * sqrSize * ORTHO_OFFSET.y/orthoYFactor2) - (ORTHO_OFFSET.y*orthoYFactor1 * sqrSize * coord.x),             
+            transform.position.y + (sqrSize * gridSize.y * ORTHO_OFFSET.y/ySqrScale) + (coord.y * sqrSize * ORTHO_OFFSET.y/orthoYFactor2) - (ORTHO_OFFSET.y*orthoYFactor1 * sqrSize * coord.x),             
             0);
     }
 

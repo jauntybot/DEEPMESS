@@ -136,23 +136,9 @@ public class Grid : MonoBehaviour {
         if (!stack)
             DisableGridHighlight();
 
-        Color c = floorManager.moveColor;
-        if (index is int i) {
-            switch (i) {
-             case 0:
-                c = floorManager.moveColor;
-             break;
-             case 1:
-                c = floorManager.attackColor;
-             break;
-             case 2:
-                c = floorManager.hammerColor;
-            break;
-            case 3:
-                c = floorManager.playerColor;
-            break;
-            }
-        }
+        Color c = floorManager.equipmentColor;
+        if (index is int i)
+            c = floorManager.GetFloorColor(i);
 
         if (coords != null) {
             foreach (Vector2 coord in coords) {
@@ -181,7 +167,7 @@ public class Grid : MonoBehaviour {
         return new Vector3(
 // offset from scene origin + coord to pos conversion + ortho offset + center measure
             transform.position.x - (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x/1.1f) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x/2.5f) + (ORTHO_OFFSET.x * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 
-            transform.position.y + (FloorManager.sqrSize * 1.75f) + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y/1.1f) - (ORTHO_OFFSET.y*2f * FloorManager.sqrSize * coord.x),             
+            transform.position.y + (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.y/1.75f) + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y/1.1f) - (ORTHO_OFFSET.y*2f * FloorManager.sqrSize * coord.x),             
             0);
     }
 

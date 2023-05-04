@@ -35,7 +35,7 @@ public class FloorManager : MonoBehaviour
     [SerializeField] private GameObject descentPreview;
     [SerializeField] private Material previewMaterial;
     [SerializeField] private Dictionary<GridElement, LineRenderer> lineRenderers;
-    public Color moveColor, attackColor, hammerColor, playerColor, enemyColor;
+    public Color playerColor, enemyColor, equipmentColor;
     private bool notation = false;
 
     #region Singleton (and Awake)
@@ -72,6 +72,24 @@ public class FloorManager : MonoBehaviour
         newFloor.transform.SetParent(floorParent);
         floors.Add(newFloor);
 
+    }
+
+    
+    public Color GetFloorColor(int i) {
+        Color c = equipmentColor;
+        
+        switch (i) {
+            case 0:
+            c = playerColor;
+            break;
+            case 1:
+            c = enemyColor;
+            break;
+            case 2:
+            c = equipmentColor;
+             break;
+        }
+        return c;
     }
 
     public IEnumerator PreviewFloor(bool down, bool draw) {
@@ -112,6 +130,7 @@ public class FloorManager : MonoBehaviour
             UIManager.instance.PlaySound(UIManager.instance.peekAboveSFX.Get());
             yield return PreviewFloor(false, true);
         }
+        yield return new WaitForSecondsRealtime(0.125f);
     }
 
     public IEnumerator ToggleDescentPreview(bool active) {
@@ -129,16 +148,22 @@ public class FloorManager : MonoBehaviour
                         lr.positionCount = 2;
                         lr.useWorldSpace = false;
                         lr.SetPosition(0, ge.transform.position); lr.SetPosition(1, ge.transform.position);
-                        lr.startColor = enemyColor; lr.endColor = enemyColor;
                         if (ge is PlayerUnit) {
                             lr.startColor = playerColor; lr.endColor = playerColor;
+                        } else if (ge is EnemyUnit) {
+                            lr.startColor = enemyColor; lr.endColor = enemyColor;
+                        } else {
+                            lr.startColor = equipmentColor; lr.endColor = equipmentColor;
                         }
 
                         lineRenderers.Add(currentFloor.sqrs.Find(sqr => sqr.coord == ge.coord), lr);
                         ge.ElementDestroyed += DestroyPreview;
 
-                        floors[currentFloor.index+1].sqrs.Find(sqr => sqr.coord == ge.coord).ToggleValidCoord(true,
-                        ge is PlayerUnit ? playerColor : enemyColor);
+                        Color c = equipmentColor;
+                        if (ge is PlayerUnit) c = playerColor;
+                        else if (ge is EnemyUnit) c = enemyColor;
+                        else c = equipmentColor;
+                        floors[currentFloor.index+1].sqrs.Find(sqr => sqr.coord == ge.coord).ToggleValidCoord(true, c);
                     }
                 }
             }
@@ -269,7 +294,8 @@ public class FloorManager : MonoBehaviour
                 }
             }
         }
-        peeking = preview;
+
+        peeking = down && preview;
 
 // And the actual animation. Has become cluttered with NestedFadeGroup logic too.
         float timer = 0;

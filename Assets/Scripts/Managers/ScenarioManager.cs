@@ -131,6 +131,7 @@ public class ScenarioManager : MonoBehaviour
                 }
             break;
             case Turn.Descent:
+                yield return StartCoroutine(floorManager.CancelPreview());
                 if (prevTurn == Turn.Cascade) {
                     player.currentGrid = floorManager.floors[player.currentGrid.index-1];
                     for (int i = player.units.Count - 1; i >= 0; i--) {
@@ -140,7 +141,6 @@ public class ScenarioManager : MonoBehaviour
                     }
                 }
                 currentTurn = Turn.Descent;
-                yield return StartCoroutine(floorManager.CancelPreview());
                 player.StartEndTurn(false);
                 foreach(Unit u in player.units)
                     u.usedEquip = false;
