@@ -27,7 +27,7 @@ public class FloorManager : MonoBehaviour
     [HideInInspector] public BetweenFloorManager betweenFloor;
     [SerializeField] Transform transitionParent;
     public float floorOffset, transitionDur, unitDropDur;
-    private bool transitioning, peeking;
+    [HideInInspector] public bool transitioning, peeking;
     [SerializeField] public GameObject upButton, downButton;
     [SerializeField] ParallaxImageScroll parallax;
     
@@ -203,6 +203,7 @@ public class FloorManager : MonoBehaviour
     }
 
     public void PreviewButton(bool down) {
+        scenario.player.DeselectUnit();
         if (!transitioning)
             StartCoroutine(PreviewFloor(down, true));
         UIManager.instance.PlaySound(down ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
@@ -225,7 +226,7 @@ public class FloorManager : MonoBehaviour
         int dir = down? 1 : -1;
         Grid toFloor = null; // After a descent the next floor hasn't generated before panning to it
 
-// Lock player from selecting units
+// Block player from selecting units
         scenario.player.ToggleUnitSelectability(dir == -1);
         downButton.GetComponent<Button>().enabled = false; upButton.GetComponent<Button>().enabled = false;
 
@@ -296,6 +297,7 @@ public class FloorManager : MonoBehaviour
         }
 
         peeking = down && preview;
+        //HideUnits(down);
 
 // And the actual animation. Has become cluttered with NestedFadeGroup logic too.
         float timer = 0;
@@ -341,6 +343,34 @@ public class FloorManager : MonoBehaviour
         UIManager.instance.metaDisplay.UpdateCurrentFloor(currentFloor.index);
 
         downButton.GetComponent<Button>().enabled = true; upButton.GetComponent<Button>().enabled = true;
+    }
+    
+    Dictionary<Unit, bool> targetedDict = new Dictionary<Unit,bool>();
+    public void HideUnits(bool state) {
+        if (state) {
+            targetedDict = new Dictionary<Unit, bool>();
+            if (targetedDict.Count == 0) {
+                foreach (Unit u in scenario.player.units) {
+                    targetedDict.Add(u, u.targeted);
+                    u.elementCanvas.ToggleStatsDisplay(false);
+                }
+                foreach (Unit u in scenario.currentEnemy.units) {
+                    targetedDict.Add(u, u.targeted);
+                    u.elementCanvas.ToggleStatsDisplay(false);
+                    u.ElementDestroyed += RemoveFromDict;
+                }
+            }
+        } else {
+            foreach (Unit u in scenario.player.units) 
+                u.elementCanvas.ToggleStatsDisplay(targetedDict[u]);
+            foreach (Unit u in scenario.currentEnemy.units) 
+                u.elementCanvas.ToggleStatsDisplay(targetedDict[u]);
+        }
+    }
+
+    void RemoveFromDict(GridElement ge) {
+        if (targetedDict.ContainsKey((Unit)ge))
+            targetedDict.Remove((Unit)ge);
     }
 
 

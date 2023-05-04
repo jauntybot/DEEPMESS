@@ -35,6 +35,13 @@ public class UnitUI : MonoBehaviour
         unit = u;
         unitName.text = u.name;
         portrait.sprite = u.portrait;
+        if (u is PlayerUnit) {
+            portrait.rectTransform.localPosition = new Vector2(-43, -86);
+            portrait.rectTransform.sizeDelta = new Vector2(900, 900);
+        } else {
+            portrait.rectTransform.localPosition = new Vector2(0, -165);
+            portrait.rectTransform.sizeDelta = new Vector2(600, 600);
+        }
         gfx.sprite = u.gfx[0].sprite;
 
         if (u is PlayerUnit) {
@@ -84,9 +91,18 @@ public class UnitUI : MonoBehaviour
     }
 
     public void DisarmButton() {
+        unit.selectedEquipment.UntargetEquipment(unit);
         unit.selectedEquipment = null;
         unit.grid.DisableGridHighlight();
         disarmButton.gameObject.SetActive(false);
+        if (!unit.moved)
+            unit.UpdateAction(unit.equipment[0]);
+        else {
+            PlayerManager pManager = (PlayerManager)unit.manager;
+            pManager.contextuals.displaying = false;
+        }
+        unit.ui.UpdateEquipmentButtons();
+
     }
 
     public void UpdateEquipmentButtons() {

@@ -63,10 +63,13 @@ public class PlayerUnit : Unit {
         FloorManager.instance.upButton.GetComponent<Button>().enabled = true; FloorManager.instance.downButton.GetComponent<Button>().enabled = true;
         if (selectedEquipment is MoveData && energyCurrent > 0)
             grid.UpdateSelectedCursor(true, coord);
+        else {
+            foreach(GridElement ge in pManager.currentGrid.gridElements) 
+                ge.TargetElement(false);
+        }
 
         UIManager.instance.ToggleUndoButton(pManager.undoOrder.Count > 0);
         pManager.unitActing = false;
-
     }
 
 // Allow the player to click on this

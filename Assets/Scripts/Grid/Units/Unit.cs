@@ -24,6 +24,7 @@ public class Unit : GridElement {
     [Header("UNIT UI/UX")]
     public UnitUI ui;
     public Sprite portrait;
+    
     [SerializeField] float animDur = 1f;
 
     [Header("UNIT AUDIO")]
