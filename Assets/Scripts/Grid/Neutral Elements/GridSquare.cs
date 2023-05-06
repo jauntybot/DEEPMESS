@@ -51,7 +51,7 @@ public class GridSquare : GroundElement {
         SpriteShapeRenderer ssr = highlight.GetComponent<SpriteShapeRenderer>();
         if (ssr) {
             ssr.color = new Color(color.r, color.g, color.b, fill ? 0.25f : 0);
-            
+            ssr.sortingOrder = grid.SortOrderFromCoord(coord);
         } else {
             highlight.GetComponent<SpriteRenderer>().color = color;
             highlight.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = .25f;
