@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D;
+
 
 // Class to control individual squares of a grid, linked to GridSquare prefab
 
@@ -29,14 +31,14 @@ public class GridSquare : GroundElement {
     }
 
 // Toggle highlight gameobject active and update it's color
-    public void ToggleValidCoord(bool state, Color? color = null) 
+    public void ToggleValidCoord(bool state, Color? color = null, bool fill = true) 
     {
         selectable = state;
 
         highlight.SetActive(state);
         if (color is Color c) {
             c.a = 50;
-            UpdateHighlight(c);
+            UpdateHighlight(c, fill);
         }
     }
     public void ToggleHitBox(bool state) {
@@ -44,10 +46,21 @@ public class GridSquare : GroundElement {
     }
 
 // Made a function for 3 lines of code ig
-    public virtual void UpdateHighlight(Color color) 
+    public virtual void UpdateHighlight(Color color, bool fill) 
     {
-        highlight.GetComponent<SpriteRenderer>().color = color;
-        highlight.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = .5f;
+        SpriteShapeRenderer ssr = highlight.GetComponent<SpriteShapeRenderer>();
+        if (ssr) {
+            ssr.color = new Color(color.r, color.g, color.b, fill ? 0.25f : 0);
+            
+        } else {
+            highlight.GetComponent<SpriteRenderer>().color = color;
+            highlight.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = .25f;
+        }
+        if (highlight.GetComponentInChildren<LineRenderer>()) {
+            LineRenderer lr = highlight.GetComponentInChildren<LineRenderer>();
+            lr.sortingOrder = grid.SortOrderFromCoord(coord);
+            lr.startColor = color; lr.endColor = color;
+        }
     }
 
     public override void UpdateElement(Vector2 c)

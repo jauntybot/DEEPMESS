@@ -25,6 +25,8 @@ public class Grid : MonoBehaviour {
     public List<GridSquare> sqrs = new List<GridSquare>();
     public List<GridElement> gridElements = new List<GridElement>();
 
+    [HideInInspector] public bool overrideHighlight;
+
 
     void Start() {
         if (FloorManager.instance) floorManager = FloorManager.instance;
@@ -123,12 +125,16 @@ public class Grid : MonoBehaviour {
         gridCursor.SetActive(state);
         gridCursor.transform.position = PosFromCoord(coord);
         gridCursor.GetComponentInChildren<SpriteRenderer>().sortingOrder = SortOrderFromCoord(coord);
+        if (overrideHighlight)
+            gridCursor.SetActive(false);
     }
 
     public void UpdateSelectedCursor(bool state, Vector2 coord) {
         selectedCursor.SetActive(state);
         selectedCursor.transform.position = PosFromCoord(coord);
         selectedCursor.GetComponentInChildren<SpriteRenderer>().sortingOrder = SortOrderFromCoord(coord);
+        if (overrideHighlight)
+            selectedCursor.SetActive(false);
     }
 
 // Toggle GridSquare highlights, apply color by index
@@ -146,6 +152,8 @@ public class Grid : MonoBehaviour {
                     sqrs.Find(sqr => sqr.coord == coord).ToggleValidCoord(true, c);
             }
         }
+
+        if (overrideHighlight) DisableGridHighlight();
     }
 
 // Disable GridSquare highlights
@@ -166,8 +174,8 @@ public class Grid : MonoBehaviour {
      public Vector3 PosFromCoord(Vector2 coord) {
         return new Vector3(
 // offset from scene origin + coord to pos conversion + ortho offset + center measure
-            transform.position.x - (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x/1.1f) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x/2.5f) + (ORTHO_OFFSET.x * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 
-            transform.position.y + (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.y/1.75f) + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y/1.1f) - (ORTHO_OFFSET.y*2f * FloorManager.sqrSize * coord.x),             
+            transform.position.x - (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x/1.355f) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x/2.5f) + (ORTHO_OFFSET.x * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 
+            transform.position.y + (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.y/1.75f) + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y/1.1f) - (ORTHO_OFFSET.y*2.1f * FloorManager.sqrSize * coord.x),             
             0);
     }
 

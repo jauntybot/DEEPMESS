@@ -6,6 +6,7 @@ public class GridContextuals : MonoBehaviour
 {
 
     PlayerManager manager;
+    [HideInInspector] public bool toggled = true;
     public Grid grid;
 
     public enum ContextDisplay { None, IconOnly, Linear, Stepped, Parabolic };
@@ -14,6 +15,8 @@ public class GridContextuals : MonoBehaviour
     public bool displaying;
     [SerializeField] GameObject contextCursor;
     Animator cursorAnimator;
+
+    [SerializeField] Color playerColor, enemyColor, equipColor;
     
     [SerializeField] LineRenderer lr;
     int lrI = 0;
@@ -28,12 +31,14 @@ public class GridContextuals : MonoBehaviour
     }
 
     public void DisplayGridContextuals(GridElement origin, GameObject refTrans, ContextDisplay context, int gridColor) {
-        ToggleValid(true);
+        if (toggled) {
+            ToggleValid(true);
 
-        UpdateCursorAnim(refTrans.transform);
-        UpdateContext(context, gridColor);        
-        
-        UpdateCursor((Unit)origin, origin.coord);
+            UpdateCursorAnim(refTrans.transform);
+            UpdateContext(context, gridColor);        
+            
+            UpdateCursor((Unit)origin, origin.coord);
+        }
     }
 
     public void StartUpdateCoroutine() {
@@ -69,59 +74,67 @@ public class GridContextuals : MonoBehaviour
 
     // Update grid position and coordinate
     public void UpdateCursor(Unit from, Vector2 to) {
-        if (currentContext != ContextDisplay.None)
-            ToggleValid(true);
+        if (toggled) {
+            if (currentContext != ContextDisplay.None)
+                ToggleValid(true);
 
-        Vector2 fromCoord = from.coord;
-        if (fromOverride != null)
-            fromCoord = fromOverride.coord;
+            Vector2 fromCoord = from.coord;
+            if (fromOverride != null)
+                fromCoord = fromOverride.coord;
 
-        contextCursor.transform.position = grid.PosFromCoord(to);
-        UpdateSortOrder(to);
+            contextCursor.transform.position = grid.PosFromCoord(to);
+            UpdateSortOrder(to);
 
-        lr.positionCount = lrI + 3;
-        lr.SetPosition(lrI, grid.PosFromCoord(fromCoord));
-        lr.SetPosition(lrI + 1, grid.PosFromCoord(fromCoord));
-        lr.SetPosition(lrI + 2, grid.PosFromCoord(fromCoord));
-        switch(currentContext) {
-            default:
-            case ContextDisplay.None:
-            case ContextDisplay.IconOnly:
-                lr.positionCount = 0;
-            break;
-            case ContextDisplay.Linear:
-                lr.positionCount = lrI + 6;
-                lr.SetPosition(lrI + 3, grid.PosFromCoord(to));
-                lr.SetPosition( lrI + 4, grid.PosFromCoord(to));
-                lr.SetPosition(lrI + 5, grid.PosFromCoord(to));
-            break;
-            case ContextDisplay.Stepped:
-                Dictionary<Vector2, Vector2> fromTo = EquipmentAdjacency.SteppedCoordAdjacency(fromCoord, to, from.selectedEquipment);
-                Vector2 prev = fromCoord;
-                lr.positionCount = lrI + (fromTo.Count + 1) * 3;
-                for (int i = 1; i <= fromTo.Count; i++) {
-                    Vector3 linePos = grid.PosFromCoord(fromTo[prev]);
-                    lr.SetPosition(lrI + 3*i, linePos); lr.SetPosition(lrI + 3*i + 1, linePos); lr.SetPosition(lrI + 3*i + 2, linePos);
-                    prev = fromTo[prev];
-                }
-            
-            break;
-            case ContextDisplay.Parabolic:
-                float h = 0.25f + Vector2.Distance(fromCoord, to) / 2;
-                List<Vector3> points = Util.SampledParabola(grid.PosFromCoord(fromCoord), grid.PosFromCoord(to), h, 24);
-                lr.positionCount = lrI + points.Count * 3;
-                for (int i = 1; i < points.Count; i++) {
-                    lr.SetPosition(lrI + 3*i, points[i]); lr.SetPosition(lrI + 3*i + 1, points[i]); lr.SetPosition(lrI + 3*i + 2, points[i]);
-                }
-            break;
-        }        
+            lr.positionCount = lrI + 3;
+            lr.SetPosition(lrI, grid.PosFromCoord(fromCoord));
+            lr.SetPosition(lrI + 1, grid.PosFromCoord(fromCoord));
+            lr.SetPosition(lrI + 2, grid.PosFromCoord(fromCoord));
+            switch(currentContext) {
+                default:
+                case ContextDisplay.None:
+                case ContextDisplay.IconOnly:
+                    lr.positionCount = 0;
+                break;
+                case ContextDisplay.Linear:
+                    lr.positionCount = lrI + 6;
+                    lr.SetPosition(lrI + 3, grid.PosFromCoord(to));
+                    lr.SetPosition( lrI + 4, grid.PosFromCoord(to));
+                    lr.SetPosition(lrI + 5, grid.PosFromCoord(to));
+                break;
+                case ContextDisplay.Stepped:
+                    Dictionary<Vector2, Vector2> fromTo = EquipmentAdjacency.SteppedCoordAdjacency(fromCoord, to, from.selectedEquipment);
+                    Vector2 prev = fromCoord;
+                    lr.positionCount = lrI + (fromTo.Count + 1) * 3;
+                    for (int i = 1; i <= fromTo.Count; i++) {
+                        Vector3 linePos = grid.PosFromCoord(fromTo[prev]);
+                        lr.SetPosition(lrI + 3*i, linePos); lr.SetPosition(lrI + 3*i + 1, linePos); lr.SetPosition(lrI + 3*i + 2, linePos);
+                        prev = fromTo[prev];
+                    }
+                
+                break;
+                case ContextDisplay.Parabolic:
+                    float h = 0.25f + Vector2.Distance(fromCoord, to) / 2;
+                    List<Vector3> points = Util.SampledParabola(grid.PosFromCoord(fromCoord), grid.PosFromCoord(to), h, 24);
+                    lr.positionCount = lrI + points.Count * 3;
+                    for (int i = 1; i < points.Count; i++) {
+                        lr.SetPosition(lrI + 3*i, points[i]); lr.SetPosition(lrI + 3*i + 1, points[i]); lr.SetPosition(lrI + 3*i + 2, points[i]);
+                    }
+                break;
+            }        
+        }
     }
 
     public void UpdateContext(ContextDisplay context, int highlightIndex, GridElement newAnim = null, GridElement newFrom = null) {
         currentContext = context;
         lrI = lr.positionCount;
         Color gridColor = FloorManager.instance.GetFloorColor(highlightIndex);
-        //lr.startColor = gridColor; lr.endColor = gridColor;
+        switch (highlightIndex) {
+            default:
+            case 0: gridColor = playerColor; break;
+            case 1: gridColor = enemyColor; break;
+            case 2: gridColor = equipColor; break;
+        }
+        lr.startColor = gridColor; lr.endColor = gridColor;
 
         if (newAnim != null) {
             UpdateCursorAnim(newAnim.transform);

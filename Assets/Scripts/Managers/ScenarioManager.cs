@@ -87,7 +87,7 @@ public class ScenarioManager : MonoBehaviour
                 case Turn.Cascade: toTurn = Turn.Descent; break;
             }
         }
-        floorManager.upButton.GetComponent<Button>().enabled = false; floorManager.downButton.GetComponent<Button>().enabled = false;
+        UIManager.instance.LockFloorButtons(true);
         prevTurn = currentTurn;
         switch(toTurn) 
         {
@@ -95,7 +95,8 @@ public class ScenarioManager : MonoBehaviour
                 if (currentEnemy.units.Count > 0) {
                     currentTurn = Turn.Enemy;
                     player.StartEndTurn(false);
-                    yield return StartCoroutine(messagePanel.DisplayMessage("ANTIBODY RESPONSE", 2));
+                    if (UIManager.instance.gameObject.activeSelf)
+                        yield return StartCoroutine(messagePanel.DisplayMessage("ANTIBODY RESPONSE", 2));
 
                     endTurnButton.enabled = false;
                     
@@ -119,8 +120,9 @@ public class ScenarioManager : MonoBehaviour
                     }
                 }
                 if (!lose && player.units.Find(u => u is Nail) != null) {
-                    floorManager.upButton.GetComponent<Button>().enabled = true; floorManager.downButton.GetComponent<Button>().enabled = true;
-                    yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN", 1));
+                    UIManager.instance.LockFloorButtons(false);
+                    if (UIManager.instance.gameObject.activeSelf)
+                        yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN", 1));
 
                     currentTurn = Turn.Player;
                     endTurnButton.enabled = true;
@@ -144,8 +146,9 @@ public class ScenarioManager : MonoBehaviour
                 player.StartEndTurn(false);
                 foreach(Unit u in player.units)
                     u.usedEquip = false;
-                endTurnButton.enabled = false;
-                yield return StartCoroutine(messagePanel.DisplayMessage("DESCENDING", 0));
+                //endTurnButton.enabled = false;
+                if (UIManager.instance.gameObject.activeSelf)
+                    yield return StartCoroutine(messagePanel.DisplayMessage("DESCENDING", 0));
             break;
             case Turn.Cascade:
                 currentTurn = Turn.Cascade;
@@ -161,7 +164,8 @@ public class ScenarioManager : MonoBehaviour
                     }
                 }
                 endTurnButton.enabled = true;
-                yield return StartCoroutine(messagePanel.DisplayMessage("REPOSITION UNITS", 1));
+                if (UIManager.instance.gameObject.activeSelf)
+                    yield return StartCoroutine(messagePanel.DisplayMessage("REPOSITION UNITS", 1));
             break;
         }
     }
@@ -174,7 +178,8 @@ public class ScenarioManager : MonoBehaviour
 
     public IEnumerator Win() 
     {
-        yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER WINS", 1));
+        if (UIManager.instance.gameObject.activeSelf)
+            yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER WINS", 1));
         yield return new WaitForSecondsRealtime(1.5f);
         SceneManager.LoadScene(resetSceneString);
     }
@@ -183,7 +188,8 @@ public class ScenarioManager : MonoBehaviour
     {
         if (currentTurn == Turn.Enemy)
             currentEnemy.EndTurnEarly();
-        yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER LOSES", 2));
+        if (UIManager.instance.gameObject.activeSelf)
+            yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER LOSES", 2));
         yield return new WaitForSecondsRealtime(1.5f);
         SceneManager.LoadScene(resetSceneString);
     }

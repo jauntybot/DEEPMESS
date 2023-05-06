@@ -44,7 +44,7 @@ public class PlacementData : ConsumableEquipmentData
                 Vector3 origin = user.grid.PosFromCoord(user.coord);
                 Vector3 dest = user.grid.PosFromCoord(target.coord);
                 float h = 0.25f + Vector2.Distance(user.coord, target.coord) / 2;
-                float throwDur = 0.25f + animDur * Vector2.Distance(user.coord, target.coord) * 2;
+                float throwDur = 0.25f + animDur * Vector2.Distance(user.coord, target.coord);
                 float timer = 0;
                 while (timer < throwDur) {
                     placed.transform.position = Util.SampleParabola(origin, dest, h, timer/throwDur);

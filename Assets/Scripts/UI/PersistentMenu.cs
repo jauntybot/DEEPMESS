@@ -3,12 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 public class PersistentMenu : MonoBehaviour
 {
 
+    public PauseMenu pauseMenu;
+    TooltipSystem toolTips;
+    private bool tooltipToggle = true;
     [SerializeField] AudioMixer mixer;
     [SerializeField] Slider musicSlider, sfxSlider;
+    bool uiToggle = true;
+    bool contextToggle = true;
+    [SerializeField] GameObject battleCanvas, menuButton;
 
     const string MIXER_MUSIC = "musicVolume";
     const string MIXER_SFX = "sfxVolume";
@@ -28,6 +35,16 @@ public class PersistentMenu : MonoBehaviour
         sfxSlider.onValueChanged.AddListener(SetSFXVolume);
         
         Time.timeScale = 1;
+
+        SceneManager.sceneLoaded += UpdateRefs;
+    }
+
+    void UpdateRefs(Scene scene, LoadSceneMode mode) {
+        battleCanvas = null;
+        if (UIManager.instance)
+            battleCanvas = UIManager.instance.gameObject;
+        if (TooltipSystem.instance)
+            toolTips = TooltipSystem.instance;
     }
 
     void SetMusicVolume(float vol) {
@@ -41,6 +58,31 @@ public class PersistentMenu : MonoBehaviour
         
     }
 
+    public void ToggleUI() {
+        uiToggle = !uiToggle;
+        if (battleCanvas) 
+            battleCanvas.SetActive(uiToggle);
+        menuButton.SetActive(uiToggle);
+    }
 
+    public void ToggleGridHighlights() {
+        if (FloorManager.instance) {
+            FloorManager.instance.GridHighlightToggle();
+        }
+    }
+
+    public void ToggleContext() {
+        contextToggle = !contextToggle;
+        if (ScenarioManager.instance) {
+            ScenarioManager.instance.player.contextuals.ToggleValid(contextToggle);
+            ScenarioManager.instance.player.contextuals.toggled = contextToggle;
+        }
+    }
+
+    public void ToggleTooltips() {
+        tooltipToggle = !tooltipToggle;
+        if (toolTips)
+            toolTips.gameObject.SetActive(tooltipToggle);
+    }
 
 }
