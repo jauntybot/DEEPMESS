@@ -16,7 +16,8 @@ public class PlayerController : MonoBehaviour {
 
         StartCoroutine(HotkeyInput());
 
-        Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
+        Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.ForceSoftware);
+        
     }
 
 
