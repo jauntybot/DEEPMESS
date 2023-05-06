@@ -78,6 +78,8 @@ public class ScenarioManager : MonoBehaviour
 // Overload allows you to specify which turn to switch to, otherwise inverts the binary
     public IEnumerator SwitchTurns(Turn toTurn = default) 
     {
+        foreach(GridElement ge in floorManager.currentFloor.gridElements) 
+                ge.TargetElement(false);
         if (toTurn == default) {
             switch (currentTurn) {
                 default: toTurn = Turn.Player; break;
