@@ -436,6 +436,7 @@ public class FloorManager : MonoBehaviour
         if (cascade) {
             yield return StartCoroutine(ChooseLandingPositions());
             yield return new WaitForSecondsRealtime(1.25f);
+            SetButtonActive(downButton, true); SetButtonActive(upButton, false);
         }
 
         Coroutine drop = StartCoroutine(DropUnits(floors[currentFloor.index-1], currentFloor));
