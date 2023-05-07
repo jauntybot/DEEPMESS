@@ -34,10 +34,12 @@ public class GridContextuals : MonoBehaviour
         if (toggled) {
             ToggleValid(context != ContextDisplay.None);
 
-            UpdateCursorAnim(refTrans.transform);
+            if (refTrans)
+                UpdateCursorAnim(refTrans.transform);
             UpdateContext(context, gridColor);        
             
-            UpdateCursor((Unit)origin, origin.coord);
+            if (origin)
+                UpdateCursor((Unit)origin, origin.coord);
         }
     }
 
