@@ -87,8 +87,12 @@ public class SlotMachine : MonoBehaviour
         foreach (Unit u in ScenarioManager.instance.player.units) {
             if (u is Nail) 
                 StartCoroutine(u.TakeDamage(-3));
-            else
-                StartCoroutine(u.TakeDamage(-1));
+            else if (u is PlayerUnit pu) {
+                if (pu.conditions.Contains(Unit.Status.Disabled))
+                    pu.Stabilize();
+                else
+                    StartCoroutine(u.TakeDamage(-1));
+            }
         }
         Invoke("SkipSlots", 1f);
     }

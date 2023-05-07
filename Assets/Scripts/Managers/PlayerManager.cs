@@ -94,7 +94,6 @@ public class PlayerManager : UnitManager {
 // Initializes or closes functions for turn start/end
     public void StartEndTurn(bool start, bool cascade = false) {
         ToggleUnitSelectability(start);
-        
 // Start Turn
         if (start) {
             StartCoroutine(pc.GridInput());
@@ -126,6 +125,8 @@ public class PlayerManager : UnitManager {
             foreach (Unit u in units) {
                 u.grid = currentGrid;
             }
+            contextuals.grid = currentGrid;
+            contextuals.DisplayGridContextuals(selectedUnit, null, overrideEquipment.contextDisplay, 0);
         } else
             overrideEquipment = null;
     }

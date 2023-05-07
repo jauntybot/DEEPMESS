@@ -32,7 +32,7 @@ public class GridContextuals : MonoBehaviour
 
     public void DisplayGridContextuals(GridElement origin, GameObject refTrans, ContextDisplay context, int gridColor) {
         if (toggled) {
-            ToggleValid(true);
+            ToggleValid(context != ContextDisplay.None);
 
             UpdateCursorAnim(refTrans.transform);
             UpdateContext(context, gridColor);        
@@ -75,8 +75,7 @@ public class GridContextuals : MonoBehaviour
     // Update grid position and coordinate
     public void UpdateCursor(Unit from, Vector2 to) {
         if (toggled) {
-            if (currentContext != ContextDisplay.None)
-                ToggleValid(true);
+            ToggleValid(currentContext != ContextDisplay.None);
 
             Vector2 fromCoord = from.coord;
             if (fromOverride != null)
