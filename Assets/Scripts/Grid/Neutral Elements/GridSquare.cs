@@ -17,17 +17,22 @@ public class GridSquare : GroundElement {
     [SerializeField] GameObject highlight;
     [SerializeField] List<Sprite> rndSprite;
 
+    Animator anim;
+
 // Initialize refs
     protected override void Start() {
         hitbox = GetComponent<PolygonCollider2D>();
         if (rndSprite.Count > 0)
             gfx[0].sprite = rndSprite[Random.Range(0,rndSprite.Count)];
+        if (gfx[0].GetComponent<Animator>())
+            anim = gfx[0].GetComponent<Animator>();
+
     }
 
 // Don't inherit base class initialization to avoid adding GridElement to wrong list
     public override void StoreInGrid(Grid owner) {
-            grid = owner;
-            transform.localScale = Vector3.one * FloorManager.sqrSize;
+        grid = owner;
+        transform.localScale = Vector3.one * FloorManager.sqrSize;
     }
 
 // Toggle highlight gameobject active and update it's color
@@ -70,6 +75,9 @@ public class GridSquare : GroundElement {
 // Apply color variant to GFX sprite renderer
             foreach (SpriteRenderer sr in spriteRenderers) 
                 sr.color = blackColor;
+        }
+        if (anim) {
+            
         }
     }
 }
