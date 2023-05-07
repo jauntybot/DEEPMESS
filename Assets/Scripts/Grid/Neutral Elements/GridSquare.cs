@@ -17,10 +17,10 @@ public class GridSquare : GroundElement {
     [SerializeField] GameObject highlight;
     [SerializeField] List<Sprite> rndSprite;
 
-    Animator anim;
+    [SerializeField] Animator anim;
 
 // Initialize refs
-    protected override void Start() {
+    protected virtual void Awake() {
         hitbox = GetComponent<PolygonCollider2D>();
         if (rndSprite.Count > 0)
             gfx[0].sprite = rndSprite[Random.Range(0,rndSprite.Count)];
@@ -50,7 +50,6 @@ public class GridSquare : GroundElement {
         hitbox.enabled = state;
     }
 
-// Made a function for 3 lines of code ig
     public virtual void UpdateHighlight(Color color, bool fill) 
     {
         SpriteShapeRenderer ssr = highlight.GetComponent<SpriteShapeRenderer>();
@@ -76,8 +75,10 @@ public class GridSquare : GroundElement {
             foreach (SpriteRenderer sr in spriteRenderers) 
                 sr.color = blackColor;
         }
-        if (anim) {
-            
+        if (anim != null) {
+            Debug.Log("remapped to " + Util.Remap(grid.SortOrderFromCoord(c), 0, 16, 0, 1));
+            string name = anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+            anim.Play(name, 0, Util.Remap(grid.SortOrderFromCoord(c), 0, 16, 0, 4)%4);
         }
     }
 }
