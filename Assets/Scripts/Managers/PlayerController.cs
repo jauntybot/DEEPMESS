@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour {
 
     PlayerManager manager;
     [SerializeField] Texture2D cursorTexture;
+    [SerializeField] bool clickable;
 
     void Start() 
     {
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour {
 // Coroutine that runs while the player is allowed to select elements on the grid
     public IEnumerator GridInput() {
         while (manager.scenario.currentTurn == ScenarioManager.Turn.Player || manager.scenario.currentTurn == ScenarioManager.Turn.Cascade) {
+            clickable = true;
             yield return new WaitForSecondsRealtime(1/Util.fps);
             RaycastHit2D hit = ClickInput();
 // On mouseover
@@ -32,8 +34,9 @@ public class PlayerController : MonoBehaviour {
 // On click
                     manager.GridMouseOver(hit.transform.GetComponent<GridElement>().coord, true);
 // Disable input under these conditions
-                    if (!manager.unitActing && !FloorManager.instance.peeking) {
+                    if (!manager.unitActing && !(FloorManager.instance.peeking && manager.scenario.currentTurn != ScenarioManager.Turn.Cascade)) {
                         if (Input.GetMouseButtonDown(0)) {
+                            Debug.Log("Click");
 // Pass call to contextualize click to manager
                             manager.GridInput(hit.transform.GetComponent<GridElement>());       
                             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -52,6 +55,7 @@ public class PlayerController : MonoBehaviour {
                 manager.DisplayAllHP(false);
             }
         }
+        clickable = false;
     }
 
     public IEnumerator HotkeyInput() {

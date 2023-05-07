@@ -135,7 +135,8 @@ public class ScenarioManager : MonoBehaviour
                 }
             break;
             case Turn.Descent:
-                yield return StartCoroutine(floorManager.CancelPreview());
+                if (prevTurn != Turn.Cascade)
+                    yield return StartCoroutine(floorManager.CancelPreview());
                 if (prevTurn == Turn.Cascade) {
                     player.currentGrid = floorManager.floors[player.currentGrid.index-1];
                     for (int i = player.units.Count - 1; i >= 0; i--) {

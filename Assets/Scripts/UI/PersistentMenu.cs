@@ -85,4 +85,23 @@ public class PersistentMenu : MonoBehaviour
             toolTips.gameObject.SetActive(tooltipToggle);
     }
 
+    public void TriggerCascade() {
+        if (FloorManager.instance && ScenarioManager.instance) {
+            ScenarioManager.instance.prevTurn = ScenarioManager.Turn.Descent;
+            FloorManager.instance.Descend(true);
+        }
+    }
+
+    public void HealAllUnitsToFull() {
+        foreach (Unit u in ScenarioManager.instance.player.units) {
+            if (u is Nail) 
+                StartCoroutine(u.TakeDamage(u.hpCurrent - u.hpMax));
+            else if (u is PlayerUnit pu) {
+                if (pu.conditions.Contains(Unit.Status.Disabled))
+                    pu.Stabilize();
+                StartCoroutine(u.TakeDamage(u.hpCurrent-u.hpMax));
+            }
+        }
+    }
+
 }
