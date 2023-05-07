@@ -84,10 +84,6 @@ public class GridElement : MonoBehaviour{
     public virtual IEnumerator TakeDamage(int dmg, GridElement source = null) 
     {
         if (!shell || Mathf.Sign(dmg) == -1) {
-            hpCurrent -= dmg;
-            hpCurrent = hpCurrent < 0 ? 0 : hpCurrent;
-            hpCurrent = hpCurrent > hpMax ? hpMax : hpCurrent;
-
             if (Mathf.Sign(dmg) == 1) {
                 if (dmgdSFX)
                     PlaySound(dmgdSFX.Get());
@@ -95,11 +91,15 @@ public class GridElement : MonoBehaviour{
                 if (healedSFX)
                     PlaySound(healedSFX.Get());
             }
-
             if (elementCanvas) {
-                elementCanvas.UpdateStatsDisplay();
                 yield return StartCoroutine(elementCanvas.DisplayDamageNumber(dmg));
             }
+
+            hpCurrent -= dmg;
+            hpCurrent = hpCurrent < 0 ? 0 : hpCurrent;
+            hpCurrent = hpCurrent > hpMax ? hpMax : hpCurrent;
+
+
         } else {
             RemoveShell();
         }
@@ -125,7 +125,7 @@ public class GridElement : MonoBehaviour{
             elementCanvas.ToggleStatsDisplay(false);
 
         yield return new WaitForSecondsRealtime(d.length);
-            if (this.gameObject != null)
+        if (this.gameObject != null)
             Destroy(this.gameObject);
         
     }

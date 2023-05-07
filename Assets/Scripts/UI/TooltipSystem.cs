@@ -10,10 +10,6 @@ public class TooltipSystem : MonoBehaviour
 
     public void Awake()
     {
-        if (instance) {
-            Debug.Log("Warning! More than one instance of TooltipSystem found!");
-            DestroyImmediate(instance.gameObject);
-        }
         instance = this;
     }
 
