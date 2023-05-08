@@ -71,10 +71,6 @@ public class MoveData : EquipmentData
             current = fromTo[current];
         }        
         unit.UpdateElement(moveTo);
-// Check for shared space  
-        foreach (GridElement ge in unit.grid.CoordContents(moveTo)) {
-            ge.OnSharedSpace(unit);
-        }
     }
 
 }

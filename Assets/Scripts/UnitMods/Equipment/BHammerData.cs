@@ -122,6 +122,7 @@ public class BHammerData : HammerData
 
         Vector2 prevCoord = user.coord;
 
+        Coroutine targetCo = null;
 // Lerp hammer to target
         if (target != null) {
             if (target.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
@@ -149,7 +150,7 @@ public class BHammerData : HammerData
                     if (useSFX)
                         target.PlaySound(useSFX.Get());
                 }
-                target.StartCoroutine(target.TakeDamage(1));
+                targetCo = target.StartCoroutine(target.TakeDamage(1));
             }
 // Trigger descent if nail
             else if (target is Nail n) {
@@ -190,6 +191,8 @@ public class BHammerData : HammerData
             PassHammer((PlayerUnit)user, (PlayerUnit)passTo);
             hammer.SetActive(false);
         }
+        if (targetCo != null)
+            yield return targetCo;
         if (target is Nail) {
             PlayerManager manager = (PlayerManager)user.manager;
             yield return new WaitForSecondsRealtime(0.25f);

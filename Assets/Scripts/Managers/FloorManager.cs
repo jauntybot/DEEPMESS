@@ -100,7 +100,8 @@ public class FloorManager : MonoBehaviour
 
     public IEnumerator PreviewFloor(bool down, bool draw) {
         transitioning = true;
-        scenario.endTurnButton.enabled = !down;
+        if (scenario.currentTurn == ScenarioManager.Turn.Player)
+            uiManager.endTurnButton.enabled = !down;
         if (down) {
             if (draw) {
                 StartCoroutine(ToggleDescentPreview(true));
@@ -243,7 +244,6 @@ public class FloorManager : MonoBehaviour
 
 // Block player from selecting units
         scenario.player.ToggleUnitSelectability(dir == -1);
-        downButton.GetComponent<Button>().enabled = false; upButton.GetComponent<Button>().enabled = false;
 
         if (floors.Count - 1 >= currentFloor.index + dir) // Checks if there is a floor in the direction transitioning
             toFloor = floors[currentFloor.index + dir];
@@ -312,7 +312,7 @@ public class FloorManager : MonoBehaviour
         }
 
         peeking = down && preview;
-        //HideUnits(down);
+        HideUnits(down);
 
 // And the actual animation. Has become cluttered with NestedFadeGroup logic too.
         float timer = 0;
@@ -360,7 +360,6 @@ public class FloorManager : MonoBehaviour
         if (uiManager.gameObject.activeSelf)
             uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index);
 
-        downButton.GetComponent<Button>().enabled = true; upButton.GetComponent<Button>().enabled = true;
     }
     
     Dictionary<Unit, bool> targetedDict = new Dictionary<Unit,bool>();
@@ -525,7 +524,7 @@ public class FloorManager : MonoBehaviour
             if (subElement is not GroundElement)
                 yield return StartCoroutine(unit.CollideFromAbove(subElement));
         } else if (currentFloor.sqrs.Find(sqr => sqr.coord == unit.coord).tileType == GridSquare.TileType.Bile) {
-            yield return new WaitForSecondsRealtime(0.1f);
+            yield return new WaitForSecondsRealtime(0.25f);
             StartCoroutine(unit.DestroyElement());
         }   
     }

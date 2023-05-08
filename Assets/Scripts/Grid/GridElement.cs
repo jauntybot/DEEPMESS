@@ -63,6 +63,9 @@ public class GridElement : MonoBehaviour{
         transform.position = grid.PosFromCoord(c);
         UpdateSortOrder(c);
         coord=c;
+        foreach (GridElement ge in grid.CoordContents(c)) {
+            ge.OnSharedSpace(this);
+        }
     }  
 
     public virtual void UpdateSortOrder(Vector2 c) {

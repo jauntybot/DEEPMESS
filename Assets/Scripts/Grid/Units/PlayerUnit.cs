@@ -42,21 +42,21 @@ public class PlayerUnit : Unit {
         if (selectedEquipment) {
             if (!selectedEquipment.multiselect && selectedEquipment is not MoveData) {
                 pManager.DeselectUnit();
-                pManager.unitActing = true;
+                pManager.StartCoroutine(pManager.UnitIsActing());
             }
             else if (selectedEquipment is MoveData && energyCurrent > 0) {
-                pManager.unitActing = true;
+                pManager.StartCoroutine(pManager.UnitIsActing());
             }
             else if (selectedEquipment.firstTarget != null) {
                 GridElement anim = selectedEquipment.contextualAnimGO ? selectedEquipment.contextualAnimGO.GetComponent<GridElement>() : null;
                 pManager.contextuals.UpdateContext(selectedEquipment.multiContext, selectedEquipment.gridColor, anim, target);
             } else {
                 pManager.DeselectUnit();
-                pManager.unitActing = true;
+                pManager.StartCoroutine(pManager.UnitIsActing());
             }
         } else {
             pManager.DeselectUnit();
-            pManager.unitActing = true;
+            pManager.StartCoroutine(pManager.UnitIsActing());
         }
         FloorManager.instance.upButton.GetComponent<Button>().enabled = false; FloorManager.instance.downButton.GetComponent<Button>().enabled = false;
         yield return co;

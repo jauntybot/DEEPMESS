@@ -229,12 +229,18 @@ public class PlayerManager : UnitManager {
                 }
             }
         }
+        else if (input is GroundElement) {
+            GridInput(currentGrid.sqrs.Find(sqr => sqr.coord == input.coord));
+        }
 // Player clicks on square
         else if (input is GridSquare sqr) 
         {
 // Check if square is empty
             GridElement contents = null;
-            foreach (GridElement ge in currentGrid.CoordContents(sqr.coord)) contents = ge;
+            foreach (GridElement ge in currentGrid.CoordContents(sqr.coord)) {
+                if (ge is not GroundElement)
+                   contents = ge;
+            }
 // Square not empty, recurse this function with reference to square contents
             if (contents)
                 GridInput(contents);
@@ -338,6 +344,16 @@ public class PlayerManager : UnitManager {
         turnBlink.BlinkEndTurn();
         prevCursorTargetState = false;
         contextuals.displaying = false;
+    }
+
+    public virtual IEnumerator UnitIsActing() {
+        unitActing = true;
+        scenario.uiManager.LockHUDButtons(true);
+        while (unitActing) {
+            yield return null;
+
+        }
+        scenario.uiManager.LockHUDButtons(false);
     }
 
     public void UndoMove() {
