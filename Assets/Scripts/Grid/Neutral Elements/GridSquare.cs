@@ -7,7 +7,7 @@ using UnityEngine.U2D;
 // Class to control individual squares of a grid, linked to GridSquare prefab
 
 [System.Serializable]
-public class GridSquare : GroundElement {
+public class GridSquare : GridElement {
 
     [SerializeField] SpriteRenderer[] spriteRenderers;
     public enum TileType { Bone, Blood, Bile };

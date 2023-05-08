@@ -14,8 +14,8 @@ public class UIManager : MonoBehaviour
     public MetaDisplay metaDisplay;
 
     [Header("Floor Buttons")]
-    [SerializeField] Button upButton;
-    [SerializeField] Button downButton, endTurnButton, undoButton;
+    [SerializeField] public Button upButton;
+    [SerializeField] public Button downButton, endTurnButton, undoButton;
 
     [Header("Portraits")]
     [SerializeField] Transform portraitParent;
@@ -99,6 +99,11 @@ public class UIManager : MonoBehaviour
     public void LockFloorButtons(bool state) {
         upButton.GetComponent<Button>().enabled = !state;
         downButton.GetComponent<Button>().enabled = !state;
+    }
+
+    public void LockHUDButtons(bool state) {
+        LockFloorButtons(state);
+        endTurnButton.enabled = !state;
     }
 
     public void ToggleUndoButton(bool state) {

@@ -63,11 +63,6 @@ public class PlacementData : ConsumableEquipmentData
 public IEnumerator MoveToCoord(Unit unit, Vector2 moveTo) 
     {
         float timer = 0;
-
-// Check for shared space  
-        foreach (GridElement ge in unit.grid.CoordContents(moveTo)) {
-            ge.OnSharedSpace(unit);
-        }
         
 // exposed UpdateElement() functionality to selectively update sort order
         if (unit.grid.SortOrderFromCoord(moveTo) > unit.grid.SortOrderFromCoord(unit.coord))
