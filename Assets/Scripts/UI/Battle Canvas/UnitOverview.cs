@@ -27,7 +27,7 @@ public class UnitOverview : MonoBehaviour
         equipment.sprite = unit.equipment[1].icon;
 
         InstantiateMaxPips();
-        UpdateOverview();
+        UpdateOverview(u.hpCurrent);
 
         return this;
     }
@@ -41,7 +41,7 @@ public class UnitOverview : MonoBehaviour
         hpPips.gameObject.SetActive(true);
     }
 
-    public virtual void UpdateOverview() {
+    public virtual void UpdateOverview(int value) {
 
         mini.color = unit.conditions.Contains(Unit.Status.Disabled) ? new Color(0.5f, 0.5f, 0.5f) : Color.white;
         hammerPossession.SetActive(unit.equipment.Find(e => e is HammerData) != null);
@@ -53,7 +53,7 @@ public class UnitOverview : MonoBehaviour
         equipmentDisable.SetActive(unit.usedEquip || unit.energyCurrent <= 0);
 
         for (int i = 0; i <= unit.hpMax - 1; i++) 
-            hpPips.transform.GetChild(i).gameObject.SetActive(i <= unit.hpCurrent - 1);
+            hpPips.transform.GetChild(i).gameObject.SetActive(i <= value);
         
     }
 

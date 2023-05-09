@@ -16,7 +16,7 @@ public class ElementCanvas : MonoBehaviour
     public GameObject dmgPanel;
     [SerializeField] Animator dmgAnim;
 
-    UnitOverview overview = null;
+    [SerializeField] UnitOverview overview = null;
 
     public virtual void Initialize(GridElement ge) 
     {
@@ -58,9 +58,9 @@ public class ElementCanvas : MonoBehaviour
     }
     public virtual void UpdateStatsDisplay(int pre = -32) {
         if (!disable) {
+            int cap = (pre == -32) ? element.hpCurrent - 1 : pre - 1;
             if (element.hpCurrent <= 10) {
                 hpContainer.SetActive(true); hpInt.SetActive(false);
-                int cap = (pre == -32) ? element.hpCurrent - 1 : pre - 1;
                 for (int i = 0; i <= element.hpMax - 1; i++) {
                     hpPips.transform.GetChild(i).gameObject.SetActive(i <= cap);
                 }
@@ -80,7 +80,7 @@ public class ElementCanvas : MonoBehaviour
                 }
             }
             if (overview)
-                overview.UpdateOverview();
+                overview.UpdateOverview(cap);
         }
     }
 

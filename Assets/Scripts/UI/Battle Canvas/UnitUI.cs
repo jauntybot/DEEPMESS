@@ -87,7 +87,7 @@ public class UnitUI : MonoBehaviour
             disarmButton.gameObject.SetActive(unit.selectedEquipment != null);
         
         if (overview != null )
-            overview.UpdateOverview();
+            overview.UpdateOverview(unit.hpCurrent);
     }
 
     public void DisarmButton() {
@@ -132,7 +132,7 @@ public class UnitUI : MonoBehaviour
         }
         UpdateEquipmentButtonMods();
         if (overview != null )
-            overview.UpdateOverview();
+            overview.UpdateOverview(unit.hpCurrent);
         ToggleEquipmentButtons();
     }
 
@@ -175,7 +175,7 @@ public class UnitUI : MonoBehaviour
             }
         }
         if (overview != null )  
-            overview.UpdateOverview();
+            overview.UpdateOverview(unit.hpCurrent);
     }
 
     public void SwapEquipmentFromSlots() {
