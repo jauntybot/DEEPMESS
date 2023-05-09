@@ -50,6 +50,10 @@ public class Unit : GridElement {
         if (selectedEquipment) {
             yield return StartCoroutine(selectedEquipment.UseEquipment(this, target));
         }
+        if (selectedEquipment && !selectedEquipment.multiselect) {
+            selectedEquipment.UntargetEquipment(this);
+            selectedEquipment = null;
+        }
     }
 
     public bool ValidCommand(Vector2 target, EquipmentData equip) {
@@ -104,7 +108,6 @@ public class Unit : GridElement {
                 case Status.Normal: return;
                 case Status.Immobilized:
                     moved = true;
-                    ui.UpdateEquipmentButtonMods();
                 break;
                 case Status.Disabled:
                     energyCurrent = 0;
@@ -130,6 +133,9 @@ public class Unit : GridElement {
                             Destroy(goo.gameObject);
                         }
                     }
+                break;
+                case Status.Restricted:
+                    ui.ToggleEquipmentButtons();
                 break;
                 case Status.Disabled:
                     hpCurrent = 0;

@@ -905,17 +905,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1105476274 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5002903889946405938, guid: 578d591cdf9694298b8819611910b639, type: 3}
-  m_PrefabInstance: {fileID: 1164701228}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1142055591 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6225232350642243400, guid: 578d591cdf9694298b8819611910b639, type: 3}
@@ -1233,10 +1222,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3679fa74a0cb3cf4fafd58512b8b93c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiManager: {fileID: 0}
   resetSceneString: Working Game Scene
   currentEnemy: {fileID: 0}
   player: {fileID: 894283982}
-  endTurnButton: {fileID: 1105476274}
   messagePanel: {fileID: 240713490}
   currentTurn: 0
   prevTurn: 0
@@ -1330,7 +1319,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slotMachine: {fileID: 1164701229}
-  slotMachineInterval: 5
+  slotMachineInterval: 1
 --- !u!114 &1323949470 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3287153488056223117, guid: 578d591cdf9694298b8819611910b639, type: 3}

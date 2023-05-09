@@ -16,7 +16,7 @@ public class NailDisplay : UnitOverview
         mini.sprite = u.gfx[0].sprite;
 
         InstantiateMaxPips();
-        UpdateOverview();
+        UpdateOverview(u.hpCurrent);
 
         return this;
 
@@ -33,13 +33,13 @@ public class NailDisplay : UnitOverview
         hpPips.gameObject.SetActive(true);
     }
 
-    public override void UpdateOverview()
+    public override void UpdateOverview(int value)
     {
         Nail n = (Nail)unit;
         mini.sprite = n.nailState == Nail.NailState.Primed ? primed : buried;
 
         for (int i = 0; i <= unit.hpMax - 1; i++) 
-            hpPips.transform.GetChild(i).gameObject.SetActive(i <= unit.hpCurrent - 1);
+            hpPips.transform.GetChild(i).gameObject.SetActive(i <= value);
     }
 
 }

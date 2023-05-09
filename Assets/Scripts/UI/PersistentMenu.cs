@@ -16,6 +16,7 @@ public class PersistentMenu : MonoBehaviour
     bool uiToggle = true;
     bool contextToggle = true;
     [SerializeField] GameObject battleCanvas, menuButton;
+    [SerializeField] TMPro.TMP_Text tooltipText;
 
     const string MIXER_MUSIC = "musicVolume";
     const string MIXER_SFX = "sfxVolume";
@@ -83,6 +84,8 @@ public class PersistentMenu : MonoBehaviour
         tooltipToggle = !tooltipToggle;
         if (toolTips)
             toolTips.gameObject.SetActive(tooltipToggle);
+        string state = tooltipToggle ? "ON" : "OFF";
+        tooltipText.text = "TOGGLE TOOLTIPS: " +  state;
     }
 
     public void TriggerCascade() {

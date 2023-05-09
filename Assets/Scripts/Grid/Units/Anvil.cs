@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Mine : Unit
+public class Anvil : Unit
 {
     public override IEnumerator CollideFromAbove(GridElement subGE) {
 

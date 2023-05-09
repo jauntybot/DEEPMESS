@@ -140,7 +140,7 @@ public class ConsumeMoveData : ConsumableEquipmentData
         List<Unit> unitsToMove = new List<Unit>();
         foreach (GridElement ge in user.grid.gridElements) {
             if (ge is Unit u) {
-                if (u is not Nail && u is not PlayerUnit) 
+                if (u is not Nail && u is not PlayerUnit && u is not Anvil) 
                     unitsToMove.Add(u);
             }
         }
