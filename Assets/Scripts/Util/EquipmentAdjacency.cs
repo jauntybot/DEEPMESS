@@ -158,8 +158,9 @@ public class EquipmentAdjacency : MonoBehaviour
                             || data.filters == null) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord,current);
-                                if (Vector2.Equals(current, to)) break;
+                                break;
                             }
+                            if (Vector2.Equals(current, to)) break;
                         }
 // Coord is empty
                         if (!occupied) {
@@ -182,9 +183,9 @@ public class EquipmentAdjacency : MonoBehaviour
                             || data.filters == null) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord, current);
-                                if (Vector2.Equals(current, to)) break;
-// Valid coord if element is target, but stops frontier
+                                break;
                             }
+                            if (Vector2.Equals(current, to)) break;
                         }
 // Coord is empty
                         if (!occupied) {

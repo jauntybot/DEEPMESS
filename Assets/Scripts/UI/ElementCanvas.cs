@@ -16,7 +16,7 @@ public class ElementCanvas : MonoBehaviour
     public GameObject dmgPanel;
     [SerializeField] Animator dmgAnim;
 
-    UnitOverview overview = null;
+    [SerializeField] UnitOverview overview = null;
 
     public virtual void Initialize(GridElement ge) 
     {
@@ -56,12 +56,13 @@ public class ElementCanvas : MonoBehaviour
         Vector3 delta = (element.hpMax <= 5) ? new Vector2((float)(0.2f * element.hpMax + 0.02 * (element.hpMax - 1)), 0.333f) : new Vector2((float)(0.2f * 5 + 0.02 * 4), 0.333f);
         rect.sizeDelta = (delta);
     }
-    public virtual void UpdateStatsDisplay() {
+    public virtual void UpdateStatsDisplay(int pre = -32) {
         if (!disable) {
+            int cap = (pre == -32) ? element.hpCurrent - 1 : pre - 1;
             if (element.hpCurrent <= 10) {
                 hpContainer.SetActive(true); hpInt.SetActive(false);
                 for (int i = 0; i <= element.hpMax - 1; i++) {
-                    hpPips.transform.GetChild(i).gameObject.SetActive(i <= element.hpCurrent - 1);
+                    hpPips.transform.GetChild(i).gameObject.SetActive(i <= cap);
                 }
             } else {
                 hpContainer.SetActive(false); hpInt.SetActive(true);
@@ -79,7 +80,7 @@ public class ElementCanvas : MonoBehaviour
                 }
             }
             if (overview)
-                overview.UpdateOverview();
+                overview.UpdateOverview(cap);
         }
     }
 
@@ -92,18 +93,19 @@ public class ElementCanvas : MonoBehaviour
         
         int r = element.hpCurrent - dmg;
 // Element is damaged
-        if (dmg > 0) {           
+        if (dmg > 0) {   
+            UpdateStatsDisplay(r);        
             for (int i = 0; i <= element.hpMax - 1; i++) {
                 GameObject pip = Instantiate(dmgPipPrefab, dmgPanel.transform);
-                pip.GetComponent<Image>().enabled = i > r;
-                pip.gameObject.SetActive(i <= element.hpCurrent);
+                pip.GetComponent<Image>().enabled = i >= r;
+                pip.gameObject.SetActive(i < element.hpCurrent);
             }
             dmgAnim.SetBool("dmg", true);         
 // Element is healed
         } else if (dmg < 0) {
             for (int i = 0; i <= element.hpMax - 1; i++) {
-                GameObject pip = Instantiate(dmgPipPrefab, dmgPanel.transform);
-                pip.GetComponent<Image>().enabled = i > element.hpCurrent;
+                GameObject pip = Instantiate(hpPipPrefab, dmgPanel.transform);
+                pip.GetComponent<Image>().enabled = i >= element.hpCurrent;
                 pip.gameObject.SetActive(i <= r);
             }
             dmgAnim.SetBool("dmg", false);
@@ -112,6 +114,7 @@ public class ElementCanvas : MonoBehaviour
         while (dmgAnim.gameObject.activeSelf) {
             yield return null;
         }
+        UpdateStatsDisplay(r);
     }
 
     public void ToggleStatsDisplay(bool state) {

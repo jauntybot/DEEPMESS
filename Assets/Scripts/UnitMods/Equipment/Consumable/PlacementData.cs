@@ -44,7 +44,7 @@ public class PlacementData : ConsumableEquipmentData
                 Vector3 origin = user.grid.PosFromCoord(user.coord);
                 Vector3 dest = user.grid.PosFromCoord(target.coord);
                 float h = 0.25f + Vector2.Distance(user.coord, target.coord) / 2;
-                float throwDur = 0.25f + animDur * Vector2.Distance(user.coord, target.coord) * 2;
+                float throwDur = 0.25f + animDur * Vector2.Distance(user.coord, target.coord);
                 float timer = 0;
                 while (timer < throwDur) {
                     placed.transform.position = Util.SampleParabola(origin, dest, h, timer/throwDur);
@@ -63,11 +63,6 @@ public class PlacementData : ConsumableEquipmentData
 public IEnumerator MoveToCoord(Unit unit, Vector2 moveTo) 
     {
         float timer = 0;
-
-// Check for shared space  
-        foreach (GridElement ge in unit.grid.CoordContents(moveTo)) {
-            ge.OnSharedSpace(unit);
-        }
         
 // exposed UpdateElement() functionality to selectively update sort order
         if (unit.grid.SortOrderFromCoord(moveTo) > unit.grid.SortOrderFromCoord(unit.coord))

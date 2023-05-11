@@ -12,8 +12,10 @@ public class UIManager : MonoBehaviour
 
     [Header("Top UIs")]
     public MetaDisplay metaDisplay;
-    public Button undoButton;
 
+    [Header("Floor Buttons")]
+    [SerializeField] public Button upButton;
+    [SerializeField] public Button downButton, endTurnButton, undoButton;
 
     [Header("Portraits")]
     [SerializeField] Transform portraitParent;
@@ -92,6 +94,16 @@ public class UIManager : MonoBehaviour
         loadoutPanel.gameObject.SetActive(false);
         foreach(Unit u in scenario.player.units)
             u.ui.UpdateEquipmentButtons();
+    }
+
+    public void LockFloorButtons(bool state) {
+        upButton.GetComponent<Button>().enabled = !state;
+        downButton.GetComponent<Button>().enabled = !state;
+    }
+
+    public void LockHUDButtons(bool state) {
+        LockFloorButtons(state);
+        endTurnButton.enabled = !state;
     }
 
     public void ToggleUndoButton(bool state) {

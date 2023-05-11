@@ -83,7 +83,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.10437393
+        value: 0.12379074
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -137,7 +137,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7493072995555432915}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44c533746bcad8949956707beabd7870, type: 3}
   m_Name: 
@@ -193,6 +193,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff6539855a3375e41b3b407c0b253678, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cursorTexture: {fileID: 2800000, guid: 621a17ad511f5f14a905e5d2d841d6eb, type: 3}
 --- !u!114 &7493072995628922205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,10 +251,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5aa493eb397d534e924fee748ae3d50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  toggled: 1
   grid: {fileID: 0}
   currentContext: 0
   displaying: 0
   contextCursor: {fileID: 7493072996218028450}
+  playerColor: {r: 0.3486372, g: 1, b: 0.09811318, a: 1}
+  enemyColor: {r: 0.98039216, g: 0.21176471, b: 0.49019608, a: 1}
+  equipColor: {r: 1, g: 0.9147424, b: 0.088679194, a: 1}
   lr: {fileID: 7493072995555432913}
 --- !u!1 &7493072996218028450
 GameObject:

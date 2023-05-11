@@ -6,16 +6,19 @@ using UnityEngine;
 public class GridSpacing : MonoBehaviour
 {
     [SerializeField] bool generate;
+    [SerializeField] Vector2 calcIn;
+    [SerializeField] bool calc;
     [SerializeField] Transform gridContainer;
     [SerializeField] GameObject sqrPrefab, wallPrefab;
     
-    [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.15f, 0.35f);
+    [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.12f, 0.35f);
 
     [SerializeField] Vector2 gridSize;
     [SerializeField] float sqrSize;
     [SerializeField] float belowFlooroffset;
 
-    [SerializeField] float orthoXFactor1 = 1.25f, orthoXFactor2 = 2.25f, orthoYFactor1 = 2.25f, orthoYFactor2 = 1.65f, ySqrScale = 1.75f;
+    [SerializeField] float orthoXFactor1 = 1.355f, orthoXFactor2 = 2.5f, orthoYFactor1 = 2.1f, orthoYFactor2 = 1.1f, ySqrScale = 1.75f;
+
 
     void Update()
     {
@@ -31,6 +34,11 @@ public class GridSpacing : MonoBehaviour
                     sqr.transform.localScale = Vector3.one * sqrSize;
                     
                     sqr.gfx[0].sortingOrder = SortOrderFromCoord(new Vector2(x,y));
+                    if (sqr.GetComponentInChildren<LineRenderer>()) {
+                        LineRenderer lr = sqr.GetComponentInChildren<LineRenderer>();
+                        lr.sortingOrder = SortOrderFromCoord(new Vector2(x,y));
+                        
+                    }
                     if (x >= gridSize.x/2 - 4 && x <= gridSize.x/2 + 3 && y >= gridSize.y/2 - 4 && y <= gridSize.y/2 + 3) {
 
                     } else {
@@ -53,6 +61,12 @@ public class GridSpacing : MonoBehaviour
                 }
             }
             generate = false;
+        }
+        if (calc) {
+            Vector3 pos = PosFromCoord(calcIn);
+            Vector3 offset = new Vector3(pos.x + (sqrSize * gridSize.x * ORTHO_OFFSET.x/orthoXFactor1), pos.y - (sqrSize * gridSize.y * ORTHO_OFFSET.y/ySqrScale));
+            Debug.Log(calcIn + ", " +  offset);
+            calc = false;
         }
     }
 

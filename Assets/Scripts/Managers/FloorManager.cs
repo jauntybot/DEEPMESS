@@ -8,12 +8,14 @@ using UnityEngine.Rendering;
 public class FloorManager : MonoBehaviour
 {
 
+    UIManager uiManager;
     ScenarioManager scenario;
     
     [Header("Floor Serialization")]
     [SerializeField] GameObject floorPrefab;
     [SerializeField] Transform floorParent;
     [SerializeField] List<FloorDefinition> floorDefinitions;
+    public bool gridHightlightOverride;
 
     public Grid currentFloor;
     public List<Grid> floors;
@@ -32,6 +34,8 @@ public class FloorManager : MonoBehaviour
     [SerializeField] ParallaxImageScroll parallax;
     
     [Header("Grid Viz")]
+    public bool gridHighlights;
+    public bool gridContextuals;
     [SerializeField] private GameObject descentPreview;
     [SerializeField] private Material previewMaterial;
     [SerializeField] private Dictionary<GridElement, LineRenderer> lineRenderers;
@@ -52,6 +56,7 @@ public class FloorManager : MonoBehaviour
 
     void Start() {
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
+        if (UIManager.instance) uiManager = UIManager.instance;
         lineRenderers = new Dictionary<GridElement, LineRenderer>();
         betweenFloor = GetComponent<BetweenFloorManager>();
     }
@@ -67,6 +72,7 @@ public class FloorManager : MonoBehaviour
         Coroutine co = StartCoroutine(newFloor.GenerateGrid(index));
         yield return co;
         newFloor.ToggleChessNotation(notation);
+        newFloor.overrideHighlight = gridHightlightOverride;
     
         newFloor.gameObject.name = "Floor" + newFloor.index;
         newFloor.transform.SetParent(floorParent);
@@ -94,7 +100,8 @@ public class FloorManager : MonoBehaviour
 
     public IEnumerator PreviewFloor(bool down, bool draw) {
         transitioning = true;
-        scenario.endTurnButton.enabled = !down;
+        if (scenario.currentTurn == ScenarioManager.Turn.Player)
+            uiManager.endTurnButton.enabled = !down;
         if (down) {
             if (draw) {
                 StartCoroutine(ToggleDescentPreview(true));
@@ -127,7 +134,8 @@ public class FloorManager : MonoBehaviour
             yield return null;
         }
         if (peeking) {
-            UIManager.instance.PlaySound(UIManager.instance.peekAboveSFX.Get());
+            if (uiManager.gameObject.activeSelf)
+                uiManager.PlaySound(uiManager.peekAboveSFX.Get());
             yield return PreviewFloor(false, true);
         }
         yield return new WaitForSecondsRealtime(0.125f);
@@ -163,7 +171,7 @@ public class FloorManager : MonoBehaviour
                         if (ge is PlayerUnit) c = playerColor;
                         else if (ge is EnemyUnit) c = enemyColor;
                         else c = equipmentColor;
-                        floors[currentFloor.index+1].sqrs.Find(sqr => sqr.coord == ge.coord).ToggleValidCoord(true, c);
+                        floors[currentFloor.index+1].sqrs.Find(sqr => sqr.coord == ge.coord).ToggleValidCoord(true, c, false);
                     }
                 }
             }
@@ -206,13 +214,21 @@ public class FloorManager : MonoBehaviour
         scenario.player.DeselectUnit();
         if (!transitioning)
             StartCoroutine(PreviewFloor(down, true));
-        UIManager.instance.PlaySound(down ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
+        if (uiManager.gameObject.activeSelf)
+            uiManager.PlaySound(down ? uiManager.peekBelowSFX.Get() : uiManager.peekAboveSFX.Get());
     }
 
     public void ChessNotationToggle() {
         notation = !notation;
         foreach (Grid floor in floors)
             floor.ToggleChessNotation(notation);
+    }
+
+    public void GridHighlightToggle() {
+        gridHightlightOverride = !gridHightlightOverride;
+        foreach (Grid floor in floors) {
+            floor.overrideHighlight = gridHightlightOverride;
+        }
     }
 
     void SetButtonActive(GameObject button, bool state) {
@@ -228,7 +244,6 @@ public class FloorManager : MonoBehaviour
 
 // Block player from selecting units
         scenario.player.ToggleUnitSelectability(dir == -1);
-        downButton.GetComponent<Button>().enabled = false; upButton.GetComponent<Button>().enabled = false;
 
         if (floors.Count - 1 >= currentFloor.index + dir) // Checks if there is a floor in the direction transitioning
             toFloor = floors[currentFloor.index + dir];
@@ -297,7 +312,7 @@ public class FloorManager : MonoBehaviour
         }
 
         peeking = down && preview;
-        //HideUnits(down);
+        HideUnits(down);
 
 // And the actual animation. Has become cluttered with NestedFadeGroup logic too.
         float timer = 0;
@@ -330,6 +345,8 @@ public class FloorManager : MonoBehaviour
         }
 // Hard set lerped variables
         floorParent.transform.position = to;
+        currentFloor.transform.localScale = toScale;
+        if (toFloor) toFloor.transform.localScale = Vector3.one;
         foreach(NestedFadeGroup.NestedFadeGroup fade in currentFade) {
             fade.AlphaSelf = currToA;
         }
@@ -340,9 +357,9 @@ public class FloorManager : MonoBehaviour
 // Update floor manager current floor... preview next floor untis stats?
         if (down && currentFloor.index-1 >= 0) floors[currentFloor.index-1].gameObject.SetActive(false);
         if (toFloor) currentFloor = toFloor;
-        UIManager.instance.metaDisplay.UpdateCurrentFloor(currentFloor.index);
+        if (uiManager.gameObject.activeSelf)
+            uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index);
 
-        downButton.GetComponent<Button>().enabled = true; upButton.GetComponent<Button>().enabled = true;
     }
     
     Dictionary<Unit, bool> targetedDict = new Dictionary<Unit,bool>();
@@ -391,18 +408,17 @@ public class FloorManager : MonoBehaviour
 
     public IEnumerator DescendFloors(bool cascade = false) {
 
-        upButton.GetComponent<Button>().enabled = false; downButton.GetComponent<Button>().enabled = false;
+        if (uiManager.gameObject.activeSelf)
+            uiManager.LockFloorButtons(true);
         EnemyManager enemy = (EnemyManager)currentFloor.enemy;
         
         currentFloor.DisableGridHighlight();
         currentFloor.LockGrid(true);
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
-        downButton.GetComponent<Button>().interactable = false;
         
         if (cascade) {
             yield return StartCoroutine(PreviewFloor(true, true));
             currentFloor.LockGrid(false);
-            SetButtonActive(downButton, true); SetButtonActive(upButton, false);
         }
         else
             yield return StartCoroutine(TransitionFloors(true, false));
@@ -419,6 +435,7 @@ public class FloorManager : MonoBehaviour
         if (cascade) {
             yield return StartCoroutine(ChooseLandingPositions());
             yield return new WaitForSecondsRealtime(1.25f);
+            SetButtonActive(downButton, true); SetButtonActive(upButton, false);
         }
 
         Coroutine drop = StartCoroutine(DropUnits(floors[currentFloor.index-1], currentFloor));
@@ -433,8 +450,9 @@ public class FloorManager : MonoBehaviour
         
         yield return new WaitForSecondsRealtime(0.75f);
         
-        yield return StartCoroutine(scenario.player.DropNail());        
-        UIManager.instance.metaDisplay.UpdateEnemiesRemaining(scenario.currentEnemy.units.Count);
+        yield return StartCoroutine(scenario.player.DropNail());       
+        if (uiManager.gameObject.activeSelf)    
+            uiManager.metaDisplay.UpdateEnemiesRemaining(scenario.currentEnemy.units.Count);
 
 
         yield return new WaitForSecondsRealtime(.75f);
@@ -457,7 +475,8 @@ public class FloorManager : MonoBehaviour
 
             StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
         }
-        downButton.GetComponent<Button>().interactable = true;
+        if (uiManager.gameObject.activeSelf)
+            uiManager.LockFloorButtons(false);
     }
     public IEnumerator DropUnits(Grid fromFloor, Grid toFloor) {
         
@@ -505,7 +524,7 @@ public class FloorManager : MonoBehaviour
             if (subElement is not GroundElement)
                 yield return StartCoroutine(unit.CollideFromAbove(subElement));
         } else if (currentFloor.sqrs.Find(sqr => sqr.coord == unit.coord).tileType == GridSquare.TileType.Bile) {
-            yield return new WaitForSecondsRealtime(0.1f);
+            yield return new WaitForSecondsRealtime(0.25f);
             StartCoroutine(unit.DestroyElement());
         }   
     }

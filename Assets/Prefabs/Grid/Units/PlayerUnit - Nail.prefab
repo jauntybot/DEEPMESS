@@ -190,7 +190,7 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   selectedSFX: {fileID: 11400000, guid: 5c30872cb0988ba449a40758ffe05b34, type: 2}
   dmgdSFX: {fileID: 0}
-  healedSFX: {fileID: 0}
+  healedSFX: {fileID: 11400000, guid: c6850de864e4bc94b9c18e4bffe96839, type: 2}
   destroyedSFX: {fileID: 0}
   manager: {fileID: 0}
   selected: 0
@@ -581,14 +581,6 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2341651523672462379, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2341651523672462379, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2341651523672462379, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -628,12 +620,24 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2638226697941201587, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}
+      propertyPath: alpha
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4471381515458699348, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}
+      propertyPath: m_Color.a
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 4540997612109558425, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}
       propertyPath: m_Name
       value: Shell
       objectReference: {fileID: 0}
     - target: {fileID: 4540997612109558425, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4953449923351505360, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}
+      propertyPath: exclude
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

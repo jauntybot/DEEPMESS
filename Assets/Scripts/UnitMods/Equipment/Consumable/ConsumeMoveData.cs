@@ -120,9 +120,9 @@ public class ConsumeMoveData : ConsumableEquipmentData
     public IEnumerator ThrowUnit(Unit thrower, Unit thrown, Vector2 coord) {
         Vector3 to = thrower.grid.PosFromCoord(coord);
         Vector3 origin = thrown.transform.position;
-        float h = 0.25f + Vector2.Distance(thrower.coord, thrown.coord) / 2;
+        float h = 0.25f + Vector2.Distance(thrower.coord, coord) / 2;
 
-        float throwDur = 0.25f + animDur * Vector2.Distance(thrower.coord, coord) * 2;
+        float throwDur = 0.25f + animDur * Vector2.Distance(thrower.coord, coord);
         float timer = 0;
         while (timer < throwDur) {
 
@@ -140,7 +140,7 @@ public class ConsumeMoveData : ConsumableEquipmentData
         List<Unit> unitsToMove = new List<Unit>();
         foreach (GridElement ge in user.grid.gridElements) {
             if (ge is Unit u) {
-                if (u is not Nail && u is not PlayerUnit) 
+                if (u is not Nail && u is not PlayerUnit && u is not Anvil) 
                     unitsToMove.Add(u);
             }
         }

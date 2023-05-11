@@ -70,7 +70,7 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   selectedSFX: {fileID: 11400000, guid: 5c30872cb0988ba449a40758ffe05b34, type: 2}
   dmgdSFX: {fileID: 0}
-  healedSFX: {fileID: 0}
+  healedSFX: {fileID: 11400000, guid: c6850de864e4bc94b9c18e4bffe96839, type: 2}
   destroyedSFX: {fileID: 0}
   manager: {fileID: 0}
   selected: 0
@@ -305,7 +305,7 @@ SpriteRenderer:
   m_SortingLayerID: -1674473361
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: -577719360, guid: f6cc7e4b050e7e24ca06ed3024ef7507, type: 3}
+  m_Sprite: {fileID: 1902579007, guid: 5e81b0985ba2f2a41a60bebd82c0c36e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -765,6 +765,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2341651523672462379, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4471381515458699348, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}
+      propertyPath: m_Color.a
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4540997612109558425, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}
