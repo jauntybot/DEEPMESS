@@ -76,7 +76,6 @@ public class GridSquare : GridElement {
                 sr.color = blackColor;
         }
         if (anim != null) {
-            Debug.Log("remapped to " + Util.Remap(grid.SortOrderFromCoord(c), 0, 16, 0, 1));
             string name = anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
             anim.Play(name, 0, Util.Remap(grid.SortOrderFromCoord(c), 0, 16, 0, 4)%4);
         }

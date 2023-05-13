@@ -5,14 +5,10 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [ExecuteInEditMode]
-public class TooltipEquipmentTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class TooltipEquipmentTrigger : TooltipTrigger, IPointerEnterHandler, IPointerExitHandler
 {
 
-    private static LTDescr delay;
     [SerializeField] bool initSelf;
-    public string header;
-    [Multiline()]
-    public string content;
 
     void Start() {
         if (initSelf) Initialize(GetComponent<EquipmentButton>().data.name);
@@ -29,26 +25,6 @@ public class TooltipEquipmentTrigger : MonoBehaviour, IPointerEnterHandler, IPoi
             case "BIG GRAB": BigGrab(); break;
             case "HAMMER": Hammer(); break;
         }
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        delay = LeanTween.delayedCall(1f, () =>
-        {
-            TooltipSystem.Show(content, header);
-        });
-    }
-
-    void OnDisable() {
-        if (delay != null)
-            LeanTween.cancel(delay.uniqueId);
-        TooltipSystem.Hide();
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        LeanTween.cancel(delay.uniqueId);
-        TooltipSystem.Hide();
     }
 
     private void Anvil()

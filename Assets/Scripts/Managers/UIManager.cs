@@ -30,9 +30,8 @@ public class UIManager : MonoBehaviour
 
     [Header("Loadouts")]
     [SerializeField] LoadoutManager loadoutManager;
-    [SerializeField] GameObject loadoutPrefab;
-    [SerializeField] Transform loadoutBG, loadoutPanel, loadoutUIParent;
-    List<UnitUI> loadoutUIs = new List<UnitUI>();
+
+    [SerializeField] Transform loadoutBG, loadoutPanel;
 
     [Header("UI AUDIO")]
     [SerializeField] public SFX peekBelowSFX;
@@ -74,14 +73,6 @@ public class UIManager : MonoBehaviour
 
     }
 
-    public UnitUI CreateLoadoutUI(Unit u) {
-        UnitUI ui = Instantiate(loadoutPrefab, loadoutUIParent).GetComponent<UnitUI>();
-        ui.Initialize(u);
-        loadoutUIs.Add(ui);
-        return ui;
-    }
-    
-
     public IEnumerator LoadOutScreen(bool first = false) {
         loadoutBG.gameObject.SetActive(true);
         loadoutPanel.gameObject.SetActive(true);
@@ -104,6 +95,7 @@ public class UIManager : MonoBehaviour
     public void LockHUDButtons(bool state) {
         LockFloorButtons(state);
         endTurnButton.enabled = !state;
+        undoButton.enabled = !state;
     }
 
     public void ToggleUndoButton(bool state) {

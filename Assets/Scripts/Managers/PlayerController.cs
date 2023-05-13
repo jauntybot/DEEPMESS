@@ -36,7 +36,6 @@ public class PlayerController : MonoBehaviour {
 // Disable input under these conditions
                     if (!manager.unitActing && !(FloorManager.instance.peeking && manager.scenario.currentTurn != ScenarioManager.Turn.Cascade)) {
                         if (Input.GetMouseButtonDown(0)) {
-                            Debug.Log("Click");
 // Pass call to contextualize click to manager
                             manager.GridInput(hit.transform.GetComponent<GridElement>());       
                             yield return new WaitForSecondsRealtime(1/Util.fps);

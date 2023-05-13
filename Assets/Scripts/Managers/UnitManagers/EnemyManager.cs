@@ -6,9 +6,9 @@ public class EnemyManager : UnitManager {
 
     public delegate void OnEnemyCondition(GridElement ge);
     public event OnEnemyCondition WipedOutCallback;
-    private Coroutine ongoingTurn;
+    protected Coroutine ongoingTurn;
 
-    public override IEnumerator Initialize()
+    public override IEnumerator Initialize(bool tut = false)
     {
         yield return base.Initialize();
     }
@@ -20,17 +20,16 @@ public class EnemyManager : UnitManager {
         return u;
     }
 
-    public void DescentTriggerCheck(GridElement ge = null) {
+    public virtual void DescentTriggerCheck(GridElement ge = null) {
         if (scenario.currentEnemy == this && scenario.currentTurn != ScenarioManager.Turn.Descent) {
             if (units.Count <= 0) {
-                Debug.Log("Trigger descent");
                 EndTurnEarly();
                 scenario.player.TriggerDescent();
             }
         }
     }
 
-    public IEnumerator TakeTurn(bool scatter) {
+    public virtual IEnumerator TakeTurn(bool scatter) {
 
 // Reset manager and units for turn
         foreach(Unit u in units) {
