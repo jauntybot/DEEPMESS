@@ -24,6 +24,7 @@ public class TutorialSequence : MonoBehaviour
     public Tooltip tooltip;
     public Animator screenFade;
     [HideInInspector] public string header, body;
+    bool blinking = false;
 
 
     public void Initialize(ScenarioManager manager) {
@@ -89,6 +90,21 @@ public class TutorialSequence : MonoBehaviour
         Destroy(gameObject);
     }
 
+    IEnumerator BlinkTile(Vector2 coord) {
+        blinking = true;
+        GridSquare sqr = scenario.player.currentGrid.sqrs.Find(sqr => sqr.coord == coord);
+        float timer = 0;
+        int i = 0;
+        while (blinking) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            timer += Time.deltaTime;
+            if (timer > 0.5f) {
+                sqr.ToggleValidCoord(true, i%2==0 ? FloorManager.instance.playerColor : FloorManager.instance.equipmentColor);
+                i++; timer = 0;
+            }
+        }
+    }
+
     public IEnumerator SplashMessage() {
         screenFade.gameObject.SetActive(true);
         currentEnemy = (TutorialEnemyManager)scenario.player.currentGrid.enemy;
@@ -109,11 +125,12 @@ public class TutorialSequence : MonoBehaviour
         header = "";
         body = "Select this unit to move it in line with an ENEMY.";
         tooltip.SetText(new Vector2(-200, -190), body);
-        
+        StartCoroutine(BlinkTile(new Vector2(4,1)));
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             if (scenario.player.selectedUnit) break;
         }
+        blinking = false;
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 
@@ -121,13 +138,14 @@ public class TutorialSequence : MonoBehaviour
         scenario.player.currentGrid.LockGrid(false);
         body = "Move your unit to this space by selecting a highlighted square.";
         tooltip.SetText(new Vector2(-85,-360), body);
-        
+        StartCoroutine(BlinkTile(new Vector2(6,1)));
         while (true) {
             if (scenario.player.selectedUnit)
                 scenario.player.selectedUnit.validActionCoords = new List<Vector2> {new Vector2(6,1)};
             yield return new WaitForSecondsRealtime(1/Util.fps);
             if (scenario.player.unitActing) break;
         }
+        blinking = false;
         while (scenario.player.unitActing)
             yield return new WaitForSecondsRealtime(1/Util.fps);
         UIManager.instance.LockHUDButtons(true);
@@ -137,7 +155,7 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator Equip01() {
         body = "Select the HAMMER and select the ENEMY in range.";
         tooltip.SetText(new Vector2(-360, -200), body);
-
+        StartCoroutine(BlinkTile(new Vector2(4,1)));
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             if (scenario.player.selectedUnit) {
