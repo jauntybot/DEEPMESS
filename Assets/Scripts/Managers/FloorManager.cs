@@ -14,7 +14,7 @@ public class FloorManager : MonoBehaviour
     [Header("Floor Serialization")]
     [SerializeField] GameObject floorPrefab;
     [SerializeField] Transform floorParent;
-    [SerializeField] List<FloorDefinition> floorDefinitions;
+    [SerializeField] public List<FloorDefinition> floorDefinitions;
     public bool gridHightlightOverride;
 
     public Grid currentFloor;
@@ -61,15 +61,15 @@ public class FloorManager : MonoBehaviour
         betweenFloor = GetComponent<BetweenFloorManager>();
     }
 
-    public IEnumerator GenerateFloor() {
+    public IEnumerator GenerateFloor(GameObject floorOverride = null, GameObject enemyOverride = null) {
         int index = floors.Count;
 
-        Grid newFloor = Instantiate(floorPrefab, this.transform).GetComponent<Grid>();
+        Grid newFloor = Instantiate(floorOverride == null ? floorPrefab : floorOverride, this.transform).GetComponent<Grid>();
         currentFloor = newFloor;
         FloorDefinition floorDef = floorDefinitions[index];
         newFloor.lvlDef = floorDef;
     
-        Coroutine co = StartCoroutine(newFloor.GenerateGrid(index));
+        Coroutine co = StartCoroutine(newFloor.GenerateGrid(index, enemyOverride));
         yield return co;
         newFloor.ToggleChessNotation(notation);
         newFloor.overrideHighlight = gridHightlightOverride;
@@ -401,12 +401,12 @@ public class FloorManager : MonoBehaviour
 
     }
 
-    public void Descend(bool cascade = false) {
-        StartCoroutine(DescendFloors(cascade));
+    public void Descend(bool cascade = false, bool tut = false) {
+        StartCoroutine(DescendFloors(cascade, tut));
         
     }
 
-    public IEnumerator DescendFloors(bool cascade = false) {
+    public IEnumerator DescendFloors(bool cascade = false, bool tut = false) {
 
         if (uiManager.gameObject.activeSelf)
             uiManager.LockFloorButtons(true);
@@ -441,23 +441,36 @@ public class FloorManager : MonoBehaviour
         Coroutine drop = StartCoroutine(DropUnits(floors[currentFloor.index-1], currentFloor));
         scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
         yield return drop;
-        enemy.SeedUnits(currentFloor);
+        if (enemy)
+            enemy.SeedUnits(currentFloor);
 
 
         scenario.player.DescendGrids(currentFloor);
-        
         currentFloor.LockGrid(false);
         
         yield return new WaitForSecondsRealtime(0.75f);
         
         yield return StartCoroutine(scenario.player.DropNail());       
+
         if (uiManager.gameObject.activeSelf)    
             uiManager.metaDisplay.UpdateEnemiesRemaining(scenario.currentEnemy.units.Count);
 
+        yield return new WaitForSecondsRealtime(1.5f);
+        if (tut) {
+            if (currentFloor.index < 2)
+                yield return StartCoroutine(GenerateNextFloor(TutorialSequence.instance.tutorialFloorPrefab, TutorialSequence.instance.tutorialEnemyPrefab));
+            else
+                yield return StartCoroutine(GenerateNextFloor());
+            yield return new WaitForSeconds(0.5f);
+            scenario.currentTurn = ScenarioManager.Turn.Null;
+        } else {
+            yield return StartCoroutine(GenerateNextFloor());
+            yield return new WaitForSeconds(0.5f);
+            StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
+        }
+    }
 
-        yield return new WaitForSecondsRealtime(.75f);
-        yield return new WaitForSecondsRealtime(.75f);
-
+    public IEnumerator GenerateNextFloor(GameObject floorPrefab = null, GameObject enemyPrefab = null) {
 // Check if player wins
         if (currentFloor.index >= floorDefinitions.Count - 2) {
 
@@ -467,17 +480,16 @@ public class FloorManager : MonoBehaviour
 
             yield return StartCoroutine(TransitionFloors(true, false));
 
-            yield return StartCoroutine(GenerateFloor());
+            yield return StartCoroutine(GenerateFloor(floorPrefab, enemyPrefab));
 
             yield return new WaitForSeconds(0.5f);
             yield return StartCoroutine(PreviewFloor(false, false));
-            yield return new WaitForSeconds(0.5f);
-
-            StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
         }
         if (uiManager.gameObject.activeSelf)
             uiManager.LockFloorButtons(false);
     }
+
+
     public IEnumerator DropUnits(Grid fromFloor, Grid toFloor) {
         
         scenario.player.transform.parent = transitionParent;
@@ -491,16 +503,23 @@ public class FloorManager : MonoBehaviour
                 ge.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
         }
 
+        List<Coroutine> descents = new List<Coroutine>();
         for (int i = fromFloor.gridElements.Count - 1; i >= 0; i--) {
             if (fromFloor.gridElements[i] is Unit u) {
                 u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
                 if (fromFloor.gridElements[i] is not Nail) {
                     GridElement subElement = null;
                     foreach (GridElement ge in toFloor.CoordContents(u.coord)) subElement = ge;
-                    yield return StartCoroutine(DropUnit(u, fromFloor.PosFromCoord(u.coord), toFloor.PosFromCoord(u.coord), subElement));
+                    descents.Add(StartCoroutine(DropUnit(u, fromFloor.PosFromCoord(u.coord), toFloor.PosFromCoord(u.coord), subElement)));
                     yield return new WaitForSeconds(0.1f);
                 }
             }
+        }
+        for (int i = descents.Count - 1; i >= 0; i--) {
+            if (descents[i] != null) 
+                yield return descents[i];
+            else
+                descents.RemoveAt(i);
         }
     }
 

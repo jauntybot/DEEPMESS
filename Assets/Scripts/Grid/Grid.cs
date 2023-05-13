@@ -8,7 +8,7 @@ using UnityEngine;
 public class Grid : MonoBehaviour {
     
     FloorManager floorManager;
-    PlayerManager player;
+    [SerializeField] PlayerManager player;
     public int index = 0;
     public GameObject gridContainer, neutralGEContainer;
     [SerializeField] GameObject chessNotation;
@@ -28,13 +28,13 @@ public class Grid : MonoBehaviour {
     [HideInInspector] public bool overrideHighlight;
 
 
-    void Start() {
+    void Awake() {
         if (FloorManager.instance) floorManager = FloorManager.instance;
         if (PlayerManager.instance) player = PlayerManager.instance;
     }
 
 // loop through grid x,y, generate sqr grid elements, update them and add to list
-    public IEnumerator GenerateGrid(int i) {
+    public IEnumerator GenerateGrid(int i, GameObject enemyOverride = null) {
         List<Vector2> bloodTiles = new List<Vector2>();
         List<Vector2> bileTiles = new List<Vector2>();
         foreach (FloorDefinition.Spawn spawn in lvlDef.initSpawns) {
@@ -73,7 +73,7 @@ public class Grid : MonoBehaviour {
         selectedCursor.transform.SetAsLastSibling();
         index = i;
 
-        yield return StartCoroutine(SpawnLevelDefinition());
+        SpawnLevelDefinition(enemyOverride);
        
         NestedFadeGroup.NestedFadeGroup fade = GetComponent<NestedFadeGroup.NestedFadeGroup>();
 
@@ -88,15 +88,20 @@ public class Grid : MonoBehaviour {
         fade.AlphaSelf = 1;
     }
 
-    IEnumerator SpawnLevelDefinition() {
-        enemy = Instantiate(enemyPrefab, this.transform).GetComponent<EnemyManager>(); 
+    
+    void SpawnLevelDefinition(GameObject enemyOverride = null) {
+        List<Vector2> nailSpawns = new List<Vector2>();
+        enemy = Instantiate(enemyOverride == null ? enemyPrefab : enemyOverride, this.transform).GetComponent<EnemyManager>(); 
         enemy.transform.SetSiblingIndex(2);
-        yield return StartCoroutine(enemy.Initialize());
+        enemy.StartCoroutine(enemy.Initialize());
         foreach (FloorDefinition.Spawn spawn in lvlDef.initSpawns) {
             if (spawn.asset.ge is Unit u) 
             {
                 if (u is EnemyUnit e) {
                     enemy.SpawnUnit(spawn.coord, e);
+                }
+                else if (u is Nail) {
+                    nailSpawns.Add(spawn.coord);
                 }
             } else if (spawn.asset.ge is not GridSquare) {
                 GridElement ge = Instantiate(spawn.asset.prefab, this.transform).GetComponent<GridElement>();
@@ -106,6 +111,7 @@ public class Grid : MonoBehaviour {
                 ge.UpdateElement(spawn.coord);
             }
         }
+        player.nailSpawnOverrides = nailSpawns;
     }
 
     public void ToggleChessNotation(bool state) {
