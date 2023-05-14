@@ -22,6 +22,7 @@ public class ScenarioManager : MonoBehaviour
 
 // Instanced refs
     [HideInInspector] public UIManager uiManager;
+    TutorialSequence tutorial;
     FloorManager floorManager;
     [SerializeField] string resetSceneString;
     public EnemyManager currentEnemy;
@@ -41,38 +42,43 @@ public class ScenarioManager : MonoBehaviour
     {
         if (UIManager.instance)
             uiManager = UIManager.instance;
+        if (TutorialSequence.instance) {
+            tutorial = TutorialSequence.instance;
+            tutorial.Initialize(this);
+        }
+
         if (FloorManager.instance) 
         {
             floorManager = FloorManager.instance;
-            
-            yield return StartCoroutine(floorManager.GenerateFloor()); 
+            if (tutorial) {
+                for (int i = 0; i <= tutorial.scriptedFloors.Count - 1; i++) 
+                    floorManager.floorDefinitions.Insert(i, tutorial.scriptedFloors[i]);
+                yield return StartCoroutine(floorManager.GenerateFloor(tutorial.tutorialFloorPrefab, tutorial.tutorialEnemyPrefab));
+            } else
+                yield return StartCoroutine(floorManager.GenerateFloor()); 
             currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
             player.transform.parent = floorManager.currentFloor.transform;
         }
         resetSceneString = SceneManager.GetActiveScene().name;
         
-        yield return StartCoroutine(player.Initialize());
+        yield return StartCoroutine(player.Initialize((tutorial != null)));
+
     }
 
+// Triggered by scene
     public void InitialDescent() {
         StartCoroutine(FirstTurn());
     }
 
     public IEnumerator FirstTurn() {
-        yield return StartCoroutine(SwitchTurns(Turn.Descent));
-
-        yield return new WaitForSeconds(.75f);
-        yield return StartCoroutine(floorManager.TransitionFloors(floorManager.currentFloor.gameObject, false));
-
-        if (floorManager) yield return StartCoroutine(floorManager.GenerateFloor());
-
-        yield return new WaitForSeconds(0.75f);
-        StartCoroutine(floorManager.PreviewFloor(false, false));
-        yield return new WaitForSeconds(1);
-
-        currentTurn = Turn.Enemy;
-        StartCoroutine(SwitchTurns(Turn.Player));
-        floorManager.currentFloor.LockGrid(false);
+        if (tutorial) {
+            yield return StartCoroutine(floorManager.GenerateNextFloor(tutorial.tutorialFloorPrefab, tutorial.tutorialEnemyPrefab));
+            yield return tutorial.StartCoroutine(tutorial.Tutorial());
+        } else {
+            yield return StartCoroutine(floorManager.GenerateNextFloor());
+            StartCoroutine(SwitchTurns(Turn.Enemy));
+        }
+        
     }
 
 #endregion
@@ -109,7 +115,7 @@ public class ScenarioManager : MonoBehaviour
                         StartCoroutine(currentEnemy.TakeTurn(false));
                 }
                 else if (currentEnemy.units.Count <= 0) {
-                   floorManager.Descend(prevTurn == Turn.Descent);
+                   floorManager.Descend(prevTurn == Turn.Descent, currentEnemy is TutorialEnemyManager);
                    Debug.Log("Empty floor descent");
                 }
             break;
@@ -167,6 +173,7 @@ public class ScenarioManager : MonoBehaviour
                     }
                 }
                 uiManager.LockHUDButtons(false);
+                uiManager.LockFloorButtons(true);
                 if (uiManager.gameObject.activeSelf)
                     yield return StartCoroutine(messagePanel.DisplayMessage("REPOSITION UNITS", 1));
             break;

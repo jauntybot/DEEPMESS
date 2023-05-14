@@ -19,7 +19,7 @@ public class UnitManager : MonoBehaviour {
 
 
 // Called from scenario manager when game starts
-    public virtual IEnumerator Initialize() 
+    public virtual IEnumerator Initialize(bool tut = false) 
     {
 // Grab global refs
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;

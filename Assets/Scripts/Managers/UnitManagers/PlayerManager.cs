@@ -16,6 +16,7 @@ public class PlayerManager : UnitManager {
     [Header("PLAYER MANAGER")]
     public LoadoutManager loadout;
     public Nail nail;
+    [HideInInspector] public List<Vector2> nailSpawnOverrides = new List<Vector2>();
     public List<HammerData> hammerActions;
     [SerializeField] EquipmentData cascadeMovement;
     [HideInInspector] public EquipmentData overrideEquipment = null;
@@ -47,32 +48,52 @@ public class PlayerManager : UnitManager {
     }
     #endregion
 
-    public override IEnumerator Initialize()
+    public override IEnumerator Initialize(bool tut = false)
     {
         yield return base.Initialize();
 
         contextuals.Initialize(this);
 
+        List<Vector2> spawnCoords =new List<Vector2>{
+            new Vector2(3,4),
+            new Vector2(4,4),
+            new Vector2(3,3)
+        };
+        if (tut) {
+            spawnCoords = new List<Vector2>{
+                new Vector2(4,1),
+                new Vector2(1,2),
+                new Vector2(3,3)
+            };
+        }
+
         List<Unit> initU = new List<Unit>() {
-            SpawnUnit(new Vector2(3,4), loadout.unitPrefabs[0]),
-            SpawnUnit(new Vector2(4,4), loadout.unitPrefabs[1]),
-            SpawnUnit(new Vector2(3,3), loadout.unitPrefabs[2])
+            SpawnUnit(spawnCoords[0], loadout.unitPrefabs[0]),
+            SpawnUnit(spawnCoords[1], loadout.unitPrefabs[1]),
+            SpawnUnit(spawnCoords[2], loadout.unitPrefabs[2])
         };
 
         yield return StartCoroutine(loadout.Initialize(initU));
+        yield return ScenarioManager.instance.StartCoroutine(ScenarioManager.instance.SwitchTurns(ScenarioManager.Turn.Descent));
 
         SpawnHammer((PlayerUnit)units[0], hammerActions);
+
         foreach (Unit u in initU) {
             StartCoroutine(floorManager.DropUnit(u, u.transform.position, currentGrid.PosFromCoord(u.coord)));
+            yield return new WaitForSecondsRealtime(0.1f);
         }
         
         nail = (Nail)SpawnUnit(new Vector3(3, 3), nailPrefab.GetComponent<Nail>());
         nail.gameObject.transform.parent = unitParent.transform;
-        yield return StartCoroutine(DropNail());
 
+        yield return StartCoroutine(DropNail());
 
         pc = GetComponent<PlayerController>();
         if (FloorManager.instance) floorManager = FloorManager.instance;
+
+// NEEDS IF STATEMENT FOR BOOL USED IN LOADOUT INITIALIZATION
+        ScenarioManager.instance.InitialDescent();
+// END HERE
     }
 
 // Spawn a new instance of a hammer and update hammer actions
@@ -162,10 +183,15 @@ public class PlayerManager : UnitManager {
 // Find a valid coord that a player is not in
         while (!validCoord) {
             validCoord = true;
-            spawn = new Vector2(Random.Range(1,6), Random.Range(1,6));
+            if (nailSpawnOverrides.Count > 0) 
+                spawn = nailSpawnOverrides[Random.Range(0,nailSpawnOverrides.Count)];
+            else
+                spawn = new Vector2(Random.Range(1,6), Random.Range(1,6));
+                
             foreach(Unit u in units) {
                 if (u.coord == spawn) validCoord = false;
             }
+
             if (currentGrid.sqrs.Find(sqr => sqr.coord == spawn).tileType == GridSquare.TileType.Bile) validCoord = false;
         }
         
@@ -380,8 +406,8 @@ public class PlayerManager : UnitManager {
         }
     }
 
-    public void TriggerDescent() {
-        floorManager.Descend();
+    public void TriggerDescent(bool tut = false) {
+        floorManager.Descend(false, tut);
     }
 
     public virtual void DescendGrids(Grid newGrid) {
