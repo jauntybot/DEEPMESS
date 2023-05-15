@@ -33,10 +33,22 @@ public class TutorialEnemyManager : EnemyManager
                 DeselectUnit();
             }
             if (attacks != null) {
-
+                units[i].UpdateAction(units[i].equipment[1]);
+                SelectUnit(units[i]);
+                GridElement target = null;
+                foreach (GridElement ge in selectedUnit.grid.CoordContents(attacks[i]))
+                    target = ge;
+                currentGrid.DisplayValidCoords(units[i].validActionCoords, units[i].selectedEquipment.gridColor);
+                yield return new WaitForSecondsRealtime(0.5f);
+                Coroutine co = StartCoroutine(units[i].selectedEquipment.UseEquipment(units[i], target));
+                currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
+                currentGrid.DisableGridHighlight();
+                yield return co;
+                yield return new WaitForSecondsRealtime(0.125f);
+                DeselectUnit();
             }
         }
-        EndTurn();
+        
     }
 }
 

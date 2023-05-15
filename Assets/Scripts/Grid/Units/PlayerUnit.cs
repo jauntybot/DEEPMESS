@@ -82,7 +82,7 @@ public class PlayerUnit : Unit {
     public override void TargetElement(bool state)
     {
         base.TargetElement(state);
-        ui.ToggleEquipmentPanel(state);
+        //ui.ToggleEquipmentPanel(state);
         //if (energyCurrent == 0 || pManager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
     }
 
