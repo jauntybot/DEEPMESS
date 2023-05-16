@@ -42,27 +42,35 @@ public class ScenarioManager : MonoBehaviour
     {
         if (UIManager.instance)
             uiManager = UIManager.instance;
-        if (TutorialSequence.instance) {
+        if (TutorialSequence.instance) 
             tutorial = TutorialSequence.instance;
-            tutorial.Initialize(this);
-        }
+            
+        
+        bool tut = false;
 
         if (FloorManager.instance) 
         {
             floorManager = FloorManager.instance;
             if (tutorial) {
-                for (int i = 0; i <= tutorial.scriptedFloors.Count - 1; i++) 
-                    floorManager.floorDefinitions.Insert(i, tutorial.scriptedFloors[i]);
-                yield return StartCoroutine(floorManager.GenerateFloor(tutorial.tutorialFloorPrefab, tutorial.tutorialEnemyPrefab));
+                if (tutorial.skip)
+                    yield return StartCoroutine(floorManager.GenerateFloor()); 
+                else {
+                    tut = true;
+                    for (int i = 0; i <= tutorial.scriptedFloors.Count - 1; i++) 
+                        floorManager.floorDefinitions.Insert(i, tutorial.scriptedFloors[i]);
+                    yield return StartCoroutine(floorManager.GenerateFloor(tutorial.tutorialFloorPrefab, tutorial.tutorialEnemyPrefab));
+                }
             } else
                 yield return StartCoroutine(floorManager.GenerateFloor()); 
             currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
             player.transform.parent = floorManager.currentFloor.transform;
         }
         resetSceneString = SceneManager.GetActiveScene().name;
-        
-        yield return StartCoroutine(player.Initialize((tutorial != null)));
+    
+        yield return StartCoroutine(player.Initialize(tut));
 
+        if (tutorial)
+            tutorial.Initialize(this);
     }
 
 // Triggered by scene
@@ -72,9 +80,38 @@ public class ScenarioManager : MonoBehaviour
 
     public IEnumerator FirstTurn() {
         if (tutorial) {
-            yield return StartCoroutine(floorManager.GenerateNextFloor(tutorial.tutorialFloorPrefab, tutorial.tutorialEnemyPrefab));
-            yield return tutorial.StartCoroutine(tutorial.Tutorial());
+            if (!tutorial.skip) {
+                yield return StartCoroutine(SwitchTurns(Turn.Descent));
+                foreach (Unit u in player.units) {
+                    if (u is not Nail) {
+                        StartCoroutine(floorManager.DropUnit(u, u.transform.position, floorManager.currentFloor.PosFromCoord(u.coord)));
+                        yield return new WaitForSecondsRealtime(0.1f);
+                    }
+                }
+                yield return StartCoroutine(player.DropNail());
+                yield return StartCoroutine(floorManager.GenerateNextFloor(TutorialSequence.instance.tutorialFloorPrefab, TutorialSequence.instance.tutorialEnemyPrefab));
+                StartCoroutine(tutorial.Tutorial());
+            } else {
+                StartCoroutine(floorManager.ToggleDescentPreview(true, true));
+                player.nail.selectable = false;
+                foreach (GridElement ge in player.units)
+                    floorManager.currentFloor.RemoveElement(ge);
+                yield return StartCoroutine(floorManager.ChooseLandingPositions());
+                yield return new WaitForSecondsRealtime(1.25f);
+                StartCoroutine(floorManager.ToggleDescentPreview(false));
+                yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], }));
+                yield return StartCoroutine(floorManager.GenerateNextFloor());
+                StartCoroutine(SwitchTurns(Turn.Enemy));
+            }
         } else {
+            StartCoroutine(floorManager.ToggleDescentPreview(true, true));
+            player.nail.selectable = false;
+            foreach (GridElement ge in player.units)
+                floorManager.currentFloor.RemoveElement(ge);
+            yield return StartCoroutine(floorManager.ChooseLandingPositions());
+            yield return new WaitForSecondsRealtime(1.25f);
+            StartCoroutine(floorManager.ToggleDescentPreview(false));
+            yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], }));
             yield return StartCoroutine(floorManager.GenerateNextFloor());
             StartCoroutine(SwitchTurns(Turn.Enemy));
         }
@@ -145,7 +182,7 @@ public class ScenarioManager : MonoBehaviour
                 if (prevTurn != Turn.Cascade)
                     yield return StartCoroutine(floorManager.CancelPreview());
                 if (prevTurn == Turn.Cascade) {
-                    player.currentGrid = floorManager.floors[player.currentGrid.index-1];
+                    //player.currentGrid = floorManager.floors[player.currentGrid.index-1];
                     for (int i = player.units.Count - 1; i >= 0; i--) {
                         if (player.units[i] is not Nail) {
                             floorManager.currentFloor.RemoveElement(player.units[i]);
@@ -162,6 +199,7 @@ public class ScenarioManager : MonoBehaviour
             case Turn.Cascade:
                 currentTurn = Turn.Cascade;
                 player.currentGrid = floorManager.currentFloor;
+                player.currentGrid.LockGrid(false);
                 player.StartEndTurn(true, true);
                 foreach (Unit u in player.units) {
                     if (u is not Nail) {
