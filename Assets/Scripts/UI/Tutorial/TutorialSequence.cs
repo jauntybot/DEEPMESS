@@ -94,8 +94,6 @@ public class TutorialSequence : MonoBehaviour
 
         yield return StartCoroutine(Message03());
         yield return new WaitForSecondsRealtime(0.15f);
-
-        Destroy(gameObject);
     }
 
     public IEnumerator BlinkTile(Vector2 coord, bool move = true) {

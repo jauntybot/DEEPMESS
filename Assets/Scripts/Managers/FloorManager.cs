@@ -16,7 +16,7 @@ public class FloorManager : MonoBehaviour
     [SerializeField] Transform floorParent;
     [SerializeField] public List<FloorDefinition> floorDefinitions;
     public bool gridHightlightOverride;
-
+    int tutOffset = 0;
     public Grid currentFloor;
     public List<Grid> floors;
 
@@ -59,6 +59,9 @@ public class FloorManager : MonoBehaviour
         if (UIManager.instance) uiManager = UIManager.instance;
         lineRenderers = new Dictionary<GridElement, LineRenderer>();
         betweenFloor = GetComponent<BetweenFloorManager>();
+        if (TutorialSequence.instance) {
+            if (!TutorialSequence.instance.skip) tutOffset = -3;
+        }
     }
 
     public IEnumerator GenerateFloor(GameObject floorOverride = null, GameObject enemyOverride = null) {
@@ -387,7 +390,7 @@ public class FloorManager : MonoBehaviour
         if (down && currentFloor.index-1 >= 0) floors[currentFloor.index-1].gameObject.SetActive(false);
         if (toFloor) currentFloor = toFloor;
         if (uiManager.gameObject.activeSelf)
-            uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index);
+            uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index + tutOffset);
 
     }
     
@@ -455,7 +458,7 @@ public class FloorManager : MonoBehaviour
         scenario.player.nail.ToggleNailState(Nail.NailState.Primed);
 
         yield return new WaitForSecondsRealtime(0.25f);
-        if (betweenFloor.InbetweenTrigger(currentFloor.index-1)) {
+        if (betweenFloor.InbetweenTrigger(currentFloor.index-1 + tutOffset)) {
             yield return StartCoroutine(betweenFloor.BetweenFloorSegment(currentFloor.index-1));
             
             yield return new WaitForSecondsRealtime(0.25f);
