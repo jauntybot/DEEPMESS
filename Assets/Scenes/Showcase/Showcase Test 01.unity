@@ -8967,6 +8967,15 @@ PrefabInstance:
       propertyPath: m_TargetCamera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 456712696145198233, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: body
+      value: "To progress, you must descend your SLAGS from their current floor to
+        the one below. Descending causes all units (slag and antibody) on a floor
+        to fall onto the tile below them. If that tile is occupied, the descending
+        unit takes 1 damage and whatever is below is eliminated.\n\nThere are two
+        ways to trigger descent: \n1) Striking the NAIL with the HAMMER.\n2) Eliminating
+        all ANTIBODIES on the current floor."
+      objectReference: {fileID: 0}
     - target: {fileID: 456712696168355025, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -9054,6 +9063,129 @@ PrefabInstance:
     - target: {fileID: 456712696168355037, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
       propertyPath: m_Name
       value: Persistent Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712696260200869, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: body
+      value: ANTIBODIES will attack your SLAGS and the NAIL. On the antibodies' turn,
+        each unit will first move, and then attack if they are in range. ANTIBODIES
+        have a shield and 1 HP. They have a movement range of 2 tiles and can attack
+        an adjacent unit for 1 damage.
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712696406160305, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: m_Name
+      value: Player Help
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712696406160318, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: body
+      value: "Your SLAG overview is in the left column and NAIL overview is in the
+        top right.\n\nSelecting a SLAG on the board or with it\u2019s icon displays
+        it\u2019s portrait along with its EQUIPMENT. In the bottom right, preview
+        the next floor with the PEEK BUTTON, end your current turn, or undo your
+        SLAGS\u2019 movement."
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712696406160318, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: title
+      value: PLAYER
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712696457711553, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: body
+      value: When you land on a new floor, the ANTIBODIES will scatter immediately,
+        moving to a random space on the floor but not attacking. After this the player
+        take their turn. The player chooses when to end their turn, at which point
+        the ANTIBODIES take their turn.
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712696958101017, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: body
+      value: 'Every floor is an 8x8 grid of tiles containing environmental hazards
+        and ANTIBODIES. The player is able to view both the current floor and the
+        upcoming floor with the PEEK BUTTON.
+
+        Every 5 floors there is a SLOT
+        MACHINE where you can swap out EQUIPMENT or heal your SLAGS and NAIL.'
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712697118810986, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: body
+      value: "There are various hazards on the floors of DEEPMESS.\nWalls: units
+        can\u2019t move through these tiles and take 1 damage if they land on top
+        of a wall.\nBlood tile: SLAGS can\u2019t use EQUIPMENT or the HAMMER while
+        standing in blood.\nBile tile: Any unit that ends up in a bile tile is reduced
+        to 0 HP."
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712697118810986, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: title
+      value: HAZARDS
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712697118810989, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: m_Name
+      value: HAZARDS Help
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712697386212429, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: body
+      value: 'There are three SLAGS under the player''s control: Flat, Spike and
+        Pony. If all three SLAGS are downed, the run is lost. SLAGS have a movement
+        range of 4 tiles, 5 HP, and 1 AP to use on either EQUIPMENT or the HAMMER.
+
+
+        If
+        a SLAG is downed, they can be brought back by striking them with the HAMMER
+        or reviving at a SLOT MACHINE. If struck by the hammer, the SLAG takes 1
+        HP from the NAIL, reentering the fight with 1 HP and 1 AP.'
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712697451954127, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: m_text
+      value: PLAYER
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712697827665819, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: body
+      value: "There\u2019s a variety of equipment that your SLAGS can use in DEEPMESS.
+        Each SLAG can hold one piece of equipment that can be used once per floor.
+        The SLAGS\u2019 1 AP is shared with the HAMMER, so if a SLAG uses its equipment,
+        it won\u2019t be able to use the HAMMER until the next turn, and vice versa."
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712697921950931, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: body
+      value: 'The HAMMER is the main tool of the SLAGS.
+
+        It can be used to:
+
+        Attack
+        an ANTIBODY for 1 damage
+
+        Strike the primed NAIL to trigger a DESCENT
+
+
+        After
+        selecting a target, a SLAG must be selected as a second target for the HAMMER
+        to be passed to.'
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712697928637038, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: body
+      value: "Every 5 floors you will encounter a SLOT MACHINE. The slots provide
+        you two options:\nHeal all SLAGS 1 HP and NAIL 3 HP\nor\nSpin the slots for
+        new EQUIPMENT.\n\nYou can replace one of your SLAG\u2019S EQUIPMENT with
+        a new piece from the slots."
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712697955298387, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: body
+      value: 'DEEPMESS is a game about tactics, chaos, and descent.
+
+
+        As
+        the player, you must utilize three SLAGS and the NAIL in order to navigate
+        the limited space and hostile ANTIBODIES on your current floor, while simultaneously
+        ensuring a safe descent to the floor below.'
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712697970449533, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: body
+      value: 'The NAIL is the main way to trigger a descent. It has 10 HP and if
+        it is defeated the run is lost.
+
+
+        On descent, the NAIL falls after
+        all other units, landing on a random non-SLAG occupied tile and crushing
+        anything it lands on. After landing, the nail is buried and takes a complete
+        ANTIBODY turn to prime itself. Once primed, it can be struck by the HAMMER
+        to trigger a descent.'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
@@ -30637,6 +30769,86 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2017525368609710076, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525368609710077, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525368656125314, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525368656125314, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525368656125314, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525368656125314, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525368656125314, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525368898658890, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525368898658890, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525368898658890, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 120.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525368898658890, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525368898658890, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525368898658890, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525368898658891, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_text
+      value: TEST TEXT
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525369044458482, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525369044458482, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525369044458482, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525369044458482, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525369044458482, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525369044458482, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2017525369693994798, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
       propertyPath: cam
       value: 

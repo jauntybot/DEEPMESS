@@ -121,10 +121,18 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
         currentEnemy = (TutorialEnemyManager)scenario.player.currentGrid.enemy;
 
-        header = "WELCOME";
-        body = "to DEEPMESS. Here's a brief summary of what you'll be doing in the game." + '\n' + '\n' + "SUMMARY";
+        header = "WELCOME to DEEPMESS";
+        body = "It's time to dig deep and make a mess. I'm the NAIL and I'll give you a few tips on how to descend down through this head." + '\n';
         tooltip.SetText(new Vector3(100,0,0), body, header);
-        tooltip.transform.GetChild(0).gameObject.SetActive(true);
+
+        while (true) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            if (Input.GetMouseButtonDown(0)) break;
+        }
+        
+        header = "";
+        body = "You’re in control of three SLAGS: Flat, Pony, and Spike." + '\n' + '\n' + "Together, we need to navigate this limited space and hostile ANTIBODIES in order to descend.";
+        tooltip.SetText(new Vector3(100,0,0), body, header);
 
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -136,7 +144,7 @@ public class TutorialSequence : MonoBehaviour
 
     public IEnumerator Select01() {
         header = "";
-        body = "Select FLAT to move it in line with an ENEMY.";
+        body = "Select Flat to move it in line with this ANTIBODY.";
         tooltip.SetText(new Vector2(280, -50), body);
         StartCoroutine(BlinkTile(new Vector2(4,1)));
 
@@ -150,7 +158,7 @@ public class TutorialSequence : MonoBehaviour
 
     public IEnumerator Move01() {
         scenario.player.currentGrid.LockGrid(false);
-        body = "Move FLAT here by selecting the highlighted tile.";
+        body = "Move Flat here by selecting the highlighted tile.";
         tooltip.SetText(new Vector2(370,-200), body);
         StartCoroutine(BlinkTile(new Vector2(6,1)));
 
@@ -169,7 +177,7 @@ public class TutorialSequence : MonoBehaviour
 
     public IEnumerator Equip01() {
         scenario.player.units[0].ui.equipment[1].GetComponent<Button>().enabled = true;
-        body = "These are FLAT's equipment. Equip the HAMMER by clicking its button.";
+        body = "This is the equipment panel. Equip the HAMMER by selecting its button.";
         tooltip.SetText(new Vector2(-300, -125), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -177,7 +185,7 @@ public class TutorialSequence : MonoBehaviour
                 if (scenario.player.selectedUnit.selectedEquipment) break;
             }
         }
-        body = "Now, target the ENEMY in range of FLAT's selected equipment.";
+        body = "Select the ANTIBODY to target it.";
         tooltip.SetText(new Vector2(680, -100), body);
 
         StartCoroutine(BlinkTile(new Vector2(6,4)));
@@ -199,7 +207,7 @@ public class TutorialSequence : MonoBehaviour
 
 
     public IEnumerator Select02() {
-        body = "Now select a slag for the HAMMER to bounce to." + '\n' + "Let's send it to PONY.";
+        body = "Now select a SLAG for the HAMMER to bounce to." + '\n' + '\n' + "Let's send it to Pony.";
         tooltip.SetText(new Vector2(-90, -50), body);
         StartCoroutine(BlinkTile(new Vector2(3,3)));
 
@@ -227,13 +235,13 @@ public class TutorialSequence : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.25f);
         UIManager.instance.LockHUDButtons(true);
 
-        body = "Great. That knocked off the enemy's shield. We'll need to attack it again to kill it for good.";
+        body = "Great. That did some damage, but we'll need to attack it again to finish it off.";
         tooltip.SetText(new Vector2(680, -100), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             if (Input.GetMouseButtonDown(0)) break;
         }
-        body = "The HAMMER can be passed between slag units or it can bounce back to the unit that threw it.";
+        body = "The HAMMER can be bounced between SLAGS or it can bounce back to the SLAG that threw it.";
         tooltip.SetText(new Vector2(440, 110), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -245,7 +253,7 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator Select03() {
         scenario.player.units[2].selectable = true;
 
-        body = "MOVE PONY in range of the ENEMY, attack it again with the HAMMER, then bounce it back to PONY.";
+        body = "MOVE Pony in range of the ANTIBODY and attack it again with the HAMMER." + '\n' + '\n' + "Select Pony again for the HAMMER to bounce back to it.";
         tooltip.SetText(new Vector2(140, 320), body);
         StartCoroutine(BlinkTile(new Vector2(3,3)));
         while (!scenario.player.selectedUnit) yield return null;
@@ -299,20 +307,20 @@ public class TutorialSequence : MonoBehaviour
         while (scenario.player.unitActing)
             yield return new WaitForSecondsRealtime(1/Util.fps);
 
-        body = "That ENEMY is taken care of. There's still an ENEMY on the floor, but the HAMMER can't be thrown again because PONY already acted.";
+        body = "That one is taken care of. There's still an ANTIBODY on the floor, but the HAMMER can't be thrown again because Pony is out of actions.";
         tooltip.SetText(new Vector2(680, -100), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             if (Input.GetMouseButtonDown(0)) break;
         }
-        body = "SPIKE can still act, let's see what it can do.";
+        body = "Spike can still act, let's see what it can do after we take a look below.";
         tooltip.SetText(new Vector2(210, 225), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             if (Input.GetMouseButtonDown(0)) break;
         }
         UIManager.instance.LockFloorButtons(false);
-        body = "Units will descend to the next floor crushing anything below." + '\n' + "Select PEEK to look at the next floor.";
+        body = "DEEPMESS is all about getting an advantage on the ANTIBODIES below." + '\n' + "Select the PEEK button to get a look at the floor below.";
         tooltip.SetText(new Vector2(650, -200), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -321,7 +329,7 @@ public class TutorialSequence : MonoBehaviour
         while (FloorManager.instance.transitioning)
             yield return new WaitForSecondsRealtime(1/Util.fps);
         UIManager.instance.LockFloorButtons(true);
-        body = "This is a preview of the next floor. You can see where enemies and hazards are located.";
+        body = "This is a preview of the next floor. You can see where ANTIBODIES and other hazards are located.";
         tooltip.SetText(new Vector2(360,-160), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -334,7 +342,7 @@ public class TutorialSequence : MonoBehaviour
             if (Input.GetMouseButtonDown(0)) break;
         }
         UIManager.instance.LockFloorButtons(false);
-        body = "Let's use SPIKE's equipment to crush an enemy below." + '\n' + "Use the PEEK button again to return to the top floor.";
+        body = "Let's use Spike's equipment to crush one of these ANTIBODIES." + '\n' + '\n' + "Select the PEEK button again to return to the top floor.";
         tooltip.SetText(new Vector2(650, -200), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -357,7 +365,7 @@ public class TutorialSequence : MonoBehaviour
         scenario.player.units[1].selectable = true;
         scenario.player.units[1].ui.equipment[0].GetComponent<Button>().enabled = true;
         UIManager.instance.LockFloorButtons(false);
-        body = "Move Spike into position over an ENEMY. Use the PEEK button to line them up.";
+        body = "Move Spike into position over the ANTIBODY. Use the PEEK button to line them up.";
         StartCoroutine(BlinkTile(new Vector2(1,2)));
         tooltip.SetText(new Vector2(80, 90), body);
         while (!scenario.player.selectedUnit)
@@ -383,7 +391,7 @@ public class TutorialSequence : MonoBehaviour
             }
         }
 
-        body = "This equipment allows SPIKE to MOVE again, leaving an ANVIL on the previous tile.";
+        body = "This equipment allows Spike to MOVE again, leaving an ANVIL on the previous tile. Equipment can only be used once per floor, so use it wisely!";
         tooltip.SetText(new Vector2(50, 450), body);
         StartCoroutine(BlinkTile(new Vector2(1,5)));
         while (scenario.player.units[1].energyCurrent > 0) {
@@ -401,7 +409,7 @@ public class TutorialSequence : MonoBehaviour
             scenario.player.units[1].selectable = false;
         scenario.player.units[1].ui.equipment[0].GetComponent<Button>().enabled = false;
         UIManager.instance.LockFloorButtons(true);
-        body = "Now that we set this trap we're out of actions. Press END TURN and ENEMIES will respond.";
+        body = "Now that we set this trap, we're out of actions. Press END TURN and ANTIBODIES will respond.";
         tooltip.SetText(new Vector2(650, -225), body);
         while (scenario.currentTurn == ScenarioManager.Turn.Player)
             yield return new WaitForSecondsRealtime(1/Util.fps);       
@@ -412,7 +420,7 @@ public class TutorialSequence : MonoBehaviour
         while (scenario.currentTurn != ScenarioManager.Turn.Enemy) yield return null;
         yield return new WaitForSecondsRealtime(0.5f);
 
-        body = "ENEMIES can move 2 tiles and then attack an adjacent tile for 1 damage.";
+        body = "ANTIBODIES can move 2 tiles and then attack anything next to them.";
         tooltip.SetText(new Vector2(480, -90), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -420,13 +428,13 @@ public class TutorialSequence : MonoBehaviour
         }
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
         yield return StartCoroutine(currentEnemy.MoveInOrder(new List<Vector2>{ new Vector2(3,6) }, new List<Vector2>{ new Vector2(2,6) }));
-        body = "Ouch! This ENEMY attakcked me! But I'm not helpless, I deal 1 damage back to attackers.";
+        body = "Ouch! This ANTIBODY attacked me! But I'm not completely helpless." + '\n' + '\n' + "I deal damage to anything that attacks me.";
         tooltip.SetText(new Vector2(400, 90), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             if (Input.GetMouseButtonDown(0)) break;
         }
-        body = "Be careful, though. If I die, or all three slag units, the run is failed.";
+        body = "Be careful, though. If I or all three of your SLAGS are destroyed, we'll lose the run.";
         tooltip.SetText(new Vector2(400, 90), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -447,14 +455,14 @@ public class TutorialSequence : MonoBehaviour
         scenario.player.units[3].selectable = false;
         UIManager.instance.LockFloorButtons(true);
 
-        body = "Our turn again. Let's descend to take advantage of our ANVIL trap.";
+        body = "It's our turn again. Let's descend to take advantage of our ANVIL trap.";
         tooltip.SetText(new Vector2(20, 120), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             if (Input.GetMouseButtonDown(0)) break;
         }
         
-        body = "Descend to the next floor by striking me with the HAMMER, or by eliminating all ENEMIES on the current floor.";
+        body = "Descend to the next floor by striking me with the HAMMER, or by eliminating all ANTIBODIES on the current floor.";
         tooltip.SetText(new Vector2(265, 0), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -462,7 +470,7 @@ public class TutorialSequence : MonoBehaviour
         }
          
         UIManager.instance.LockFloorButtons(false);
-        body = "Before descending, check to make sure your slag are in safe positions." + '\n' + "PEEK down to the next floor";
+        body = "Before descending, let's make sure your SLAGS are in a safe position." + '\n' + '\n' + "PEEK down to the next floor";
         tooltip.SetText(new Vector2(650, -200), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -470,7 +478,7 @@ public class TutorialSequence : MonoBehaviour
         }
         while (FloorManager.instance.transitioning) yield return null;
         yield return new WaitForSecondsRealtime(1/Util.fps);
-        body = "FLAT would land on a wall if you descend now. Any unit will crush anything they land on, but take 1 damage as a result.";
+        body = "Flat would land on a wall if you descend now. SLAGS and ANTIBODIES crush anything they land on, but take damage as a result.";
         tooltip.SetText(new Vector2(335, -220), body);
         StartCoroutine(BlinkTile(new Vector2(6,1)));
         while (true) {
@@ -479,7 +487,7 @@ public class TutorialSequence : MonoBehaviour
         }
         blinking = false;
         yield return null;
-        body = "Return to the current floor to move FLAT out of the way.";
+        body = "Return to the current floor to move Flat out of the way.";
         tooltip.SetText(new Vector2(650, -230), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -509,7 +517,7 @@ public class TutorialSequence : MonoBehaviour
         scenario.player.units[2].selectable = true;
         scenario.player.units[2].ui.equipment[0].GetComponent<Button>().enabled = false;
         scenario.player.units[2].ui.equipment[1].GetComponent<Button>().enabled = false;
-        body = "It's time to strike the NAIL. Move PONY into range, target me with the HAMMER, and pass to SPIKE.";
+        body = "It's time to strike me, the NAIL. Move Pony into range and select the HAMMER." + '\n' + "Target the NAIL and bounce the HAMMER to Spike.";
         tooltip.SetText(new Vector2(140, -10), body);
         StartCoroutine(BlinkTile(new Vector2(3,4)));
         while (!scenario.player.selectedUnit) yield return null;
@@ -552,7 +560,7 @@ public class TutorialSequence : MonoBehaviour
             yield return new WaitForSecondsRealtime(1/Util.fps);
 
         currentEnemy = (TutorialEnemyManager)scenario.currentEnemy;
-        body = "Solid landing. I land after all other units, but never on slag.";
+        body = "Solid landing! I land after everything else, crushing anything I land on." + '\n' + '\n' + "Don't worry, I won't land on any of your SLAGS.";
         tooltip.SetText(new Vector2(400, 180), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -561,7 +569,7 @@ public class TutorialSequence : MonoBehaviour
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
         scenario.currentTurn = ScenarioManager.Turn.Descent;
         yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
-        body = "ENEMIES act first after a descent, but they scatter in fear and don't attack.";
+        body = "When you land on a floor, ANTIBODIES scatter but can't attack yet. Let's see what we're dealing with.";
         tooltip.SetText(body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -589,7 +597,7 @@ public class TutorialSequence : MonoBehaviour
         }
         
         scenario.player.units[0].selectable = true;
-        body = "Move FLAT next to an enemy to use its equipment, BIG GRAB.";
+        body = "Move Flat next to this ANTIBODY and use its equipment, BIG GRAB.";
         tooltip.SetText(new Vector2(625, -125), body);
         StartCoroutine(BlinkTile(new Vector2(6,3)));
         while (!scenario.player.selectedUnit) yield return null;
@@ -640,13 +648,13 @@ public class TutorialSequence : MonoBehaviour
         scenario.player.units[2].selectable = true;
         scenario.player.units[2].ui.equipment[0].GetComponent<Button>().enabled = false;
 
-        body = "PONY landed in BLOOD. BLOOD won't damage units, but it restricts you from using the HAMMER or equipment.";
+        body = "Pony landed in BLOOD. BLOOD doesn't do damage, but it prevents using the HAMMER or equipment.";
         tooltip.SetText(new Vector2(375, 180), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             if (Input.GetMouseButtonDown(0)) break;
         }
-        body = "MOVE PONY out of there.";
+        body = "MOVE Pony out of there.";
         tooltip.SetText(new Vector2(-150, 280), body);
         StartCoroutine(BlinkTile(new Vector2(2,3)));
         while (!scenario.player.selectedUnit) yield return null;
@@ -666,7 +674,7 @@ public class TutorialSequence : MonoBehaviour
         scenario.player.units[1].ui.equipment[0].GetComponent<Button>().enabled = false;
         scenario.player.units[1].ui.equipment[1].GetComponent<Button>().enabled = false;
         UIManager.instance.LockHUDButtons(true);
-        body = "SPIKE has the HAMMER, but I can't be hit to descend until next turn. Line SPIKE up to attack the enemy instead.";
+        body = "Spike has the HAMMER, but I can't be struck to descend until next turn. Line Spike up to attack the ANTIBODY instead.";
         tooltip.SetText(new Vector2(200, 165), body);
         StartCoroutine(BlinkTile(new Vector2(1, 5)));
         while (!scenario.player.selectedUnit) yield return null;
@@ -683,13 +691,13 @@ public class TutorialSequence : MonoBehaviour
         while (scenario.player.unitActing)
             yield return new WaitForSecondsRealtime(1/Util.fps);
         UIManager.instance.LockHUDButtons(true);
-        body = "Oops. SPIKE can't hit that enemy with PONY in the way.";
+        body = "Oops. Spike can't hit that ANTIBODY with Pony in the way.";
         tooltip.SetText(new Vector2(130, 180), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             if (Input.GetMouseButtonDown(0)) break;
         }
-        body = "You can UNDO your slags' MOVEMENT only. Once a slag performs an action, you can't UNDO any slags' previous MOVE. Plan accordingly!";
+        body = "You can UNDO your SLAGS' MOVEMENT. Once a SLAG performs an action, however, you can't UNDO any previous MOVE. Plan accordingly!";
         tooltip.SetText(new Vector2(650, -200), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -698,14 +706,14 @@ public class TutorialSequence : MonoBehaviour
         UIManager.instance.LockHUDButtons(false);
         UIManager.instance.endTurnButton.enabled = false;
         UIManager.instance.LockFloorButtons(true);
-        body = "UNDO SPIKE and PONY's MOVE so you can attack with SPIKE before PONY MOVES.";
+        body = "UNDO Spike and Pony's MOVE so you can attack with Spike before Pony MOVES.";
         tooltip.SetText(body);
         while (scenario.player.undoableMoves.Count > 0) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             
         }
         scenario.player.units[1].selectable = true;
-        body = "Now, attack that last enemy and pass the HAMMER to PONY.";
+        body = "Now, attack that last ANTIBODY and bounce the HAMMER to Pony.";
         tooltip.SetText(new Vector2(-220, 420), body);
         StartCoroutine(BlinkTile(new Vector2(1,5)));
         while (!scenario.player.selectedUnit) yield return null;
@@ -743,7 +751,7 @@ public class TutorialSequence : MonoBehaviour
         yield return new WaitForSecondsRealtime(1/Util.fps);
         UIManager.instance.LockHUDButtons(true);
         scenario.player.units[2].selectable = true;
-        body = "Don't forget, eliminating the last enemy will also trigger a DESCENT.";
+        body = "Remember, you descend after striking the NAIL or as soon as the last ANTIBODY is defeated on a floor." + '\n' + "Make sure you're prepared!";
         tooltip.SetText(new Vector2(-90, 360), body);
         StartCoroutine(BlinkTile(new Vector2(2,3)));
         while (!scenario.player.selectedUnit) yield return null;
@@ -789,14 +797,14 @@ public class TutorialSequence : MonoBehaviour
         while (scenario.currentTurn == ScenarioManager.Turn.Descent)
             yield return new WaitForSecondsRealtime(1/Util.fps);
 
-        body = "Good job going down. Remember, our primary goal is to descend as far as possible.";
+        body = "Good job going down. Remember, our goal is to descend as far as possible, and if I or all three SLAGS are destroyed, the run is over!";
         tooltip.SetText(new Vector2(90, -60), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             if (Input.GetMouseButtonDown(0)) break;
         }
 
-        body = "We landed on an empty floor. When this happens we use our momentum to trigger a CASCADE. Slag won't be able to act on this floor, and we DESCEND again immediately.";
+        body = "We landed on an empty floor. When this happens we use our momentum to trigger a CASCADE. SLAGS won't be able to act on this floor, and we DESCEND again immediately.";
         tooltip.SetText(body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
