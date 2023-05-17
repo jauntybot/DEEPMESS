@@ -50,7 +50,7 @@ public class UnitUI : MonoBehaviour
                 overview = view.Initialize(u, overviewLayoutParent);
             }
             UpdateEquipmentButtons();
-            ToggleEquipmentPanel(false);
+           
         }
         ToggleUnitPanel(false);
         if (initialLoadoutButton != null) {

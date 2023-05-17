@@ -33,10 +33,6 @@ public class EquipmentButton : MonoBehaviour
         UpdateMod();
     }
 
-    public void ButtonEnabled() {
-        GetComponent<Button>().enabled = !unit.conditions.Contains(Unit.Status.Restricted);
-    }
-
     public void UpdateMod() {
         if (data is MoveData) {
             rangeMod = unit.moveMod;

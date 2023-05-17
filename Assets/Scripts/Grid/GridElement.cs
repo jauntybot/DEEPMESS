@@ -64,7 +64,8 @@ public class GridElement : MonoBehaviour{
         UpdateSortOrder(c);
         coord=c;
         foreach (GridElement ge in grid.CoordContents(c)) {
-            ge.OnSharedSpace(this);
+            if (ge != this)
+                ge.OnSharedSpace(this);
         }
     }  
 

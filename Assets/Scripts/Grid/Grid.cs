@@ -148,7 +148,7 @@ public class Grid : MonoBehaviour {
         if (!stack)
             DisableGridHighlight();
 
-        Color c = floorManager.equipmentColor;
+        Color c = floorManager.playerColor;
         if (index is int i)
             c = floorManager.GetFloorColor(i);
 

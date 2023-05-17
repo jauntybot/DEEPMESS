@@ -13,6 +13,7 @@ public class PlayerUnit : Unit {
     public AnimState prevAnimState, animState;
     protected Animator gfxAnim;
     public override event OnElementUpdate ElementDestroyed;
+    public virtual event OnElementUpdate ElementDisabled;
     
     protected override void Start() {
         base.Start();
@@ -28,11 +29,12 @@ public class PlayerUnit : Unit {
                 base.UpdateAction(equipment, mod);
             else if (equipment is not ConsumableEquipmentData)
                 base.UpdateAction(equipment, mod);
+            pManager.EquipmentSelected(equipment);
         }
         else {
             base.UpdateAction(pManager.overrideEquipment, mod);
+            pManager.EquipmentSelected(pManager.overrideEquipment);
         }
-        pManager.EquipmentSelected(equipment);
     }
 
     public override IEnumerator ExecuteAction(GridElement target = null) {
@@ -82,7 +84,7 @@ public class PlayerUnit : Unit {
     public override void TargetElement(bool state)
     {
         base.TargetElement(state);
-        ui.ToggleEquipmentPanel(state);
+        //ui.ToggleEquipmentPanel(state);
         //if (energyCurrent == 0 || pManager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
     }
 
@@ -125,6 +127,8 @@ public class PlayerUnit : Unit {
             }
         }
         yield return null;
+        ElementDisabled?.Invoke(this);
+        Debug.Log("event sent");
         SwitchAnim(AnimState.Disabled);
         ApplyCondition(Status.Disabled);
     }

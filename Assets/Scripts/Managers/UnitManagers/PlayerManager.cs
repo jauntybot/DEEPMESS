@@ -19,7 +19,7 @@ public class PlayerManager : UnitManager {
     [HideInInspector] public List<Vector2> nailSpawnOverrides = new List<Vector2>();
     public List<HammerData> hammerActions;
     [SerializeField] EquipmentData cascadeMovement;
-    [HideInInspector] public EquipmentData overrideEquipment = null;
+     public EquipmentData overrideEquipment = null;
     [SerializeField] public GridContextuals contextuals;
 
     [Header("PREFABS")]
@@ -74,19 +74,12 @@ public class PlayerManager : UnitManager {
         };
 
         yield return StartCoroutine(loadout.Initialize(initU));
-        yield return ScenarioManager.instance.StartCoroutine(ScenarioManager.instance.SwitchTurns(ScenarioManager.Turn.Descent));
+        //yield return ScenarioManager.instance.StartCoroutine(ScenarioManager.instance.SwitchTurns(ScenarioManager.Turn.Descent));
 
         SpawnHammer((PlayerUnit)units[0], hammerActions);
-
-        foreach (Unit u in initU) {
-            StartCoroutine(floorManager.DropUnit(u, u.transform.position, currentGrid.PosFromCoord(u.coord)));
-            yield return new WaitForSecondsRealtime(0.1f);
-        }
         
         nail = (Nail)SpawnUnit(new Vector3(3, 3), nailPrefab.GetComponent<Nail>());
-        nail.gameObject.transform.parent = unitParent.transform;
-
-        yield return StartCoroutine(DropNail());
+        nail.gameObject.transform.parent = unitParent.transform;      
 
         pc = GetComponent<PlayerController>();
         if (FloorManager.instance) floorManager = FloorManager.instance;
@@ -147,7 +140,7 @@ public class PlayerManager : UnitManager {
                 u.grid = currentGrid;
             }
             contextuals.grid = currentGrid;
-            contextuals.DisplayGridContextuals(selectedUnit, null, overrideEquipment.contextDisplay, 0);
+            //contextuals.DisplayGridContextuals(selectedUnit, null, GridContextuals.ContextDisplay.IconOnly, 0);
         } else
             overrideEquipment = null;
     }
@@ -161,13 +154,17 @@ public class PlayerManager : UnitManager {
 // Overriden functionality
     public override Unit SpawnUnit(Vector2 coord, Unit unit) {
         Unit u = base.SpawnUnit(coord, unit);
-        u.transform.position += new Vector3(0, floorManager.floorOffset, 0);
-        u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
-        
+        //u.transform.position += new Vector3(0, floorManager.floorOffset, 0);
+        u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0.5f;
+        if (u is Nail)
+            u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
+            
+                
 // Initialize equipment from prefab
         foreach(EquipmentData e in u.equipment) {
             e.EquipEquipment(u);
         }
+        //u.grid.RemoveElement(u);
 
         return u;
     }
@@ -352,7 +349,7 @@ public class PlayerManager : UnitManager {
     }
 
     public void EquipmentSelected(EquipmentData equip = null) {
-        if (equip && equip != overrideEquipment) {
+        if (equip) {
             if (!equip.multiselect || equip.firstTarget == null) {
                 contextuals.StartUpdateCoroutine();
             }
