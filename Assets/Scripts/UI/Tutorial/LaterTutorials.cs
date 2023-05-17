@@ -99,8 +99,8 @@ public class LaterTutorials : MonoBehaviour
     }
 
     void StartDeathTut(GridElement blank) {
-        
-        StartCoroutine(DeathRevivTut());
+        if (!deathReviveEncountered)
+            StartCoroutine(DeathRevivTut());
     }
 
     public IEnumerator DeathRevivTut() {
