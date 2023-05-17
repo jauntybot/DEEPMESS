@@ -106,7 +106,7 @@ public class ElementCanvas : MonoBehaviour
             for (int i = 0; i <= element.hpMax - 1; i++) {
                 GameObject pip = Instantiate(hpPipPrefab, dmgPanel.transform);
                 pip.GetComponent<Image>().enabled = i >= element.hpCurrent;
-                pip.gameObject.SetActive(i <= r);
+                pip.gameObject.SetActive(i <= r - 1);
             }
             dmgAnim.SetBool("dmg", false);
         }

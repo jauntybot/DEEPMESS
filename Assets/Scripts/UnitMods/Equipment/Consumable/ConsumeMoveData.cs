@@ -83,7 +83,7 @@ public class ConsumeMoveData : ConsumableEquipmentData
                     unit.grid.DisplayValidCoords(unit.validActionCoords, gridColor);
                     yield return user.StartCoroutine(GrabUnit((Unit)user, (Unit)firstTarget));
                 } else {
-                    SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(target.coord), Quaternion.identity).GetComponent<SpriteRenderer>();
+                    SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(user.coord), Quaternion.identity).GetComponent<SpriteRenderer>();
                     sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
                     Coroutine co = user.StartCoroutine(ThrowUnit((Unit)user, (Unit)firstTarget, target.coord));
                     firstTarget = null;
@@ -99,7 +99,7 @@ public class ConsumeMoveData : ConsumableEquipmentData
     public IEnumerator SwapUnits(Unit unit1, Unit unit2) {
         Instantiate(vfx, unit1.grid.PosFromCoord(unit1.coord), Quaternion.identity);
         Instantiate(vfx, unit1.grid.PosFromCoord(unit2.coord), Quaternion.identity);
-        
+
         Vector2 to1 = unit2.coord; Vector2 to2 = unit1.coord;
         yield return null;
         unit1.UpdateElement(to1); unit2.UpdateElement(to2);
