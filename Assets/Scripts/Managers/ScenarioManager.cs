@@ -79,6 +79,10 @@ public class ScenarioManager : MonoBehaviour
     }
 
     public IEnumerator FirstTurn() {
+        foreach (Unit u in player.units) {
+            u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
+            u.hitbox.enabled = false;
+        }
         if (tutorial) {
             if (!tutorial.skip) {
                 yield return StartCoroutine(SwitchTurns(Turn.Descent));
@@ -105,10 +109,6 @@ public class ScenarioManager : MonoBehaviour
             }
         } else {
             floorManager.previewManager.InitialPreview();
-            foreach (Unit u in player.units) {
-                u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
-                u.hitbox.enabled = false;
-            }
             
             foreach (GridElement ge in player.units)
                 floorManager.currentFloor.RemoveElement(ge);
