@@ -254,7 +254,7 @@ public class TutorialSequence : MonoBehaviour
         scenario.player.units[2].selectable = true;
 
         body = "MOVE Pony in range of the ANTIBODY and attack it again with the HAMMER." + '\n' + '\n' + "Select Pony again for the HAMMER to bounce back to it.";
-        tooltip.SetText(new Vector2(140, 320), body);
+        tooltip.SetText(new Vector2(140, 370), body);
         StartCoroutine(BlinkTile(new Vector2(3,3)));
         while (!scenario.player.selectedUnit) yield return null;
         blinking = false;
@@ -343,7 +343,7 @@ public class TutorialSequence : MonoBehaviour
         }
         UIManager.instance.LockFloorButtons(false);
         body = "Let's use Spike's equipment to crush one of these ANTIBODIES." + '\n' + '\n' + "Select the PEEK button again to return to the top floor.";
-        tooltip.SetText(new Vector2(650, -200), body);
+        tooltip.SetText(new Vector2(650, -170), body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             if (FloorManager.instance.transitioning) break;
@@ -392,7 +392,7 @@ public class TutorialSequence : MonoBehaviour
         }
 
         body = "This equipment allows Spike to MOVE again, leaving an ANVIL on the previous tile. Equipment can only be used once per floor, so use it wisely!";
-        tooltip.SetText(new Vector2(50, 450), body);
+        tooltip.SetText(new Vector2(50, 500), body);
         StartCoroutine(BlinkTile(new Vector2(1,5)));
         while (scenario.player.units[1].energyCurrent > 0) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -571,7 +571,7 @@ public class TutorialSequence : MonoBehaviour
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
         scenario.currentTurn = ScenarioManager.Turn.Descent;
         yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
-        body = "When you land on a floor, ANTIBODIES scatter but can't attack yet. Let's see what we're dealing with.";
+        body = "When you land on a floor, ANTIBODIES scatter but wont attack. Let's see what we're dealing with.";
         tooltip.SetText(body);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
