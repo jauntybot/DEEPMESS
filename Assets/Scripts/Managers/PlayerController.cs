@@ -102,7 +102,7 @@ public class PlayerController : MonoBehaviour {
                             manager.UndoMove();
                         }
                         if (Input.GetKeyDown(KeyCode.Space)) {
-                            FloorManager.instance.PreviewButton(!FloorManager.instance.peeking);
+                            FloorManager.instance.previewManager.PreviewButton(!FloorManager.instance.peeking);
                         }
                         if (Input.GetKeyDown(KeyCode.T)) {
                             ScenarioManager.instance.EndTurn();

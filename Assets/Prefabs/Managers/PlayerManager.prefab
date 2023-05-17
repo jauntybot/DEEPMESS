@@ -194,6 +194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cursorTexture: {fileID: 2800000, guid: 621a17ad511f5f14a905e5d2d841d6eb, type: 3}
+  clickable: 0
 --- !u!114 &7493072995628922205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,9 +212,11 @@ MonoBehaviour:
   unitParent: {fileID: 7493072997588697754}
   units: []
   selectedUnit: {fileID: 0}
+  unitDescentPreview: {fileID: 4667224458327339558, guid: ea5797a6c092dd648bd71d4f3fb8d6cc, type: 3}
   pc: {fileID: 0}
   loadout: {fileID: 0}
   nail: {fileID: 0}
+  nailSpawnOverrides: []
   hammerActions:
   - {fileID: 11400000, guid: a4375cd6c7930d04393ffb6fa42b069e, type: 2}
   cascadeMovement: {fileID: 11400000, guid: cfb129f02c32c39469e9cb8361751f64, type: 2}
@@ -221,7 +224,6 @@ MonoBehaviour:
   contextuals: {fileID: 7493072995628922177}
   nailPrefab: {fileID: 2911188987296525511, guid: 3c53f14dfc3e6174e874415021915958, type: 3}
   hammerPrefab: {fileID: 3955549777479365904, guid: a8ad447d87fd54d3284fc69a0b042b16, type: 3}
-  hammerPickupPrefab: {fileID: 447688835278664603, guid: c280a86d83b54064b8ac57b8732a317d, type: 3}
   unitActing: 0
   undoOrder: []
   turnBlink: {fileID: 0}

@@ -52,6 +52,7 @@ public class PlacementData : ConsumableEquipmentData
                     yield return new WaitForSecondsRealtime(1/Util.fps);
                     timer += Time.deltaTime;    
                 }
+                placed.gfx[0].GetComponent<Animator>().SetTrigger("Deploy");
                 placed.UpdateElement(target.coord);
                 if (target != null)
                     placed.OnSharedSpace(target);

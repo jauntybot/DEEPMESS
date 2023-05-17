@@ -16,8 +16,9 @@ public class GridElement : MonoBehaviour{
     public bool selectable, targeted;
     public PolygonCollider2D hitbox;
     public ElementCanvas elementCanvas;
-
+    public enum DamageType { Unspecified, Melee, Gravity, Bile };
     Material originalMaterial;
+    bool takingDmg;
 
     [Header("UI/UX")]
     public List<SpriteRenderer> gfx;
@@ -25,6 +26,7 @@ public class GridElement : MonoBehaviour{
 
 
     public delegate void OnElementUpdate(GridElement ge);
+    public virtual event OnElementUpdate ElementUpdated;
     public virtual event OnElementUpdate ElementDestroyed;
 
     public int hpMax, hpCurrent, defense;
@@ -60,6 +62,7 @@ public class GridElement : MonoBehaviour{
 // Update grid position and coordinate
     public virtual void UpdateElement(Vector2 c) 
     {
+        ElementUpdated?.Invoke(this);
         transform.position = grid.PosFromCoord(c);
         UpdateSortOrder(c);
         coord=c;
@@ -85,8 +88,9 @@ public class GridElement : MonoBehaviour{
     }
 
   
-    public virtual IEnumerator TakeDamage(int dmg, GridElement source = null) 
+    public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) 
     {
+        takingDmg = true;
         if (!shell || Mathf.Sign(dmg) == -1) {
             if (Mathf.Sign(dmg) == 1) {
                 if (dmgdSFX)
@@ -107,14 +111,14 @@ public class GridElement : MonoBehaviour{
         } else {
             RemoveShell();
         }
+        if (hpCurrent <= 0) {
+            StartCoroutine(DestroyElement(dmgType));
+        }
         yield return new WaitForSecondsRealtime(.4f);
         TargetElement(false);
-        if (hpCurrent <= 0) {
-            StartCoroutine(DestroyElement());
-        }
     }
 
-    public virtual IEnumerator DestroyElement() 
+    public virtual IEnumerator DestroyElement(DamageType dmgType = DamageType.Unspecified) 
     {
         ElementDestroyed?.Invoke(this);
         AudioClip d = null;
@@ -122,7 +126,7 @@ public class GridElement : MonoBehaviour{
             d = destroyedSFX.Get();
             PlaySound(d);
         }
-
+        yield return new WaitForSecondsRealtime(.4f);
         foreach (SpriteRenderer sr in gfx) 
             sr.enabled = false;
         if (elementCanvas)
@@ -144,7 +148,7 @@ public class GridElement : MonoBehaviour{
 
     public virtual IEnumerator CollideFromBelow(GridElement above) {
         RemoveShell();
-        yield return StartCoroutine(DestroyElement());
+        yield return StartCoroutine(DestroyElement(DamageType.Gravity));
     }
 
     public virtual void OnSharedSpace(GridElement sharedWith) {

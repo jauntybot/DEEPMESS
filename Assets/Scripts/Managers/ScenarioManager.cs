@@ -79,6 +79,10 @@ public class ScenarioManager : MonoBehaviour
     }
 
     public IEnumerator FirstTurn() {
+        foreach (Unit u in player.units) {
+            u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
+            u.hitbox.enabled = false;
+        }
         if (tutorial) {
             if (!tutorial.skip) {
                 yield return StartCoroutine(SwitchTurns(Turn.Descent));
@@ -92,25 +96,25 @@ public class ScenarioManager : MonoBehaviour
                 yield return StartCoroutine(floorManager.GenerateNextFloor(TutorialSequence.instance.tutorialFloorPrefab, TutorialSequence.instance.tutorialEnemyPrefab));
                 StartCoroutine(tutorial.Tutorial());
             } else {
-                StartCoroutine(floorManager.ToggleDescentPreview(true, true));
+                
                 player.nail.selectable = false;
                 foreach (GridElement ge in player.units)
                     floorManager.currentFloor.RemoveElement(ge);
                 yield return StartCoroutine(floorManager.ChooseLandingPositions());
                 yield return new WaitForSecondsRealtime(1.25f);
-                StartCoroutine(floorManager.ToggleDescentPreview(false));
+                
                 yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], }));
                 yield return StartCoroutine(floorManager.GenerateNextFloor());
                 StartCoroutine(SwitchTurns(Turn.Enemy));
             }
         } else {
-            StartCoroutine(floorManager.ToggleDescentPreview(true, true));
-            player.nail.selectable = false;
+            floorManager.previewManager.InitialPreview();
+            
             foreach (GridElement ge in player.units)
                 floorManager.currentFloor.RemoveElement(ge);
             yield return StartCoroutine(floorManager.ChooseLandingPositions());
             yield return new WaitForSecondsRealtime(1.25f);
-            StartCoroutine(floorManager.ToggleDescentPreview(false));
+            
             yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], }));
             yield return StartCoroutine(floorManager.GenerateNextFloor());
             StartCoroutine(SwitchTurns(Turn.Enemy));
@@ -179,8 +183,8 @@ public class ScenarioManager : MonoBehaviour
                 }
             break;
             case Turn.Descent:
-                if (prevTurn != Turn.Cascade)
-                    yield return StartCoroutine(floorManager.CancelPreview());
+                floorManager.previewManager.TogglePreivews(false);
+                
                 if (prevTurn == Turn.Cascade) {
                     //player.currentGrid = floorManager.floors[player.currentGrid.index-1];
                     for (int i = player.units.Count - 1; i >= 0; i--) {
@@ -199,8 +203,11 @@ public class ScenarioManager : MonoBehaviour
             case Turn.Cascade:
                 currentTurn = Turn.Cascade;
                 player.currentGrid = floorManager.currentFloor;
-                player.currentGrid.LockGrid(false);
+                floorManager.previewManager.alignmentFloor = floorManager.currentFloor;
+                floorManager.currentFloor.LockGrid(false);
                 player.StartEndTurn(true, true);
+                foreach(Unit u in player.units)
+                    u.hitbox.enabled = false;
                 foreach (Unit u in player.units) {
                     if (u is not Nail) {
                         u.energyCurrent = 0;

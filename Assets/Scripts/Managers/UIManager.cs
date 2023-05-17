@@ -70,7 +70,6 @@ public class UIManager : MonoBehaviour
         }
         unitPortraits.Add(ui);
         return ui;
-
     }
 
     public IEnumerator LoadOutScreen(bool first = false) {
