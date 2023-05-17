@@ -6,6 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public class BHammerData : HammerData
 {
+    GridElement.DamageType dmgType = GridElement.DamageType.Melee;
     public SFX throwSFX, catchSFX, nailSFX, shellSFX;
    
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
@@ -150,7 +151,8 @@ public class BHammerData : HammerData
                     if (useSFX)
                         target.PlaySound(useSFX.Get());
                 }
-                targetCo = target.StartCoroutine(target.TakeDamage(1));
+                Instantiate(vfx, user.grid.PosFromCoord(target.coord) + new Vector3(0, 1, 0), Quaternion.identity);
+                targetCo = target.StartCoroutine(target.TakeDamage(1, dmgType));
             }
 // Trigger descent if nail
             else if (target is Nail n) {
@@ -158,6 +160,7 @@ public class BHammerData : HammerData
                     target.PlaySound(nailSFX.Get());
                 if (n.nailState == Nail.NailState.Primed)
                     n.ToggleNailState(Nail.NailState.Buried);
+                Instantiate(vfx, user.grid.PosFromCoord(target.coord) + new Vector3(0, 1, 0), Quaternion.identity);
             } else if (target is PlayerUnit pu) {
                 if (catchSFX)
                     user.PlaySound(catchSFX.Get());

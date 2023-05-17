@@ -36,12 +36,19 @@ public class UnitUI : MonoBehaviour
         unitName.text = u.name;
         portrait.sprite = u.portrait;
         if (u is PlayerUnit) {
-            portrait.rectTransform.localPosition = new Vector2(-43, -86);
+            portrait.rectTransform.localPosition = new Vector2(-43, -86);    
             portrait.rectTransform.sizeDelta = new Vector2(900, 900);
-        } else {
-            portrait.rectTransform.localPosition = new Vector2(0, -165);
+        } else if (u is EnemyUnit) {
+            portrait.rectTransform.localPosition = new Vector2(-12, -315);
+            portrait.rectTransform.sizeDelta = new Vector2(900, 900);
+        } else if (u is Anvil) {
+            portrait.rectTransform.localPosition = new Vector3(-17, -51, 0);
+            portrait.rectTransform.sizeDelta = new Vector2(500, 500);
+        } else if (u is Nail) {
+            portrait.rectTransform.localPosition = new Vector3(0,-65,0);
             portrait.rectTransform.sizeDelta = new Vector2(600, 600);
         }
+        
         gfx.sprite = u.gfx[0].sprite;
 
         if (u is PlayerUnit) {

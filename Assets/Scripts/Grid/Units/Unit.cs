@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class Unit : GridElement {
 
+    public override event OnElementUpdate ElementDestroyed;
 
     [Header("Unit")]
+    protected Animator gfxAnim;
+    [SerializeField] DescentVFX descentVFX;
     public UnitManager manager;
     public bool selected;
     public EquipmentData selectedEquipment;
@@ -23,6 +26,7 @@ public class Unit : GridElement {
 
     [Header("UNIT UI/UX")]
     public UnitUI ui;
+    public DescentPreview descentPreview;
     public Sprite portrait;
     
     [SerializeField] float animDur = 1f;
@@ -32,6 +36,11 @@ public class Unit : GridElement {
 
 // Functions that will change depending on the class they're inherited from
 #region Inherited Functionality
+
+    protected override void Start() {
+        base.Start();
+        gfxAnim = gfx[0].GetComponent<Animator>();
+    }
 
     public virtual void UpdateAction(EquipmentData equipment = null, int mod = 0) {
 // Clear data
@@ -74,20 +83,35 @@ public class Unit : GridElement {
             ApplyCondition(Status.Restricted);
         } else if (targetSqr.tileType == GridSquare.TileType.Bile) {
             RemoveShell();
-            StartCoroutine(TakeDamage(hpMax));
+            StartCoroutine(TakeDamage(hpMax, DamageType.Bile));
         } else {
             RemoveCondition(Status.Restricted);
         }
     }
 
-    public override IEnumerator TakeDamage(int dmg, GridElement source = null) {
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) {
 
         bool prevTargeted = targeted;
         TargetElement(true);
 
-        yield return base.TakeDamage(dmg, source);
+        yield return base.TakeDamage(dmg, dmgType, source);
 
         TargetElement(targeted);
+    }
+
+    public override IEnumerator DestroyElement(DamageType dmgType = DamageType.Unspecified) {
+        ElementDestroyed?.Invoke(this);
+        AudioClip d = null;
+        if (destroyedSFX) {
+            d = destroyedSFX.Get();
+            PlaySound(d);
+        }
+
+        //gfxAnim.SetBool("Destoyed", true);
+        
+        yield return new WaitForSecondsRealtime(d.length + 0.5f);
+        if (this.gameObject != null)
+            Destroy(this.gameObject);
     }
 
 #endregion
@@ -95,9 +119,30 @@ public class Unit : GridElement {
 
 #region Unit Functionality
     
+    public void DescentVFX(GridSquare sqr, GridElement subGE = null) {
+        descentVFX.gameObject.SetActive(true);
+
+        if (subGE) {
+            if (subGE is Wall)
+                descentVFX.SetColor(4);
+            else if (subGE is EnemyUnit)
+                descentVFX.SetColor(3);
+            else
+                descentVFX.SetColor(0);
+        } else {
+            if (sqr.tileType == GridSquare.TileType.Blood)
+                descentVFX.SetColor(2);
+            else if (sqr.tileType == GridSquare.TileType.Bile)
+                descentVFX.SetColor(1);
+            else
+                descentVFX.SetColor(0);
+        }
+
+    }
+
     public virtual IEnumerator CollideFromAbove(GridElement subGE) {
 
-        yield return StartCoroutine(TakeDamage(1));
+        yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
     }
 
     public virtual void ApplyCondition(Status s) {

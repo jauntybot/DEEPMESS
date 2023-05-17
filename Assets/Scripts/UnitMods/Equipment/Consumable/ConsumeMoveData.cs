@@ -19,7 +19,6 @@ public class ConsumeMoveData : ConsumableEquipmentData
                 return base.TargetEquipment(user, mod);
             case MoveType.Throw:
                 if (firstTarget == null) {
-                    Debug.Log("Target Grab");
                     List<Vector2> validCoords = EquipmentAdjacency.OrthagonalAdjacency(user, 1, firstTargets, firstTargets);
                     user.grid.DisplayValidCoords(validCoords, gridColor);
                     for (int i = validCoords.Count - 1; i >= 0; i--) {
@@ -41,7 +40,6 @@ public class ConsumeMoveData : ConsumableEquipmentData
                     }
                     return validCoords;
                 } else {
-                    Debug.Log("Target Throw");
                     List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this);
                     user.grid.DisplayValidCoords(validCoords, gridColor);
                     if (user is PlayerUnit u) u.ui.ToggleEquipmentButtons();
@@ -75,6 +73,8 @@ public class ConsumeMoveData : ConsumableEquipmentData
                 break;
             case MoveType.Throw: 
                 if (firstTarget == null) {
+                    SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(user.coord), Quaternion.identity).GetComponent<SpriteRenderer>();
+                    sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
                     firstTarget = target;
                     contextualAnimGO = target.gameObject;
                     Unit unit = (Unit)user;
@@ -83,6 +83,8 @@ public class ConsumeMoveData : ConsumableEquipmentData
                     unit.grid.DisplayValidCoords(unit.validActionCoords, gridColor);
                     yield return user.StartCoroutine(GrabUnit((Unit)user, (Unit)firstTarget));
                 } else {
+                    SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(target.coord), Quaternion.identity).GetComponent<SpriteRenderer>();
+                    sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
                     Coroutine co = user.StartCoroutine(ThrowUnit((Unit)user, (Unit)firstTarget, target.coord));
                     firstTarget = null;
                     yield return base.UseEquipment(user);
@@ -95,7 +97,9 @@ public class ConsumeMoveData : ConsumableEquipmentData
     }
 
     public IEnumerator SwapUnits(Unit unit1, Unit unit2) {
-
+        Instantiate(vfx, unit1.grid.PosFromCoord(unit1.coord), Quaternion.identity);
+        Instantiate(vfx, unit1.grid.PosFromCoord(unit2.coord), Quaternion.identity);
+        
         Vector2 to1 = unit2.coord; Vector2 to2 = unit1.coord;
         yield return null;
         unit1.UpdateElement(to1); unit2.UpdateElement(to2);
@@ -136,7 +140,9 @@ public class ConsumeMoveData : ConsumableEquipmentData
 
     public IEnumerator MoveAllUnits(GridElement user, Vector2 selection) {
 
-        dir = selection - user.coord;
+        dir = (selection - user.coord).normalized;
+        Animator anim = Instantiate(vfx).GetComponent<Animator>();
+        anim.SetInteger("X", (int)dir.x); anim.SetInteger("Y", (int)dir.y);
         List<Unit> unitsToMove = new List<Unit>();
         foreach (GridElement ge in user.grid.gridElements) {
             if (ge is Unit u) {

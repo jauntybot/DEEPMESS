@@ -10,7 +10,6 @@ public class Nail : Unit
 
     public enum NailState { Primed, Buried }
     public NailState nailState;
-    [SerializeField] Animator gfxAnim;
 
     protected override void Start()
     {

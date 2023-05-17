@@ -124,7 +124,6 @@ public class TutorialSequence : MonoBehaviour
         header = "WELCOME";
         body = "to DEEPMESS. Here's a brief summary of what you'll be doing in the game." + '\n' + '\n' + "SUMMARY";
         tooltip.SetText(new Vector3(100,0,0), body, header);
-        tooltip.transform.GetChild(0).gameObject.SetActive(true);
 
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -526,6 +525,7 @@ public class TutorialSequence : MonoBehaviour
         blinking = false;
         scenario.player.units[2].ui.equipment[1].GetComponent<Button>().enabled = true;
         while (scenario.player.unitActing) yield return null;
+        UIManager.instance.LockHUDButtons(true);
         StartCoroutine(BlinkTile(new Vector2(2,6)));
         scenario.player.units[2].ui.equipment[1].enabled = true;
         while (true) {
@@ -534,6 +534,7 @@ public class TutorialSequence : MonoBehaviour
                 if (scenario.player.units[2].selectedEquipment.firstTarget) break;
             }
         }
+        UIManager.instance.LockHUDButtons(true);
         blinking = false; yield return null;
         StartCoroutine(BlinkTile(new Vector2(1,5)));
         while (scenario.currentTurn == ScenarioManager.Turn.Player) {

@@ -24,7 +24,7 @@ public class PlayerManager : UnitManager {
 
     [Header("PREFABS")]
     [SerializeField] public GameObject nailPrefab;
-    [SerializeField] public GameObject hammerPrefab, hammerPickupPrefab;
+    [SerializeField] public GameObject hammerPrefab;
 
     [Header("UNDO")]
     public bool unitActing = false;
@@ -51,6 +51,7 @@ public class PlayerManager : UnitManager {
     public override IEnumerator Initialize(bool tut = false)
     {
         yield return base.Initialize();
+        if (FloorManager.instance) floorManager = FloorManager.instance;
 
         contextuals.Initialize(this);
 
@@ -82,7 +83,6 @@ public class PlayerManager : UnitManager {
         nail.gameObject.transform.parent = unitParent.transform;      
 
         pc = GetComponent<PlayerController>();
-        if (FloorManager.instance) floorManager = FloorManager.instance;
 
 // NEEDS IF STATEMENT FOR BOOL USED IN LOADOUT INITIALIZATION
         ScenarioManager.instance.InitialDescent();
@@ -153,9 +153,24 @@ public class PlayerManager : UnitManager {
 
 // Overriden functionality
     public override Unit SpawnUnit(Vector2 coord, Unit unit) {
-        Unit u = base.SpawnUnit(coord, unit);
+        Unit u = Instantiate(unit.gameObject, unitParent.transform).GetComponent<Unit>();
+        u.StoreInGrid(currentGrid);
+
+        units.Add(u);
+        SubscribeElement(u);
+        u.manager = this;
+        if (u is PlayerUnit pu)
+            pu.pManager = this;
+
+        UIManager.instance.UpdatePortrait(u, false);
+        if (unit is not Nail) {
+            DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
+            dp.Initialize(u, floorManager.previewManager);
+        }
+
+        u.UpdateElement(coord);
         //u.transform.position += new Vector3(0, floorManager.floorOffset, 0);
-        u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0.5f;
+        
         if (u is Nail)
             u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
             
@@ -229,7 +244,8 @@ public class PlayerManager : UnitManager {
                 if (selectedUnit) {
                     if (u == selectedUnit && !selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) 
                     {  
-                        DeselectUnit();                 
+                        //DeselectUnit();                 
+                        return;
                     }
                     else if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
                         StartCoroutine(selectedUnit.ExecuteAction(u));

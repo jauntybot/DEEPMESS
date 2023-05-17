@@ -16,6 +16,7 @@ public class UnitManager : MonoBehaviour {
     [SerializeField] protected GameObject unitParent;
     public List<Unit> units = new List<Unit>();    
     public Unit selectedUnit;
+    [SerializeField] protected GameObject unitDescentPreview;
 
 
 // Called from scenario manager when game starts
@@ -34,13 +35,18 @@ public class UnitManager : MonoBehaviour {
     {
         Unit u = Instantiate(unit.gameObject, unitParent.transform).GetComponent<Unit>();
         u.StoreInGrid(currentGrid);
-        u.UpdateElement(coord);
 
         units.Add(u);
         SubscribeElement(u);
         u.manager = this;
 
         UIManager.instance.UpdatePortrait(u, false);
+        if (unit is not Nail) {
+            DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
+            dp.Initialize(u, floorManager.previewManager);
+        }
+
+        u.UpdateElement(coord);
 
         return u;
     }

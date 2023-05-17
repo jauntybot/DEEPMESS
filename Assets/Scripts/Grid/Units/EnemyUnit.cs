@@ -81,4 +81,32 @@ public class EnemyUnit : Unit {
 
         return coord;
     }
+
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null)
+    {
+        if (hpCurrent - dmg <= hpMax/2) 
+            gfxAnim.SetBool("Damaged", true);
+
+        yield return base.TakeDamage(dmg, dmgType, source);
+    }
+
+    public override IEnumerator DestroyElement(DamageType dmgType)
+    {
+        switch(dmgType) {
+            case DamageType.Unspecified:
+                gfxAnim.SetTrigger("Split");
+            break;
+            case DamageType.Bile:
+                gfxAnim.SetTrigger("Melt");
+            break;
+            case DamageType.Gravity:
+                gfxAnim.SetTrigger("Crush");
+            break;
+            case DamageType.Melee:
+                gfxAnim.SetTrigger("Split");
+            break;
+        }
+
+        return base.DestroyElement(dmgType);
+    }
 }

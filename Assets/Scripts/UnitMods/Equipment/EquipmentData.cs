@@ -16,6 +16,7 @@ public class EquipmentData : ScriptableObject {
     public GridContextuals.ContextDisplay contextDisplay;
     public GridContextuals.ContextDisplay multiContext;
     public int gridColor;
+    [SerializeField] protected GameObject vfx;
     
     [Header("MODIFIERS")]
     public bool multiselect;
@@ -24,6 +25,7 @@ public class EquipmentData : ScriptableObject {
     public GridElement firstTarget;
     public int energyCost;
     public int range;
+    
     [SerializeField] protected float animDur = 0.5f;
 
     [Header("FILTERS")]

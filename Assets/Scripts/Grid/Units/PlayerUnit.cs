@@ -8,17 +8,22 @@ using UnityEngine.UI;
 public class PlayerUnit : Unit {
 
 
-    PlayerManager pManager;
+    public PlayerManager pManager;
     public enum AnimState { Idle, Hammer, Disabled };
     public AnimState prevAnimState, animState;
-    protected Animator gfxAnim;
+    
     public override event OnElementUpdate ElementDestroyed;
     public virtual event OnElementUpdate ElementDisabled;
     
     protected override void Start() {
         base.Start();
-        gfxAnim = gfx[0].GetComponent<Animator>();
-        pManager = (PlayerManager)manager;
+    }
+
+    public override void UpdateElement(Vector2 coord) {
+        base.UpdateElement(coord);
+        if (pManager.overrideEquipment)
+            transform.position += new Vector3(0, FloorManager.instance.floorOffset, 0);
+
     }
 
 // Called when an action is applied to a unit or to clear it's actions
@@ -105,7 +110,7 @@ public class PlayerUnit : Unit {
     }
 
 // Override destroy so that player units are disabled instead
-    public override IEnumerator DestroyElement() {
+    public override IEnumerator DestroyElement(DamageType dmgType) {
         
         if (destroyedSFX)
             PlaySound(destroyedSFX.Get());
@@ -128,7 +133,6 @@ public class PlayerUnit : Unit {
         }
         yield return null;
         ElementDisabled?.Invoke(this);
-        Debug.Log("event sent");
         SwitchAnim(AnimState.Disabled);
         ApplyCondition(Status.Disabled);
     }
