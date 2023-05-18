@@ -342,7 +342,7 @@ public class PlayerManager : UnitManager {
             yield return null;
 
         }
-        scenario.uiManager.LockHUDButtons(false);
+        scenario.uiManager.LockHUDButtons(scenario.currentTurn != ScenarioManager.Turn.Player);
     }
 
     public void UndoMove() {
