@@ -22,10 +22,11 @@ public class TutorialSequence : MonoBehaviour
     [SerializeField] TutorialEnemyManager currentEnemy;
     public List<FloorDefinition> scriptedFloors;
     public GameObject tutorialFloorPrefab, tutorialEnemyPrefab;
-    public Tooltip tooltip, wsTooltip;
+    public DialogueTooltip tooltip;
     public Animator screenFade;
     [HideInInspector] public string header, body;
     public bool blinking = false;
+
     int coStep = 0;
     public bool skip;
 
@@ -33,10 +34,11 @@ public class TutorialSequence : MonoBehaviour
     public void Initialize(ScenarioManager manager) {
         scenario = manager;
         GetComponent<LaterTutorials>().StartListening(scenario.player);
+        
     }
-
+    
     public IEnumerator Tutorial() {
-
+        PersistentMenu.instance.ToggleTooltips();
         yield return new WaitForSecondsRealtime(0.15f);
         yield return StartCoroutine(SplashMessage());
         yield return new WaitForSecondsRealtime(0.15f);
@@ -96,6 +98,7 @@ public class TutorialSequence : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.15f);
 
         PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
+        PersistentMenu.instance.ToggleTooltips();
     }
 
     public IEnumerator BlinkTile(Vector2 coord, bool move = true) {
@@ -125,20 +128,19 @@ public class TutorialSequence : MonoBehaviour
 
         header = "WELCOME to DEEPMESS";
         body = "It's time to dig deep and make a mess. I'm the NAIL and I'll give you a few tips on how to descend down through this head." + '\n';
-        tooltip.SetText(new Vector3(100,0,0), body, header);
+        tooltip.SetText(new Vector3(100,0,0), body, header, true);
 
-        while (true) {
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
+            
         }
         
         header = "";
-        body = "You’re in control of three SLAGS: Flat, Pony, and Spike." + '\n' + '\n' + "Together, we need to navigate this limited space and hostile ANTIBODIES in order to descend.";
-        tooltip.SetText(new Vector3(100,0,0), body, header);
+        body = "You're in control of three SLAGS: Flat, Pony, and Spike." + '\n' + '\n' + "Together, we need to navigate this limited space and hostile ANTIBODIES in order to descend.";
+        tooltip.SetText(new Vector3(100,0,0), body, header, true);
 
-        while (true) {
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
@@ -238,16 +240,14 @@ public class TutorialSequence : MonoBehaviour
         UIManager.instance.LockHUDButtons(true);
 
         body = "Great. That did some damage, but we'll need to attack it again to finish it off.";
-        tooltip.SetText(new Vector2(680, -100), body);
-        while (true) {
+        tooltip.SetText(new Vector2(680, -100), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         body = "The HAMMER can be bounced between SLAGS or it can bounce back to the SLAG that threw it.";
-        tooltip.SetText(new Vector2(440, 110), body);
-        while (true) {
+        tooltip.SetText(new Vector2(440, 110), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
@@ -310,16 +310,14 @@ public class TutorialSequence : MonoBehaviour
             yield return new WaitForSecondsRealtime(1/Util.fps);
 
         body = "That one is taken care of. There's still an ANTIBODY on the floor, but the HAMMER can't be thrown again because Pony is out of actions.";
-        tooltip.SetText(new Vector2(680, -100), body);
-        while (true) {
+        tooltip.SetText(new Vector2(680, -100), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         body = "Spike can still act, let's see what it can do after we take a look below.";
-        tooltip.SetText(new Vector2(210, 225), body);
-        while (true) {
+        tooltip.SetText(new Vector2(210, 225), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         UIManager.instance.LockFloorButtons(false);
         body = "DEEPMESS is all about getting an advantage on the ANTIBODIES below." + '\n' + "Select the PEEK button to get a look at the floor below.";
@@ -332,16 +330,14 @@ public class TutorialSequence : MonoBehaviour
             yield return new WaitForSecondsRealtime(1/Util.fps);
         UIManager.instance.LockFloorButtons(true);
         body = "This is a preview of the next floor. You can see where ANTIBODIES and other hazards are located.";
-        tooltip.SetText(new Vector2(360,-160), body);
-        while (true) {
+        tooltip.SetText(new Vector2(360,-160), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         body = "You also see where the units above will land after a descent.";
-        tooltip.SetText(new Vector2(-70, 0), body);
-        while (true) {
+        tooltip.SetText(new Vector2(-70, 0), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         UIManager.instance.LockFloorButtons(false);
         body = "Let's use Spike's equipment to crush one of these ANTIBODIES." + '\n' + '\n' + "Select the PEEK button again to return to the top floor.";
@@ -423,24 +419,21 @@ public class TutorialSequence : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.5f);
 
         body = "ANTIBODIES can move 2 tiles and then attack anything next to them.";
-        tooltip.SetText(new Vector2(480, -90), body);
-        while (true) {
+        tooltip.SetText(new Vector2(480, -90), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
         yield return StartCoroutine(currentEnemy.MoveInOrder(new List<Vector2>{ new Vector2(3,6) }, new List<Vector2>{ new Vector2(2,6) }));
         body = "Ouch! This ANTIBODY attacked me! But I'm not completely helpless." + '\n' + '\n' + "I deal damage to anything that attacks me.";
-        tooltip.SetText(new Vector2(400, 90), body);
-        while (true) {
+        tooltip.SetText(new Vector2(400, 90), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         body = "Be careful, though. If I or all three of your SLAGS are destroyed, we'll lose the run.";
-        tooltip.SetText(new Vector2(400, 90), body);
-        while (true) {
+        tooltip.SetText(new Vector2(400, 90), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         currentEnemy.EndTurn();
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
@@ -458,17 +451,15 @@ public class TutorialSequence : MonoBehaviour
         UIManager.instance.LockFloorButtons(true);
 
         body = "It's our turn again. Let's descend to take advantage of our ANVIL trap.";
-        tooltip.SetText(new Vector2(20, 120), body);
-        while (true) {
+        tooltip.SetText(new Vector2(20, 120), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         
         body = "Descend to the next floor by striking me with the HAMMER, or by eliminating all ANTIBODIES on the current floor.";
-        tooltip.SetText(new Vector2(265, 0), body);
-        while (true) {
+        tooltip.SetText(new Vector2(265, 0), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
          
         UIManager.instance.LockFloorButtons(false);
@@ -481,11 +472,10 @@ public class TutorialSequence : MonoBehaviour
         while (FloorManager.instance.transitioning) yield return null;
         yield return new WaitForSecondsRealtime(1/Util.fps);
         body = "Flat would land on a wall if you descend now. SLAGS and ANTIBODIES crush anything they land on, but take damage as a result.";
-        tooltip.SetText(new Vector2(335, -220), body);
+        tooltip.SetText(new Vector2(335, -220), body, "", true);
         StartCoroutine(BlinkTile(new Vector2(6,1)));
-        while (true) {
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         blinking = false;
         yield return null;
@@ -565,19 +555,17 @@ public class TutorialSequence : MonoBehaviour
 
         currentEnemy = (TutorialEnemyManager)scenario.currentEnemy;
         body = "Solid landing! I land after everything else, crushing anything I land on." + '\n' + '\n' + "Don't worry, I won't land on any of your SLAGS.";
-        tooltip.SetText(new Vector2(400, 180), body);
-        while (true) {
+        tooltip.SetText(new Vector2(400, 180), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
         scenario.currentTurn = ScenarioManager.Turn.Descent;
         yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
         body = "When you land on a floor, ANTIBODIES scatter but wont attack. Let's see what we're dealing with.";
-        tooltip.SetText(body);
-        while (true) {
+        tooltip.SetText(new Vector2(400, 180), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
         yield return currentEnemy.StartCoroutine(currentEnemy.MoveInOrder(new List<Vector2>{ new Vector2(4, 6), new Vector2(5, 1) }));
@@ -594,10 +582,9 @@ public class TutorialSequence : MonoBehaviour
         UIManager.instance.LockHUDButtons(true);
 
         body = "These green tiles are BILE, a deadly substance for anything that falls in it. We can use this to our advantage.";
-        tooltip.SetText(new Vector2(520, -20), body);
-        while (true) {
+        tooltip.SetText(new Vector2(520, -20), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         
         scenario.player.units[0].selectable = true;
@@ -653,10 +640,9 @@ public class TutorialSequence : MonoBehaviour
         scenario.player.units[2].ui.equipment[0].GetComponent<Button>().enabled = false;
 
         body = "Pony landed in BLOOD. BLOOD doesn't do damage, but it prevents using the HAMMER or equipment.";
-        tooltip.SetText(new Vector2(375, 180), body);
-        while (true) {
+        tooltip.SetText(new Vector2(375, 180), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         body = "MOVE Pony out of there.";
         tooltip.SetText(new Vector2(-150, 280), body);
@@ -696,16 +682,14 @@ public class TutorialSequence : MonoBehaviour
             yield return new WaitForSecondsRealtime(1/Util.fps);
         UIManager.instance.LockHUDButtons(true);
         body = "Oops. Spike can't hit that ANTIBODY with Pony in the way.";
-        tooltip.SetText(new Vector2(130, 180), body);
-        while (true) {
+        tooltip.SetText(new Vector2(130, 180), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         body = "You can UNDO your SLAGS' MOVEMENT. Once a SLAG performs an action, however, you can't UNDO any previous MOVE. Plan accordingly!";
-        tooltip.SetText(new Vector2(650, -200), body);
-        while (true) {
+        tooltip.SetText(new Vector2(650, -200), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         UIManager.instance.LockHUDButtons(false);
         UIManager.instance.endTurnButton.enabled = false;
@@ -802,30 +786,26 @@ public class TutorialSequence : MonoBehaviour
             yield return new WaitForSecondsRealtime(1/Util.fps);
 
         body = "Good job going down. Remember, our goal is to descend as far as possible, and if I or all three SLAGS are destroyed, the run is over!";
-        tooltip.SetText(new Vector2(90, -60), body);
-        while (true) {
+        tooltip.SetText(new Vector2(90, -60), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
 
         body = "We landed on an empty floor. When this happens we use our momentum to trigger a CASCADE. SLAGS won't be able to act on this floor, and we DESCEND again immediately.";
-        tooltip.SetText(body);
-        while (true) {
+        tooltip.SetText(new Vector2(90, -60), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         
         body = "Don't worry though. Before they fall, you can reposition them anywhere on the next floor. This happens at the very beginning of a run too.";
-        tooltip.SetText(body);
-        while (true) {
+        tooltip.SetText(new Vector2(90, -60), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         body = "That's enough to get you started. There is more for you to discover on your own. Good luck in the DEEPMESS.";
-        tooltip.SetText(body);
-        while (true) {
+        tooltip.SetText(new Vector2(90, -60), body, "", true);
+        while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            if (Input.GetMouseButtonDown(0)) break;
         }
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
         

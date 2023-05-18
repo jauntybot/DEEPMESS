@@ -411,8 +411,8 @@ public class FloorManager : MonoBehaviour
 
             if (currentFloor.sqrs.Find(sqr => sqr.coord == spawn).tileType == GridSquare.TileType.Bile) validCoord = false;
         }
-        nail.transform.position = nail.grid.PosFromCoord(spawn);
-        nail.gfx[0].sortingOrder = nail.grid.SortOrderFromCoord(spawn);
+        Debug.Log(nail.grid.name);
+        nail.UpdateElement(spawn);
 
         GridElement subElement = null;
         foreach (GridElement ge in currentFloor.CoordContents(nail.coord)) subElement = ge;
