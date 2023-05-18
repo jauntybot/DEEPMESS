@@ -94,6 +94,8 @@ public class TutorialSequence : MonoBehaviour
 
         yield return StartCoroutine(Message03());
         yield return new WaitForSecondsRealtime(0.15f);
+
+        PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
     }
 
     public IEnumerator BlinkTile(Vector2 coord, bool move = true) {

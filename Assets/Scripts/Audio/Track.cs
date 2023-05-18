@@ -6,4 +6,5 @@ using UnityEngine;
 public class Track : ScriptableObject
 {
     public AudioClip trackAudioClip;
+    public MusicController.MusicState state; 
 }
