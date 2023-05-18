@@ -6,8 +6,11 @@ using UnityEngine.UI;
 public class MessagePanel : MonoBehaviour
 {
  
-    public GameObject panel;
+    public enum Message { Slag, Antibody, Descent, Cascade, Position } ;
+
     public Animator anim;
+    [Header("Old Anim")]
+    public GameObject panel;
     [SerializeField] Image panelImage;
     public TMPro.TMP_Text messageText;
     [SerializeField] List<Color> messageColors;
@@ -19,6 +22,31 @@ public class MessagePanel : MonoBehaviour
         while (panel.activeSelf) {
             yield return null; 
         }
+    }
+
+    public IEnumerator PlayMessage(Message message) {
+        string trigger = "";
+        switch(message) {
+            default:
+            case Message.Slag:
+                trigger = "Slag";
+            break;
+            case Message.Antibody:
+                trigger = "Antibody";
+            break;
+            case Message.Descent:
+                trigger = "Descent";
+            break;
+            case Message.Cascade:
+                trigger = "Cascade";
+            break;
+            case Message.Position:
+                trigger = "Position";
+            break;
+        }
+        anim.SetTrigger(trigger);
+        yield return null;
+        yield return new WaitForSecondsRealtime(anim.GetCurrentAnimatorStateInfo(0).length);
     }
 
 }

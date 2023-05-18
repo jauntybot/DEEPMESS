@@ -17,7 +17,7 @@ public class Tooltip : MonoBehaviour
 
     [SerializeField] RectTransform rectTransform;
 
-    public void SetText(string content, string header = "")
+    public virtual void SetText(string content, string header = "", bool clickToSkip = false)
     {
         if (string.IsNullOrEmpty(header))
         {
@@ -40,7 +40,7 @@ public class Tooltip : MonoBehaviour
         transform.GetChild(0).gameObject.SetActive(true);
     }
 
-    public void SetText(Vector2 pos, string content, string header = "") {
+    public virtual void SetText(Vector2 pos, string content, string header = "",  bool clickToSkip = false) {
         if (string.IsNullOrEmpty(header))
         {
             headerField.gameObject.SetActive(false);

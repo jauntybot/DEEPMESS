@@ -146,7 +146,7 @@ public class ScenarioManager : MonoBehaviour
                     currentTurn = Turn.Enemy;
                     player.StartEndTurn(false);
                     if (uiManager.gameObject.activeSelf)
-                        yield return StartCoroutine(messagePanel.DisplayMessage("ANTIBODY RESPONSE", 2));
+                        yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Antibody));
 
                     
                     if (prevTurn == Turn.Descent)
@@ -171,7 +171,7 @@ public class ScenarioManager : MonoBehaviour
                 if (!lose && player.units.Find(u => u is Nail) != null) {
                     uiManager.LockFloorButtons(false);
                     if (uiManager.gameObject.activeSelf)
-                        yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER TURN", 1));
+                        yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Slag));
 
                     currentTurn = Turn.Player;
                     uiManager.LockHUDButtons(false);
@@ -197,7 +197,7 @@ public class ScenarioManager : MonoBehaviour
                 foreach(Unit u in player.units)
                     u.usedEquip = false;
                 if (uiManager.gameObject.activeSelf)
-                    yield return StartCoroutine(messagePanel.DisplayMessage("DESCENDING", 0));
+                    yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Descent));
             break;
             case Turn.Cascade:
                 currentTurn = Turn.Cascade;
@@ -219,7 +219,7 @@ public class ScenarioManager : MonoBehaviour
                 uiManager.LockHUDButtons(false);
                 uiManager.LockFloorButtons(true);
                 if (uiManager.gameObject.activeSelf)
-                    yield return StartCoroutine(messagePanel.DisplayMessage("REPOSITION UNITS", 1));
+                    yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Position));
             break;
         }
     }
