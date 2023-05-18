@@ -13,7 +13,7 @@ public class SlotMachineSlot : MonoBehaviour
     [SerializeField] Image slotSpin1, slotSpin2;
     int fastSpins;
     [SerializeField] int fastSpinCount;
-
+    [SerializeField] TooltipEquipmentTrigger tooltip;
     void Start() {
         anim = GetComponent<Animator>();
         anim.StopPlayback();
@@ -23,6 +23,7 @@ public class SlotMachineSlot : MonoBehaviour
         slotMachine = slot;
         equipmentTable = table;
         GetComponent<Button>().interactable = false;
+        tooltip.enabled = false;
     }
 
 
@@ -56,6 +57,7 @@ public class SlotMachineSlot : MonoBehaviour
         index = finalIndex;
         slotSpin1.sprite = equipmentTable[index].icon;
         GetComponent<Button>().interactable = true;
+        tooltip.enabled = true; tooltip.Initialize(equipmentTable[index].name);
     }
 
     public void SelectSlot() {
