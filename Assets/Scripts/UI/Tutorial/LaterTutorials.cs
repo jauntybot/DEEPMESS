@@ -79,7 +79,7 @@ public class LaterTutorials : MonoBehaviour
     public IEnumerator SlotsTut() {
         slotsEncountered = true;
         TutorialSequence.instance.screenFade.gameObject.SetActive(true);
-        content = "This is the slot machine. Here you can spin for new equipment to outfit your SLAGS with, or gain a little health back for the whole crew, including me.";
+        content = "This is the slot machine. Here you can spin for new equipment to outfit your SLAGS with. It also heals us all a little.";
         tooltip.SetText(new Vector2(420, 50), content, "", true);
         while (!tooltip.skip) {
             yield return null;

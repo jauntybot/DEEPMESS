@@ -18,6 +18,7 @@ public class PersistentMenu : MonoBehaviour
     bool contextToggle = true;
     [SerializeField] GameObject battleCanvas, menuButton;
     [SerializeField] TMPro.TMP_Text tooltipText;
+    [SerializeField] GameObject menuButtons;
 
     const string MIXER_MUSIC = "musicVolume";
     const string MIXER_SFX = "sfxVolume";
@@ -46,7 +47,14 @@ public class PersistentMenu : MonoBehaviour
         battleCanvas = null;
         if (UIManager.instance) 
             battleCanvas = UIManager.instance.gameObject;
-        
+
+        if (MainMenuManager.instance) {
+            menuButtons.SetActive(false);
+            MainMenuManager.instance.optionsButton.onClick.AddListener(MainMenuPause);
+        }
+        else
+            menuButtons.SetActive(true);
+
         if (TutorialSequence.instance)
             musicController.SwitchMusicState(MusicController.MusicState.Tutorial, false);
         else if (UIManager.instance) 
@@ -56,6 +64,10 @@ public class PersistentMenu : MonoBehaviour
 
         if (TooltipSystem.instance)
             toolTips = TooltipSystem.instance;
+    }
+
+    void MainMenuPause() {
+        pauseMenu.gameObject.SetActive(true);
     }
 
     void SetMusicVolume(float vol) {
