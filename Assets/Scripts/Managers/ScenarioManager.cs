@@ -87,6 +87,7 @@ public class ScenarioManager : MonoBehaviour
             if (!tutorial.skip) {
                 foreach (GridElement ge in player.units)
                     floorManager.currentFloor.RemoveElement(ge);
+                    
                 yield return StartCoroutine(SwitchTurns(Turn.Descent));
                 yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3]} ));
                 yield return StartCoroutine(floorManager.GenerateNextFloor(TutorialSequence.instance.tutorialFloorPrefab, TutorialSequence.instance.tutorialEnemyPrefab));

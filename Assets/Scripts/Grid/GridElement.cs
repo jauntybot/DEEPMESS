@@ -167,8 +167,12 @@ public class GridElement : MonoBehaviour{
     }
 
     public virtual void PlaySound(SFX sfx = null) {
-        if (sfx)
+        if (sfx) {
+            if (sfx.outputMixerGroup) 
+                audioSource.outputAudioMixerGroup = sfx.outputMixerGroup;   
+
             audioSource.PlayOneShot(sfx.Get());
+        }
     }
     
 }
