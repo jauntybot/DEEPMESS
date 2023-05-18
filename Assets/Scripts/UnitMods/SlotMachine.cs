@@ -13,6 +13,8 @@ public class SlotMachine : MonoBehaviour
     List<SlotMachineSlot> slots;
     List<int> rolledEquipment = new List<int>();
     [SerializeField] Button spinButton, backButton, healButton;
+    [SerializeField] SFX slotSpin, healSFX;
+    AudioSource audioSource;
 
 
     public void Initialize(List<EquipmentData> table) {
@@ -21,6 +23,8 @@ public class SlotMachine : MonoBehaviour
             ui.slotsLoadoutButton.GetComponent<Button>().onClick.AddListener(ui.SwapEquipmentFromSlots);
             ui.slotsLoadoutButton.GetComponent<Button>().onClick.AddListener(ClaimSelectedReward);
         }
+
+        audioSource = GetComponent<AudioSource>();
 
         spinButton.interactable = true;
         slots = new List<SlotMachineSlot>();
@@ -33,17 +37,18 @@ public class SlotMachine : MonoBehaviour
         spinButton.gameObject.SetActive(true);
         spinButton.interactable = true;
         backButton.gameObject.SetActive(false);
-        healButton.gameObject.SetActive(true);
-        orText.gameObject.SetActive(true);
-        orText.GetComponent<TMPro.TMP_Text>().text = "- or -";
+        
+        
         foreach (SlotMachineSlot slot in slots) 
             slot.gameObject.SetActive(true);
+
+        HealAllUnits();
     }
 
     public void SpinSlots() {
+        PlaySound(slotSpin);
         spinButton.interactable = false;
-        healButton.gameObject.SetActive(false);
-        orText.gameObject.SetActive(false);
+
         rolledEquipment = new List<int>();
         for (int i = 0; i <= 2; i++) {
             int newEquip = Random.Range(0, equipmentTable.Count - 1);
@@ -54,8 +59,16 @@ public class SlotMachine : MonoBehaviour
             slots[i].Spin(rolledEquipment[i]);
         }
         spinButton.gameObject.SetActive(false);
-        orText.gameObject.SetActive(true);
-        orText.GetComponent<TMPro.TMP_Text>().text = "SELECT AN EQUIPMENT";
+
+    }
+
+    public virtual void PlaySound(SFX sfx = null) {
+        if (sfx) {
+            if (sfx.outputMixerGroup) 
+                audioSource.outputAudioMixerGroup = sfx.outputMixerGroup;   
+
+            audioSource.PlayOneShot(sfx.Get());
+        }
     }
 
     public void SelectReward(int index, SlotMachineSlot selected) {
@@ -84,6 +97,7 @@ public class SlotMachine : MonoBehaviour
         Invoke("SkipSlots", 1f);
     }
     public void HealAllUnits() {
+        PlaySound(healSFX);
         foreach (Unit u in ScenarioManager.instance.player.units) {
             if (u is Nail) 
                 u.StartCoroutine(u.TakeDamage(-3));
@@ -91,10 +105,9 @@ public class SlotMachine : MonoBehaviour
                 if (pu.conditions.Contains(Unit.Status.Disabled))
                     pu.Stabilize();
                 else
-                    pu.StartCoroutine(u.TakeDamage(-1));
+                    pu.StartCoroutine(u.TakeDamage(-1, GridElement.DamageType.Slots));
             }
         }
-        Invoke("SkipSlots", 1f);
     }
 
     public void SkipSlots() {

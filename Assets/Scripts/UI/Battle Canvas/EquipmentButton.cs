@@ -24,9 +24,9 @@ public class EquipmentButton : MonoBehaviour
         if (d is HammerData) hammer = true;
         unit = (PlayerUnit)ge;
         EquipmentSelected += unit.UpdateAction;
-        bg = GetComponent<Image>();
+        bg = GetComponentInChildren<Image>();
         bg.sprite = data.icon;
-        tooltip = GetComponent<TooltipEquipmentTrigger>();
+        tooltip = GetComponentInChildren<TooltipEquipmentTrigger>();
         if (tooltip)
             tooltip.Initialize(d.name);
         //badge.SetActive(d is ConsumableEquipmentData);
