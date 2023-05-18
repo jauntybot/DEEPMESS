@@ -8,6 +8,7 @@ using UnityEngine.Audio;
 public class SFX : ScriptableObject {
     public List<AudioClip> audioClips;
     public AudioMixerGroup outputMixerGroup;
+    
 
     public AudioClip Get() {
         return audioClips[Random.Range(0, audioClips.Count)];

@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 public class PersistentMenu : MonoBehaviour
 {
 
+    public MusicController musicController;
     public PauseMenu pauseMenu;
     TooltipSystem toolTips;
     private bool tooltipToggle = true;
@@ -17,6 +18,7 @@ public class PersistentMenu : MonoBehaviour
     bool contextToggle = true;
     [SerializeField] GameObject battleCanvas, menuButton;
     [SerializeField] TMPro.TMP_Text tooltipText;
+    [SerializeField] GameObject menuButtons;
 
     const string MIXER_MUSIC = "musicVolume";
     const string MIXER_SFX = "sfxVolume";
@@ -24,7 +26,7 @@ public class PersistentMenu : MonoBehaviour
 
     public static PersistentMenu instance;
     private void Awake() {
-        if (instance) {
+        if (PersistentMenu.instance) {
             Debug.Log("Warning! More than one instance of PersistentMenu found!");
             Destroy(this.gameObject);
             return;
@@ -32,6 +34,7 @@ public class PersistentMenu : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(this);
 
+        musicController = GetComponentInChildren<MusicController>();
         musicSlider.onValueChanged.AddListener(SetMusicVolume);
         sfxSlider.onValueChanged.AddListener(SetSFXVolume);
         
@@ -40,12 +43,31 @@ public class PersistentMenu : MonoBehaviour
         SceneManager.sceneLoaded += UpdateRefs;
     }
 
-    void UpdateRefs(Scene scene, LoadSceneMode mode) {
+    void UpdateRefs(Scene scene = default, LoadSceneMode mode = default) {
         battleCanvas = null;
-        if (UIManager.instance)
+        if (UIManager.instance) 
             battleCanvas = UIManager.instance.gameObject;
+
+        if (MainMenuManager.instance) {
+            menuButtons.SetActive(false);
+            MainMenuManager.instance.optionsButton.onClick.AddListener(MainMenuPause);
+        }
+        else
+            menuButtons.SetActive(true);
+
+        if (TutorialSequence.instance)
+            musicController.SwitchMusicState(MusicController.MusicState.Tutorial, false);
+        else if (UIManager.instance) 
+            musicController.SwitchMusicState(MusicController.MusicState.Game, false);
+        else
+            musicController.SwitchMusicState(MusicController.MusicState.MainMenu, true);
+
         if (TooltipSystem.instance)
             toolTips = TooltipSystem.instance;
+    }
+
+    void MainMenuPause() {
+        pauseMenu.gameObject.SetActive(true);
     }
 
     void SetMusicVolume(float vol) {

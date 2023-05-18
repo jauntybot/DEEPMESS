@@ -393,11 +393,15 @@ public class FloorManager : MonoBehaviour
 
         bool validCoord = false;
         Vector2 spawn = Vector2.zero;
+
 // Find a valid coord that a player is not in
         while (!validCoord) {
             validCoord = true;
-            if (nailSpawnOverrides.Count > 0) 
-                spawn = nailSpawnOverrides[Random.Range(0,nailSpawnOverrides.Count)];
+            if (nailSpawnOverrides.Count > 0) {
+                int i = Random.Range(0,nailSpawnOverrides.Count);
+                spawn = nailSpawnOverrides[i];
+                nailSpawnOverrides.RemoveAt(i);
+            }
             else
                 spawn = new Vector2(Random.Range(1,6), Random.Range(1,6));
                 
@@ -407,6 +411,7 @@ public class FloorManager : MonoBehaviour
 
             if (currentFloor.sqrs.Find(sqr => sqr.coord == spawn).tileType == GridSquare.TileType.Bile) validCoord = false;
         }
+        Debug.Log(nail.grid.name);
         nail.UpdateElement(spawn);
 
         GridElement subElement = null;

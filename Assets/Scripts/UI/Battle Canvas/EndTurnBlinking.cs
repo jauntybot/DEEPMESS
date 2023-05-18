@@ -8,12 +8,10 @@ public class EndTurnBlinking : MonoBehaviour
     ScenarioManager scenario;
     PlayerManager playerManager;
     [SerializeField] GameObject endTurn;
+    [SerializeField] Animator highlightAnim;
 
     private bool outOfEnergy;
-    private Image endTurnButton;
-    private Color startColor = Color.white;
-    private Color endColor = new Color(1, 1, 0, 1);
-    private float speed = 1;
+
     private bool blinking = false;
 
     // Start is called before the first frame update
@@ -21,7 +19,6 @@ public class EndTurnBlinking : MonoBehaviour
     {
         scenario = ScenarioManager.instance;
         playerManager = scenario.player;
-        endTurnButton = endTurn.GetComponent<Image>();
     }
 
 
@@ -45,11 +42,11 @@ public class EndTurnBlinking : MonoBehaviour
 
     public IEnumerator BlinkButton() {
         blinking = true;
+        highlightAnim.SetBool("Active", true);
         while (scenario.currentTurn == ScenarioManager.Turn.Player) {
-            endTurnButton.color = Color.Lerp(startColor, endColor, Mathf.PingPong(Time.time * speed, 1));
             yield return null;
         }
+        highlightAnim.SetBool("Active", false);
         blinking = false;
-        endTurnButton.color = Color.white;
     }
 }

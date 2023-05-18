@@ -63,7 +63,7 @@ public class UnitUI : MonoBehaviour
         if (initialLoadoutButton != null) {
             initialLoadoutButton.SetActive(true); slotsLoadoutButton.SetActive(false);
             foreach (EquipmentButton b in equipment) 
-                b.gameObject.GetComponent<Button>().interactable = true;
+                b.gameObject.GetComponentInChildren<Button>().interactable = true;
         }
 
         u.ElementDestroyed += UnitDestroyed;
@@ -74,8 +74,7 @@ public class UnitUI : MonoBehaviour
     public void ToggleUnitPanel(bool active) {
 
         portraitPanel.SetActive(active);
-        if (overview != null && unit is not Nail)
-            overview.ToggleOverview(!active);
+
     }
 
     public void ToggleEquipmentPanel(bool active) {
@@ -85,14 +84,19 @@ public class UnitUI : MonoBehaviour
 
     public void ToggleEquipmentButtons() {
         foreach (EquipmentButton b in equipment) {
-            b.gameObject.GetComponent<Button>().interactable = (unit.energyCurrent >= b.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted));
+            b.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= b.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted));
             if (b.data is ConsumableEquipmentData && unit.usedEquip)
-                b.gameObject.GetComponent<Button>().interactable = false;
+                b.gameObject.GetComponentInChildren<Button>().interactable = false;
         }
 
-        if (disarmButton)
-            disarmButton.gameObject.SetActive(unit.selectedEquipment != null);
-        
+        bool active = false;
+        if (disarmButton) {
+            if (unit.selectedEquipment) {
+                if (unit.selectedEquipment != unit.equipment[0]) active = true;
+            }
+            disarmButton.gameObject.SetActive(active);
+        }
+
         if (overview != null )
             overview.UpdateOverview(unit.hpCurrent);
     }
@@ -129,7 +133,7 @@ public class UnitUI : MonoBehaviour
         for (int i = unit.equipment.Count - 1; i >= 0; i--) {
             if (unit.equipment[i] is not MoveData) {
                 if (equipment.Find(b => b.data == unit.equipment[i]) == null) {
-                    EquipmentButton newButt = Instantiate(equipmentButtonPrefab).GetComponent<EquipmentButton>();
+                    EquipmentButton newButt = Instantiate(unit.equipment[i] is HammerData ? hammerButtonPrefab : equipmentButtonPrefab).GetComponent<EquipmentButton>();
                     newButt.transform.SetParent(unit.equipment[i] is HammerData ? hammerPanel.transform : equipmentPanel.transform);
                     newButt.transform.localScale = Vector3.one;
                     newButt.Initialize(unit.equipment[i], unit);
@@ -172,7 +176,7 @@ public class UnitUI : MonoBehaviour
 
         UpdateEquipmentButtons();
         foreach (EquipmentButton b in equipment) 
-            b.gameObject.GetComponent<Button>().interactable = true;
+            b.gameObject.GetComponentInChildren<Button>().interactable = true;
 
         for(int i = equipment.Count - 1; i >= 0; i--) {
             if (equipment[i].data is not ConsumableEquipmentData) {
@@ -191,7 +195,7 @@ public class UnitUI : MonoBehaviour
             UpdateLoadout(reward);
         ToggleEquipmentButtons();
         foreach (EquipmentButton b in equipment) 
-            b.gameObject.GetComponent<Button>().interactable = true;
+            b.gameObject.GetComponentInChildren<Button>().interactable = true;
     }
 
 }

@@ -57,8 +57,5 @@ public class UnitOverview : MonoBehaviour
         
     }
 
-    public void ToggleOverview(bool state) {
-        overviewPanel.SetActive(state);
-    }
 
 }
