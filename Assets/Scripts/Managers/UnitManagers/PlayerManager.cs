@@ -16,7 +16,6 @@ public class PlayerManager : UnitManager {
     [Header("PLAYER MANAGER")]
     public LoadoutManager loadout;
     public Nail nail;
-    [HideInInspector] public List<Vector2> nailSpawnOverrides = new List<Vector2>();
     public List<HammerData> hammerActions;
     [SerializeField] EquipmentData cascadeMovement;
      public EquipmentData overrideEquipment = null;
@@ -154,7 +153,6 @@ public class PlayerManager : UnitManager {
 // Overriden functionality
     public override Unit SpawnUnit(Vector2 coord, Unit unit) {
         Unit u = Instantiate(unit.gameObject, unitParent.transform).GetComponent<Unit>();
-        u.StoreInGrid(currentGrid);
 
         units.Add(u);
         SubscribeElement(u);
@@ -168,6 +166,7 @@ public class PlayerManager : UnitManager {
             dp.Initialize(u, floorManager.previewManager);
         }
 
+        u.StoreInGrid(currentGrid);
         u.UpdateElement(coord);
         //u.transform.position += new Vector3(0, floorManager.floorOffset, 0);
         
@@ -182,55 +181,6 @@ public class PlayerManager : UnitManager {
         //u.grid.RemoveElement(u);
 
         return u;
-    }
-
-    public IEnumerator DropNail() {
-        if (nail.nailState == Nail.NailState.Buried)
-            nail.ToggleNailState(Nail.NailState.Primed);
-            
-        yield return null;
-
-        bool validCoord = false;
-        Vector2 spawn = Vector2.zero;
-// Find a valid coord that a player is not in
-        while (!validCoord) {
-            validCoord = true;
-            if (nailSpawnOverrides.Count > 0) 
-                spawn = nailSpawnOverrides[Random.Range(0,nailSpawnOverrides.Count)];
-            else
-                spawn = new Vector2(Random.Range(1,6), Random.Range(1,6));
-                
-            foreach(Unit u in units) {
-                if (u.coord == spawn) validCoord = false;
-            }
-
-            if (currentGrid.sqrs.Find(sqr => sqr.coord == spawn).tileType == GridSquare.TileType.Bile) validCoord = false;
-        }
-        
-        nail.transform.position = currentGrid.PosFromCoord(spawn) + new Vector3(0, floorManager.floorOffset, 0);
-        nail.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
-        
-        yield return StartCoroutine(UpdateNail(spawn));
-    }
-
-    public IEnumerator UpdateNail(Vector2 coord) {
-        nail.transform.parent = unitParent.transform;
-
-        GridElement subGE = currentGrid.gridElements.Find(ge => ge.coord == coord);
-        if (subGE != null) {
-            StartCoroutine(subGE.CollideFromBelow(nail));
-        }
-        
-        yield return StartCoroutine(nail.nailDrop.MoveToCoord(nail, coord));
-
-        if (nail.landingSFX)
-            nail.PlaySound(nail.landingSFX.Get());
-
-        nail.ToggleNailState(Nail.NailState.Buried);
-
-        if (!currentGrid.gridElements.Contains(nail))
-            nail.StoreInGrid(currentGrid);
-
     }
 
 // Get grid input from player controller, translate it to functionality
@@ -430,9 +380,9 @@ public class PlayerManager : UnitManager {
 
         for (int i = units.Count - 1; i >= 0; i--) {
             currentGrid.RemoveElement(units[i]);
+            
             units[i].StoreInGrid(newGrid);
-            if (units[i] is not Nail)
-                units[i].UpdateElement(units[i].coord);
+                
             if (units[i].conditions.Contains(Unit.Status.Immobilized))
                 units[i].RemoveCondition(Unit.Status.Immobilized);
         }

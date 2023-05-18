@@ -85,37 +85,35 @@ public class ScenarioManager : MonoBehaviour
         }
         if (tutorial) {
             if (!tutorial.skip) {
+                foreach (GridElement ge in player.units)
+                    floorManager.currentFloor.RemoveElement(ge);
                 yield return StartCoroutine(SwitchTurns(Turn.Descent));
-                foreach (Unit u in player.units) {
-                    if (u is not Nail) {
-                        StartCoroutine(floorManager.DropUnit(u, u.transform.position, floorManager.currentFloor.PosFromCoord(u.coord)));
-                        yield return new WaitForSecondsRealtime(0.1f);
-                    }
-                }
-                yield return StartCoroutine(player.DropNail());
+                yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3]} ));
                 yield return StartCoroutine(floorManager.GenerateNextFloor(TutorialSequence.instance.tutorialFloorPrefab, TutorialSequence.instance.tutorialEnemyPrefab));
                 StartCoroutine(tutorial.Tutorial());
             } else {
+                floorManager.previewManager.InitialPreview();
+                uiManager.LockFloorButtons(true);
                 
-                player.nail.selectable = false;
                 foreach (GridElement ge in player.units)
                     floorManager.currentFloor.RemoveElement(ge);
                 yield return StartCoroutine(floorManager.ChooseLandingPositions());
                 yield return new WaitForSecondsRealtime(1.25f);
                 
-                yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], }));
+                yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3]} ));
                 yield return StartCoroutine(floorManager.GenerateNextFloor());
                 StartCoroutine(SwitchTurns(Turn.Enemy));
             }
         } else {
             floorManager.previewManager.InitialPreview();
+            uiManager.LockFloorButtons(true);
             
             foreach (GridElement ge in player.units)
                 floorManager.currentFloor.RemoveElement(ge);
             yield return StartCoroutine(floorManager.ChooseLandingPositions());
             yield return new WaitForSecondsRealtime(1.25f);
             
-            yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], }));
+            yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3]} ));
             yield return StartCoroutine(floorManager.GenerateNextFloor());
             StartCoroutine(SwitchTurns(Turn.Enemy));
         }

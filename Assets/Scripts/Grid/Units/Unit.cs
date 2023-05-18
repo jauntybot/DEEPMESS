@@ -40,6 +40,7 @@ public class Unit : GridElement {
     protected override void Start() {
         base.Start();
         gfxAnim = gfx[0].GetComponent<Animator>();
+        gfxAnim.keepAnimatorStateOnDisable = true;
     }
 
     public virtual void UpdateAction(EquipmentData equipment = null, int mod = 0) {
@@ -78,14 +79,18 @@ public class Unit : GridElement {
 
     public override void UpdateElement(Vector2 c) {
         base.UpdateElement(c);
-        GridSquare targetSqr = grid.sqrs.Find(sqr => sqr.coord == c);
-        if (targetSqr.tileType == GridSquare.TileType.Blood) {
-            ApplyCondition(Status.Restricted);
-        } else if (targetSqr.tileType == GridSquare.TileType.Bile) {
-            RemoveShell();
-            StartCoroutine(TakeDamage(hpMax, DamageType.Bile));
-        } else {
-            RemoveCondition(Status.Restricted);
+        if (manager.scenario.currentTurn != ScenarioManager.Turn.Cascade) {
+            GridSquare targetSqr = grid.sqrs.Find(sqr => sqr.coord == c);
+            if (targetSqr.tileType == GridSquare.TileType.Blood) {
+                targetSqr.PlaySound(targetSqr.dmgdSFX);
+                ApplyCondition(Status.Restricted);
+            } else if (targetSqr.tileType == GridSquare.TileType.Bile) {
+                targetSqr.PlaySound(targetSqr.dmgdSFX);
+                RemoveShell();
+                StartCoroutine(TakeDamage(hpMax, DamageType.Bile));
+            } else {
+                RemoveCondition(Status.Restricted);
+            }
         }
     }
 
@@ -101,15 +106,12 @@ public class Unit : GridElement {
 
     public override IEnumerator DestroyElement(DamageType dmgType = DamageType.Unspecified) {
         ElementDestroyed?.Invoke(this);
-        AudioClip d = null;
-        if (destroyedSFX) {
-            d = destroyedSFX.Get();
-            PlaySound(d);
-        }
+        
+        PlaySound(destroyedSFX);
+        yield return new WaitForSecondsRealtime(0.5f);
 
         //gfxAnim.SetBool("Destoyed", true);
         
-        yield return new WaitForSecondsRealtime(d.length + 0.5f);
         if (this.gameObject != null)
             Destroy(this.gameObject);
     }

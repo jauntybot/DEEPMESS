@@ -81,6 +81,7 @@ public class ConsumeMoveData : ConsumableEquipmentData
                     unit.grid.DisableGridHighlight();
                     unit.validActionCoords = TargetEquipment(user);
                     unit.grid.DisplayValidCoords(unit.validActionCoords, gridColor);
+                    user.PlaySound(selectSFX);
                     yield return user.StartCoroutine(GrabUnit((Unit)user, (Unit)firstTarget));
                 } else {
                     SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(user.coord), Quaternion.identity).GetComponent<SpriteRenderer>();

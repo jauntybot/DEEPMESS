@@ -18,6 +18,7 @@ public class Nail : Unit
             floorManager = FloorManager.instance;
             selectedEquipment = equipment[0];
         gfxAnim = gfx[0].GetComponent<Animator>();
+        ToggleNailState(NailState.Primed);
     }
 
 

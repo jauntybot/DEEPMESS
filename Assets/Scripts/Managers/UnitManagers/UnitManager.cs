@@ -34,7 +34,6 @@ public class UnitManager : MonoBehaviour {
     public virtual Unit SpawnUnit(Vector2 coord, Unit unit) 
     {
         Unit u = Instantiate(unit.gameObject, unitParent.transform).GetComponent<Unit>();
-        u.StoreInGrid(currentGrid);
 
         units.Add(u);
         SubscribeElement(u);
@@ -46,6 +45,7 @@ public class UnitManager : MonoBehaviour {
             dp.Initialize(u, floorManager.previewManager);
         }
 
+        u.StoreInGrid(currentGrid);
         u.UpdateElement(coord);
 
         return u;
@@ -64,9 +64,8 @@ public class UnitManager : MonoBehaviour {
         UIManager.instance.UpdatePortrait(u);
 
         currentGrid.UpdateSelectedCursor(true, u.coord);
-        
-        if (u.selectedSFX)
-            u.PlaySound(u.selectedSFX.Get());
+    
+        u.PlaySound(u.selectedSFX);
     }
     public virtual void DeselectUnit() {     
         if (selectedUnit) {

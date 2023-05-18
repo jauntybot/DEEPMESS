@@ -26,8 +26,7 @@ public class MoveData : EquipmentData
             unit.moved = true;
         user.elementCanvas.UpdateStatsDisplay();
 
-        if (useSFX)
-            user.PlaySound(useSFX.Get());
+        user.PlaySound(useSFX);
 
         user.grid.UpdateSelectedCursor(false, Vector2.one * -32);
 
@@ -56,6 +55,7 @@ public class MoveData : EquipmentData
 
         Vector2 current = unit.coord;
         unit.coord = moveTo;
+        
 // Lerp units position to target
         while (!Vector2.Equals(current, moveTo)) {
             float timer = 0;

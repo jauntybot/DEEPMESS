@@ -16,7 +16,6 @@ public class FloorManager : MonoBehaviour
     [SerializeField] Transform floorParent;
     [SerializeField] public List<FloorDefinition> floorDefinitions;
     public bool gridHightlightOverride;
-    int tutOffset = 0;
     public Grid currentFloor;
     public List<Grid> floors;
 
@@ -34,6 +33,7 @@ public class FloorManager : MonoBehaviour
     [SerializeField] public GameObject upButton, downButton;
     [SerializeField] ParallaxImageScroll parallax;
     public DescentPreviewManager previewManager;
+    public List<Vector2> nailSpawnOverrides = new List<Vector2>();
     
     [Header("Grid Viz")]
     [SerializeField] private Dictionary<GridElement, LineRenderer> lineRenderers;
@@ -57,9 +57,6 @@ public class FloorManager : MonoBehaviour
         if (UIManager.instance) uiManager = UIManager.instance;
         lineRenderers = new Dictionary<GridElement, LineRenderer>();
         betweenFloor = GetComponent<BetweenFloorManager>();
-        if (TutorialSequence.instance) {
-            if (!TutorialSequence.instance.skip) tutOffset = -3;
-        }
     }
 
     public IEnumerator GenerateFloor(GameObject floorOverride = null, GameObject enemyOverride = null) {
@@ -83,7 +80,7 @@ public class FloorManager : MonoBehaviour
 
     public IEnumerator GenerateNextFloor(GameObject floorPrefab = null, GameObject enemyPrefab = null) {
 // Check if player wins
-        if (currentFloor.index + tutOffset  >= floorDefinitions.Count - 2) {
+        if (currentFloor.index >= floorDefinitions.Count - 2) {
 
             StartCoroutine(scenario.Win());
 
@@ -208,7 +205,7 @@ public class FloorManager : MonoBehaviour
         if (down && currentFloor.index-1 >= 0) floors[currentFloor.index-1].gameObject.SetActive(false);
         if (toFloor) currentFloor = toFloor;
         if (uiManager.gameObject.activeSelf)
-            uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index + tutOffset);
+            uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index);
 
     }
     
@@ -278,7 +275,7 @@ public class FloorManager : MonoBehaviour
 
 // Yield for Slots sequence
         yield return new WaitForSecondsRealtime(0.25f);
-        if (betweenFloor.InbetweenTrigger(currentFloor.index-1 + tutOffset)) {
+        if (betweenFloor.InbetweenTrigger(currentFloor.index-1)) {
             yield return StartCoroutine(betweenFloor.BetweenFloorSegment(currentFloor.index-1));
             
             yield return new WaitForSecondsRealtime(0.25f);
@@ -319,10 +316,6 @@ public class FloorManager : MonoBehaviour
 
         scenario.player.DescendGrids(currentFloor);
         currentFloor.LockGrid(false);
-        
-        yield return new WaitForSecondsRealtime(0.75f);
-        
-        yield return StartCoroutine(scenario.player.DropNail());       
 
         if (uiManager.gameObject.activeSelf)    
             uiManager.metaDisplay.UpdateEnemiesRemaining(scenario.currentEnemy.units.Count);
@@ -343,7 +336,7 @@ public class FloorManager : MonoBehaviour
                 u.manager.transform.parent = transitionParent;
             }
         }
-
+        Nail nail = null;
         List<Coroutine> descents = new List<Coroutine>();
         for (int i = units.Count - 1; i >= 0; i--) {
             if (units[i] is Unit u) {
@@ -352,7 +345,9 @@ public class FloorManager : MonoBehaviour
                     foreach (GridElement ge in toFloor.CoordContents(u.coord)) subElement = ge;
                     descents.Add(StartCoroutine(DropUnit(u, toFloor.PosFromCoord(u.coord) + new Vector3 (0, floorOffset*2, 0), toFloor.PosFromCoord(u.coord), subElement)));
                     yield return new WaitForSeconds(unitDropDur);
-                }
+                } else 
+                    nail = (Nail)u;
+                
             }
         }
         for (int i = descents.Count - 1; i >= 0; i--) {
@@ -361,6 +356,9 @@ public class FloorManager : MonoBehaviour
             else
                 descents.RemoveAt(i);
         }
+        yield return new WaitForSecondsRealtime(0.75f);
+        
+        yield return StartCoroutine(DropNail(nail));
     }
 
     public IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
@@ -374,10 +372,10 @@ public class FloorManager : MonoBehaviour
         }
         unit.DescentVFX(unit.grid.sqrs.Find(sqr => sqr.coord == unit.coord), subElement);
         unit.transform.position = to;
+        unit.StoreInGrid(currentFloor);
         fade.AlphaSelf = 1;
 
-        if (unit.landingSFX)
-            unit.PlaySound(unit.landingSFX.Get());
+        unit.PlaySound(unit.landingSFX);
 
         if (subElement) {
             StartCoroutine(subElement.CollideFromBelow(unit));
@@ -389,4 +387,54 @@ public class FloorManager : MonoBehaviour
         }   
     }
 
+    public IEnumerator DropNail(Nail nail) {
+        if (nail.nailState == Nail.NailState.Buried)
+            nail.ToggleNailState(Nail.NailState.Primed);
+
+        bool validCoord = false;
+        Vector2 spawn = Vector2.zero;
+// Find a valid coord that a player is not in
+        while (!validCoord) {
+            validCoord = true;
+            if (nailSpawnOverrides.Count > 0) 
+                spawn = nailSpawnOverrides[Random.Range(0,nailSpawnOverrides.Count)];
+            else
+                spawn = new Vector2(Random.Range(1,6), Random.Range(1,6));
+                
+            foreach(Unit u in scenario.player.units) {
+                if (u.coord == spawn) validCoord = false;
+            }
+
+            if (currentFloor.sqrs.Find(sqr => sqr.coord == spawn).tileType == GridSquare.TileType.Bile) validCoord = false;
+        }
+        nail.UpdateElement(spawn);
+
+        GridElement subElement = null;
+        foreach (GridElement ge in currentFloor.CoordContents(nail.coord)) subElement = ge;
+
+        Vector3 to = currentFloor.PosFromCoord(spawn);
+        Vector3 from = to + new Vector3(0, floorOffset*2, 0);
+
+
+        nail.PlaySound(nail.selectedSFX);
+
+        float timer = 0;
+        NestedFadeGroup.NestedFadeGroup fade = nail.GetComponent<NestedFadeGroup.NestedFadeGroup>();
+        while (timer <= unitDropDur) {
+            nail.transform.localPosition = Vector3.Lerp(from, to, dropCurve.Evaluate(timer/unitDropDur));
+            fade.AlphaSelf = Mathf.Lerp(0, 1, timer/(unitDropDur/3));
+            yield return null;
+            timer += Time.deltaTime;
+        }
+        nail.DescentVFX(nail.grid.sqrs.Find(sqr => sqr.coord == nail.coord), subElement);
+        nail.transform.position = to;
+        nail.StoreInGrid(currentFloor);
+        nail.ToggleNailState(Nail.NailState.Buried);
+        fade.AlphaSelf = 1;
+
+        nail.PlaySound(nail.landingSFX);
+
+        if (subElement) 
+            StartCoroutine(subElement.CollideFromBelow(nail));
+    }
 }

@@ -111,7 +111,7 @@ public class Grid : MonoBehaviour {
                 ge.UpdateElement(spawn.coord);
             }
         }
-        player.nailSpawnOverrides = nailSpawns;
+        floorManager.nailSpawnOverrides = nailSpawns;
     }
 
     public void ToggleChessNotation(bool state) {
