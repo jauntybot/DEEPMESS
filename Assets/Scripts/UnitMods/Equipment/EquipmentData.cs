@@ -44,8 +44,6 @@ public class EquipmentData : ScriptableObject {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this);
         user.grid.DisplayValidCoords(validCoords, gridColor);
         if (user is PlayerUnit u) u.ui.ToggleEquipmentButtons();
-        if (selectSFX)
-            user.PlaySound(selectSFX.Get());
 
         return validCoords;
     }
@@ -63,8 +61,8 @@ public class EquipmentData : ScriptableObject {
         }
         user.elementCanvas.UpdateStatsDisplay();
 
-        if (useSFX)
-            user.PlaySound(useSFX.Get());
+        
+        user.PlaySound(useSFX);
 
         yield return null;
     }

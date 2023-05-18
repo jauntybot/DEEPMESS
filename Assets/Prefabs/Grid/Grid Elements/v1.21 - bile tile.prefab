@@ -599,7 +599,7 @@ MonoBehaviour:
   energyMax: 0
   audioSource: {fileID: 0}
   selectedSFX: {fileID: 0}
-  dmgdSFX: {fileID: 0}
+  dmgdSFX: {fileID: 11400000, guid: 17d3583494aa2ac4ba5a02d5abbb010d, type: 2}
   healedSFX: {fileID: 0}
   destroyedSFX: {fileID: 0}
   spriteRenderers:
@@ -610,6 +610,7 @@ MonoBehaviour:
   blackColor: {r: 0.88235295, g: 0.88235295, b: 0.88235295, a: 1}
   highlight: {fileID: 3226691499193237596}
   rndSprite: []
+  anim: {fileID: 0}
 --- !u!60 &8517864744566959261
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -665,6 +666,7 @@ MonoBehaviour:
   hpText: {fileID: 0}
   dmgPanel: {fileID: 0}
   dmgAnim: {fileID: 0}
+  overview: {fileID: 0}
 --- !u!82 &4725770806878504000
 AudioSource:
   m_ObjectHideFlags: 0

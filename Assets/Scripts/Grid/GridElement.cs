@@ -54,9 +54,12 @@ public class GridElement : MonoBehaviour{
 
     public virtual void StoreInGrid(Grid owner) {
         grid = owner;
-        grid.gridElements.Add(this);
-        ElementDestroyed += grid.RemoveElement;
-        transform.localScale = Vector3.one * FloorManager.sqrSize;
+        if (!grid.gridElements.Contains(this)) {
+            grid.gridElements.Add(this);
+            ElementDestroyed += grid.RemoveElement;
+            transform.localScale = Vector3.one * FloorManager.sqrSize;
+            UpdateElement(coord);
+        }
     }
 
 // Update grid position and coordinate
@@ -92,13 +95,11 @@ public class GridElement : MonoBehaviour{
     {
         takingDmg = true;
         if (!shell || Mathf.Sign(dmg) == -1) {
-            if (Mathf.Sign(dmg) == 1) {
-                if (dmgdSFX)
-                    PlaySound(dmgdSFX.Get());
-            } else {
-                if (healedSFX)
-                    PlaySound(healedSFX.Get());
-            }
+            if (Mathf.Sign(dmg) == 1) 
+                PlaySound(dmgdSFX);
+             else 
+                PlaySound(healedSFX);
+            
             if (elementCanvas) {
                 yield return StartCoroutine(elementCanvas.DisplayDamageNumber(dmg));
             }
@@ -121,18 +122,14 @@ public class GridElement : MonoBehaviour{
     public virtual IEnumerator DestroyElement(DamageType dmgType = DamageType.Unspecified) 
     {
         ElementDestroyed?.Invoke(this);
-        AudioClip d = null;
-        if (destroyedSFX) {
-            d = destroyedSFX.Get();
-            PlaySound(d);
-        }
-        yield return new WaitForSecondsRealtime(.4f);
+               
+        PlaySound(destroyedSFX);
+        
+        yield return new WaitForSecondsRealtime(.5f);
         foreach (SpriteRenderer sr in gfx) 
             sr.enabled = false;
         if (elementCanvas)
             elementCanvas.ToggleStatsDisplay(false);
-
-        yield return new WaitForSecondsRealtime(d.length);
         if (this.gameObject != null)
             Destroy(this.gameObject);
         
@@ -169,9 +166,13 @@ public class GridElement : MonoBehaviour{
         }
     }
 
-    public virtual void PlaySound(AudioClip clip) {
-        if (clip)
-            audioSource.PlayOneShot(clip);
+    public virtual void PlaySound(SFX sfx = null) {
+        if (sfx) {
+            if (sfx.outputMixerGroup) 
+                audioSource.outputAudioMixerGroup = sfx.outputMixerGroup;   
+
+            audioSource.PlayOneShot(sfx.Get());
+        }
     }
     
 }

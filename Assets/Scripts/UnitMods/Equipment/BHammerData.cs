@@ -78,7 +78,6 @@ public class BHammerData : HammerData
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
     {
         if (firstTarget != null) {
-            Debug.Log("Click lob");
         // REPLACE w/ BASE.USEEQUIPMENT IF BROUGHT BACK INTO WORKING SCRIPTS
             user.energyCurrent -= energyCost;
             if (user is PlayerUnit pu) {
@@ -89,7 +88,6 @@ public class BHammerData : HammerData
             user.elementCanvas.UpdateStatsDisplay();
             yield return user.StartCoroutine(ThrowHammer((PlayerUnit)user, firstTarget, (PlayerUnit)target));
         } else {
-            Debug.Log("Click strike");
             firstTarget = target;
             Unit unit = (Unit)user;
             unit.grid.DisableGridHighlight();
@@ -100,7 +98,7 @@ public class BHammerData : HammerData
                     u.TargetElement(true);
             }
             if (selectSFX)
-                user.PlaySound(selectSFX.Get());
+                user.PlaySound(selectSFX);
                 
             yield return null;
         }
@@ -115,8 +113,8 @@ public class BHammerData : HammerData
         
         user.manager.DeselectUnit();
     
-        if (throwSFX)
-            user.PlaySound(throwSFX.Get());
+        
+        user.PlaySound(throwSFX);
 
         user.SwitchAnim(PlayerUnit.AnimState.Idle);
         hammer.SetActive(true);
@@ -143,34 +141,31 @@ public class BHammerData : HammerData
 
 // Attack target if unit
             if (target is EnemyUnit) {
-                if (target.shell) {
-                    if (shellSFX)
-                        target.PlaySound(shellSFX.Get());
-                }
-                else {
-                    if (useSFX)
-                        target.PlaySound(useSFX.Get());
-                }
+                if (target.shell)
+                    target.PlaySound(shellSFX);
+                else 
+                    target.PlaySound(useSFX);
+                
                 Instantiate(vfx, user.grid.PosFromCoord(target.coord) + new Vector3(0, 1, 0), Quaternion.identity);
                 targetCo = target.StartCoroutine(target.TakeDamage(1, dmgType));
             }
 // Trigger descent if nail
             else if (target is Nail n) {
-                if (nailSFX)
-                    target.PlaySound(nailSFX.Get());
+                
+                target.PlaySound(nailSFX);
                 if (n.nailState == Nail.NailState.Primed)
                     n.ToggleNailState(Nail.NailState.Buried);
                 Instantiate(vfx, user.grid.PosFromCoord(target.coord) + new Vector3(0, 1, 0), Quaternion.identity);
             } else if (target is PlayerUnit pu) {
-                if (catchSFX)
-                    user.PlaySound(catchSFX.Get());
+                
+                user.PlaySound(catchSFX);
                 if (pu.conditions.Contains(Unit.Status.Disabled))
                     pu.Stabilize();
             }
         }
 
         if (throwSFX)
-            user.PlaySound(throwSFX.Get());
+            user.PlaySound(throwSFX);
 
 // Lerp hammer to passTo unit
         if (passTo != null) {
@@ -188,8 +183,7 @@ public class BHammerData : HammerData
             }
             hammer.transform.position = endPos;
 
-            if (catchSFX)
-                user.PlaySound(catchSFX.Get());
+            user.PlaySound(catchSFX);
                  
             PassHammer((PlayerUnit)user, (PlayerUnit)passTo);
             hammer.SetActive(false);
