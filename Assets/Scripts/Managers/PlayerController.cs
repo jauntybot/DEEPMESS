@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour {
     {
         manager = GetComponent<PlayerManager>();
 
-        StartCoroutine(HotkeyInput());
+        //StartCoroutine(HotkeyInput());
 
         Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.ForceSoftware);
         
