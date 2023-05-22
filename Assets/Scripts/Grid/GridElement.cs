@@ -16,7 +16,7 @@ public class GridElement : MonoBehaviour{
     public bool selectable, targeted;
     public PolygonCollider2D hitbox;
     public ElementCanvas elementCanvas;
-    public enum DamageType { Unspecified, Melee, Gravity, Bile };
+    public enum DamageType { Unspecified, Melee, Gravity, Bile, Slots };
     Material originalMaterial;
     bool takingDmg;
 
@@ -97,7 +97,7 @@ public class GridElement : MonoBehaviour{
         if (!shell || Mathf.Sign(dmg) == -1) {
             if (Mathf.Sign(dmg) == 1) 
                 PlaySound(dmgdSFX);
-             else 
+             else if (dmgType != DamageType.Slots)
                 PlaySound(healedSFX);
             
             if (elementCanvas) {
