@@ -11,15 +11,6 @@ public class PlacementData : ConsumableEquipmentData
     public PlacementType placementType;
     [SerializeField] GameObject prefab;
 
-
-    public override List<Vector2> TargetEquipment(GridElement user, int mod)
-    {
-        return base.TargetEquipment(user);
-
-    }
-
-
-
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
     {
         yield return base.UseEquipment(user, target);

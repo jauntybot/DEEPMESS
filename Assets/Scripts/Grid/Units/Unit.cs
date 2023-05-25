@@ -16,6 +16,7 @@ public class Unit : GridElement {
     public bool moved, usedEquip;
 
     public List<Vector2> validActionCoords;
+    public List<Vector2> inRangeCoords;
     
     public enum Status { Normal, Immobilized, Restricted, Disabled }
     [Header("Modifiers")]

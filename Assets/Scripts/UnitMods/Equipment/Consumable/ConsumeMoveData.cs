@@ -79,7 +79,8 @@ public class ConsumeMoveData : ConsumableEquipmentData
                     contextualAnimGO = target.gameObject;
                     Unit unit = (Unit)user;
                     unit.grid.DisableGridHighlight();
-                    unit.validActionCoords = TargetEquipment(user);
+                    unit.inRangeCoords = TargetEquipment(user);
+                    unit.validActionCoords = unit.inRangeCoords;
                     unit.grid.DisplayValidCoords(unit.validActionCoords, gridColor);
                     user.PlaySound(selectSFX);
                     yield return user.StartCoroutine(GrabUnit((Unit)user, (Unit)firstTarget));

@@ -16,7 +16,7 @@ public class GridContextuals : MonoBehaviour
     [SerializeField] GameObject contextCursor;
     Animator cursorAnimator;
 
-    [SerializeField] Color playerColor, enemyColor, equipColor;
+    [SerializeField] Color playerColor, enemyColor, equipColor, invalidColor;
     
     [SerializeField] LineRenderer lr;
     int lrI = 0;
@@ -128,14 +128,7 @@ public class GridContextuals : MonoBehaviour
     public void UpdateContext(ContextDisplay context, int highlightIndex, GridElement newAnim = null, GridElement newFrom = null) {
         currentContext = context;
         lrI = lr.positionCount;
-        Color gridColor = FloorManager.instance.GetFloorColor(highlightIndex);
-        switch (highlightIndex) {
-            default:
-            case 0: gridColor = playerColor; break;
-            case 1: gridColor = enemyColor; break;
-            case 2: gridColor = equipColor; break;
-        }
-        lr.startColor = gridColor; lr.endColor = gridColor;
+        ChangeLineColor(highlightIndex);
 
         if (newAnim != null) {
             UpdateCursorAnim(newAnim.transform);
@@ -144,6 +137,18 @@ public class GridContextuals : MonoBehaviour
             fromOverride = newFrom;  
         }
     }  
+
+    public void ChangeLineColor(int highlightIndex) {
+        Color gridColor = FloorManager.instance.GetFloorColor(highlightIndex);
+        switch (highlightIndex) {
+            case 0: gridColor = playerColor; break;
+            case 1: gridColor = enemyColor; break;
+            case 2: gridColor = equipColor; break;
+            default:
+            case 3: gridColor = invalidColor; break;
+        }
+        lr.startColor = gridColor; lr.endColor = gridColor;
+    }
 
     public virtual void UpdateSortOrder(Vector2 c) {
         int sort = grid.SortOrderFromCoord(c);

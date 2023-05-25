@@ -260,9 +260,14 @@ public class PlayerManager : UnitManager {
         currentGrid.UpdateTargetCursor(state, pos);
         if (selectedUnit != null) {
             if (contextuals.displaying) {
-                if (selectedUnit.validActionCoords.Count > 0) {
-                    if (selectedUnit.validActionCoords.Contains(pos)) 
+                if (selectedUnit.inRangeCoords.Count > 0) {
+                    if (selectedUnit.inRangeCoords.Contains(pos)) {
                         contextuals.UpdateCursor(selectedUnit, pos);
+                        if (selectedUnit.validActionCoords.Contains(pos))
+                            contextuals.ChangeLineColor(selectedUnit.selectedEquipment.gridColor);
+                        else
+                            contextuals.ChangeLineColor(3); // 3 is invalid color index
+                    }
                     else
                         contextuals.ToggleValid(false);
                 }

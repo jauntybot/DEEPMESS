@@ -65,6 +65,7 @@ public class MusicController : MonoBehaviour
 
     public void PlayAudio()
     {
+        StopAllCoroutines();
         musicAudioSource.Play();
         playing = StartCoroutine(EndOfTrack());
     }
