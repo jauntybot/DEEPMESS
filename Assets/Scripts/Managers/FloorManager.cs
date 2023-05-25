@@ -411,7 +411,7 @@ public class FloorManager : MonoBehaviour
 
             if (currentFloor.sqrs.Find(sqr => sqr.coord == spawn).tileType == GridSquare.TileType.Bile) validCoord = false;
         }
-        Debug.Log(nail.grid.name);
+        
         nail.UpdateElement(spawn);
 
         GridElement subElement = null;
@@ -431,9 +431,10 @@ public class FloorManager : MonoBehaviour
             yield return null;
             timer += Time.deltaTime;
         }
-        nail.DescentVFX(nail.grid.sqrs.Find(sqr => sqr.coord == nail.coord), subElement);
+        nail.DescentVFX(currentFloor.sqrs.Find(sqr => sqr.coord == nail.coord), subElement);
         nail.transform.position = to;
         nail.StoreInGrid(currentFloor);
+        nail.UpdateElement(spawn);
         nail.ToggleNailState(Nail.NailState.Buried);
         fade.AlphaSelf = 1;
 

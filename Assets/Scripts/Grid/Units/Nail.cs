@@ -36,5 +36,17 @@ public class Nail : Unit
         ui.overview.UpdateOverview(hpCurrent);
     }
 
-    
+     public override void UpdateElement(Vector2 c) {
+        base.UpdateElement(c);
+        if (manager.scenario.currentTurn != ScenarioManager.Turn.Cascade) {
+            GridSquare targetSqr = grid.sqrs.Find(sqr => sqr.coord == c);
+            if (targetSqr.tileType == GridSquare.TileType.Blood) {
+                targetSqr.PlaySound(targetSqr.dmgdSFX);
+            } else if (targetSqr.tileType == GridSquare.TileType.Bile) {
+                targetSqr.PlaySound(targetSqr.dmgdSFX);
+            } else {
+                RemoveCondition(Status.Restricted);
+            }
+        }
+    }
 }
