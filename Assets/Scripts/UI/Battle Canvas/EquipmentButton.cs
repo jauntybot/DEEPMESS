@@ -21,7 +21,7 @@ public class EquipmentButton : MonoBehaviour
 
     public void Initialize(EquipmentData d, GridElement ge) {
         data = d;
-        if (d is HammerData) hammer = true;
+        if (d is Hammer) hammer = true;
         unit = (PlayerUnit)ge;
         EquipmentSelected += unit.UpdateAction;
         bg = GetComponentInChildren<Image>();

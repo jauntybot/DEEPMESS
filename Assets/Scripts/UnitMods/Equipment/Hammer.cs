@@ -4,7 +4,7 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName = "Equipment/Hammer")]
 [System.Serializable]
-public class HammerData : EquipmentData
+public class Hammer : EquipmentData
 {
     public GameObject hammer;
     public Nail nail;
@@ -216,7 +216,7 @@ public class HammerData : EquipmentData
     public virtual void PassHammer(PlayerUnit sender, PlayerUnit reciever) {
         List<EquipmentData> toAdd = new List<EquipmentData>();
         for (int i = sender.equipment.Count - 1; i >= 0; i--) {
-            if (sender.equipment[i] is HammerData) {
+            if (sender.equipment[i] is Hammer) {
                 toAdd.Add(sender.equipment[i]);
 
                 sender.equipment.Remove(sender.equipment[i]);

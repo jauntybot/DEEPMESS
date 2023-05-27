@@ -48,7 +48,7 @@ public class EquipmentAdjacency : MonoBehaviour
                     Vector2 coord = new Vector2(current.x + x, current.y);
                     if (!_coords.Contains(coord)) {
                         bool valid = true;
-                        if (data is HammerData || data is AttackData) valid = false;
+                        if (data is Hammer || data is AttackData) valid = false;
 // If there is something already occupying this coord  
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
 // Valid coord if element is not filtered
@@ -90,7 +90,7 @@ public class EquipmentAdjacency : MonoBehaviour
                     Vector2 coord = new Vector2(current.x, current.y + y);
                     if (!_coords.Contains(coord)) {
                         bool valid = true;
-                        if (data is HammerData || data is AttackData) valid = false;
+                        if (data is Hammer || data is AttackData) valid = false;
 // If there is something already occupying this coord                        
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
 // Valid coord if element is not filtered

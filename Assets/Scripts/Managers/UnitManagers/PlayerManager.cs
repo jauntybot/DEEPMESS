@@ -16,7 +16,7 @@ public class PlayerManager : UnitManager {
     [Header("PLAYER MANAGER")]
     public LoadoutManager loadout;
     public Nail nail;
-    public List<HammerData> hammerActions;
+    public List<Hammer> hammerActions;
     [SerializeField] EquipmentData cascadeMovement;
      public EquipmentData overrideEquipment = null;
     [SerializeField] public GridContextuals contextuals;
@@ -90,12 +90,12 @@ public class PlayerManager : UnitManager {
     }
 
 // Spawn a new instance of a hammer and update hammer actions
-    public virtual void SpawnHammer(PlayerUnit unit, List<HammerData> hammerData) {
+    public virtual void SpawnHammer(PlayerUnit unit, List<Hammer> hammerData) {
         GameObject h = Instantiate(hammerPrefab, unit.transform.position, Quaternion.identity, unit.transform);
         h.GetComponentInChildren<SpriteRenderer>().sortingOrder = unit.gfx[0].sortingOrder;
         unit.gfx.Add(h.GetComponentInChildren<SpriteRenderer>());
         h.transform.GetChild(0).transform.localPosition = new Vector3(0.5f, 0, 0);
-        foreach(HammerData equip in hammerData) {
+        foreach(Hammer equip in hammerData) {
             unit.equipment.Insert(unit.equipment.Count, equip);
             equip.EquipEquipment(unit);
             equip.AssignHammer(h, nail);

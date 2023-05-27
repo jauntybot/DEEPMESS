@@ -73,7 +73,7 @@ public class Unit : GridElement {
         if (!validActionCoords.Contains(target)) return false;
         if (energyCurrent < equip.energyCost && equip is not MoveData) return false;
         else if (moved && equip is MoveData) return false;
-        else if (usedEquip && (equip is ConsumableEquipmentData && equip is not HammerData)) return false;
+        else if (usedEquip && (equip is ConsumableEquipmentData && equip is not Hammer)) return false;
 
         return true;
     }

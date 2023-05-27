@@ -44,7 +44,7 @@ public class UnitOverview : MonoBehaviour
     public virtual void UpdateOverview(int value) {
 
         mini.color = unit.conditions.Contains(Unit.Status.Disabled) ? new Color(0.5f, 0.5f, 0.5f) : Color.white;
-        hammerPossession.SetActive(unit.equipment.Find(e => e is HammerData) != null);
+        hammerPossession.SetActive(unit.equipment.Find(e => e is Hammer) != null);
         hammerDisable.SetActive(unit.energyCurrent <= 0);
         
         moveDisable.SetActive(unit.moved);

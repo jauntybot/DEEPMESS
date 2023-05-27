@@ -117,7 +117,7 @@ public class PlayerUnit : Unit {
 
         bool droppedHammer = false;
         for (int i = equipment.Count - 1; i >= 0; i--) {
-            if (equipment[i] is HammerData hammer) {
+            if (equipment[i] is Hammer hammer) {
                 if (!droppedHammer) {
                     List<Unit> possiblePasses = new List<Unit>();
                     foreach (Unit u in pManager.units) {
