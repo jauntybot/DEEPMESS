@@ -4,7 +4,6 @@ using UnityEngine;
 
 // Custom data class, stores card type enum, sprite, and other things to come
 
-[CreateAssetMenu(menuName = "Equipment")]
 [System.Serializable]
 public class EquipmentData : ScriptableObject {
 
