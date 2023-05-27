@@ -27,9 +27,9 @@ public class EquipmentPickup : GroundElement
 // Spawn new hammer and assign it to equipment data
                 case Pickup.Hammer:
                     PlayerManager manager = (PlayerManager)pu.manager;
-                    List<Hammer> hData = new List<Hammer>();
+                    List<HammerData> hData = new List<HammerData>();
                     foreach (EquipmentData equip in equipment)
-                        hData.Add((Hammer)equip);
+                        hData.Add((HammerData)equip);
                     manager.SpawnHammer(pu, hData);
                     StartCoroutine(DestroyElement());
                 break;
