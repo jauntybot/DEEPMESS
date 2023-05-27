@@ -89,7 +89,7 @@ public class HammerData : EquipmentData
         base.UntargetEquipment(user);
         firstTarget = null;
         PlayerUnit pu = (PlayerUnit)user;
-        pu.SwitchAnim(PlayerUnit.AnimState.HammerData);
+        pu.SwitchAnim(PlayerUnit.AnimState.Hammer);
         hammer.SetActive(false);
     }
 
@@ -228,7 +228,7 @@ public class HammerData : EquipmentData
         sender.gfx.Remove(hammer.GetComponentInChildren<SpriteRenderer>());
         hammer.transform.parent = reciever.transform;
         reciever.gfx.Add(hammer.GetComponentInChildren<SpriteRenderer>());
-        reciever.SwitchAnim(PlayerUnit.AnimState.HammerData);
+        reciever.SwitchAnim(PlayerUnit.AnimState.Hammer);
 
         reciever.ui.UpdateEquipmentButtons();
         sender.ui.UpdateEquipmentButtons();
