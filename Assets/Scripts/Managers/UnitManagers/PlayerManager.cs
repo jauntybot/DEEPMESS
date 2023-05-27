@@ -28,6 +28,7 @@ public class PlayerManager : UnitManager {
     [Header("UNDO")]
     public bool unitActing = false;
     public Dictionary<Unit, Vector2> undoableMoves = new Dictionary<Unit, Vector2>();
+    public Dictionary<Unit, GridElement> destroyedByMove = new Dictionary<Unit, GridElement>();
     public List<Unit> undoOrder;
     private GridElement prevCursorTarget = null;
     private bool prevCursorTargetState = false;
@@ -358,7 +359,11 @@ public class PlayerManager : UnitManager {
 
         if (undoableMoves.Count > 0 && undoOrder.Count > 0) {
             Unit lastMoved = undoOrder[undoOrder.Count - 1];
-
+            Debug.Log(destroyedByMove.Count);
+            if (destroyedByMove.ContainsKey(lastMoved)) {
+                TilePad pad = (TilePad)destroyedByMove[lastMoved];
+                pad.UndoDestroy();
+            }
             MoveData move = (MoveData)cascadeMovement;
             StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved], true));
             lastMoved.moved = false;
@@ -371,7 +376,12 @@ public class PlayerManager : UnitManager {
         } else if ((undoableMoves.Count > 0 && undoOrder.Count == 0) ||(undoableMoves.Count == 0 && undoOrder.Count > 0)) {
             undoOrder = new List<Unit>();
             undoableMoves = new Dictionary<Unit, Vector2>();
+            destroyedByMove = new Dictionary<Unit, GridElement>();
         }
+    }
+
+    public virtual void StoreForUndo(GridElement ge) {
+        destroyedByMove.Add(undoOrder[undoOrder.Count-1], ge);
     }
 
     public void TriggerDescent(bool tut = false) {

@@ -370,9 +370,10 @@ public class FloorManager : MonoBehaviour
             yield return null;
             timer += Time.deltaTime;
         }
-        unit.DescentVFX(unit.grid.sqrs.Find(sqr => sqr.coord == unit.coord), subElement);
+        unit.DescentVFX(currentFloor.sqrs.Find(sqr => sqr.coord == unit.coord), subElement);
         unit.transform.position = to;
         unit.StoreInGrid(currentFloor);
+        unit.UpdateElement(unit.coord);
         fade.AlphaSelf = 1;
 
         unit.PlaySound(unit.landingSFX);

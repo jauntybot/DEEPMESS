@@ -47,6 +47,12 @@ public class MoveData : EquipmentData
             }
             manager.undoableMoves.Add(unit, unit.coord);
             manager.undoOrder.Add(unit);
+            foreach (GridElement ge in unit.grid.CoordContents(moveTo)) {
+                if (ge is GroundElement) {
+                    ge.ElementDestroyed += manager.StoreForUndo;
+                    Debug.Log("Sub");
+                }
+            }
         }
 // Build frontier dictionary for stepped lerp
         Dictionary<Vector2, Vector2> fromTo = new Dictionary<Vector2, Vector2>();

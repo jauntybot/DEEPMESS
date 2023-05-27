@@ -5,6 +5,7 @@ using UnityEngine;
 public class TilePad : GroundElement
 {
 
+    public GameObject undoPrefab;
     public enum Buff { Heal, Equip }
     public Buff buff;
 
@@ -20,7 +21,10 @@ public class TilePad : GroundElement
                 case Buff.Heal:
                     if (sharedWith.hpCurrent < sharedWith.hpMax) {
                         StartCoroutine(sharedWith.TakeDamage(-value));
-                        StartCoroutine(DestroyElement());
+                        if (sharedWith is PlayerUnit u)
+                            StartCoroutine(WaitForUndoClear(u.pManager));
+                        else
+                            StartCoroutine(DestroyElement());
                     }
                 break;
                 case Buff.Equip:
@@ -33,5 +37,17 @@ public class TilePad : GroundElement
                 break;
             }
         }
+    }
+
+    IEnumerator WaitForUndoClear(PlayerManager manager) {
+        foreach (SpriteRenderer sr in gfx) sr.enabled = false;
+        while (manager.undoableMoves.Count > 0) yield return null;
+        yield return new WaitForSecondsRealtime(0.125f);
+        StartCoroutine(DestroyElement());
+    }
+
+    public void UndoDestroy() {
+        StopAllCoroutines();
+        foreach (SpriteRenderer sr in gfx) sr.enabled = true;
     }
 }
