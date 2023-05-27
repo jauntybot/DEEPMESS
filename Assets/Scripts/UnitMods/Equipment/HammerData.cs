@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Equipment/BHammer")]
+[CreateAssetMenu(menuName = "Equipment/Hammer")]
 [System.Serializable]
 public class HammerData : EquipmentData
 {
