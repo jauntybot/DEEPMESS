@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Equipment/HammerBAD")]
+[CreateAssetMenu(menuName = "Equipment/HammerData")]
 [System.Serializable]
-public class Hammer : EquipmentData
+public class HammerData : EquipmentData
 {
     public GameObject hammer;
     public Nail nail;
@@ -89,7 +89,7 @@ public class Hammer : EquipmentData
         base.UntargetEquipment(user);
         firstTarget = null;
         PlayerUnit pu = (PlayerUnit)user;
-        pu.SwitchAnim(PlayerUnit.AnimState.Hammer);
+        pu.SwitchAnim(PlayerUnit.AnimState.HammerData);
         hammer.SetActive(false);
     }
 
@@ -216,7 +216,7 @@ public class Hammer : EquipmentData
     public virtual void PassHammer(PlayerUnit sender, PlayerUnit reciever) {
         List<EquipmentData> toAdd = new List<EquipmentData>();
         for (int i = sender.equipment.Count - 1; i >= 0; i--) {
-            if (sender.equipment[i] is Hammer) {
+            if (sender.equipment[i] is HammerData) {
                 toAdd.Add(sender.equipment[i]);
 
                 sender.equipment.Remove(sender.equipment[i]);
@@ -228,7 +228,7 @@ public class Hammer : EquipmentData
         sender.gfx.Remove(hammer.GetComponentInChildren<SpriteRenderer>());
         hammer.transform.parent = reciever.transform;
         reciever.gfx.Add(hammer.GetComponentInChildren<SpriteRenderer>());
-        reciever.SwitchAnim(PlayerUnit.AnimState.Hammer);
+        reciever.SwitchAnim(PlayerUnit.AnimState.HammerData);
 
         reciever.ui.UpdateEquipmentButtons();
         sender.ui.UpdateEquipmentButtons();

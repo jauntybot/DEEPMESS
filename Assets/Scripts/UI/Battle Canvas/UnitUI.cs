@@ -133,8 +133,8 @@ public class UnitUI : MonoBehaviour
         for (int i = unit.equipment.Count - 1; i >= 0; i--) {
             if (unit.equipment[i] is not MoveData) {
                 if (equipment.Find(b => b.data == unit.equipment[i]) == null) {
-                    EquipmentButton newButt = Instantiate(unit.equipment[i] is Hammer ? hammerButtonPrefab : equipmentButtonPrefab).GetComponent<EquipmentButton>();
-                    newButt.transform.SetParent(unit.equipment[i] is Hammer ? hammerPanel.transform : equipmentPanel.transform);
+                    EquipmentButton newButt = Instantiate(unit.equipment[i] is HammerData ? hammerButtonPrefab : equipmentButtonPrefab).GetComponent<EquipmentButton>();
+                    newButt.transform.SetParent(unit.equipment[i] is HammerData ? hammerPanel.transform : equipmentPanel.transform);
                     newButt.transform.localScale = Vector3.one;
                     newButt.Initialize(unit.equipment[i], unit);
                     equipment.Add(newButt);

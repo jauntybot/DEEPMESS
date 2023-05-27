@@ -87,8 +87,8 @@ public class PlayerController : MonoBehaviour {
                         }
                         if (Input.GetKeyDown(KeyCode.W)) {
                             if (manager.selectedUnit) {
-                                if (manager.selectedUnit.equipment.Find(e => e is Hammer) && manager.selectedUnit.energyCurrent > 0) {
-                                    manager.selectedUnit.selectedEquipment = manager.selectedUnit.equipment.Find(e => e is Hammer);
+                                if (manager.selectedUnit.equipment.Find(e => e is HammerData) && manager.selectedUnit.energyCurrent > 0) {
+                                    manager.selectedUnit.selectedEquipment = manager.selectedUnit.equipment.Find(e => e is HammerData);
                                     manager.selectedUnit.UpdateAction(manager.selectedUnit.selectedEquipment);
                                     if (manager.selectedUnit.ui.hammerSelectSFX)
                                         UIManager.instance.PlaySound(manager.selectedUnit.ui.hammerSelectSFX.Get());
