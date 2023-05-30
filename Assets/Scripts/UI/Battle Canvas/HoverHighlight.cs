@@ -10,24 +10,22 @@ public class HoverHighlight : MonoBehaviour
 
     [Header("Enter Values")]
     public int leftEnterValue;
-    public int rightEnterValue;
 
     [Header("Exit Values")]
     public int leftExitValue;
-    public int rightExitValue;
 
     public float animSpeed;
 
     public void HighlightEnter()
     {
         LeanTween.moveLocalX(leftHighlight, leftEnterValue, animSpeed).setEase(LeanTweenType.easeInQuad);
-        LeanTween.moveLocalX(rightHighlight, rightEnterValue, animSpeed).setEase(LeanTweenType.easeInQuad);
+        LeanTween.moveLocalX(rightHighlight, Mathf.Abs(leftEnterValue), animSpeed).setEase(LeanTweenType.easeInQuad);
     }
 
     public void HighlightExit()
     {
         LeanTween.moveLocalX(leftHighlight, leftExitValue, animSpeed).setEase(LeanTweenType.easeInQuad);
-        LeanTween.moveLocalX(rightHighlight, rightExitValue, animSpeed).setEase(LeanTweenType.easeInQuad);
+        LeanTween.moveLocalX(rightHighlight, Mathf.Abs(leftExitValue), animSpeed).setEase(LeanTweenType.easeInQuad);
     }
 
 }

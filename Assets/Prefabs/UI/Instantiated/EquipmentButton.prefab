@@ -213,7 +213,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.5, g: 0.5, b: 0.5, a: 0.5019608}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -248,7 +248,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6524660502575837902
 RectTransform:
   m_ObjectHideFlags: 0
@@ -337,9 +337,7 @@ MonoBehaviour:
   leftHighlight: {fileID: 4032062854811821854}
   rightHighlight: {fileID: 2991468385520093946}
   leftEnterValue: -115
-  rightEnterValue: 115
   leftExitValue: -170
-  rightExitValue: 170
   animSpeed: 0.25
 --- !u!1 &4032062854811821854
 GameObject:
@@ -401,7 +399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.5, g: 0.5, b: 0.5, a: 0.5019608}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

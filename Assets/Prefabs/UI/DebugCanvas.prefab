@@ -410,9 +410,7 @@ MonoBehaviour:
   leftHighlight: {fileID: 7686774963927933609}
   rightHighlight: {fileID: 7247212284984830408}
   leftEnterValue: -130
-  rightEnterValue: 130
   leftExitValue: -170
-  rightExitValue: 170
   animSpeed: 0.25
 --- !u!1 &1539751409023911517
 GameObject:
@@ -7202,6 +7200,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8940216680623068612}
     m_Modifications:
+    - target: {fileID: 3104127489963913438, guid: ed1fbf5889db149aca476cabd43a2606, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4143282109969617914, guid: ed1fbf5889db149aca476cabd43a2606, type: 3}
       propertyPath: m_Name
       value: End Turn Button
@@ -7374,6 +7376,14 @@ PrefabInstance:
       propertyPath: m_PixelsPerUnitMultiplier
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5246048710935185459, guid: ed1fbf5889db149aca476cabd43a2606, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7631743474873672927, guid: ed1fbf5889db149aca476cabd43a2606, type: 3}
+      propertyPath: m_FillCenter
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ed1fbf5889db149aca476cabd43a2606, type: 3}
 --- !u!114 &5002903889946405938 stripped
@@ -7392,32 +7402,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4143282109969617914, guid: ed1fbf5889db149aca476cabd43a2606, type: 3}
   m_PrefabInstance: {fileID: 8940216681465733418}
   m_PrefabAsset: {fileID: 0}
---- !u!61 &4053167633378963029
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5002903890005406416}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
 --- !u!114 &7217586495550332669
 MonoBehaviour:
   m_ObjectHideFlags: 0
