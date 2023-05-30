@@ -387,6 +387,10 @@ public class PlayerManager : UnitManager {
 
     public override void DeselectUnit()
     {
+        if (selectedUnit is PlayerUnit pu) {
+            foreach (EquipmentButton eb in pu.ui.equipment)
+                eb.DeselectEquipment();
+        }
         base.DeselectUnit();
         turnBlink.BlinkEndTurn();
         prevCursorTargetState = false;

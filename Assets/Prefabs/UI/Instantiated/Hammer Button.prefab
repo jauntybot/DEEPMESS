@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3408611856841022631
 RectTransform:
   m_ObjectHideFlags: 0
@@ -647,8 +647,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 0}
-  badge: {fileID: 0}
-  badgeNumber: {fileID: 0}
+  button: {fileID: 735508261610608116}
+  selected: 0
+  disarmOverlay: {fileID: 622450547540956480}
 --- !u!222 &7769907341983634209
 CanvasRenderer:
   m_ObjectHideFlags: 0

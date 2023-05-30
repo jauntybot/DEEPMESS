@@ -29,6 +29,8 @@ public class PlayerUnit : Unit {
 // Called when an action is applied to a unit or to clear it's actions
     public override void UpdateAction(EquipmentData equipment = null, int mod = 0) 
     {
+        foreach (EquipmentButton eb in ui.equipment) 
+            eb.DeselectEquipment();
         if (pManager.overrideEquipment == null) {
             if (equipment is ConsumableEquipmentData && !usedEquip)
                 base.UpdateAction(equipment, mod);
