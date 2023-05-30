@@ -62,7 +62,7 @@ public class GridSquare : GridElement {
         LineRenderer lr = highlight.GetComponentInChildren<LineRenderer>();
         if (lr) {
             lr.sortingOrder = grid.SortOrderFromCoord(coord);
-            lr.startColor = new Color(color.r, color.g, color.b, 0.5f); lr.endColor = new Color(color.r, color.g, color.b, 0.5f);
+            lr.startColor = new Color(color.r, color.g, color.b, 0.75f); lr.endColor = new Color(color.r, color.g, color.b, 0.75f);
         }
     }
 

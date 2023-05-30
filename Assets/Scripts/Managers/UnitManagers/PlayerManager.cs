@@ -285,6 +285,7 @@ public class PlayerManager : UnitManager {
                 }
             }
         }
+// No unit selected
         else if (scenario.currentTurn == ScenarioManager.Turn.Player) {
             bool hovered = false;
             foreach (GridElement ge in currentGrid.CoordContents(pos)) {
