@@ -29,6 +29,8 @@ public class PlayerUnit : Unit {
 // Called when an action is applied to a unit or to clear it's actions
     public override void UpdateAction(EquipmentData equipment = null, int mod = 0) 
     {
+        foreach (EquipmentButton eb in ui.equipment) 
+            eb.DeselectEquipment();
         if (pManager.overrideEquipment == null) {
             if (equipment is ConsumableEquipmentData && !usedEquip)
                 base.UpdateAction(equipment, mod);
@@ -45,18 +47,18 @@ public class PlayerUnit : Unit {
     public override IEnumerator ExecuteAction(GridElement target = null) {
         
         Coroutine co = StartCoroutine(base.ExecuteAction(target));
-
-        if (selectedEquipment) {
-            if (!selectedEquipment.multiselect && selectedEquipment is not MoveData) {
+        EquipmentData equip = selectedEquipment;
+        if (equip) {
+            if (!equip.multiselect && equip is not MoveData) {
                 pManager.DeselectUnit();
                 pManager.StartCoroutine(pManager.UnitIsActing());
             }
-            else if (selectedEquipment is MoveData && energyCurrent > 0) {
+            else if (equip is MoveData && energyCurrent > 0) {
                 pManager.StartCoroutine(pManager.UnitIsActing());
             }
-            else if (selectedEquipment.firstTarget != null) {
-                GridElement anim = selectedEquipment.contextualAnimGO ? selectedEquipment.contextualAnimGO.GetComponent<GridElement>() : null;
-                pManager.contextuals.UpdateContext(selectedEquipment.multiContext, selectedEquipment.gridColor, anim, target);
+            else if (equip.firstTarget != null) {
+                GridElement anim = equip.contextualAnimGO ? equip.contextualAnimGO.GetComponent<GridElement>() : null;
+                pManager.contextuals.UpdateContext(equip.multiContext, equip.gridColor, anim, target);
             } else {
                 pManager.DeselectUnit();
                 pManager.StartCoroutine(pManager.UnitIsActing());
@@ -68,8 +70,10 @@ public class PlayerUnit : Unit {
         FloorManager.instance.upButton.GetComponent<Button>().enabled = false; FloorManager.instance.downButton.GetComponent<Button>().enabled = false;
         yield return co;
         FloorManager.instance.upButton.GetComponent<Button>().enabled = true; FloorManager.instance.downButton.GetComponent<Button>().enabled = true;
-        if (selectedEquipment is MoveData && energyCurrent > 0)
+        if (equip is MoveData && energyCurrent > 0) {
+            Debug.Log("Update select cursor");
             grid.UpdateSelectedCursor(true, coord);
+        }
         else {
             foreach(GridElement ge in pManager.currentGrid.gridElements) 
                 ge.TargetElement(false);

@@ -67,10 +67,10 @@ public class Grid : MonoBehaviour {
             }
         }
         
-        gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
-        gridCursor.transform.SetAsLastSibling();
         selectedCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
         selectedCursor.transform.SetAsLastSibling();
+        gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
+        gridCursor.transform.SetAsLastSibling();
         index = i;
 
         SpawnLevelDefinition(enemyOverride);
@@ -144,7 +144,7 @@ public class Grid : MonoBehaviour {
     }
 
 // Toggle GridSquare highlights, apply color by index
-    public void DisplayValidCoords(List<Vector2> coords, int? index = null, bool stack = false) {
+    public void DisplayValidCoords(List<Vector2> coords, int? index = null, bool stack = false, bool fill = true) {
         if (!stack)
             DisableGridHighlight();
 
@@ -155,7 +155,7 @@ public class Grid : MonoBehaviour {
         if (coords != null) {
             foreach (Vector2 coord in coords) {
                 if (sqrs.Find(sqr => sqr.coord == coord))
-                    sqrs.Find(sqr => sqr.coord == coord).ToggleValidCoord(true, c);
+                    sqrs.Find(sqr => sqr.coord == coord).ToggleValidCoord(true, c, fill);
             }
         }
 

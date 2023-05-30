@@ -49,8 +49,7 @@ public class MoveData : EquipmentData
             manager.undoOrder.Add(unit);
             foreach (GridElement ge in unit.grid.CoordContents(moveTo)) {
                 if (ge is GroundElement) {
-                    ge.ElementDestroyed += manager.StoreForUndo;
-                    Debug.Log("Sub");
+                    manager.StoreForUndo(ge);
                 }
             }
         }

@@ -19,6 +19,7 @@ public class CascadeMoveData : MoveData
         }
         user.grid.DisplayValidCoords(invalidCoords, 3);
         user.grid.DisplayValidCoords(validCoords, gridColor, true);
+        unit.inRangeCoords = validCoords;
         return validCoords;
     }
 

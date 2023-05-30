@@ -93,8 +93,8 @@ public class ScenarioManager : MonoBehaviour
                 yield return StartCoroutine(floorManager.GenerateNextFloor(TutorialSequence.instance.tutorialFloorPrefab, TutorialSequence.instance.tutorialEnemyPrefab));
                 StartCoroutine(tutorial.Tutorial());
             } else {
-                floorManager.previewManager.InitialPreview();
                 uiManager.LockFloorButtons(true);
+                floorManager.previewManager.InitialPreview();
                 
                 foreach (GridElement ge in player.units)
                     floorManager.currentFloor.RemoveElement(ge);
@@ -106,9 +106,9 @@ public class ScenarioManager : MonoBehaviour
                 StartCoroutine(SwitchTurns(Turn.Enemy));
             }
         } else {
-            floorManager.previewManager.InitialPreview();
             uiManager.LockFloorButtons(true);
             
+            floorManager.previewManager.InitialPreview();
             foreach (GridElement ge in player.units)
                 floorManager.currentFloor.RemoveElement(ge);
             yield return StartCoroutine(floorManager.ChooseLandingPositions());
@@ -218,6 +218,7 @@ public class ScenarioManager : MonoBehaviour
                 }
                 uiManager.LockHUDButtons(false);
                 uiManager.LockFloorButtons(true);
+                yield return new WaitForSecondsRealtime(0.2f);
                 if (uiManager.gameObject.activeSelf)
                     yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Position));
             break;

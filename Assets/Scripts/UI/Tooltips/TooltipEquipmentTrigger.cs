@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [ExecuteInEditMode]
-public class TooltipEquipmentTrigger : TooltipTrigger, IPointerEnterHandler, IPointerExitHandler
+public class TooltipEquipmentTrigger : TooltipTrigger
 {
 
     [SerializeField] bool initSelf;

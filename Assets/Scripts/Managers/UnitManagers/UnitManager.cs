@@ -43,6 +43,7 @@ public class UnitManager : MonoBehaviour {
         if (unit is not Nail) {
             DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
             dp.Initialize(u, floorManager.previewManager);
+            
         }
 
         u.StoreInGrid(currentGrid);

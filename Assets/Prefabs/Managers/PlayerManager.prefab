@@ -193,7 +193,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff6539855a3375e41b3b407c0b253678, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cursorTexture: {fileID: 2800000, guid: 621a17ad511f5f14a905e5d2d841d6eb, type: 3}
+  cursorState: 0
+  pointerAnchor: {x: 15.36, y: 51.46}
+  defaultCursor: {fileID: 2800000, guid: 75ecd03048218f7489f3fa2bea54f333, type: 3}
+  clickableCursor: {fileID: 2800000, guid: 2f8282547f6de9b4ba1503dab5a8a95b, type: 3}
+  moveCursor: {fileID: 2800000, guid: 3e09bca52ad0fd449ab473d26b98e400, type: 3}
+  nullMoveCursor: {fileID: 2800000, guid: e46930bb7870f4944a211191242bd8f7, type: 3}
+  targetCursor: {fileID: 2800000, guid: abf8ab57560e60047bd25c50838be6fd, type: 3}
+  nullTargetCursor: {fileID: 2800000, guid: 1c2017c7368d6ab4ab83dbe125efebba, type: 3}
   clickable: 0
 --- !u!114 &7493072995628922205
 MonoBehaviour:
@@ -217,7 +224,7 @@ MonoBehaviour:
   loadout: {fileID: 0}
   nail: {fileID: 0}
   hammerActions:
-  - {fileID: 11400000, guid: a4375cd6c7930d04393ffb6fa42b069e, type: 2}
+  - {fileID: 11400000, guid: 1b409151806cd83439f88bdaea0c4f81, type: 2}
   cascadeMovement: {fileID: 11400000, guid: cfb129f02c32c39469e9cb8361751f64, type: 2}
   overrideEquipment: {fileID: 0}
   contextuals: {fileID: 7493072995628922177}
@@ -225,6 +232,7 @@ MonoBehaviour:
   hammerPrefab: {fileID: 3955549777479365904, guid: a8ad447d87fd54d3284fc69a0b042b16, type: 3}
   unitActing: 0
   undoOrder: []
+  hoveredUnit: {fileID: 0}
   turnBlink: {fileID: 0}
 --- !u!114 &7493072995628922178
 MonoBehaviour:

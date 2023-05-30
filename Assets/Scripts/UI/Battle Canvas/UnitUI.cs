@@ -19,8 +19,6 @@ public class UnitUI : MonoBehaviour
     public List<EquipmentButton> equipment; 
     [SerializeField] GameObject equipmentPanel, hammerPanel, equipmentButtonPrefab, hammerButtonPrefab;
 
-    [SerializeField] Button disarmButton;
-
     [Header("Loadout")]
     [SerializeField] public GameObject equipmentOptions;
     public GameObject initialLoadoutButton, slotsLoadoutButton;
@@ -72,8 +70,8 @@ public class UnitUI : MonoBehaviour
     }
 
     public void ToggleUnitPanel(bool active) {
-
-        portraitPanel.SetActive(active);
+        if (portraitPanel)
+            portraitPanel.SetActive(active);
 
     }
 
@@ -87,16 +85,8 @@ public class UnitUI : MonoBehaviour
             b.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= b.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted));
             if (b.data is ConsumableEquipmentData && unit.usedEquip)
                 b.gameObject.GetComponentInChildren<Button>().interactable = false;
-        }
-
-        bool active = false;
-        if (disarmButton) {
-            if (unit.selectedEquipment) {
-                if (unit.selectedEquipment != unit.equipment[0]) active = true;
-            }
-            disarmButton.gameObject.SetActive(active);
-        }
-
+        }      
+        
         if (overview != null )
             overview.UpdateOverview(unit.hpCurrent);
     }
@@ -105,15 +95,14 @@ public class UnitUI : MonoBehaviour
         unit.selectedEquipment.UntargetEquipment(unit);
         unit.selectedEquipment = null;
         unit.grid.DisableGridHighlight();
-        disarmButton.gameObject.SetActive(false);
         if (!unit.moved)
             unit.UpdateAction(unit.equipment[0]);
         else {
+            unit.UpdateAction();
             PlayerManager pManager = (PlayerManager)unit.manager;
             pManager.contextuals.displaying = false;
         }
         unit.ui.UpdateEquipmentButtons();
-
     }
 
     public void UpdateEquipmentButtons() {
@@ -136,7 +125,7 @@ public class UnitUI : MonoBehaviour
                     EquipmentButton newButt = Instantiate(unit.equipment[i] is HammerData ? hammerButtonPrefab : equipmentButtonPrefab).GetComponent<EquipmentButton>();
                     newButt.transform.SetParent(unit.equipment[i] is HammerData ? hammerPanel.transform : equipmentPanel.transform);
                     newButt.transform.localScale = Vector3.one;
-                    newButt.Initialize(unit.equipment[i], unit);
+                    newButt.Initialize(this, unit.equipment[i], unit);
                     equipment.Add(newButt);
                 }
             }

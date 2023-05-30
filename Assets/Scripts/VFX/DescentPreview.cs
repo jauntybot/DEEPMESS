@@ -16,6 +16,7 @@ public class DescentPreview : MonoBehaviour
         unit = u;
         u.ElementUpdated += UpdatePreview;
         u.ElementDestroyed += DestroySelf;
+        anim.gameObject.SetActive(true);
         gameObject.name = u.name + " Descent Preview";
         portrait = u.portrait;
         portraitSR.sprite = portrait;

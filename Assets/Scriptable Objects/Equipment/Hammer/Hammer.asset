@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd453d2ab5064be4790d6200bba6d637, type: 3}
+  m_Name: Hammer
+  m_EditorClassIdentifier: 
+  name: HAMMER
+  icon: {fileID: 21300000, guid: 14f3d279b8fc14feeb108575f624d8a6, type: 3}
+  contextualAnimGO: {fileID: 3955549777479365904, guid: a8ad447d87fd54d3284fc69a0b042b16, type: 3}
+  contextDisplay: 2
+  multiContext: 4
+  gridColor: 2
+  vfx: {fileID: 5594480275710007220, guid: 90583eee47efcbd4fb3c7ac0bf4ce3d0, type: 3}
+  multiselect: 1
+  adjacency: 1
+  firstTarget: {fileID: 0}
+  energyCost: 1
+  range: 8
+  animDur: 0.1
+  filterValid: 0
+  filters:
+  - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
+  - {fileID: 4634978180570587290, guid: c7249e601f4730c4999df2560c657aac, type: 3}
+  - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
+  - {fileID: 2016796106260804354, guid: b12bed586f9b98a4b9f6045893aeb48a, type: 3}
+  - {fileID: 2916689396987693090, guid: 9196974c7f601814c8c816639c833a0c, type: 3}
+  targetTypes:
+  - {fileID: 2016796106260804354, guid: b12bed586f9b98a4b9f6045893aeb48a, type: 3}
+  - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
+  - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
+  selectSFX: {fileID: 0}
+  useSFX: {fileID: 11400000, guid: fd03f8f4655fdf44a954d188be53b497, type: 2}
+  hammer: {fileID: 0}
+  nail: {fileID: 0}
+  action: 1
+  throwSFX: {fileID: 11400000, guid: 17cc868967e9ebb43b978a6968af8d58, type: 2}
+  catchSFX: {fileID: 11400000, guid: 959a59fe28e35244b8ed368a3263df97, type: 2}
+  nailSFX: {fileID: 11400000, guid: 4cce48baf696a914ca15d447f1344fe8, type: 2}
+  shellSFX: {fileID: 11400000, guid: 27386cb8326d8d147a2a30a43567ae5a, type: 2}
