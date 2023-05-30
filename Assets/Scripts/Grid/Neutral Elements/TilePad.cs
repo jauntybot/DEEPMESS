@@ -10,7 +10,7 @@ public class TilePad : GroundElement
     public Buff buff;
 
     public int value;
-
+    public int usedValue;
 
     public override void OnSharedSpace(GridElement sharedWith)
     {
@@ -20,6 +20,11 @@ public class TilePad : GroundElement
                 default:
                 case Buff.Heal:
                     if (sharedWith.hpCurrent < sharedWith.hpMax) {
+                        int missing = sharedWith.hpMax - sharedWith.hpCurrent;
+                        if (missing > 0) {
+                            usedValue = value - missing;
+                            usedValue = usedValue <= 0 ? value : usedValue;
+                        }                        
                         StartCoroutine(sharedWith.TakeDamage(-value));
                         if (sharedWith is PlayerUnit u)
                             StartCoroutine(WaitForUndoClear(u.pManager));

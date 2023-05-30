@@ -30,6 +30,9 @@ public class PlayerManager : UnitManager {
     public Dictionary<Unit, Vector2> undoableMoves = new Dictionary<Unit, Vector2>();
     public Dictionary<Unit, GridElement> destroyedByMove = new Dictionary<Unit, GridElement>();
     public List<Unit> undoOrder;
+
+    [Header("GRID VIS")]
+    [SerializeField] Unit hoveredUnit = null;
     private GridElement prevCursorTarget = null;
     private bool prevCursorTargetState = false;
 
@@ -165,6 +168,7 @@ public class PlayerManager : UnitManager {
         if (unit is not Nail) {
             DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
             dp.Initialize(u, floorManager.previewManager);
+            
         }
 
         u.StoreInGrid(currentGrid);
@@ -265,32 +269,60 @@ public class PlayerManager : UnitManager {
                 if (selectedUnit.inRangeCoords.Count > 0) {
                     if (selectedUnit.inRangeCoords.Contains(pos)) {
                         contextuals.UpdateCursor(selectedUnit, pos);
-                        if (selectedUnit.validActionCoords.Contains(pos))
+                        if (selectedUnit.validActionCoords.Contains(pos)) {
                             contextuals.ChangeLineColor(selectedUnit.selectedEquipment.gridColor);
-                        else
+                            pc.ToggleCursorValid(true);
+                        }
+                        else {
                             contextuals.ChangeLineColor(3); // 3 is invalid color index
+                            pc.ToggleCursorValid(false);
+                        }
                     }
-                    else
+                    else {
                         contextuals.ToggleValid(false);
+                        pc.ToggleCursorValid(false);
+                    }
                 }
             }
         }
         else if (scenario.currentTurn == ScenarioManager.Turn.Player) {
-            bool hover = false;
+            bool hovered = false;
             foreach (GridElement ge in currentGrid.CoordContents(pos)) {
                 if (ge is Unit u) {
-                    hover = true;
+                    
+                    pc.ToggleCursorValid(true);
+
+                    if (hoveredUnit) {
+                        selectedUnit = hoveredUnit;
+                        DeselectUnit();
+                        hoveredUnit = null;
+                    }
+                    if (u is PlayerUnit) {
+                        if (!u.selectable || u.moved) break;
+                    }
+                    hoveredUnit = u;        
+                    hovered = true;
                     ge.TargetElement(true);
-                    UIManager.instance.UpdatePortrait(u);
+                    UIManager.instance.UpdatePortrait(u, true);
                     u.ui.ToggleEquipmentButtons();
-                    if (!u.moved && u is PlayerUnit) {
+
+                    if (u is PlayerUnit || u is EnemyUnit) {
                         u.selectedEquipment = u.equipment[0];
                         u.UpdateAction(u.selectedEquipment, u.moveMod);
+                        u.grid.DisplayValidCoords(u.validActionCoords, u is EnemyUnit ? 4 : 3, false, false);
                     }
-                }
+                } 
             }
-            if (!hover)
-                foreach (UnitUI ui in UIManager.instance.unitPortraits) ui.ToggleUnitPanel(false);
+            if (!hovered) {
+                UIManager.instance.UpdatePortrait();
+                if (hoveredUnit) {
+                    selectedUnit = hoveredUnit;
+                    DeselectUnit();
+                    hoveredUnit = null;
+                }
+                
+                pc.ToggleCursorValid(false);
+            }
         }
         bool update = false;
 // if cursor is on grid
@@ -348,7 +380,8 @@ public class PlayerManager : UnitManager {
             } else {
                 contextuals.DisplayGridContextuals(selectedUnit, selectedUnit.gameObject, equip.contextDisplay, equip.gridColor);
             }
-        }
+            pc.UpdateCursor(equip is MoveData ? PlayerController.CursorState.Move : PlayerController.CursorState.Target);
+        } else pc.UpdateCursor(PlayerController.CursorState.Default);
     }
 
     public override void DeselectUnit()
@@ -357,15 +390,17 @@ public class PlayerManager : UnitManager {
         turnBlink.BlinkEndTurn();
         prevCursorTargetState = false;
         contextuals.displaying = false;
+        pc.UpdateCursor(PlayerController.CursorState.Default);
     }
 
     public virtual IEnumerator UnitIsActing() {
         unitActing = true;
         scenario.uiManager.LockHUDButtons(true);
+        pc.UpdateCursor(PlayerController.CursorState.Default);
         while (unitActing) {
             yield return null;
-
         }
+
         scenario.uiManager.LockHUDButtons(false);
     }
 
@@ -377,10 +412,12 @@ public class PlayerManager : UnitManager {
 
         if (undoableMoves.Count > 0 && undoOrder.Count > 0) {
             Unit lastMoved = undoOrder[undoOrder.Count - 1];
-            Debug.Log(destroyedByMove.Count);
             if (destroyedByMove.ContainsKey(lastMoved)) {
                 TilePad pad = (TilePad)destroyedByMove[lastMoved];
                 pad.UndoDestroy();
+                lastMoved.hpCurrent -= pad.usedValue;
+                lastMoved.elementCanvas.UpdateStatsDisplay();
+                destroyedByMove.Remove(lastMoved);
             }
             MoveData move = (MoveData)cascadeMovement;
             StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved], true));

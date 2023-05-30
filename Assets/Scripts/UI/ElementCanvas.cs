@@ -56,9 +56,15 @@ public class ElementCanvas : MonoBehaviour
         Vector3 delta = (element.hpMax <= 5) ? new Vector2((float)(0.2f * element.hpMax + 0.02 * (element.hpMax - 1)), 0.333f) : new Vector2((float)(0.2f * 5 + 0.02 * 4), 0.333f);
         rect.sizeDelta = (delta);
     }
+
     public virtual void UpdateStatsDisplay(int pre = -32) {
         if (!disable) {
+            
             int cap = (pre == -32) ? element.hpCurrent - 1 : pre - 1;
+
+            if (overview)
+                overview.UpdateOverview(cap + 1);
+
             if (element.hpCurrent <= 10) {
                 hpContainer.SetActive(true); hpInt.SetActive(false);
                 for (int i = 0; i <= element.hpMax - 1; i++) {
@@ -79,8 +85,6 @@ public class ElementCanvas : MonoBehaviour
                     }
                 }
             }
-            if (overview)
-                overview.UpdateOverview(cap);
         }
     }
 

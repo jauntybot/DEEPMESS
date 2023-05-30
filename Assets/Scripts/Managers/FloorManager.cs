@@ -37,7 +37,7 @@ public class FloorManager : MonoBehaviour
     
     [Header("Grid Viz")]
     [SerializeField] private Dictionary<GridElement, LineRenderer> lineRenderers;
-    public Color playerColor, enemyColor, equipmentColor;
+    public Color playerColor, enemyColor, equipmentColor, movePreview, enemyMovePreview;
     private bool notation = false;
 
     #region Singleton (and Awake)
@@ -113,6 +113,12 @@ public class FloorManager : MonoBehaviour
             case 2:
             c = equipmentColor;
              break;
+            case 3:
+            c = movePreview;
+            break;
+            case 4:
+            c = enemyMovePreview;
+            break;
         }
         return c;
     }
@@ -239,7 +245,6 @@ public class FloorManager : MonoBehaviour
 
 
     public IEnumerator ChooseLandingPositions() {
-        yield return new WaitForSecondsRealtime(.2f);
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Cascade));
         while (scenario.currentTurn == ScenarioManager.Turn.Cascade)
             yield return null;

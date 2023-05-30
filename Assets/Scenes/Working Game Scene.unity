@@ -330,7 +330,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 148836116}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4, y: 0, z: 20}
+  m_LocalPosition: {x: -4.057, y: -0.019, z: 20}
   m_LocalScale: {x: 0.6666, y: 0.6666, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -997,6 +997,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5724b132023a04baebc6abf77f1276ce, type: 2}
   - {fileID: 11400000, guid: f87cbe3ebb5064ac88e3d8a429ec3868, type: 2}
   - {fileID: 11400000, guid: e3cf6363fb2c446b1b1d45a66a66002f, type: 2}
+  - {fileID: 11400000, guid: 3fc7c663a3dfcbb46975ac62dc66a774, type: 2}
+  - {fileID: 11400000, guid: 3fc7c663a3dfcbb46975ac62dc66a774, type: 2}
+  - {fileID: 11400000, guid: 3fc7c663a3dfcbb46975ac62dc66a774, type: 2}
   gridHightlightOverride: 0
   currentFloor: {fileID: 0}
   floors: []
@@ -1047,9 +1050,11 @@ MonoBehaviour:
   parallax: {fileID: 148836117}
   previewManager: {fileID: 1255669752}
   nailSpawnOverrides: []
-  playerColor: {r: 0.49019608, g: 0.74509805, b: 0.29411766, a: 1}
-  enemyColor: {r: 0.88235295, g: 0.33333334, b: 0.49019608, a: 1}
-  equipmentColor: {r: 0.84313726, g: 0.78431374, b: 0.09803922, a: 1}
+  playerColor: {r: 0.49019608, g: 0.74509805, b: 0.29411766, a: 0.24705882}
+  enemyColor: {r: 0.88235295, g: 0.33333334, b: 0.49019608, a: 0.24705882}
+  equipmentColor: {r: 0.84313726, g: 0.78431374, b: 0.09803922, a: 0.24705882}
+  movePreview: {r: 0.49019608, g: 0.74509805, b: 0.29411766, a: 0.1254902}
+  enemyMovePreview: {r: 0.88235295, g: 0.33333334, b: 0.49019608, a: 0.1254902}
 --- !u!114 &1272466586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1604,6 +1609,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1272466583}
     m_Modifications:
+    - target: {fileID: 7493072995628922177, guid: 77910660d9e94bc4db37063ecc2bb510, type: 3}
+      propertyPath: enemyColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7493072995628922177, guid: 77910660d9e94bc4db37063ecc2bb510, type: 3}
+      propertyPath: equipColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7493072995628922177, guid: 77910660d9e94bc4db37063ecc2bb510, type: 3}
+      propertyPath: playerColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7493072995628922177, guid: 77910660d9e94bc4db37063ecc2bb510, type: 3}
+      propertyPath: invalidColor.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7493072995628922205, guid: 77910660d9e94bc4db37063ecc2bb510, type: 3}
       propertyPath: loadout
       value: 

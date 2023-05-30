@@ -21,7 +21,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] Transform portraitParent;
     [SerializeField] GameObject portraitPrefab;
     public List<UnitUI> unitPortraits = new List<UnitUI>();
-    bool unitDisplayed;
 
     [Header("Overviews")]
     [SerializeField] Transform overviewParent;
@@ -53,12 +52,11 @@ public class UIManager : MonoBehaviour
     }
 
     public void UpdatePortrait(Unit u = null, bool active = true) {
-        if (unitDisplayed) {
-            foreach (UnitUI ui in unitPortraits) ui.ToggleUnitPanel(false);
-        }
+        foreach (UnitUI ui in unitPortraits) ui.ToggleUnitPanel(false);
+    
         UnitUI unitUI = unitPortraits.Find(p => p.unit == u);
-        if (unitUI == null) { unitUI = CreateUnitUI(u); }
-        unitUI.ToggleUnitPanel(active);        
+        if (unitUI == null && u != null) { unitUI = CreateUnitUI(u); }
+        if (unitUI) unitUI.ToggleUnitPanel(active);        
     }
 
     public UnitUI CreateUnitUI(Unit u) {
@@ -69,7 +67,6 @@ public class UIManager : MonoBehaviour
             u.ui.overview = nailOverview.Initialize(u, nailOverview.transform.parent);
         }
         unitPortraits.Add(ui);
-        u.ElementDestroyed += DestroyPortrait;
 
         return ui;
     }
@@ -114,12 +111,6 @@ public class UIManager : MonoBehaviour
         audioSource.PlayOneShot(positive ? genSelectSFX.Get() : genDeselectSFX.Get());
     }
 
-    public void DestroyPortrait(GridElement ge) {
-        Unit u = (Unit) ge;
-        UnitUI ui = u.ui;
-        unitPortraits.Remove(ui);
-        Destroy(ui.gameObject);
-    }
 
 
 }

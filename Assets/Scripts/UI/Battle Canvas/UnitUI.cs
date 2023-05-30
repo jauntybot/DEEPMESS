@@ -72,8 +72,8 @@ public class UnitUI : MonoBehaviour
     }
 
     public void ToggleUnitPanel(bool active) {
-
-        portraitPanel.SetActive(active);
+        if (portraitPanel)
+            portraitPanel.SetActive(active);
 
     }
 

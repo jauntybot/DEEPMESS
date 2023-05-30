@@ -42,7 +42,6 @@ public class GridSquare : GridElement {
 
         highlight.SetActive(state);
         if (color is Color c) {
-            c.a = 50;
             UpdateHighlight(c, fill);
         }
     }
@@ -54,16 +53,16 @@ public class GridSquare : GridElement {
     {
         SpriteShapeRenderer ssr = highlight.GetComponent<SpriteShapeRenderer>();
         if (ssr) {
-            ssr.color = new Color(color.r, color.g, color.b, fill ? 0.25f : 0);
+            ssr.color = new Color(color.r, color.g, color.b, fill ? color.a : 0);
             ssr.sortingOrder = grid.SortOrderFromCoord(coord);
         } else {
             highlight.GetComponent<SpriteRenderer>().color = color;
             highlight.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = .25f;
         }
-        if (highlight.GetComponentInChildren<LineRenderer>()) {
-            LineRenderer lr = highlight.GetComponentInChildren<LineRenderer>();
+        LineRenderer lr = highlight.GetComponentInChildren<LineRenderer>();
+        if (lr) {
             lr.sortingOrder = grid.SortOrderFromCoord(coord);
-            lr.startColor = color; lr.endColor = color;
+            lr.startColor = new Color(color.r, color.g, color.b, 0.5f); lr.endColor = new Color(color.r, color.g, color.b, 0.5f);
         }
     }
 

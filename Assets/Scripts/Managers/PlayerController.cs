@@ -7,8 +7,13 @@ using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour {
 
+
     PlayerManager manager;
-    [SerializeField] Texture2D cursorTexture;
+
+    public enum CursorState { Default, Move, Target, };
+    public CursorState cursorState;
+    [SerializeField] Vector2 pointerAnchor;
+    [SerializeField] Texture2D defaultCursor, clickableCursor, moveCursor, nullMoveCursor, targetCursor, nullTargetCursor;
     [SerializeField] bool clickable;
 
     void Start() 
@@ -17,8 +22,30 @@ public class PlayerController : MonoBehaviour {
 
         //StartCoroutine(HotkeyInput());
 
-        Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.ForceSoftware);
-        
+        UpdateCursor();
+    }
+
+
+    public void UpdateCursor(CursorState state = CursorState.Default) {
+        cursorState = state;
+        ToggleCursorValid(false);
+    }
+
+    public void ToggleCursorValid(bool state) {
+        Texture2D targetTexture = defaultCursor;
+        switch(cursorState) {
+            case CursorState.Default:
+                targetTexture = state ? clickableCursor : defaultCursor;
+            break;
+            case CursorState.Move:
+                targetTexture = state ? moveCursor : nullMoveCursor;
+            break;
+            case CursorState.Target:
+                targetTexture = state ? targetCursor : nullTargetCursor;
+            break;
+        }
+
+        Cursor.SetCursor(targetTexture, pointerAnchor, CursorMode.ForceSoftware);
     }
 
 
