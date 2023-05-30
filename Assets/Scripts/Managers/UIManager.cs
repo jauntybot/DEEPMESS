@@ -20,7 +20,7 @@ public class UIManager : MonoBehaviour
     [Header("Portraits")]
     [SerializeField] Transform portraitParent;
     [SerializeField] GameObject portraitPrefab;
-    List<UnitUI> unitPortraits = new List<UnitUI>();
+    public List<UnitUI> unitPortraits = new List<UnitUI>();
     bool unitDisplayed;
 
     [Header("Overviews")]
@@ -69,6 +69,8 @@ public class UIManager : MonoBehaviour
             u.ui.overview = nailOverview.Initialize(u, nailOverview.transform.parent);
         }
         unitPortraits.Add(ui);
+        u.ElementDestroyed += DestroyPortrait;
+
         return ui;
     }
 
@@ -110,6 +112,13 @@ public class UIManager : MonoBehaviour
 
     public virtual void GenericMenu(bool positive) {
         audioSource.PlayOneShot(positive ? genSelectSFX.Get() : genDeselectSFX.Get());
+    }
+
+    public void DestroyPortrait(GridElement ge) {
+        Unit u = (Unit) ge;
+        UnitUI ui = u.ui;
+        unitPortraits.Remove(ui);
+        Destroy(ui.gameObject);
     }
 
 

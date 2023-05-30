@@ -259,6 +259,7 @@ public class PlayerManager : UnitManager {
 
     public void GridMouseOver(Vector2 pos, bool state) {
         currentGrid.UpdateTargetCursor(state, pos);
+// Unit is selected - Grid contextuals
         if (selectedUnit != null) {
             if (contextuals.displaying) {
                 if (selectedUnit.inRangeCoords.Count > 0) {
@@ -273,6 +274,23 @@ public class PlayerManager : UnitManager {
                         contextuals.ToggleValid(false);
                 }
             }
+        }
+        else if (scenario.currentTurn == ScenarioManager.Turn.Player) {
+            bool hover = false;
+            foreach (GridElement ge in currentGrid.CoordContents(pos)) {
+                if (ge is Unit u) {
+                    hover = true;
+                    ge.TargetElement(true);
+                    UIManager.instance.UpdatePortrait(u);
+                    u.ui.ToggleEquipmentButtons();
+                    if (!u.moved && u is PlayerUnit) {
+                        u.selectedEquipment = u.equipment[0];
+                        u.UpdateAction(u.selectedEquipment, u.moveMod);
+                    }
+                }
+            }
+            if (!hover)
+                foreach (UnitUI ui in UIManager.instance.unitPortraits) ui.ToggleUnitPanel(false);
         }
         bool update = false;
 // if cursor is on grid
@@ -311,7 +329,7 @@ public class PlayerManager : UnitManager {
     {
         if (u.selectable) {
             base.SelectUnit(u);
-            if (u.energyCurrent > 0) u.ui.ToggleEquipmentButtons();
+            u.ui.ToggleEquipmentButtons();
             if (!u.moved && u is PlayerUnit) {
                 u.selectedEquipment = u.equipment[0];
                 u.UpdateAction(u.selectedEquipment, u.moveMod);
@@ -321,7 +339,7 @@ public class PlayerManager : UnitManager {
     }
 
     public void EquipmentSelected(EquipmentData equip = null) {
-        if (equip) {
+        if (equip && selectedUnit) {
             if (!equip.multiselect || equip.firstTarget == null) {
                 contextuals.StartUpdateCoroutine();
             }
