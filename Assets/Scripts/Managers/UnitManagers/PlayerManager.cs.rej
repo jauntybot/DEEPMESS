@@ -1,0 +1,9 @@
+diff a/Assets/Scripts/Managers/UnitManagers/PlayerManager.cs b/Assets/Scripts/Managers/UnitManagers/PlayerManager.cs	(rejected hunks)
+@@ -305,6 +305,7 @@
+ +                        if (!u.selectable || u.moved) break;
+ +                    }
+ +=======
++                     if (u is PlayerUnit && !u.selectable) break;
+ +>>>>>>> Stashed changes
+                      hoveredUnit = u;        
+                      hovered = true;
