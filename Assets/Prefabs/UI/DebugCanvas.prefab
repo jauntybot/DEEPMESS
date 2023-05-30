@@ -3075,10 +3075,10 @@ MonoBehaviour:
   overviewPanel: {fileID: 8337578737058323533}
   mini: {fileID: 3377578467564456574}
   equipment: {fileID: 0}
-  moveDisable: {fileID: 0}
+  movePip: {fileID: 0}
+  actionPip: {fileID: 0}
   equipmentDisable: {fileID: 0}
   hammerPossession: {fileID: 0}
-  hammerDisable: {fileID: 0}
   hpPips: {fileID: 1566962479921238902}
   emptyHpPips: {fileID: 8727967049136683939}
   hpPipPrefab: {fileID: 6918762094188802550, guid: d65b772272ab2f8428f2cc6337cb2e50, type: 3}
@@ -6323,6 +6323,7 @@ MonoBehaviour:
   undoButton: {fileID: 1539751409023911515}
   portraitParent: {fileID: 8940216681485791700}
   portraitPrefab: {fileID: 7666888907102902536, guid: ddadf643fbedec144b50f1b45075701f, type: 3}
+  unitPortraits: []
   overviewParent: {fileID: 8940216680937090388}
   overviewLayoutParent: {fileID: 1258282620}
   nailOverview: {fileID: 2001095789}
@@ -7382,6 +7383,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7631743474873672927, guid: ed1fbf5889db149aca476cabd43a2606, type: 3}
       propertyPath: m_FillCenter
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7982787990047219567, guid: ed1fbf5889db149aca476cabd43a2606, type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

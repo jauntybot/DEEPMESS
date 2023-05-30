@@ -35,6 +35,7 @@ public class PlayerManager : UnitManager {
     [SerializeField] Unit hoveredUnit = null;
     private GridElement prevCursorTarget = null;
     private bool prevCursorTargetState = false;
+    PlayerController.CursorState targetCursorState;
 
     [Header("MISC.")]
 // Get rid of this reference somehow
@@ -263,6 +264,8 @@ public class PlayerManager : UnitManager {
 
     public void GridMouseOver(Vector2 pos, bool state) {
         currentGrid.UpdateTargetCursor(state, pos);
+        if (Mathf.Sign(pos.x) >= 0) pc.UpdateCursor(targetCursorState);
+        else pc.UpdateCursor(PlayerController.CursorState.Default);
 // Unit is selected - Grid contextuals
         if (selectedUnit != null) {
             if (contextuals.displaying) {
@@ -381,8 +384,8 @@ public class PlayerManager : UnitManager {
             } else {
                 contextuals.DisplayGridContextuals(selectedUnit, selectedUnit.gameObject, equip.contextDisplay, equip.gridColor);
             }
-            pc.UpdateCursor(equip is MoveData ? PlayerController.CursorState.Move : PlayerController.CursorState.Target);
-        } else pc.UpdateCursor(PlayerController.CursorState.Default);
+            targetCursorState = equip is MoveData ? PlayerController.CursorState.Move : PlayerController.CursorState.Target;
+        } else targetCursorState = PlayerController.CursorState.Default;
     }
 
     public override void DeselectUnit()
@@ -395,13 +398,13 @@ public class PlayerManager : UnitManager {
         turnBlink.BlinkEndTurn();
         prevCursorTargetState = false;
         contextuals.displaying = false;
-        pc.UpdateCursor(PlayerController.CursorState.Default);
+        targetCursorState = PlayerController.CursorState.Default;
     }
 
     public virtual IEnumerator UnitIsActing() {
         unitActing = true;
         scenario.uiManager.LockHUDButtons(true);
-        pc.UpdateCursor(PlayerController.CursorState.Default);
+        targetCursorState = PlayerController.CursorState.Default;
         while (unitActing) {
             yield return null;
         }
