@@ -20,8 +20,11 @@ public class SlotMachine : MonoBehaviour
     public void Initialize(List<EquipmentData> table) {
         
         foreach (UnitUI ui in ScenarioManager.instance.player.loadout.unitUI) {
-            ui.slotsLoadoutButton.GetComponent<Button>().onClick.AddListener(ui.SwapEquipmentFromSlots);
-            ui.slotsLoadoutButton.GetComponent<Button>().onClick.AddListener(ClaimSelectedReward);
+            Button b = ui.slotsLoadoutButton.GetComponent<Button>();
+            b.onClick.RemoveAllListeners();
+            b.onClick.AddListener(ui.SwapEquipmentFromSlots);
+            b.onClick.AddListener(ClaimSelectedReward);
+            b.interactable = false;
         }
 
         audioSource = GetComponent<AudioSource>();
@@ -79,6 +82,10 @@ public class SlotMachine : MonoBehaviour
         spinButton.gameObject.SetActive(false);
         orText.gameObject.SetActive(true);
         orText.GetComponent<TMPro.TMP_Text>().text = "SELECT UNIT TO SWAP EQUIPMENT";
+        foreach (UnitUI ui in ScenarioManager.instance.player.loadout.unitUI) {
+            Button b = ui.slotsLoadoutButton.GetComponent<Button>();
+            b.interactable = true;
+        }
     }
 
     public void DeselectReward() {
@@ -88,6 +95,10 @@ public class SlotMachine : MonoBehaviour
         backButton.gameObject.SetActive(false);
         orText.gameObject.SetActive(true);
         orText.GetComponent<TMPro.TMP_Text>().text = "SELECT AN EQUIPMENT";
+        foreach (UnitUI ui in ScenarioManager.instance.player.loadout.unitUI) {
+            Button b = ui.slotsLoadoutButton.GetComponent<Button>();
+            b.interactable = false;
+        }
     }
 
     void ClaimSelectedReward() {

@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class GridElement : MonoBehaviour{
 
     public Grid grid;
+    
 
     [Header("Grid Element")]
     public Vector2 coord;
@@ -93,6 +94,7 @@ public class GridElement : MonoBehaviour{
   
     public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) 
     {
+        Debug.Log("Taking " + dmg + " damage");
         takingDmg = true;
         if (!shell || Mathf.Sign(dmg) == -1) {
             if (Mathf.Sign(dmg) == 1) 
@@ -105,8 +107,8 @@ public class GridElement : MonoBehaviour{
             }
 
             hpCurrent -= dmg;
-            hpCurrent = hpCurrent < 0 ? 0 : hpCurrent;
-            hpCurrent = hpCurrent > hpMax ? hpMax : hpCurrent;
+            if (hpCurrent < 0) hpCurrent = 0;
+            if (hpCurrent > hpMax) hpCurrent = hpMax;
 
 
         } else {

@@ -39,7 +39,7 @@ public class NailDisplay : UnitOverview
         mini.sprite = n.nailState == Nail.NailState.Primed ? primed : buried;
 
         for (int i = 0; i <= unit.hpMax - 1; i++) 
-            hpPips.transform.GetChild(i).gameObject.SetActive(i <= value);
+            hpPips.transform.GetChild(i).gameObject.SetActive(i < value);
     }
 
 }

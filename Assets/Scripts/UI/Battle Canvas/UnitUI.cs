@@ -113,9 +113,9 @@ public class UnitUI : MonoBehaviour
             if (unit.equipment.Find(d => d == b.data) == null) {
                 equipment.Remove(b);
                 Destroy(b.gameObject);
-            } else {
-                b.transform.parent.SetSiblingIndex(i);
-            }
+            } 
+            if (b.data is HammerData) b.transform.SetSiblingIndex(1);
+            else b.transform.SetSiblingIndex(0);
             
         }
 // Add buttons unit owns but does not have
@@ -155,18 +155,21 @@ public class UnitUI : MonoBehaviour
     }
 
     public void UpdateLoadout(EquipmentData equip) {
+// Remove old equipment unless the same
         for (int i = unit.equipment.Count - 1; i >= 0; i--) {
             if (unit.equipment[i] is ConsumableEquipmentData e) {
                 if (equip == e) return;
                 unit.equipment.Remove(e);
             }
         }
+// Add new equipment to unit
         unit.equipment.Insert(1, equip);
 
         UpdateEquipmentButtons();
         foreach (EquipmentButton b in equipment) 
             b.gameObject.GetComponentInChildren<Button>().interactable = true;
 
+// Destroy buttons
         for(int i = equipment.Count - 1; i >= 0; i--) {
             if (equipment[i].data is not ConsumableEquipmentData) {
                 EquipmentButton b = equipment[i];

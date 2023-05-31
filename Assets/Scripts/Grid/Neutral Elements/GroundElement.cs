@@ -7,8 +7,7 @@ public class GroundElement : GridElement
 
     
     public override IEnumerator CollideFromBelow(GridElement above) {
-        yield return base.CollideFromBelow(above);
-        OnSharedSpace(above);
+        yield return null;
     }
 
     

@@ -26,7 +26,7 @@ public class TilePad : GroundElement
                             usedValue = usedValue <= 0 ? value : usedValue;
                         }                        
                         StartCoroutine(sharedWith.TakeDamage(-value));
-                        if (sharedWith is PlayerUnit u)
+                        if (sharedWith is PlayerUnit u && ScenarioManager.instance.currentTurn == ScenarioManager.Turn.Player)
                             StartCoroutine(WaitForUndoClear(u.pManager));
                         else
                             StartCoroutine(DestroyElement());

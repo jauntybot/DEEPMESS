@@ -85,7 +85,7 @@ public class Unit : GridElement {
             if (targetSqr.tileType == GridSquare.TileType.Blood) {
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
                 ApplyCondition(Status.Restricted);
-            } else if (targetSqr.tileType == GridSquare.TileType.Bile) {
+            } else if (targetSqr.tileType == GridSquare.TileType.Bile && hpCurrent > 0) {
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
                 RemoveShell();
                 StartCoroutine(TakeDamage(hpMax, DamageType.Bile));
@@ -144,8 +144,8 @@ public class Unit : GridElement {
     }
 
     public virtual IEnumerator CollideFromAbove(GridElement subGE) {
-
-        yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
+        if (subGE is not GroundElement)
+            yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
     }
 
     public virtual void ApplyCondition(Status s) {

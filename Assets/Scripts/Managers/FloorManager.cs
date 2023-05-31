@@ -349,7 +349,7 @@ public class FloorManager : MonoBehaviour
                     GridElement subElement = null;
                     foreach (GridElement ge in toFloor.CoordContents(u.coord)) subElement = ge;
                     descents.Add(StartCoroutine(DropUnit(u, toFloor.PosFromCoord(u.coord) + new Vector3 (0, floorOffset*2, 0), toFloor.PosFromCoord(u.coord), subElement)));
-                    yield return new WaitForSeconds(unitDropDur);
+                    yield return new WaitForSeconds(unitDropDur*1.5f);
                 } else 
                     nail = (Nail)u;
                 
@@ -378,7 +378,6 @@ public class FloorManager : MonoBehaviour
         unit.DescentVFX(currentFloor.sqrs.Find(sqr => sqr.coord == unit.coord), subElement);
         unit.transform.position = to;
         unit.StoreInGrid(currentFloor);
-        unit.UpdateElement(unit.coord);
         fade.AlphaSelf = 1;
 
         unit.PlaySound(unit.landingSFX);
@@ -387,10 +386,7 @@ public class FloorManager : MonoBehaviour
             StartCoroutine(subElement.CollideFromBelow(unit));
             if (subElement is not GroundElement)
                 yield return StartCoroutine(unit.CollideFromAbove(subElement));
-        } else if (currentFloor.sqrs.Find(sqr => sqr.coord == unit.coord).tileType == GridSquare.TileType.Bile) {
-            yield return new WaitForSecondsRealtime(0.25f);
-            StartCoroutine(unit.DestroyElement(GridElement.DamageType.Bile));
-        }   
+        }
     }
 
     public IEnumerator DropNail(Nail nail) {
@@ -418,7 +414,9 @@ public class FloorManager : MonoBehaviour
             if (currentFloor.sqrs.Find(sqr => sqr.coord == spawn).tileType == GridSquare.TileType.Bile) validCoord = false;
         }
         
-        nail.UpdateElement(spawn);
+        nail.transform.position = nail.grid.PosFromCoord(spawn);
+        nail.UpdateSortOrder(spawn);
+        nail.coord = spawn;
 
         GridElement subElement = null;
         foreach (GridElement ge in currentFloor.CoordContents(nail.coord)) subElement = ge;
@@ -440,7 +438,6 @@ public class FloorManager : MonoBehaviour
         nail.DescentVFX(currentFloor.sqrs.Find(sqr => sqr.coord == nail.coord), subElement);
         nail.transform.position = to;
         nail.StoreInGrid(currentFloor);
-        nail.UpdateElement(spawn);
         nail.ToggleNailState(Nail.NailState.Buried);
         fade.AlphaSelf = 1;
 
