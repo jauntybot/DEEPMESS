@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Nail : Unit
 {
+    public override event OnElementUpdate ElementUpdated;
+
     FloorManager floorManager;
     public MoveData nailDrop;
 
@@ -37,7 +39,14 @@ public class Nail : Unit
     }
 
      public override void UpdateElement(Vector2 c) {
-        base.UpdateElement(c);
+        ElementUpdated?.Invoke(this);
+        transform.position = grid.PosFromCoord(c);
+        UpdateSortOrder(c);
+        coord=c;
+        foreach (GridElement ge in grid.CoordContents(c)) {
+            if (ge != this)
+                ge.OnSharedSpace(this);
+        }
         if (manager.scenario.currentTurn != ScenarioManager.Turn.Cascade) {
             GridSquare targetSqr = grid.sqrs.Find(sqr => sqr.coord == c);
             if (targetSqr.tileType == GridSquare.TileType.Blood) {
