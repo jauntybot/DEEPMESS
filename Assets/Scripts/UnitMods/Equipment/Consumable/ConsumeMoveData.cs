@@ -20,22 +20,26 @@ public class ConsumeMoveData : ConsumableEquipmentData
             case MoveType.Throw:
                 if (firstTarget == null) {
                     List<Vector2> validCoords = EquipmentAdjacency.OrthagonalAdjacency(user, 1, firstTargets, firstTargets);
+                    Unit u = (Unit)user;
+                    u.inRangeCoords = validCoords;
                     user.grid.DisplayValidCoords(validCoords, gridColor);
                     for (int i = validCoords.Count - 1; i >= 0; i--) {
                         bool occupied = false;
+                        bool remove = false;
                         foreach(GridElement ge in user.grid.CoordContents(validCoords[i])) {
-                            if (ge is not GroundElement) occupied = true;
-                            bool remove = true;
-                            foreach(GridElement target in firstTargets)
-                            if (ge.GetType() == target.GetType()) {
-                                remove = false;
-                                if (ge is EnemyUnit)
-                                    ge.elementCanvas.ToggleStatsDisplay(true);
+                            if (ge is not GroundElement) {
+                                occupied = true; remove = true;
+                                foreach(GridElement target in firstTargets)
+                                if (ge.GetType() == target.GetType()) {
+                                    remove = false;
+                                    if (ge is EnemyUnit)
+                                        ge.elementCanvas.ToggleStatsDisplay(true);
+                                }
                             }
-                            if (remove || !occupied) {
-                                if (validCoords.Count >= i)
-                                    validCoords.Remove(validCoords[i]);
-                            }
+                        }
+                        if (remove || !occupied) {
+                            if (validCoords.Count >= i)
+                                validCoords.Remove(validCoords[i]);
                         }
                     }
                     return validCoords;
