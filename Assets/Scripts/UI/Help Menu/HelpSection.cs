@@ -10,6 +10,7 @@ public class HelpSection : MonoBehaviour
     HelpMenu helpMenu;
     public string title;
     [TextArea] public string body;
+    public Sprite image;
 
     public void Initialize(HelpMenu menu) {
         button = GetComponent<Button>();

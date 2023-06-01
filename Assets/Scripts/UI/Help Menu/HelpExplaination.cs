@@ -8,14 +8,16 @@ using TMPro;
 public class HelpExplaination : MonoBehaviour
 {
 
-    [SerializeField] RawImage image;
+    [SerializeField] Image image;
+    [SerializeField] RawImage videoPlayerWindow;
     [SerializeField] UnityEngine.Video.VideoPlayer vp;
     [SerializeField] TMP_Text titleTMP, bodyTMP;
 
 
-    public void UpdateExplaination(string title, string body) {
+    public void UpdateExplaination(string title, string body, Sprite _image) {
         titleTMP.text = title;
         bodyTMP.text = body;
+        image.sprite = _image;
     }
 
 }

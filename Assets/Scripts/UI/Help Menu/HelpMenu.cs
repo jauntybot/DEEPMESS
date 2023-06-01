@@ -18,7 +18,7 @@ public class HelpMenu : MonoBehaviour
     }
 
     public void SwitchSections(HelpSection newSection) {
-        explainer.UpdateExplaination(newSection.title, newSection.body);
+        explainer.UpdateExplaination(newSection.title, newSection.body, newSection.image);
     }
 
 }
