@@ -94,7 +94,6 @@ public class GridElement : MonoBehaviour{
   
     public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) 
     {
-        Debug.Log("Taking " + dmg + " damage");
         takingDmg = true;
         if (!shell || Mathf.Sign(dmg) == -1) {
             if (Mathf.Sign(dmg) == 1) 
@@ -107,9 +106,10 @@ public class GridElement : MonoBehaviour{
             }
 
             hpCurrent -= dmg;
+            Debug.Log("Taking " + dmg + " damage");
             if (hpCurrent < 0) hpCurrent = 0;
             if (hpCurrent > hpMax) hpCurrent = hpMax;
-
+            Debug.Log(hpCurrent);
 
         } else {
             RemoveShell();

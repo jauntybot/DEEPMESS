@@ -310,7 +310,7 @@ public class PlayerManager : UnitManager {
                     UIManager.instance.UpdatePortrait(u, true);
                     u.ui.ToggleEquipmentButtons();
 
-                    if (u is PlayerUnit || u is EnemyUnit) {
+                    if ((u is PlayerUnit || u is EnemyUnit) && FloorManager.instance.currentFloor == currentGrid) {
                         u.selectedEquipment = u.equipment[0];
                         u.UpdateAction(u.selectedEquipment, u.moveMod);
                         u.grid.DisplayValidCoords(u.validActionCoords, u is EnemyUnit ? 4 : 3, false, false);
