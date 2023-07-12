@@ -279,6 +279,7 @@ public class TutorialSequence : MonoBehaviour
         blinking = false;
         while (scenario.player.unitActing)
             yield return new WaitForSecondsRealtime(1/Util.fps);
+        yield return new WaitForSecondsRealtime(0.1f);
         UIManager.instance.LockHUDButtons(true);
         scenario.player.units[2].ui.equipment[1].GetComponentInChildren<Button>().enabled = true;
         GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.equipment[1].gameObject.transform);
@@ -700,6 +701,8 @@ public class TutorialSequence : MonoBehaviour
         }
         Destroy(highlight);
         scenario.player.units[1].selectable = true;
+        scenario.player.units[1].ui.equipment[0].GetComponentInChildren<Button>().enabled = false;
+        scenario.player.units[1].ui.equipment[1].GetComponentInChildren<Button>().enabled = false;
         body = "Now, attack that last ANTIBODY and bounce the HAMMER to Pony.";
         tooltip.SetText(new Vector2(-220, 420), body);
         StartCoroutine(BlinkTile(new Vector2(1,5)));
