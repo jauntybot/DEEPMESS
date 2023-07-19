@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Rendering;
 
+// This class generates and sequences Floor prefabs (Grid class), as well as manages the descending of units
+
 [RequireComponent(typeof(BetweenFloorManager))]
 public class FloorManager : MonoBehaviour
 {
@@ -24,6 +26,7 @@ public class FloorManager : MonoBehaviour
     [SerializeField] float _sqrSize;
     public static float sqrSize;
 
+
     [Header("Floor Transitioning")]
     [HideInInspector] public BetweenFloorManager betweenFloor;
     public Transform transitionParent;
@@ -33,14 +36,19 @@ public class FloorManager : MonoBehaviour
     [SerializeField] public GameObject upButton, downButton;
     [SerializeField] ParallaxImageScroll parallax;
     public DescentPreviewManager previewManager;
-    public List<Vector2> nailSpawnOverrides = new List<Vector2>();
+
+
+    public List<Vector2> nailSpawnOverrides = new List<Vector2>(); // MOVE TO GRID CLASS
+
     
     [Header("Grid Viz")]
-    [SerializeField] private Dictionary<GridElement, LineRenderer> lineRenderers;
-    public Color playerColor, enemyColor, equipmentColor, movePreview, enemyMovePreview;
+    public Color playerColor;
+    public Color enemyColor, equipmentColor, movePreview, enemyMovePreview;
     private bool notation = false;
 
+
     #region Singleton (and Awake)
+
     public static FloorManager instance;
     private void Awake() {
         if (FloorManager.instance) {
@@ -55,7 +63,6 @@ public class FloorManager : MonoBehaviour
     void Start() {
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
         if (UIManager.instance) uiManager = UIManager.instance;
-        lineRenderers = new Dictionary<GridElement, LineRenderer>();
         betweenFloor = GetComponent<BetweenFloorManager>();
     }
 
@@ -123,11 +130,11 @@ public class FloorManager : MonoBehaviour
         return c;
     }
 
-    public void ChessNotationToggle() {
-        notation = !notation;
-        foreach (Grid floor in floors)
-            floor.ToggleChessNotation(notation);
-    }
+    // public void ChessNotationToggle() {
+    //     notation = !notation;
+    //     foreach (Grid floor in floors)
+    //         floor.ToggleChessNotation(notation);
+    // }
 
     public void GridHighlightToggle() {
         gridHightlightOverride = !gridHightlightOverride;
@@ -136,9 +143,6 @@ public class FloorManager : MonoBehaviour
         }
     }
 
-    void SetButtonActive(GameObject button, bool state) {
-        button.SetActive(state);
-    }
 
 // Huge function, animation should be seperated
 // Handles all calls to transition the floor view, from upper to lower, lower to upper, preview or descent
@@ -215,6 +219,8 @@ public class FloorManager : MonoBehaviour
 
     }
     
+
+    // Function that hides units when previewing the next floor -- MOVE TO UNIT FUNCTIONALITY
     Dictionary<Unit, bool> targetedDict = new Dictionary<Unit,bool>();
     public void HideUnits(bool state) {
         if (state) {
@@ -269,12 +275,12 @@ public class FloorManager : MonoBehaviour
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
 
 // Pan to next floor        
-        if (cascade) {
-            yield return StartCoroutine(previewManager.PreviewFloor(true, true));
-            currentFloor.LockGrid(false);
-        }
-        else
-            yield return StartCoroutine(TransitionFloors(true, false));
+        // if (cascade) {
+        //     yield return StartCoroutine(previewManager.PreviewFloor(true, true));
+        //     currentFloor.LockGrid(false);
+        // }
+        // else
+        yield return StartCoroutine(TransitionFloors(true, false));
 
         scenario.player.nail.ToggleNailState(Nail.NailState.Primed);
 
@@ -288,9 +294,9 @@ public class FloorManager : MonoBehaviour
 
 // Yield for cascade sequence
         if (cascade) {
-            yield return StartCoroutine(ChooseLandingPositions());
-            yield return new WaitForSecondsRealtime(1.25f);
-            SetButtonActive(downButton, true); SetButtonActive(upButton, false);
+            //yield return StartCoroutine(ChooseLandingPositions());
+            //yield return new WaitForSecondsRealtime(1.25f);
+            downButton.SetActive(true); upButton.SetActive(false);
         }
 
 // Descend units from previous floor
@@ -328,6 +334,7 @@ public class FloorManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(1.5f);
     }
 
+// Coroutine that sequences the descent of all valid units
     public IEnumerator DropUnits(List<GridElement> units, Grid toFloor) {
 
         scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
@@ -366,6 +373,7 @@ public class FloorManager : MonoBehaviour
         yield return StartCoroutine(DropNail(nail));
     }
 
+// Coroutine that houses the logic to descend a single unit
     public IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
         float timer = 0;
         NestedFadeGroup.NestedFadeGroup fade = unit.GetComponent<NestedFadeGroup.NestedFadeGroup>();
@@ -389,6 +397,7 @@ public class FloorManager : MonoBehaviour
         }
     }
 
+// Coroutine for descending the nail at a regulated random position
     public IEnumerator DropNail(Nail nail) {
         if (nail.nailState == Nail.NailState.Buried)
             nail.ToggleNailState(Nail.NailState.Primed);
@@ -396,7 +405,7 @@ public class FloorManager : MonoBehaviour
         bool validCoord = false;
         Vector2 spawn = Vector2.zero;
 
-// Find a valid coord that a player is not in
+// Find a valid coord that a player unit is not in
         while (!validCoord) {
             validCoord = true;
             if (nailSpawnOverrides.Count > 0) {

@@ -21,7 +21,7 @@ public class FloorEditor : EditorWindow {
         lvl = _lvl;
         activeCoord = Vector2.zero;
         ReloadAssetsFromAtlas();
-        Dictionary<string, Texture> options = new Dictionary<string, Texture>();
+        Dictionary<string, Sprite> options = new Dictionary<string, Sprite>();
         for (int i = 0; i < lvl.atlas.assets.Count; i++) {
             options.Add(lvl.atlas.assets[i].name, lvl.atlas.assets[i].icon);
         }
@@ -82,8 +82,8 @@ public class FloorEditor : EditorWindow {
                     FloorDefinition.Spawn spawn = null;
                     if (lvl.initSpawns.Count > 0)
                         spawn = lvl.initSpawns.Find(s => s.coord == new Vector2(x, y));
-                    Texture buttonSprite = lvl.atlas.assets[0].icon;
-                    if (spawn != null) buttonSprite = spawn.asset.icon;
+                    Texture2D buttonSprite = AssetPreview.GetAssetPreview(lvl.atlas.assets[0].icon);
+                    if (spawn != null) buttonSprite = AssetPreview.GetAssetPreview(spawn.asset.icon);
                     GUILayout.BeginArea(new Rect(x*101, (7-y)*101 + 35, 100, 100));
                     if (GUILayout.Button(buttonSprite, GUILayout.Width(100), GUILayout.Height(75))) {
                         Vector2 mousePos = GUIUtility.GUIToScreenPoint(Event.current.mousePosition);
@@ -102,7 +102,12 @@ public class FloorEditor : EditorWindow {
     protected static void ReloadAssetsFromAtlas() {
         if (lvl.initSpawns.Count > 0) {
             for (int i = lvl.initSpawns.Count - 1; i >= 0; i--) {
-                lvl.initSpawns[i].asset = lvl.atlas.assets.Find(a => a.name == lvl.initSpawns[i].asset.name);
+                FloorAsset reload = lvl.atlas.assets.Find(a => a.name == lvl.initSpawns[i].asset.name);
+                if (reload != null) {
+                    lvl.initSpawns[i].asset = reload;
+                    Debug.Log("Reloaded");
+                } else
+                    Debug.Log("Reloaded failed");
             }
         }
         window.SaveChanges();

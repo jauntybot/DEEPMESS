@@ -10,9 +10,9 @@ class CoordEditorPopup : EditorWindow
     static FloorDefinition lvl;
     static List<PopupButton> buttons = new List<PopupButton>();
 
-    public static void Init(Dictionary<string, Texture> _options, FloorDefinition _lvl) {
+    public static void Init(Dictionary<string, Sprite> _options, FloorDefinition _lvl) {
         buttons = new List<PopupButton>();
-        foreach(KeyValuePair<string, Texture> entry in _options) {
+        foreach(KeyValuePair<string, Sprite> entry in _options) {
             PopupButton button = new PopupButton();
             button.name = entry.Key;
             button.icon = entry.Value;
@@ -31,7 +31,7 @@ class CoordEditorPopup : EditorWindow
     void OnGUI() {
         Rect h = EditorGUILayout.BeginVertical();
         for (int i = 0; i < buttons.Count; i++) {
-            if (GUILayout.Button(buttons[i].icon, GUILayout.Width(100), GUILayout.Height(100))) {
+            if (GUILayout.Button(AssetPreview.GetAssetPreview(buttons[i].icon), GUILayout.Width(100), GUILayout.Height(100))) {
                 Undo.RecordObject(lvl, "Setting Value");
                 FloorEditor.UpdateCoord(buttons[i].name);
                 if (i == 0) {
@@ -53,6 +53,6 @@ class CoordEditorPopup : EditorWindow
 
 class PopupButton {
     public string name;
-    public Texture icon;
+    public Sprite icon;
 }
 
