@@ -82,7 +82,7 @@ public class FloorEditor : EditorWindow {
                     FloorDefinition.Spawn spawn = null;
                     if (lvl.initSpawns.Count > 0)
                         spawn = lvl.initSpawns.Find(s => s.coord == new Vector2(x, y));
-                    Texture2D buttonSprite = AssetPreview.GetAssetPreview(lvl.atlas.assets[0].icon);
+                    Texture2D buttonSprite = AssetPreview.GetAssetPreview(lvl.atlas.baseTile.icon);
                     if (spawn != null) buttonSprite = AssetPreview.GetAssetPreview(spawn.asset.icon);
                     GUILayout.BeginArea(new Rect(x*101, (7-y)*101 + 35, 100, 100));
                     if (GUILayout.Button(buttonSprite, GUILayout.Width(100), GUILayout.Height(75))) {

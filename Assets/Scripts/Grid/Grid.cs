@@ -38,7 +38,7 @@ public class Grid : MonoBehaviour {
         List<Vector2> bloodTiles = new List<Vector2>();
         List<Vector2> bileTiles = new List<Vector2>();
         foreach (FloorDefinition.Spawn spawn in lvlDef.initSpawns) {
-            if (spawn.asset.ge is GridSquare s) {
+            if (spawn.asset.prefab.GetComponent<GridElement>() is GridSquare s) {
                 if (s.tileType == GridSquare.TileType.Blood)
                     bloodTiles.Add(spawn.coord);
                 else if (s.tileType == GridSquare.TileType.Bile)
@@ -88,30 +88,39 @@ public class Grid : MonoBehaviour {
         fade.AlphaSelf = 1;
     }
 
-    
+// Function that instantiates and houses FloorAssets that are defined by the currently loaded Floor Definition
     void SpawnLevelDefinition(GameObject enemyOverride = null) {
         List<Vector2> nailSpawns = new List<Vector2>();
+        List<Vector2> slagSpawns = new List<Vector2>();
+// Create new EnemyManager if this floor is not overriden by Tutorial
         enemy = Instantiate(enemyOverride == null ? enemyPrefab : enemyOverride, this.transform).GetComponent<EnemyManager>(); 
         enemy.transform.SetSiblingIndex(2);
         enemy.StartCoroutine(enemy.Initialize());
+        
         foreach (FloorDefinition.Spawn spawn in lvlDef.initSpawns) {
-            if (spawn.asset.ge is Unit u) 
+            GridElement ge = spawn.asset.prefab.GetComponent<GridElement>();
+// Spawn a Unit
+            if (ge is Unit u) 
             {
                 if (u is EnemyUnit e) {
-                    enemy.SpawnUnit(spawn.coord, e);
+                    enemy.SpawnUnit(spawn.coord, spawn.asset.prefab.GetComponent<Unit>());
+                } else if (u is PlayerUnit) {
+                    slagSpawns.Add(spawn.coord);
                 }
                 else if (u is Nail) {
                     nailSpawns.Add(spawn.coord);
                 }
-            } else if (spawn.asset.ge is not GridSquare) {
-                GridElement ge = Instantiate(spawn.asset.prefab, this.transform).GetComponent<GridElement>();
-                ge.transform.parent = neutralGEContainer.transform;
+// Spawn a Neutral Grid Element
+            } else if (ge is not GridSquare) {
+                GridElement neutralGE = Instantiate(spawn.asset.prefab, this.transform).GetComponent<GridElement>();
+                neutralGE.transform.parent = neutralGEContainer.transform;
 
-                ge.StoreInGrid(this);
-                ge.UpdateElement(spawn.coord);
+                neutralGE.StoreInGrid(this);
+                neutralGE.UpdateElement(spawn.coord);
             }
         }
         floorManager.nailSpawnOverrides = nailSpawns;
+        floorManager.playerDropOverrides = slagSpawns;
     }
 
     public void ToggleChessNotation(bool state) {

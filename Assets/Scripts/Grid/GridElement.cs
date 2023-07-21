@@ -18,7 +18,7 @@ public class GridElement : MonoBehaviour{
     public PolygonCollider2D hitbox;
     public ElementCanvas elementCanvas;
     public enum DamageType { Unspecified, Melee, Gravity, Bile, Slots };
-    Material originalMaterial;
+
     bool takingDmg;
 
     [Header("UI/UX")]

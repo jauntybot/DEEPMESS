@@ -104,9 +104,10 @@ public class ScenarioManager : MonoBehaviour
         
         foreach (GridElement ge in player.units)
             floorManager.currentFloor.RemoveElement(ge);
-        yield return StartCoroutine(floorManager.ChooseLandingPositions());
-        yield return new WaitForSecondsRealtime(1.25f);
+        // yield return StartCoroutine(floorManager.ChooseLandingPositions());
+        // yield return new WaitForSecondsRealtime(1.25f);
         
+        yield return StartCoroutine(SwitchTurns(Turn.Descent));
         yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3]} ));
         yield return StartCoroutine(floorManager.GenerateNextFloor());
         StartCoroutine(SwitchTurns(Turn.Enemy));

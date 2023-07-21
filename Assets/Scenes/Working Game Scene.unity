@@ -985,21 +985,9 @@ MonoBehaviour:
   floorPrefab: {fileID: 6704683991807647169, guid: 9e7d44ff36d68a84c95a170d48d95eaf, type: 3}
   floorParent: {fileID: 1736529076}
   floorDefinitions:
-  - {fileID: 11400000, guid: a3d117769960e426283ba30e09a1a3b0, type: 2}
-  - {fileID: 11400000, guid: e5e577e5c0f7f4a0a948f33e87f485b2, type: 2}
-  - {fileID: 11400000, guid: 5ce5d2511de654117a1c5694f6d564bd, type: 2}
-  - {fileID: 11400000, guid: 9ff3516aea0bb4a4ba9801a6f6bb164c, type: 2}
-  - {fileID: 11400000, guid: a23f78197f09f46779f80136183989ae, type: 2}
-  - {fileID: 11400000, guid: db7967781cda34d42bcc6b060a04d5e0, type: 2}
-  - {fileID: 11400000, guid: 1790e5b6dbabe4400b09970224a95b8b, type: 2}
-  - {fileID: 11400000, guid: 630e4836ecdb14c63a6312f6e9dced6f, type: 2}
-  - {fileID: 11400000, guid: f295b505051444dd78654f9fe847bba2, type: 2}
-  - {fileID: 11400000, guid: 7afa6f70d43d34a5882f76e730c831dc, type: 2}
-  - {fileID: 11400000, guid: 08f49a673479444179ce2bad51914bd8, type: 2}
-  - {fileID: 11400000, guid: 91de3278b731c460ba5ca48ab055cf87, type: 2}
-  - {fileID: 11400000, guid: b7abbef4f32ea4500aa01a49949e0c85, type: 2}
-  - {fileID: 11400000, guid: 82be5530969c043c193a516a330f8293, type: 2}
-  - {fileID: 11400000, guid: e4ff68e0294e44370a64016ee1fe3f99, type: 2}
+  - {fileID: 11400000, guid: 5c71710ec1883ff40a4f03dbc1a7eaf8, type: 2}
+  - {fileID: 11400000, guid: 5c71710ec1883ff40a4f03dbc1a7eaf8, type: 2}
+  - {fileID: 11400000, guid: 5c71710ec1883ff40a4f03dbc1a7eaf8, type: 2}
   gridHightlightOverride: 0
   currentFloor: {fileID: 0}
   floors: []
@@ -1050,6 +1038,7 @@ MonoBehaviour:
   parallax: {fileID: 148836117}
   previewManager: {fileID: 1255669752}
   nailSpawnOverrides: []
+  playerDropOverrides: []
   playerColor: {r: 0.49019608, g: 0.74509805, b: 0.29411766, a: 0.24705882}
   enemyColor: {r: 0.88235295, g: 0.33333334, b: 0.49019608, a: 0.24705882}
   equipmentColor: {r: 0.84313726, g: 0.78431374, b: 0.09803922, a: 0.24705882}
@@ -1274,6 +1263,10 @@ PrefabInstance:
       propertyPath: undoButton
       value: 
       objectReference: {fileID: 2144559562}
+    - target: {fileID: 2017525369693994961, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: scriptedFloors.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2017525369693994963, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
       propertyPath: m_Name
       value: Tutorial

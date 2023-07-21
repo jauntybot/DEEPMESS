@@ -39,6 +39,7 @@ public class FloorManager : MonoBehaviour
 
 
     public List<Vector2> nailSpawnOverrides = new List<Vector2>(); // MOVE TO GRID CLASS
+    public List<Vector2> playerDropOverrides = new List<Vector2>();
 
     
     [Header("Grid Viz")]
@@ -353,10 +354,15 @@ public class FloorManager : MonoBehaviour
         for (int i = units.Count - 1; i >= 0; i--) {
             if (units[i] is Unit u) {
                 if (units[i] is not Nail) {
+                    if (units[i] is PlayerUnit && playerDropOverrides.Count > 0) {
+                        units[i].coord = playerDropOverrides[0];
+                        playerDropOverrides.RemoveAt(0);
+                    } 
                     GridElement subElement = null;
                     foreach (GridElement ge in toFloor.CoordContents(u.coord)) subElement = ge;
                     descents.Add(StartCoroutine(DropUnit(u, toFloor.PosFromCoord(u.coord) + new Vector3 (0, floorOffset*2, 0), toFloor.PosFromCoord(u.coord), subElement)));
                     yield return new WaitForSeconds(unitDropDur*1.5f);
+                    
                 } else 
                     nail = (Nail)u;
                 
