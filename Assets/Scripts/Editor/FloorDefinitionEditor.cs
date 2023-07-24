@@ -24,7 +24,7 @@ public class FloorDefinitionEditor : Editor
             arg.atlas = EditorGUILayout.ObjectField("Atlas", arg.atlas, typeof(FloorAtlas), false) as FloorAtlas;
             if (arg.atlas) {
                 if (GUILayout.Button("Open FloorEditor"))
-                    FloorEditor.Init(arg);
+                    FloorEditor.Init(serializedObject);
                 EditorList.Show(tar.FindProperty("initSpawns"));
             } else {
                 GUILayout.Label("Serialize a FloorAtlas to open FloorEditor.");
