@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Equipment/Consumable/Placeable")]
+[CreateAssetMenu(menuName = "Equipment/PerFloor/Placeable")]
 [System.Serializable]   
-public class PlacementData : ConsumableEquipmentData
+public class PlacementData : PerFloorEquipmentData
 {
     public enum PlacementType { MoveAndPlace, PlaceAdjacent};
     [Header("Placement Equipment")]

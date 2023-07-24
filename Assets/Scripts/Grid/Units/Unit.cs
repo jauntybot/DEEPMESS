@@ -40,8 +40,11 @@ public class Unit : GridElement {
 
     protected override void Start() {
         base.Start();
-        gfxAnim = gfx[0].GetComponent<Animator>();
-        gfxAnim.keepAnimatorStateOnDisable = true;
+// If first serialized GFX has an animator set Unit anim to it 
+        if (gfx[0].GetComponent<Animator>()) {
+            gfxAnim = gfx[0].GetComponent<Animator>();
+            gfxAnim.keepAnimatorStateOnDisable = true;
+        }
     }
 
     public virtual void UpdateAction(EquipmentData equipment = null, int mod = 0) {
@@ -73,7 +76,7 @@ public class Unit : GridElement {
         if (!validActionCoords.Contains(target)) return false;
         if (energyCurrent < equip.energyCost && equip is not MoveData) return false;
         else if (moved && equip is MoveData) return false;
-        else if (usedEquip && (equip is ConsumableEquipmentData && equip is not HammerData)) return false;
+        else if (usedEquip && (equip is PerFloorEquipmentData && equip is not HammerData)) return false;
 
         return true;
     }
@@ -81,14 +84,16 @@ public class Unit : GridElement {
     public override void UpdateElement(Vector2 c) {
         base.UpdateElement(c);
         if (manager.scenario.currentTurn != ScenarioManager.Turn.Cascade) {
-            GridSquare targetSqr = grid.sqrs.Find(sqr => sqr.coord == c);
-            if (targetSqr.tileType == GridSquare.TileType.Blood) {
+            Tile targetSqr = grid.sqrs.Find(sqr => sqr.coord == c);
+            if (targetSqr.tileType == Tile.TileType.Blood) {
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
                 ApplyCondition(Status.Restricted);
-            } else if (targetSqr.tileType == GridSquare.TileType.Bile && hpCurrent > 0) {
+            } else if (targetSqr.tileType == Tile.TileType.Bile && hpCurrent > 0) {
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
                 RemoveShell();
                 StartCoroutine(TakeDamage(hpMax, DamageType.Bile));
+            } else if (targetSqr is TileBulb tb && this is PlayerUnit pu) {
+                tb.HarvestBulb(pu);
             } else {
                 RemoveCondition(Status.Restricted);
             }
@@ -122,7 +127,7 @@ public class Unit : GridElement {
 
 #region Unit Functionality
     
-    public void DescentVFX(GridSquare sqr, GridElement subGE = null) {
+    public void DescentVFX(Tile sqr, GridElement subGE = null) {
         descentVFX.gameObject.SetActive(true);
 
         if (subGE) {
@@ -133,9 +138,9 @@ public class Unit : GridElement {
             else
                 descentVFX.SetColor(0);
         } else {
-            if (sqr.tileType == GridSquare.TileType.Blood)
+            if (sqr.tileType == Tile.TileType.Blood)
                 descentVFX.SetColor(2);
-            else if (sqr.tileType == GridSquare.TileType.Bile)
+            else if (sqr.tileType == Tile.TileType.Bile)
                 descentVFX.SetColor(1);
             else
                 descentVFX.SetColor(0);

@@ -53,10 +53,10 @@ public class TutorialSequence : MonoBehaviour
         scenario.player.units[1].selectable = false;
         scenario.player.units[2].selectable = false;
         scenario.player.units[3].selectable = false;
-        scenario.player.units[0].ui.equipment[0].GetComponentInChildren<Button>().enabled = false;
-        scenario.player.units[0].ui.equipment[1].GetComponentInChildren<Button>().enabled = false;
-        scenario.player.units[1].ui.equipment[0].GetComponentInChildren<Button>().enabled = false;
-        scenario.player.units[2].ui.equipment[0].GetComponentInChildren<Button>().enabled = false;
+        scenario.player.units[0].ui.perFloor.GetComponentInChildren<Button>().enabled = false;
+        scenario.player.units[0].ui.hammer.GetComponentInChildren<Button>().enabled = false;
+        scenario.player.units[1].ui.perFloor.GetComponentInChildren<Button>().enabled = false;
+        scenario.player.units[2].ui.perFloor.GetComponentInChildren<Button>().enabled = false;
 
 // PLAYER FIRST TURN
         yield return StartCoroutine(Select01());
@@ -108,7 +108,7 @@ public class TutorialSequence : MonoBehaviour
 
     public IEnumerator BlinkTile(Vector2 coord, bool move = true) {
         blinking = true;
-        GridSquare sqr = FloorManager.instance.currentFloor.sqrs.Find(sqr => sqr.coord == coord);
+        Tile sqr = FloorManager.instance.currentFloor.sqrs.Find(sqr => sqr.coord == coord);
         float timer = 0;
         int i = 0;
         sqr.ToggleValidCoord(true, move ? FloorManager.instance.equipmentColor : FloorManager.instance.playerColor);
@@ -186,8 +186,8 @@ public class TutorialSequence : MonoBehaviour
     }
 
     public IEnumerator Equip01() {
-        scenario.player.units[0].ui.equipment[1].GetComponentInChildren<Button>().enabled = true;
-        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.equipment[1].gameObject.transform);
+        scenario.player.units[0].ui.hammer.GetComponentInChildren<Button>().enabled = true;
+        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.hammer.gameObject.transform);
         highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
         body = "This is the equipment panel. Equip the HAMMER by selecting its button.";
         tooltip.SetText(new Vector2(-300, -125), body);
@@ -263,7 +263,7 @@ public class TutorialSequence : MonoBehaviour
 
     public IEnumerator Select03() {
         scenario.player.units[2].selectable = true;
-        scenario.player.units[2].ui.equipment[1].GetComponentInChildren<Button>().enabled = false;
+        scenario.player.units[2].ui.hammer.GetComponentInChildren<Button>().enabled = false;
         body = "MOVE Pony in range of the ANTIBODY and attack it again with the HAMMER." + '\n' + '\n' + "Select Pony again for the HAMMER to bounce back to it.";
         tooltip.SetText(new Vector2(140, 370), body);
         StartCoroutine(BlinkTile(new Vector2(3,3)));
@@ -281,8 +281,8 @@ public class TutorialSequence : MonoBehaviour
             yield return new WaitForSecondsRealtime(1/Util.fps);
         yield return new WaitForSecondsRealtime(0.1f);
         UIManager.instance.LockHUDButtons(true);
-        scenario.player.units[2].ui.equipment[1].GetComponentInChildren<Button>().enabled = true;
-        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.equipment[1].gameObject.transform);
+        scenario.player.units[2].ui.hammer.GetComponentInChildren<Button>().enabled = true;
+        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.hammer.gameObject.transform);
         highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
         while (!scenario.player.units[2].selectedEquipment)
             yield return null;
@@ -374,7 +374,7 @@ public class TutorialSequence : MonoBehaviour
         scenario.player.units[0].selectable = false;
         scenario.player.units[1].selectable = false;
         scenario.player.units[2].selectable = false;
-        scenario.player.units[2].ui.equipment[1].enabled = false;
+        scenario.player.units[2].ui.hammer.enabled = false;
         scenario.player.units[3].selectable = false;
 
         UIManager.instance.LockHUDButtons(true);
@@ -383,7 +383,7 @@ public class TutorialSequence : MonoBehaviour
 
     public IEnumerator Select04() {
         scenario.player.units[1].selectable = true;
-        scenario.player.units[1].ui.equipment[0].GetComponentInChildren<Button>().enabled = true;
+        scenario.player.units[1].ui.perFloor.GetComponentInChildren<Button>().enabled = true;
         UIManager.instance.LockFloorButtons(false);
         body = "Move Spike into position over the ANTIBODY. Use the PEEK button to line them up.";
         StartCoroutine(BlinkTile(new Vector2(1,2)));
@@ -404,7 +404,7 @@ public class TutorialSequence : MonoBehaviour
         UIManager.instance.LockHUDButtons(true);
         body = "Select the ANVIL.";
         tooltip.SetText(new Vector2(-430, -125), body);
-        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[1].ui.equipment[0].gameObject.transform);
+        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[1].ui.perFloor.gameObject.transform);
         highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -430,7 +430,7 @@ public class TutorialSequence : MonoBehaviour
         while (scenario.player.unitActing)
             yield return new WaitForSecondsRealtime(1/Util.fps);
             scenario.player.units[1].selectable = false;
-        scenario.player.units[1].ui.equipment[0].GetComponentInChildren<Button>().enabled = false;
+        scenario.player.units[1].ui.perFloor.GetComponentInChildren<Button>().enabled = false;
         UIManager.instance.LockFloorButtons(true);
         body = "Now that we set this trap, we're out of actions. Press END TURN and ANTIBODIES will respond.";
         tooltip.SetText(new Vector2(650, -225), body);
@@ -489,8 +489,8 @@ public class TutorialSequence : MonoBehaviour
         }
 
         scenario.player.units[2].selectable = true;
-        scenario.player.units[2].ui.equipment[0].GetComponentInChildren<Button>().enabled = false;
-        scenario.player.units[2].ui.equipment[1].GetComponentInChildren<Button>().enabled = false;
+        scenario.player.units[2].ui.perFloor.GetComponentInChildren<Button>().enabled = false;
+        scenario.player.units[2].ui.hammer.GetComponentInChildren<Button>().enabled = false;
         body = "Move Pony into range and select the HAMMER." + '\n' + "Target the NAIL and bounce the HAMMER to Spike.";
         tooltip.SetText(new Vector2(140, -10), body);
         StartCoroutine(BlinkTile(new Vector2(3,4)));
@@ -506,15 +506,15 @@ public class TutorialSequence : MonoBehaviour
             }
         }
         blinking = false;
-        scenario.player.units[2].ui.equipment[1].GetComponentInChildren<Button>().enabled = true;
+        scenario.player.units[2].ui.hammer.GetComponentInChildren<Button>().enabled = true;
         while (scenario.player.unitActing) yield return null;
-        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.equipment[1].transform);
+        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.hammer.transform);
         highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
         while (!scenario.player.units[2].selectedEquipment)
             yield return null;
         UIManager.instance.LockHUDButtons(true);
         StartCoroutine(BlinkTile(new Vector2(2,6)));
-        scenario.player.units[2].ui.equipment[1].enabled = true;
+        scenario.player.units[2].ui.hammer.enabled = true;
         while (true) {
             yield return null;
             if (scenario.player.units[2].selectedEquipment) {
@@ -594,11 +594,11 @@ public class TutorialSequence : MonoBehaviour
         }
         blinking = false;
         while (scenario.player.unitActing) yield return null;
-        scenario.player.units[0].ui.equipment[0].GetComponentInChildren<Button>().enabled = true;
+        scenario.player.units[0].ui.perFloor.GetComponentInChildren<Button>().enabled = true;
         UIManager.instance.LockHUDButtons(true);
         body = "Equip BIG GRAB, select the enemy in range, then select a BILE tile to toss it into.";
         tooltip.SetText(new Vector2(100, 25), body);
-        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.equipment[0].transform);
+        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.perFloor.transform);
         highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
         while (!scenario.player.units[0].selectedEquipment) yield return null;
         Destroy(highlight);
@@ -621,7 +621,7 @@ public class TutorialSequence : MonoBehaviour
         }
         blinking = false;
         while (scenario.player.unitActing) yield return null;
-        scenario.player.units[1].ui.equipment[0].GetComponentInChildren<Button>().enabled = false;
+        scenario.player.units[1].ui.perFloor.GetComponentInChildren<Button>().enabled = false;
         yield return new WaitForSecondsRealtime(0.125f);
         scenario.player.DeselectUnit();
         scenario.player.units[0].selectable = false;
@@ -640,7 +640,7 @@ public class TutorialSequence : MonoBehaviour
         }
         
         scenario.player.units[2].selectable = true;
-        scenario.player.units[2].ui.equipment[0].GetComponentInChildren<Button>().enabled = false;
+        scenario.player.units[2].ui.perFloor.GetComponentInChildren<Button>().enabled = false;
         body = "MOVE Pony out of there.";
         tooltip.SetText(new Vector2(-150, 280), body);
         StartCoroutine(BlinkTile(new Vector2(2,3)));
@@ -658,8 +658,8 @@ public class TutorialSequence : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.125f);
         scenario.player.units[2].selectable = false;
         scenario.player.units[1].selectable = true;
-        scenario.player.units[1].ui.equipment[0].GetComponentInChildren<Button>().enabled = false;
-        scenario.player.units[1].ui.equipment[1].GetComponentInChildren<Button>().enabled = false;
+        scenario.player.units[1].ui.perFloor.GetComponentInChildren<Button>().enabled = false;
+        scenario.player.units[1].ui.hammer.GetComponentInChildren<Button>().enabled = false;
         UIManager.instance.LockHUDButtons(true);
         body = "Spike has the HAMMER, but I can't be struck to descend until next turn. Line Spike up to attack the ANTIBODY instead.";
         tooltip.SetText(new Vector2(200, 165), body);
@@ -701,8 +701,8 @@ public class TutorialSequence : MonoBehaviour
         }
         Destroy(highlight);
         scenario.player.units[1].selectable = true;
-        scenario.player.units[1].ui.equipment[0].GetComponentInChildren<Button>().enabled = false;
-        scenario.player.units[1].ui.equipment[1].GetComponentInChildren<Button>().enabled = false;
+        scenario.player.units[1].ui.perFloor.GetComponentInChildren<Button>().enabled = false;
+        scenario.player.units[1].ui.hammer.GetComponentInChildren<Button>().enabled = false;
         body = "Now, attack that last ANTIBODY and bounce the HAMMER to Pony.";
         tooltip.SetText(new Vector2(-220, 420), body);
         StartCoroutine(BlinkTile(new Vector2(1,5)));
@@ -713,16 +713,16 @@ public class TutorialSequence : MonoBehaviour
             yield return null;
             scenario.player.selectedUnit.validActionCoords = new List<Vector2> { new Vector2( 1, 1 ) };
         }
-        scenario.player.units[1].ui.equipment[1].GetComponentInChildren<Button>().enabled = true;
+        scenario.player.units[1].ui.hammer.GetComponentInChildren<Button>().enabled = true;
         blinking = false;
         scenario.player.units[1].UpdateAction();
         yield return new WaitForSecondsRealtime(0.125f);
-        highlight = Instantiate(buttonHighlight, scenario.player.units[1].ui.equipment[1].transform);
+        highlight = Instantiate(buttonHighlight, scenario.player.units[1].ui.hammer.transform);
         highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
         while (!scenario.player.units[1].selectedEquipment) yield return null;
         Destroy(highlight);
         StartCoroutine(BlinkTile(new Vector2(4, 1)));
-        scenario.player.units[1].ui.equipment[1].GetComponentInChildren<Button>().enabled = true;
+        scenario.player.units[1].ui.hammer.GetComponentInChildren<Button>().enabled = true;
         while (true) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             if (scenario.player.units[1].selectedEquipment) {
@@ -765,7 +765,7 @@ public class TutorialSequence : MonoBehaviour
         while (scenario.player.unitActing) yield return null;
         scenario.player.units[2].UpdateAction();
         yield return new WaitForSecondsRealtime(0.125f);
-        highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.equipment[1].transform);
+        highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.hammer.transform);
         highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
         while (!scenario.player.units[2].selectedEquipment) yield return null;
         Destroy(highlight);
@@ -823,10 +823,10 @@ public class TutorialSequence : MonoBehaviour
         }
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
         
-        scenario.player.units[0].ui.equipment[0].GetComponentInChildren<Button>().enabled = true;
-        scenario.player.units[0].ui.equipment[1].GetComponentInChildren<Button>().enabled = true;
-        scenario.player.units[1].ui.equipment[0].GetComponentInChildren<Button>().enabled = true;
-        scenario.player.units[2].ui.equipment[0].GetComponentInChildren<Button>().enabled = true;
+        scenario.player.units[0].ui.perFloor.GetComponentInChildren<Button>().enabled = true;
+        scenario.player.units[0].ui.hammer.GetComponentInChildren<Button>().enabled = true;
+        scenario.player.units[1].ui.perFloor.GetComponentInChildren<Button>().enabled = true;
+        scenario.player.units[2].ui.perFloor.GetComponentInChildren<Button>().enabled = true;
         currentEnemy = (TutorialEnemyManager)scenario.currentEnemy;
         scenario.currentTurn = ScenarioManager.Turn.Descent;
         FloorManager.instance.Descend(true, false);

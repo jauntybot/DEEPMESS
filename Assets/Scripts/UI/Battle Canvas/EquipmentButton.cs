@@ -33,7 +33,7 @@ public class EquipmentButton : MonoBehaviour
         tooltip = GetComponentInChildren<TooltipEquipmentTrigger>();
         if (tooltip)
             tooltip.Initialize(d.name);
-        //badge.SetActive(d is ConsumableEquipmentData);
+        //badge.SetActive(d is PerFloorEquipmentData);
         UpdateMod();
     }
 

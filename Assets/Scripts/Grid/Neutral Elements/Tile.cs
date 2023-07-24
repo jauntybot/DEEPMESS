@@ -4,10 +4,10 @@ using UnityEngine;
 using UnityEngine.U2D;
 
 
-// Class to control individual squares of a grid, linked to GridSquare prefab
+// Class to control individual squares of a grid, linked to Tile prefab
 
 [System.Serializable]
-public class GridSquare : GridElement {
+public class Tile : GridElement {
 
     [SerializeField] SpriteRenderer[] spriteRenderers;
     public enum TileType { Bone, Blood, Bile };
@@ -74,6 +74,7 @@ public class GridSquare : GridElement {
             foreach (SpriteRenderer sr in spriteRenderers) 
                 sr.color = blackColor;
         }
+// Offset tile animation to break up the grid
         if (anim != null) {
             string name = anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
             anim.Play(name, 0, Util.Remap(grid.SortOrderFromCoord(c), 0, 16, 0, 4)%4);

@@ -16,8 +16,8 @@ public class UnitUI : MonoBehaviour
     public Image gfx;
 
     [Header("Equipment")]
-    public List<EquipmentButton> equipment; 
-    [SerializeField] GameObject equipmentPanel, hammerPanel, equipmentButtonPrefab, hammerButtonPrefab;
+    public EquipmentButton perFloor, hammer, bulb;
+    [SerializeField] GameObject equipmentPanel, hammerPanel, perFloorButtonPrefab, hammerButtonPrefab, bulbButtonPrefab;
 
     [Header("Loadout")]
     [SerializeField] public GameObject equipmentOptions;
@@ -60,8 +60,10 @@ public class UnitUI : MonoBehaviour
         ToggleUnitPanel(false);
         if (initialLoadoutButton != null) {
             initialLoadoutButton.SetActive(true); slotsLoadoutButton.SetActive(false);
-            foreach (EquipmentButton b in equipment) 
-                b.gameObject.GetComponentInChildren<Button>().interactable = true;
+            
+            if (perFloor) perFloor.gameObject.GetComponentInChildren<Button>().interactable = true;
+            if (hammer) hammer.gameObject.GetComponentInChildren<Button>().interactable = true;
+            if (bulb) bulb.gameObject.GetComponentInChildren<Button>().interactable = true;
         }
 
         u.ElementDestroyed += UnitDestroyed;
@@ -81,12 +83,12 @@ public class UnitUI : MonoBehaviour
     }
 
     public void ToggleEquipmentButtons() {
-        foreach (EquipmentButton b in equipment) {
-            b.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= b.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted));
-            if (b.data is ConsumableEquipmentData && unit.usedEquip)
-                b.gameObject.GetComponentInChildren<Button>().interactable = false;
-        }      
-        
+        if (perFloor) perFloor.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= perFloor.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted));
+        if (unit.usedEquip)
+            perFloor.gameObject.GetComponentInChildren<Button>().interactable = false;
+        if (hammer) hammer.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= hammer.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted));
+        if (bulb) bulb.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= bulb.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted));
+
         if (overview != null )
             overview.UpdateOverview(unit.hpCurrent);
     }
@@ -107,27 +109,41 @@ public class UnitUI : MonoBehaviour
 
     public void UpdateEquipmentButtons() {
 
-// Remove buttons no longer owned by unit
-        for (int i = equipment.Count - 1; i >= 0; i--) {
-            EquipmentButton b = equipment[i];
-            if (unit.equipment.Find(d => d == b.data) == null) {
-                equipment.Remove(b);
-                Destroy(b.gameObject);
-            } 
-            if (b.data is HammerData) b.transform.SetSiblingIndex(1);
-            else b.transform.SetSiblingIndex(0);
-            
-        }
+// Remove all buttons
+        if (perFloor) {
+            Destroy(perFloor.gameObject);
+            perFloor = null;
+        } 
+        if (hammer) {
+            Destroy(hammer.gameObject);
+            hammer = null;
+        } 
+        if (bulb) {
+            Destroy(bulb.gameObject);
+            bulb = null;
+        } 
+    
 // Add buttons unit owns but does not have
         for (int i = unit.equipment.Count - 1; i >= 0; i--) {
             if (unit.equipment[i] is not MoveData) {
-                if (equipment.Find(b => b.data == unit.equipment[i]) == null) {
-                    EquipmentButton newButt = Instantiate(unit.equipment[i] is HammerData ? hammerButtonPrefab : equipmentButtonPrefab).GetComponent<EquipmentButton>();
-                    newButt.transform.SetParent(unit.equipment[i] is HammerData ? hammerPanel.transform : equipmentPanel.transform);
-                    newButt.transform.localScale = Vector3.one;
-                    newButt.Initialize(this, unit.equipment[i], unit);
-                    equipment.Add(newButt);
+                GameObject prefab = null;
+                Transform parent = null;
+                if (unit.equipment[i] is PerFloorEquipmentData) {
+                    prefab = perFloorButtonPrefab;
+                    parent = equipmentPanel.transform;
+                } else if (unit.equipment[i] is HammerData) {
+                    prefab = hammerButtonPrefab;
+                    parent = hammerPanel.transform;
+                } else if (unit.equipment[i] is BulbEquipmentData) {
+                    prefab = bulbButtonPrefab;
+                    parent = equipmentPanel.transform;
                 }
+                EquipmentButton newButt = Instantiate(prefab, parent).GetComponent<EquipmentButton>();
+                newButt.transform.localScale = Vector3.one;
+                newButt.Initialize(this, unit.equipment[i], unit);
+                if (newButt.data is PerFloorEquipmentData) perFloor = newButt;
+                if (newButt.data is HammerData) hammer = newButt;
+                if (newButt.data is BulbEquipmentData) bulb = newButt;
             }
         }
         UpdateEquipmentButtonMods();
@@ -149,34 +165,29 @@ public class UnitUI : MonoBehaviour
     }
 
     public void UpdateEquipmentButtonMods() {
-        foreach (EquipmentButton b in equipment) 
-            b.UpdateMod();
+        if (perFloor) perFloor.UpdateMod();
+        if (hammer) hammer.UpdateMod();
+        if (bulb) bulb.UpdateMod();
         
     }
 
     public void UpdateLoadout(EquipmentData equip) {
 // Remove old equipment unless the same
-        for (int i = unit.equipment.Count - 1; i >= 0; i--) {
-            if (unit.equipment[i] is ConsumableEquipmentData e) {
-                if (equip == e) return;
-                unit.equipment.Remove(e);
+        if (equip is PerFloorEquipmentData) {
+            for (int i = unit.equipment.Count - 1; i >= 0; i--) {
+                if (unit.equipment[i] is PerFloorEquipmentData e) {
+                    if (equip == e) return;
+                    unit.equipment.Remove(e);
+                }
             }
-        }
+        } 
 // Add new equipment to unit
         unit.equipment.Insert(1, equip);
+        UpdateEquipmentButtons(); 
+        if (perFloor) perFloor.gameObject.GetComponentInChildren<Button>().interactable = true;
+        if (hammer) hammer.gameObject.GetComponentInChildren<Button>().interactable = true;
+        if (bulb) bulb.gameObject.GetComponentInChildren<Button>().interactable = true;
 
-        UpdateEquipmentButtons();
-        foreach (EquipmentButton b in equipment) 
-            b.gameObject.GetComponentInChildren<Button>().interactable = true;
-
-// Destroy buttons
-        for(int i = equipment.Count - 1; i >= 0; i--) {
-            if (equipment[i].data is not ConsumableEquipmentData) {
-                EquipmentButton b = equipment[i];
-                equipment.Remove(b);
-                Destroy(b.gameObject);
-            }
-        }
         if (overview != null )  
             overview.UpdateOverview(unit.hpCurrent);
     }
@@ -186,8 +197,9 @@ public class UnitUI : MonoBehaviour
         if (reward != null)
             UpdateLoadout(reward);
         ToggleEquipmentButtons();
-        foreach (EquipmentButton b in equipment) 
-            b.gameObject.GetComponentInChildren<Button>().interactable = true;
+        perFloor.gameObject.GetComponentInChildren<Button>().interactable = true;
+        hammer.gameObject.GetComponentInChildren<Button>().interactable = true;
+        bulb.gameObject.GetComponentInChildren<Button>().interactable = true;
     }
 
 }

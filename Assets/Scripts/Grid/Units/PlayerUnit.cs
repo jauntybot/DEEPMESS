@@ -14,10 +14,7 @@ public class PlayerUnit : Unit {
     
     public override event OnElementUpdate ElementDestroyed;
     public virtual event OnElementUpdate ElementDisabled;
-    
-    protected override void Start() {
-        base.Start();
-    }
+
 
     public override void UpdateElement(Vector2 coord) {
         base.UpdateElement(coord);
@@ -29,12 +26,14 @@ public class PlayerUnit : Unit {
 // Called when an action is applied to a unit or to clear it's actions
     public override void UpdateAction(EquipmentData equipment = null, int mod = 0) 
     {
-        foreach (EquipmentButton eb in ui.equipment) 
-            eb.DeselectEquipment();
+        if (equipment is not MoveData) {
+            if (ui.perFloor) ui.perFloor.DeselectEquipment(); if (ui.hammer) ui.hammer.DeselectEquipment(); if (ui.bulb) ui.bulb.DeselectEquipment();
+        }
+
         if (pManager.overrideEquipment == null) {
-            if (equipment is ConsumableEquipmentData && !usedEquip)
+            if (equipment is PerFloorEquipmentData && !usedEquip)
                 base.UpdateAction(equipment, mod);
-            else if (equipment is not ConsumableEquipmentData)
+            else if (equipment is not PerFloorEquipmentData)
                 base.UpdateAction(equipment, mod);
             pManager.EquipmentSelected(equipment);
         }
@@ -48,6 +47,8 @@ public class PlayerUnit : Unit {
         
         Coroutine co = StartCoroutine(base.ExecuteAction(target));
         EquipmentData equip = selectedEquipment;
+
+// Selection logic 
         if (equip) {
             if (!equip.multiselect && equip is not MoveData) {
                 pManager.DeselectUnit();
@@ -71,7 +72,6 @@ public class PlayerUnit : Unit {
         yield return co;
         FloorManager.instance.upButton.GetComponent<Button>().enabled = true; FloorManager.instance.downButton.GetComponent<Button>().enabled = true;
         if (equip is MoveData && energyCurrent > 0) {
-            Debug.Log("Update select cursor");
             grid.UpdateSelectedCursor(true, coord);
         }
         else {

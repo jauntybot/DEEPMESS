@@ -426,7 +426,7 @@ public class FloorManager : MonoBehaviour
                 if (u.coord == spawn) validCoord = false;
             }
 
-            if (currentFloor.sqrs.Find(sqr => sqr.coord == spawn).tileType == GridSquare.TileType.Bile) validCoord = false;
+            if (currentFloor.sqrs.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false;
         }
         
         nail.transform.position = nail.grid.PosFromCoord(spawn);

@@ -629,7 +629,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4040941871375026148}
-  - component: {fileID: -2553350826419457478}
+  - component: {fileID: 1606729989493261746}
   - component: {fileID: 8517864744566959261}
   - component: {fileID: 6347572499611998251}
   - component: {fileID: 4725770806878504000}
@@ -659,7 +659,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-2553350826419457478
+--- !u!114 &1606729989493261746
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -668,7 +668,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8989576065795441841}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aedb3fe38f08e6a4db3140e84ccdde5e, type: 3}
+  m_Script: {fileID: 11500000, guid: 08c7543ec67c28a41916ea2505d934c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
@@ -679,7 +679,8 @@ MonoBehaviour:
   elementCanvas: {fileID: 0}
   gfx:
   - {fileID: 4548692920616438334}
-  name: 
+  - {fileID: 2347088025177882012}
+  - {fileID: 9182661186197527698}
   hpMax: 0
   hpCurrent: 0
   defense: 0
@@ -696,12 +697,12 @@ MonoBehaviour:
   - {fileID: 4548692920616438334}
   tileType: 0
   white: 0
-  blackColor: {r: 0.92156863, g: 0.92156863, b: 0.92156863, a: 1}
+  blackColor: {r: 0.91764706, g: 0.91764706, b: 0.91764706, a: 1}
   highlight: {fileID: 5847650023900071179}
-  rndSprite:
-  - {fileID: 21300000, guid: 65ecccb905fd51740be8e97b00d2c9b3, type: 3}
-  - {fileID: 21300000, guid: 11d7be9d4307c4747a4755effb43d35d, type: 3}
+  rndSprite: []
   anim: {fileID: 0}
+  undoPrefab: {fileID: 0}
+  bulb: {fileID: 11400000, guid: 88d11d2bb3d174447b0bcbbc35bfd2c9, type: 2}
 --- !u!60 &8517864744566959261
 PolygonCollider2D:
   m_ObjectHideFlags: 0

@@ -48,10 +48,10 @@ public class Nail : Unit
                 ge.OnSharedSpace(this);
         }
         if (manager.scenario.currentTurn != ScenarioManager.Turn.Cascade) {
-            GridSquare targetSqr = grid.sqrs.Find(sqr => sqr.coord == c);
-            if (targetSqr.tileType == GridSquare.TileType.Blood) {
+            Tile targetSqr = grid.sqrs.Find(sqr => sqr.coord == c);
+            if (targetSqr.tileType == Tile.TileType.Blood) {
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
-            } else if (targetSqr.tileType == GridSquare.TileType.Bile) {
+            } else if (targetSqr.tileType == Tile.TileType.Bile) {
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
             } else {
                 RemoveCondition(Status.Restricted);

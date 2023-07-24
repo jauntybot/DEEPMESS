@@ -60,7 +60,6 @@ MonoBehaviour:
   gfx:
   - {fileID: 7304609901400333318}
   - {fileID: 5593234969095333183}
-  name: Pony
   hpMax: 5
   hpCurrent: 0
   defense: 0
@@ -83,6 +82,7 @@ MonoBehaviour:
   moved: 0
   usedEquip: 0
   validActionCoords: []
+  inRangeCoords: []
   conditions: 
   moveMod: 0
   attackMod: 0
@@ -310,7 +310,7 @@ SpriteRenderer:
   m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 1902579007, guid: 5e81b0985ba2f2a41a60bebd82c0c36e, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -769,6 +769,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6122252504057264135, guid: 7bf2f5f844e355940877eab56e965117, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8286637947622063749, guid: 7bf2f5f844e355940877eab56e965117, type: 3}
+      propertyPath: m_Color.a
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Equipment/Consumable/Move")]
+[CreateAssetMenu(menuName = "Equipment/PerFloor/Move")]
 [System.Serializable]
-public class ConsumeMoveData : ConsumableEquipmentData
+public class PerFloorMoveData : PerFloorEquipmentData
 {
     enum MoveType { Swap, MoveAll, Throw };
     [SerializeField] MoveType moveType;

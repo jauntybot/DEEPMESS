@@ -29,7 +29,7 @@ public class GridSpacing : MonoBehaviour
             
             for (int y = 0; y < gridSize.y; y++) {
                 for (int x = 0; x < gridSize.x; x++) {
-                    GridSquare sqr = Instantiate(sqrPrefab, this.transform).GetComponent<GridSquare>();
+                    Tile sqr = Instantiate(sqrPrefab, this.transform).GetComponent<Tile>();
                     sqr.transform.position = PosFromCoord(new Vector2(x,y));
                     sqr.transform.localScale = Vector3.one * sqrSize;
                     

@@ -15,15 +15,15 @@ public class GridElement : MonoBehaviour{
     [Header("Grid Element")]
     public Vector2 coord;
     public bool selectable, targeted;
-    public PolygonCollider2D hitbox;
-    public ElementCanvas elementCanvas;
+    [HideInInspector] public PolygonCollider2D hitbox;
+    [HideInInspector] public ElementCanvas elementCanvas;
     public enum DamageType { Unspecified, Melee, Gravity, Bile, Slots };
 
     bool takingDmg;
 
     [Header("UI/UX")]
     public List<SpriteRenderer> gfx;
-    new public string name;
+
 
 
     public delegate void OnElementUpdate(GridElement ge);

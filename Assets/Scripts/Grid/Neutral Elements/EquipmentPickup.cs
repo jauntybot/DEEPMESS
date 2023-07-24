@@ -35,7 +35,7 @@ public class EquipmentPickup : GroundElement
                 break;
                 case Pickup.Consumable:
                     for (int i = pu.equipment.Count - 1; i >= 0; i--) {
-                        if (pu.equipment[i] is ConsumableEquipmentData c)
+                        if (pu.equipment[i] is PerFloorEquipmentData c)
                             pu.equipment.Remove(c);
                     }
                     pu.equipment.Insert(1, equipment[0]);

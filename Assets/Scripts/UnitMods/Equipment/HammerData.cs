@@ -70,7 +70,7 @@ public class HammerData : EquipmentData
             Unit unit = (Unit)user;
 
             List<Vector2> allCoords = new List<Vector2>();
-            foreach (GridSquare sqr in user.grid.sqrs)
+            foreach (Tile sqr in user.grid.sqrs)
                 allCoords.Add(sqr.coord);
             unit.inRangeCoords = allCoords;
 

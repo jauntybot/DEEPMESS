@@ -16,7 +16,7 @@ public class MoveData : EquipmentData
         Unit u = (Unit)user;
         u.inRangeCoords = validCoords;
         for (int i = validCoords.Count - 1; i >= 0; i--) {
-            if (user.grid.sqrs.Find(sqr => sqr.coord == validCoords[i]).tileType == GridSquare.TileType.Bile)
+            if (user.grid.sqrs.Find(sqr => sqr.coord == validCoords[i]).tileType == Tile.TileType.Bile)
                 validCoords.RemoveAt(i);
         }
         user.grid.DisplayValidCoords(validCoords, gridColor);

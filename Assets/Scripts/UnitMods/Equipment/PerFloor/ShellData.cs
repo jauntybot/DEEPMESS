@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[CreateAssetMenu(menuName = "Equipment/Consumable/Shell")]
+[CreateAssetMenu(menuName = "Equipment/PerFloor/Shell")]
 [System.Serializable]   
-public class ShellData : ConsumableEquipmentData
+public class ShellData : PerFloorEquipmentData
 {
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod) {

@@ -228,7 +228,7 @@ public class PlayerManager : UnitManager {
             GridInput(currentGrid.sqrs.Find(sqr => sqr.coord == input.coord));
         }
 // Player clicks on square
-        else if (input is GridSquare sqr) 
+        else if (input is Tile sqr) 
         {
 // Check if square is empty
             GridElement contents = null;
@@ -391,8 +391,8 @@ public class PlayerManager : UnitManager {
     public override void DeselectUnit()
     {
         if (selectedUnit is PlayerUnit pu) {
-            foreach (EquipmentButton eb in pu.ui.equipment)
-                eb.DeselectEquipment();
+            if (pu.ui.perFloor) pu.ui.perFloor.DeselectEquipment(); if (pu.ui.hammer) pu.ui.hammer.DeselectEquipment(); if (pu.ui.bulb) pu.ui.bulb.DeselectEquipment();
+        
         }
         base.DeselectUnit();
         turnBlink.BlinkEndTurn();

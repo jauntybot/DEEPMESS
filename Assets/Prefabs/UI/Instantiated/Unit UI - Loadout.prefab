@@ -674,8 +674,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 20a9e7c2a0575b44f8040600e4ab6bc9, type: 2}
-  badge: {fileID: 6151131487690239011}
-  badgeNumber: {fileID: 968586557895623493}
+  button: {fileID: 0}
+  selected: 0
+  disarmOverlay: {fileID: 0}
 --- !u!222 &8221659128622255477
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1003,8 +1004,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 1c7fe50e3ed5c444fab58cb8f0ebb79b, type: 2}
-  badge: {fileID: 9206659662205023408}
-  badgeNumber: {fileID: 6881772926755583554}
+  button: {fileID: 0}
+  selected: 0
+  disarmOverlay: {fileID: 0}
 --- !u!222 &4165089257323491610
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1243,8 +1245,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 117d51cb441b29f49b1417ea1d6961f4, type: 2}
-  badge: {fileID: 7737537658785928550}
-  badgeNumber: {fileID: 8515038218548069833}
+  button: {fileID: 0}
+  selected: 0
+  disarmOverlay: {fileID: 0}
 --- !u!222 &430858912172674141
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2064,8 +2067,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: d6b47fd9c3f432243a830a8cd6465170, type: 2}
-  badge: {fileID: 7435671155709402556}
-  badgeNumber: {fileID: 7647522457150498336}
+  button: {fileID: 0}
+  selected: 0
+  disarmOverlay: {fileID: 0}
 --- !u!222 &1531349519752236141
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2938,8 +2942,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: fdae265c7dbc1d944bbbabea4a5f3960, type: 2}
-  badge: {fileID: 3449306262413157140}
-  badgeNumber: {fileID: 7630981819072054949}
+  button: {fileID: 0}
+  selected: 0
+  disarmOverlay: {fileID: 0}
 --- !u!222 &5254306980940750012
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3567,12 +3572,14 @@ MonoBehaviour:
   unitName: {fileID: 4293906538103855586}
   portrait: {fileID: 2900050192992033094}
   gfx: {fileID: 6601378072240088351}
-  equipment: []
+  perFloor: {fileID: 0}
+  hammer: {fileID: 0}
+  bulb: {fileID: 0}
   equipmentPanel: {fileID: 4611165542650454756}
   hammerPanel: {fileID: 8016950506831994711}
-  equipmentButtonPrefab: {fileID: 7665423317416184923, guid: 884e360ac458548fd822fd09e0a460db, type: 3}
+  perFloorButtonPrefab: {fileID: 7665423317416184923, guid: 6ad24dcf493bd5a45affa9c314b699f9, type: 3}
   hammerButtonPrefab: {fileID: 7665423317416184923, guid: 85d6d13e9b053eb47809426e6ba30490, type: 3}
-  disarmButton: {fileID: 0}
+  bulbButtonPrefab: {fileID: 0}
   equipmentOptions: {fileID: 3624864556568732097}
   initialLoadoutButton: {fileID: 4011629971176809417}
   slotsLoadoutButton: {fileID: 6203512029628847639}
@@ -4084,8 +4091,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 1bcc8cbb776ab164f9e1348446f94aa9, type: 2}
-  badge: {fileID: 5817885368315849914}
-  badgeNumber: {fileID: 4008434609153439882}
+  button: {fileID: 0}
+  selected: 0
+  disarmOverlay: {fileID: 0}
 --- !u!222 &1016852154909516921
 CanvasRenderer:
   m_ObjectHideFlags: 0

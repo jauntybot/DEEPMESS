@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]   
-public class ConsumableEquipmentData : EquipmentData
+public class PerFloorEquipmentData : EquipmentData
 {
     public override void EquipEquipment(GridElement user)
     {
@@ -16,7 +16,7 @@ public class ConsumableEquipmentData : EquipmentData
     {
         yield return base.UseEquipment(user, target);
         PlayerUnit pu = (PlayerUnit)user;
-        //pu.consumableCount--;
+
         pu.usedEquip = true;
         pu.ui.UpdateEquipmentButtons();
     }

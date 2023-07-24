@@ -65,10 +65,10 @@ public class EquipmentAdjacency : MonoBehaviour
                             } 
                             if (valid == false) break;
                         }
-// Check if GridSquare is valid
+// Check if Tile is valid
                         foreach (GridElement ge in data.filters) {
-                            if (ge is GridSquare sqr) {
-                                GridSquare target = FloorManager.instance.currentFloor.sqrs.Find(sqr => sqr.coord == coord);
+                            if (ge is Tile sqr) {
+                                Tile target = FloorManager.instance.currentFloor.sqrs.Find(sqr => sqr.coord == coord);
                                 if (target != null) {
                                     if (target.tileType == sqr.tileType) {
                                         valid = false;
@@ -107,10 +107,10 @@ public class EquipmentAdjacency : MonoBehaviour
                             }
                             if (valid == false) break;
                         }
-// Check if GridSquare is valid
+// Check if Tile is valid
                         foreach (GridElement ge in data.filters) {
-                            if (ge is GridSquare sqr) {
-                                GridSquare target = FloorManager.instance.currentFloor.sqrs.Find(sqr => sqr.coord == coord);
+                            if (ge is Tile sqr) {
+                                Tile target = FloorManager.instance.currentFloor.sqrs.Find(sqr => sqr.coord == coord);
                                 if (target != null) {
                                     if (target.tileType == sqr.tileType) {
                                         valid = false;
@@ -256,8 +256,8 @@ public class EquipmentAdjacency : MonoBehaviour
         List<Vector2> _coords = new List<Vector2>();
         
         foreach (GridElement type in elements) {
-            if (type is GridSquare) {
-                foreach(GridSquare sqr in from.grid.sqrs) {
+            if (type is Tile) {
+                foreach(Tile sqr in from.grid.sqrs) {
                     bool occupied = false;
                     foreach (GridElement ge in from.grid.CoordContents(sqr.coord)) {
                         if (ge is not GroundElement) occupied = true;

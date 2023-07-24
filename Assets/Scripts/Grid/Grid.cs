@@ -17,12 +17,12 @@ public class Grid : MonoBehaviour {
     [SerializeField] GameObject enemyPrefab;
 
     [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.15f, 0.35f);
-    [SerializeField] GameObject sqrPrefab, bloodTilePrefab, bileTilePrefab, gridCursor, selectedCursor;
+    [SerializeField] GameObject sqrPrefab, bloodTilePrefab, bileTilePrefab, bulbTilePrefab, gridCursor, selectedCursor;
     [SerializeField] static float fadeInDur = 0.25f;
     public FloorDefinition lvlDef;
     [SerializeField] Color offWhite;
 
-    public List<GridSquare> sqrs = new List<GridSquare>();
+    public List<Tile> sqrs = new List<Tile>();
     public List<GridElement> gridElements = new List<GridElement>();
 
     [HideInInspector] public bool overrideHighlight;
@@ -37,23 +37,28 @@ public class Grid : MonoBehaviour {
     public IEnumerator GenerateGrid(int i, GameObject enemyOverride = null) {
         List<Vector2> bloodTiles = new List<Vector2>();
         List<Vector2> bileTiles = new List<Vector2>();
+        List<Vector2> bulbTiles = new List<Vector2>();
         foreach (FloorDefinition.Spawn spawn in lvlDef.initSpawns) {
-            if (spawn.asset.prefab.GetComponent<GridElement>() is GridSquare s) {
-                if (s.tileType == GridSquare.TileType.Blood)
+            if (spawn.asset.prefab.GetComponent<GridElement>() is Tile s) {
+                if (s.tileType == Tile.TileType.Blood)
                     bloodTiles.Add(spawn.coord);
-                else if (s.tileType == GridSquare.TileType.Bile)
+                else if (s.tileType == Tile.TileType.Bile)
                     bileTiles.Add(spawn.coord);
+                else if (s is TileBulb)
+                    bulbTiles.Add(spawn.coord);
             }
         }
         for (int y = 0; y < FloorManager.gridSize; y++) {
             for (int x = 0; x < FloorManager.gridSize; x++) {
-                GridSquare sqr = null;
+                Tile sqr = null;
                 if (bloodTiles.Contains(new Vector2(x,y)))
-                    sqr = Instantiate(bloodTilePrefab, this.transform).GetComponent<GridSquare>();
+                    sqr = Instantiate(bloodTilePrefab, this.transform).GetComponent<Tile>();
                 else if (bileTiles.Contains(new Vector2(x,y)))
-                    sqr = Instantiate(bileTilePrefab, this.transform).GetComponent<GridSquare>();
+                    sqr = Instantiate(bileTilePrefab, this.transform).GetComponent<Tile>();
+                else if (bulbTiles.Contains(new Vector2(x,y)))
+                    sqr = Instantiate(bulbTilePrefab, this.transform).GetComponent<Tile>();
                 else
-                    sqr = Instantiate(sqrPrefab, this.transform).GetComponent<GridSquare>();
+                    sqr = Instantiate(sqrPrefab, this.transform).GetComponent<Tile>();
 //store bool for white sqrs
                 sqr.white=false;
                 if (x%2==0) { if (y%2==0) sqr.white=true; } 
@@ -111,7 +116,7 @@ public class Grid : MonoBehaviour {
                     nailSpawns.Add(spawn.coord);
                 }
 // Spawn a Neutral Grid Element
-            } else if (ge is not GridSquare) {
+            } else if (ge is not Tile) {
                 GridElement neutralGE = Instantiate(spawn.asset.prefab, this.transform).GetComponent<GridElement>();
                 neutralGE.transform.parent = neutralGEContainer.transform;
 
@@ -152,7 +157,7 @@ public class Grid : MonoBehaviour {
             selectedCursor.SetActive(false);
     }
 
-// Toggle GridSquare highlights, apply color by index
+// Toggle Tile highlights, apply color by index
     public void DisplayValidCoords(List<Vector2> coords, int? index = null, bool stack = false, bool fill = true) {
         if (!stack)
             DisableGridHighlight();
@@ -171,14 +176,14 @@ public class Grid : MonoBehaviour {
         if (overrideHighlight) DisableGridHighlight();
     }
 
-// Disable GridSquare highlights
+// Disable Tile highlights
     public void DisableGridHighlight() {
-        foreach(GridSquare sqr in sqrs)
+        foreach(Tile sqr in sqrs)
             sqr.ToggleValidCoord(false);
     }
 
     public void LockGrid(bool state) {
-        foreach (GridSquare sqr in sqrs)
+        foreach (Tile sqr in sqrs)
             sqr.ToggleHitBox(!state);
     }
 
