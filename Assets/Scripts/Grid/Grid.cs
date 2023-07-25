@@ -35,28 +35,18 @@ public class Grid : MonoBehaviour {
 
 // loop through grid x,y, generate sqr grid elements, update them and add to list
     public IEnumerator GenerateGrid(int i, GameObject enemyOverride = null) {
-        List<Vector2> bloodTiles = new List<Vector2>();
-        List<Vector2> bileTiles = new List<Vector2>();
-        List<Vector2> bulbTiles = new List<Vector2>();
+        List<Vector2> altTiles = new List<Vector2>();
+
         foreach (FloorDefinition.Spawn spawn in lvlDef.initSpawns) {
-            if (spawn.asset.prefab.GetComponent<GridElement>() is Tile s) {
-                if (s.tileType == Tile.TileType.Blood)
-                    bloodTiles.Add(spawn.coord);
-                else if (s.tileType == Tile.TileType.Bile)
-                    bileTiles.Add(spawn.coord);
-                else if (s is TileBulb)
-                    bulbTiles.Add(spawn.coord);
+            if (spawn.asset.prefab.GetComponent<GridElement>() is Tile) {
+                altTiles.Add(spawn.coord);
             }
         }
         for (int y = 0; y < FloorManager.gridSize; y++) {
             for (int x = 0; x < FloorManager.gridSize; x++) {
                 Tile sqr = null;
-                if (bloodTiles.Contains(new Vector2(x,y)))
-                    sqr = Instantiate(bloodTilePrefab, this.transform).GetComponent<Tile>();
-                else if (bileTiles.Contains(new Vector2(x,y)))
-                    sqr = Instantiate(bileTilePrefab, this.transform).GetComponent<Tile>();
-                else if (bulbTiles.Contains(new Vector2(x,y)))
-                    sqr = Instantiate(bulbTilePrefab, this.transform).GetComponent<Tile>();
+                if (altTiles.Contains(new Vector2(x,y)))
+                    sqr = Instantiate(lvlDef.initSpawns.Find(s => s.coord == new Vector2(x,y)).asset.prefab, this.transform).GetComponent<Tile>();
                 else
                     sqr = Instantiate(sqrPrefab, this.transform).GetComponent<Tile>();
 //store bool for white sqrs

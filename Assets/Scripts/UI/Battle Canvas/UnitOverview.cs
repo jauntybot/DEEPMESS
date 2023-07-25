@@ -49,7 +49,7 @@ public class UnitOverview : MonoBehaviour
         movePip.SetActive(!unit.moved);
         actionPip.SetActive(unit.energyCurrent > 0);
 
-        equipment.sprite = unit.equipment[1].icon;
+        if (unit.ui) equipment.sprite = unit.ui.perFloor.data.icon;
         equipmentDisable.SetActive(unit.usedEquip);
 
         for (int i = 0; i <= unit.hpMax - 1; i++) 

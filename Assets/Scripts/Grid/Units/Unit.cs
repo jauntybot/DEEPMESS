@@ -93,7 +93,8 @@ public class Unit : GridElement {
                 RemoveShell();
                 StartCoroutine(TakeDamage(hpMax, DamageType.Bile));
             } else if (targetSqr is TileBulb tb && this is PlayerUnit pu) {
-                tb.HarvestBulb(pu);
+                if (!tb.harvested)
+                    tb.HarvestBulb(pu);
             } else {
                 RemoveCondition(Status.Restricted);
             }

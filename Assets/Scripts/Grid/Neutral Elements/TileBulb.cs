@@ -9,11 +9,14 @@ public class TileBulb : Tile
     public GameObject undoPrefab;
     
     public BulbEquipmentData bulb;
+    public bool harvested;
 
+    [SerializeField] Animator anim;
 
     public void HarvestBulb(PlayerUnit pu) {
-        Debug.Log("Harvest bulb");
+        anim.SetBool("Harvested", true);
         pu.ui.UpdateLoadout(bulb);
+        harvested = true;
     }
 
     IEnumerator WaitForUndoClear(PlayerManager manager) {

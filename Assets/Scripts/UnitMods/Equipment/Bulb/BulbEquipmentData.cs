@@ -6,7 +6,7 @@ using UnityEngine;
 public class BulbEquipmentData : EquipmentData
 {
 
-    [SerializeField] GameObject bulbPrefab;
+    [SerializeField] protected GameObject bulbPrefab;
 
     public override void EquipEquipment(GridElement user)
     {
@@ -20,7 +20,7 @@ public class BulbEquipmentData : EquipmentData
         yield return base.UseEquipment(user, target);
         PlayerUnit pu = (PlayerUnit)user;
 
-
+        pu.equipment.Remove(this);
         pu.ui.UpdateEquipmentButtons();
     }
 
