@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Equipment/Attack")]
+[CreateAssetMenu(menuName = "Equipment/Attack/Strike")]
 [System.Serializable]
 public class AttackData : EquipmentData
 {

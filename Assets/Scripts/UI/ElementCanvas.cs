@@ -11,8 +11,8 @@ public class ElementCanvas : MonoBehaviour
     int trackedHP;
     public GameObject statDisplay, hpContainer, hpPips, emptyHPPips, statusPips;
     [SerializeField] GameObject hpPipPrefab, apPipPrefab, dmgPipPrefab, emptyPipPrefab;
-    [SerializeField] GameObject badgePrefab;
-    [SerializeField] Sprite weakenedSprite, stunnedSprite;
+    //[SerializeField] GameObject badgePrefab;
+    //[SerializeField] Sprite weakenedSprite, stunnedSprite;
 
     public GameObject dmgPanel;
     [SerializeField] Animator dmgAnim;
@@ -68,14 +68,14 @@ public class ElementCanvas : MonoBehaviour
                 hpPips.transform.GetChild(i).gameObject.SetActive(i <= cap);
             }
 // Status display
-            for (int i = statusPips.transform.childCount - 1; i >= 0; i--)
-                Destroy(statusPips.transform.GetChild(i).gameObject);
-            if (element is Unit u) {
-                if (u.conditions.Contains(Unit.Status.Weakened)) {
-                    GameObject badge = Instantiate(badgePrefab, statusPips.transform);
-                    badge.GetComponent<Image>().sprite = weakenedSprite;
-                }
-            }
+            // for (int i = statusPips.transform.childCount - 1; i >= 0; i--)
+            //     Destroy(statusPips.transform.GetChild(i).gameObject);
+            // if (element is Unit u) {
+            //     if (u.conditions.Contains(Unit.Status.Weakened)) {
+            //         GameObject badge = Instantiate(badgePrefab, statusPips.transform);
+            //         badge.GetComponent<Image>().sprite = weakenedSprite;
+            //     }
+            // }
         }
     }
 

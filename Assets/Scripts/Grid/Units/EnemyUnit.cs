@@ -8,7 +8,66 @@ public class EnemyUnit : Unit {
 
     [Header("Enemy Unit")]
     public Pathfinding pathfinding;
-    [SerializeField] Unit closestTkn;
+    [SerializeField] Unit closestUnit;
+
+    public virtual IEnumerator CalculateAction() {
+// First attack scan
+        UpdateAction(equipment[1]);
+        foreach (Vector2 coord in validActionCoords) 
+        {
+            if (ValidCommand(coord, selectedEquipment)) {
+                manager.SelectUnit(this);
+                GridElement target = null;
+                foreach (GridElement ge in grid.CoordContents(coord))
+                    target = ge;
+                grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
+                yield return new WaitForSecondsRealtime(0.5f);
+                Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, target));
+                grid.UpdateSelectedCursor(false, Vector2.one * -32);
+                grid.DisableGridHighlight();
+                yield return co;
+                yield return new WaitForSecondsRealtime(0.125f);
+                manager.DeselectUnit();
+                yield break;
+            }
+        }
+// Move scan
+        if (!moved) {
+            UpdateAction(equipment[0], moveMod);
+            Vector2 targetCoord = SelectOptimalCoord(pathfinding);
+            if (Mathf.Sign(targetCoord.x) == 1) {
+                manager.SelectUnit(this);
+                grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
+                yield return new WaitForSecondsRealtime(0.5f);
+                Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, grid.sqrs.Find(sqr => sqr.coord == targetCoord)));
+                grid.UpdateSelectedCursor(false, Vector2.one * -32);
+                grid.DisableGridHighlight();
+                yield return co;
+                manager.DeselectUnit();
+            }
+        }
+
+// Second attack scan
+        UpdateAction(equipment[1]);
+        foreach (Vector2 coord in validActionCoords) 
+        {
+            if (ValidCommand(coord, selectedEquipment)) {       
+                manager.SelectUnit(this);   
+                GridElement target = null;
+                foreach (GridElement ge in grid.CoordContents(coord))
+                    target = ge;
+                grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
+                yield return new WaitForSecondsRealtime(0.5f);
+                Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, target));
+                grid.UpdateSelectedCursor(false, Vector2.one * -32);
+                grid.DisableGridHighlight();
+                yield return co;            
+                yield return new WaitForSecondsRealtime(0.125f);
+                manager.DeselectUnit();
+            }
+        }
+        grid.DisableGridHighlight();
+    }
 
 
     public virtual Vector2 SelectOptimalCoord(Pathfinding path) {
@@ -16,17 +75,17 @@ public class EnemyUnit : Unit {
         
         switch (path) {
             case Pathfinding.ClosestCoord:
-                closestTkn = manager.scenario.player.units[0];
-                if (closestTkn) {
-                    foreach (Unit tkn in manager.scenario.player.units) {
-                        if (!tkn.conditions.Contains(Status.Disabled)) {
-                            if (Vector2.Distance(tkn.coord, coord) < Vector2.Distance(closestTkn.coord, coord))
-                                closestTkn = tkn;
+                closestUnit = manager.scenario.player.units[0];
+                if (closestUnit) {
+                    foreach (Unit unit in manager.scenario.player.units) {
+                        if (!unit.conditions.Contains(Status.Disabled)) {
+                            if (Vector2.Distance(unit.coord, coord) < Vector2.Distance(closestUnit.coord, coord))
+                                closestUnit = unit;
                         }
                     }
                     Vector2 closestCoord = Vector2.one * -32;
                     foreach(Vector2 c in validActionCoords) {
-                        if (Vector2.Distance(c, closestTkn.coord) < Vector2.Distance(closestCoord, closestTkn.coord)) 
+                        if (Vector2.Distance(c, closestUnit.coord) < Vector2.Distance(closestCoord, closestUnit.coord)) 
                             closestCoord = c;
                     }
 // If there is a valid closest coord
@@ -37,15 +96,15 @@ public class EnemyUnit : Unit {
                 }
             break;
             case Pathfinding.FurthestWithinAttackRange:
-                closestTkn = manager.scenario.player.units[0];
-                if (closestTkn) {
-                    foreach (Unit tkn in manager.scenario.player.units) {
-                        if (!tkn.conditions.Contains(Status.Disabled)) {
-                            if (Vector2.Distance(tkn.coord, coord) < Vector2.Distance(closestTkn.coord, coord))
-                                closestTkn = tkn;
+                closestUnit = manager.scenario.player.units[0];
+                if (closestUnit) {
+                    foreach (Unit unit in manager.scenario.player.units) {
+                        if (!unit.conditions.Contains(Status.Disabled)) {
+                            if (Vector2.Distance(unit.coord, coord) < Vector2.Distance(closestUnit.coord, coord))
+                                closestUnit = unit;
                         }
                     }
-                    Vector2 furthestCoord = closestTkn.coord;
+                    Vector2 furthestCoord = closestUnit.coord;
                     foreach(Vector2 c in validActionCoords) {
                         Vector2 dir = Vector2.zero;
                         List<Vector2> validFurthestCoords = new List<Vector2>();
@@ -54,16 +113,16 @@ public class EnemyUnit : Unit {
                             switch (i) {case 0: dir = Vector2.down; break; case 1: dir = Vector2.left; break; case 2: dir = Vector2.up; break; case 3: dir = Vector2.right; break;}
                             
                             for (int r = 1; r <= selectedEquipment.range; r++) {
-                                Vector2 farCoord = closestTkn.coord + r * dir;
+                                Vector2 farCoord = closestUnit.coord + r * dir;
                                 if (validActionCoords.Contains(farCoord) &&
-                                Vector2.Distance(farCoord, closestTkn.coord) > Vector2.Distance(furthestCoord, closestTkn.coord)) 
+                                Vector2.Distance(farCoord, closestUnit.coord) > Vector2.Distance(furthestCoord, closestUnit.coord)) 
                                     furthestCoord = farCoord;
                             }
 
                         }
                     }
 // If there is a valid closest coord
-                    if (furthestCoord != closestTkn.coord) {
+                    if (furthestCoord != closestUnit.coord) {
                         return furthestCoord;
                     } else {
                         return SelectOptimalCoord(Pathfinding.ClosestCoord);
@@ -84,7 +143,8 @@ public class EnemyUnit : Unit {
 
     public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null)
     {
-        if (hpCurrent - dmg <= hpMax/2) 
+        int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg * 2 : dmg;
+        if (hpCurrent - modifiedDmg <= hpMax/2) 
             gfxAnim.SetBool("Damaged", true);
 
         yield return base.TakeDamage(dmg, dmgType, source);

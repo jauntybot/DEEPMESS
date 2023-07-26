@@ -58,7 +58,7 @@ public class EnemyManager : UnitManager {
 // Take either scatter action or normal action
             EnemyUnit enemy = units[i] as EnemyUnit;
             if (!scatter) {
-                ongoingTurn = StartCoroutine(CalculateAction(enemy));
+                ongoingTurn = StartCoroutine(enemy.CalculateAction());
                 yield return ongoingTurn;
                 yield return new WaitForSecondsRealtime(0.125f);
             } else {
@@ -75,65 +75,6 @@ public class EnemyManager : UnitManager {
             StopCoroutine(ongoingTurn);
             ongoingTurn = null;
         }
-    }
-
-    public IEnumerator CalculateAction(EnemyUnit input) {
-// First attack scan
-        input.UpdateAction(input.equipment[1]);
-        foreach (Vector2 coord in input.validActionCoords) 
-        {
-            if (input.ValidCommand(coord, input.selectedEquipment)) {
-                SelectUnit(input);
-                GridElement target = null;
-                foreach (GridElement ge in selectedUnit.grid.CoordContents(coord))
-                    target = ge;
-                currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
-                yield return new WaitForSecondsRealtime(0.5f);
-                Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, target));
-                currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
-                currentGrid.DisableGridHighlight();
-                yield return co;
-                yield return new WaitForSecondsRealtime(0.125f);
-                DeselectUnit();
-                yield break;
-            }
-        }
-// Move scan
-        if (!input.moved) {
-            input.UpdateAction(input.equipment[0], input.moveMod);
-            Vector2 targetCoord = input.SelectOptimalCoord(input.pathfinding);
-            if (Mathf.Sign(targetCoord.x) == 1) {
-                SelectUnit(input);
-                currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
-                yield return new WaitForSecondsRealtime(0.5f);
-                Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, currentGrid.sqrs.Find(sqr => sqr.coord == targetCoord)));
-                currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
-                currentGrid.DisableGridHighlight();
-                yield return co;
-                DeselectUnit();
-            }
-        }
-
-// Second attack scan
-        input.UpdateAction(input.equipment[1]);
-        foreach (Vector2 coord in input.validActionCoords) 
-        {
-            if (input.ValidCommand(coord, input.selectedEquipment)) {       
-                SelectUnit(input);   
-                GridElement target = null;
-                foreach (GridElement ge in selectedUnit.grid.CoordContents(coord))
-                    target = ge;
-                currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
-                yield return new WaitForSecondsRealtime(0.5f);
-                Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, target));
-                currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
-                currentGrid.DisableGridHighlight();
-                yield return co;            
-                yield return new WaitForSecondsRealtime(0.125f);
-                DeselectUnit();
-            }
-        }
-        currentGrid.DisableGridHighlight();
     }
 
     public IEnumerator ScatterTurn(EnemyUnit input) {
