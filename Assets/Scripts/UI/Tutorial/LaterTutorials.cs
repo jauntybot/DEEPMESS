@@ -23,10 +23,11 @@ public class LaterTutorials : MonoBehaviour
 
     public IEnumerator CheckFloorDef(FloorDefinition floor) {
         foreach (FloorDefinition.Spawn sp in floor.initSpawns) {
-            if (sp.asset.prefab.GetComponent<GridElement>() is TilePad tp) {
-                if (!healpadEncountered && tp.buff == TilePad.Buff.Heal) yield return StartCoroutine(HealpadTut(sp.coord));
-                if (!equippadEncountered && tp.buff == TilePad.Buff.Equip) yield return StartCoroutine(EquippadTut(sp.coord));
-            } 
+            // if (sp.asset.prefab.GetComponent<GridElement>() is TilePad tp) {
+            //     if (!healpadEncountered && tp.buff == TilePad.Buff.Heal) yield return StartCoroutine(HealpadTut(sp.coord));
+            //     if (!equippadEncountered && tp.buff == TilePad.Buff.Equip) yield return StartCoroutine(EquippadTut(sp.coord));
+            // } 
+            yield return null;
         }
     }
 

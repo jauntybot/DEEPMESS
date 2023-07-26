@@ -9,9 +9,10 @@ public class ElementCanvas : MonoBehaviour
     [SerializeField] protected bool disable;
     protected GridElement element;
     int trackedHP;
-    public GameObject statDisplay, hpContainer, hpPips, emptyHPPips,  hpInt, apPips;
+    public GameObject statDisplay, hpContainer, hpPips, emptyHPPips, statusPips;
     [SerializeField] GameObject hpPipPrefab, apPipPrefab, dmgPipPrefab, emptyPipPrefab;
-    [SerializeField] TMPro.TMP_Text hpText;
+    [SerializeField] GameObject badgePrefab;
+    [SerializeField] Sprite weakenedSprite, stunnedSprite;
 
     public GameObject dmgPanel;
     [SerializeField] Animator dmgAnim;
@@ -28,7 +29,6 @@ public class ElementCanvas : MonoBehaviour
             ToggleStatsDisplay(false);
         }
         if (element is PlayerUnit u) {
-            apPips.SetActive(true);
             overview = u.ui.overview;
         } else if (element is Nail n) {
             overview = n.ui.overview;
@@ -45,7 +45,7 @@ public class ElementCanvas : MonoBehaviour
                 Instantiate(hpPipPrefab, hpPips.transform);
                 Instantiate(dmgPipPrefab, dmgPanel.transform);
             }
-            Instantiate(apPipPrefab, apPips.transform);
+
             hpPips.SetActive(true);
         }
     }
@@ -59,30 +59,21 @@ public class ElementCanvas : MonoBehaviour
 
     public virtual void UpdateStatsDisplay(int pre = -32) {
         if (!disable) {
-            
             int cap = (pre == -32) ? element.hpCurrent - 1 : pre - 1;
-
             if (overview)
                 overview.UpdateOverview(cap + 1);
 
-            if (element.hpCurrent <= 10) {
-                hpContainer.SetActive(true); hpInt.SetActive(false);
-                for (int i = 0; i <= element.hpMax - 1; i++) {
-                    hpPips.transform.GetChild(i).gameObject.SetActive(i <= cap);
-                }
-            } else {
-                hpContainer.SetActive(false); hpInt.SetActive(true);
-                hpText.text = element.hpCurrent.ToString() + "x";
+            hpContainer.SetActive(true);
+            for (int i = 0; i <= element.hpMax - 1; i++) {
+                hpPips.transform.GetChild(i).gameObject.SetActive(i <= cap);
             }
-            if (element is PlayerUnit) {
-                int dif = element.energyCurrent - apPips.transform.childCount;
-                for (int i = Mathf.Abs(dif); i > 0; i--) {
-                    if (dif < 0) {
-                        if (apPips.transform.childCount - i >= 0)
-                        DestroyImmediate(apPips.transform.GetChild(apPips.transform.childCount - i).gameObject);
-                    } else if (dif > 0) {
-                        Instantiate(apPipPrefab, apPips.transform);
-                    }
+// Status display
+            for (int i = statusPips.transform.childCount - 1; i >= 0; i--)
+                Destroy(statusPips.transform.GetChild(i).gameObject);
+            if (element is Unit u) {
+                if (u.conditions.Contains(Unit.Status.Weakened)) {
+                    GameObject badge = Instantiate(badgePrefab, statusPips.transform);
+                    badge.GetComponent<Image>().sprite = weakenedSprite;
                 }
             }
         }

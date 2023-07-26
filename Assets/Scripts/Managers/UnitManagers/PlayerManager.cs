@@ -421,11 +421,11 @@ public class PlayerManager : UnitManager {
         if (undoableMoves.Count > 0 && undoOrder.Count > 0) {
             Unit lastMoved = undoOrder[undoOrder.Count - 1];
             if (destroyedByMove.ContainsKey(lastMoved)) {
-                TilePad pad = (TilePad)destroyedByMove[lastMoved];
-                pad.UndoDestroy();
-                lastMoved.hpCurrent -= pad.usedValue;
-                lastMoved.elementCanvas.UpdateStatsDisplay();
-                destroyedByMove.Remove(lastMoved);
+                // TilePad pad = (TilePad)destroyedByMove[lastMoved];
+                // pad.UndoDestroy();
+                // lastMoved.hpCurrent -= pad.usedValue;
+                // lastMoved.elementCanvas.UpdateStatsDisplay();
+                // destroyedByMove.Remove(lastMoved);
             }
             MoveData move = (MoveData)cascadeMovement;
             StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved], true));

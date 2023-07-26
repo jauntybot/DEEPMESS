@@ -229,8 +229,7 @@ public class EquipmentAdjacency : MonoBehaviour
                 foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                     occupied = true;
 // Valid coord if element is not filtered
-                    if (!filters.Find(f => f.GetType() == ge.GetType())
-                    || filters == null) {
+                    if (filters == null || !filters.Find(f => f.GetType() == ge.GetType())) {
                         _coords.Add(coord);
 // Valid coord if element is target, but stops frontier
                     } else if (targetLast != null) {

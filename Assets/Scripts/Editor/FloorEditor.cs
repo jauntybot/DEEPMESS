@@ -20,6 +20,7 @@ public class FloorEditor : EditorWindow {
 
     static Rect headerSection;
     static Rect assetSection;
+    Vector2 assetScrollPos;
     static Vector2 assetDim = new Vector2(100, 100);
     static float sectionPadding = 10;
     static Rect gridSection;
@@ -50,7 +51,7 @@ public class FloorEditor : EditorWindow {
         headerSection.height = 50 + sectionPadding;
 
         assetSection.x = 0; assetSection.y = headerSection.height;
-        assetSection.width = assetDim.x + sectionPadding; 
+        assetSection.width = assetDim.x + sectionPadding*2; 
 
         gridSection.x = assetSection.width; gridSection.y = headerSection.height;
         gridSection.width = (assetDim.x+1) * 8 + sectionPadding; gridSection.height = (assetDim.y+1) * 8 + sectionPadding;
@@ -61,8 +62,8 @@ public class FloorEditor : EditorWindow {
         assetSection.height = gridSection.height;
         headerSection.width = gridSection.xMax;
 
-        window.minSize = new Vector2(gridSection.xMax, gridSection.yMax);
-        window.maxSize = new Vector2(gridSection.xMax, gridSection.yMax);
+        //window.minSize = new Vector2(gridSection.xMax, gridSection.yMax);
+        //window.maxSize = new Vector2(gridSection.xMax, gridSection.yMax);
 
     }
 
@@ -130,7 +131,6 @@ public class FloorEditor : EditorWindow {
         r.y+=sectionPadding/2; r.yMax-=sectionPadding;
 
         GUILayout.BeginArea(r);
-        
         GUILayout.Label("Placing:");
         
         GUILayout.Box(AssetPreview.GetAssetPreview(activeAsset.icon), GUILayout.Width(assetDim.x), GUILayout.Height(assetDim.y));
@@ -139,10 +139,7 @@ public class FloorEditor : EditorWindow {
 
         GUILayout.Label("Assets");
         assetDropdown = (AssetType)EditorGUILayout.EnumPopup(assetDropdown);
-        DrawUILine(Color.white);
 
-        r.xMin = 0;  r.yMin+=135;
-        GUILayout.BeginArea(r);
         List<FloorAsset> currentAssets = new List<FloorAsset>();
         switch(assetDropdown) {
             default:
@@ -153,6 +150,12 @@ public class FloorEditor : EditorWindow {
                 currentAssets = lvl.atlas.unitAssets;
             break;
         }
+
+        r.xMin = 0;  r.yMin+=135; 
+        GUILayout.BeginArea(r);
+        GUILayout.BeginVertical();
+        assetScrollPos = EditorGUILayout.BeginScrollView(assetScrollPos, false, true);
+        
         for (int i = 0; i < currentAssets.Count; i++) {
             GUILayout.BeginArea(new Rect(0, i*(assetDim.y), assetDim.x, assetDim.y));
             if (GUILayout.Button(AssetPreview.GetAssetPreview(currentAssets[i].icon), GUILayout.Width(assetDim.x), GUILayout.Height(assetDim.y))) {
@@ -164,6 +167,8 @@ public class FloorEditor : EditorWindow {
             GUILayout.Box(currentAssets[i].name);
             GUILayout.EndArea();
         }
+        EditorGUILayout.EndScrollView();
+        GUILayout.EndVertical();
         GUILayout.EndArea();
         GUILayout.EndArea();
     }

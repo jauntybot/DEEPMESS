@@ -11,8 +11,6 @@ public class TileBulb : Tile
     public BulbEquipmentData bulb;
     public bool harvested;
 
-    [SerializeField] Animator anim;
-
     public void HarvestBulb(PlayerUnit pu) {
         anim.SetBool("Harvested", true);
         pu.ui.UpdateLoadout(bulb);

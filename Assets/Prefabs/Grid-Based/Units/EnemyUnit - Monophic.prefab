@@ -195,7 +195,6 @@ MonoBehaviour:
   gfx:
   - {fileID: 1384135093733884537}
   - {fileID: 8101441869780077831}
-  name: Monophic
   hpMax: 2
   hpCurrent: 0
   defense: 0
@@ -218,6 +217,7 @@ MonoBehaviour:
   moved: 0
   usedEquip: 0
   validActionCoords: []
+  inRangeCoords: []
   conditions: 
   moveMod: 0
   attackMod: 0
@@ -553,22 +553,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3908257913917299124}
     m_Modifications:
-    - target: {fileID: 275242715233555640, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-      propertyPath: hp
-      value: 
-      objectReference: {fileID: 4453142181534771632}
-    - target: {fileID: 275242715233555640, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-      propertyPath: energy
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 275242715233555640, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-      propertyPath: energyText
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 275242715233555640, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-      propertyPath: hpPipPrefab
-      value: 
-      objectReference: {fileID: 6918762094188802550, guid: c14861bdbe1025143a4cd42e98cae10b, type: 3}
     - target: {fileID: 1003956329267171811, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -653,10 +637,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7715025702989210221, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8283279539787568028, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
       propertyPath: m_PresetInfoIsWorld
       value: 1
@@ -665,17 +645,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: ElementCanvas
       objectReference: {fileID: 0}
-    - target: {fileID: 9023414508816232860, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 539febde836957f4e8604d4da70728d9, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
---- !u!1 &4453142181534771632 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7715025702989210221, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}
-  m_PrefabInstance: {fileID: 6259434176934448093}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &6571665335830157886 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1003956329267171811, guid: b53f5ce3afd7e1a499def0b1a56371bb, type: 3}

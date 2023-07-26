@@ -18,7 +18,7 @@ public class Unit : GridElement {
     public List<Vector2> validActionCoords;
     public List<Vector2> inRangeCoords;
     
-    public enum Status { Normal, Immobilized, Restricted, Disabled }
+    public enum Status { Normal, Immobilized, Restricted, Disabled, Weakened }
     [Header("Modifiers")]
     public List<Status> conditions;
     private int prevMod;
@@ -68,6 +68,10 @@ public class Unit : GridElement {
             selectedEquipment.UntargetEquipment(this);
             selectedEquipment = null;
         }
+        if (grid.sqrs.Find(sqr => sqr.coord == coord) is TileBulb tb && this is PlayerUnit pu) {
+                if (!tb.harvested && pu.ui.bulb == null)
+                    tb.HarvestBulb(pu);
+        }
     }
 
     public bool ValidCommand(Vector2 target, EquipmentData equip) {
@@ -93,7 +97,7 @@ public class Unit : GridElement {
                 RemoveShell();
                 StartCoroutine(TakeDamage(hpMax, DamageType.Bile));
             } else if (targetSqr is TileBulb tb && this is PlayerUnit pu) {
-                if (!tb.harvested)
+                if (!tb.harvested && pu.ui.bulb == null)
                     tb.HarvestBulb(pu);
             } else {
                 RemoveCondition(Status.Restricted);
@@ -106,7 +110,8 @@ public class Unit : GridElement {
         bool prevTargeted = targeted;
         TargetElement(true);
 
-        yield return base.TakeDamage(dmg, dmgType, source);
+        int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg * 2 : dmg;
+        yield return base.TakeDamage(modifiedDmg, dmgType, source);
 
         TargetElement(targeted);
     }
@@ -167,6 +172,9 @@ public class Unit : GridElement {
                     energyCurrent = 0;
                     moved = true;
                     ui.UpdateEquipmentButtons();
+                    elementCanvas.UpdateStatsDisplay();
+                break;
+                case Status.Weakened:
                     elementCanvas.UpdateStatsDisplay();
                 break;
             }
