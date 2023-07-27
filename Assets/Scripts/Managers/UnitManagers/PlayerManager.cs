@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.U2D;
 
 // Class that controls the player's functionality, recieves input from PlayerController and ScenarioManager
 // tbh I'm not commenting this one bc it's the most heavily edited and refactors are incoming
@@ -24,6 +24,7 @@ public class PlayerManager : UnitManager {
     [Header("PREFABS")]
     [SerializeField] public GameObject nailPrefab;
     [SerializeField] public GameObject hammerPrefab;
+    [SerializeField] GameObject gridCursor;
 
     [Header("UNDO")]
     public bool unitActing = false;
@@ -58,6 +59,7 @@ public class PlayerManager : UnitManager {
         if (FloorManager.instance) floorManager = FloorManager.instance;
 
         contextuals.Initialize(this);
+        gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
 
         List<Vector2> spawnCoords =new List<Vector2>{
             new Vector2(3,4),
@@ -128,11 +130,11 @@ public class PlayerManager : UnitManager {
             }
             undoableMoves = new Dictionary<Unit, Vector2>();
             undoOrder = new List<Unit>();
-            //ResolveConditions();
+            ResolveConditions();
 // End Turn
         } else {
             DeselectUnit();
-            currentGrid.UpdateTargetCursor(false, Vector2.one * -32);
+            UpdateTargetCursor(false, Vector2.one * -32);
             if (scenario.prevTurn != ScenarioManager.Turn.Descent && scenario.currentTurn != ScenarioManager.Turn.Descent) {
                 if (nail.nailState == Nail.NailState.Buried)
                     nail.ToggleNailState(Nail.NailState.Primed);
@@ -262,8 +264,10 @@ public class PlayerManager : UnitManager {
         }
     }
 
+#region Player Controller interface
+
     public void GridMouseOver(Vector2 pos, bool state) {
-        currentGrid.UpdateTargetCursor(state, pos, selectedUnit && selectedUnit.selectedEquipment);
+        UpdateTargetCursor(state, pos, selectedUnit && selectedUnit.selectedEquipment);
         if (Mathf.Sign(pos.x) >= 0) pc.UpdateCursor(targetCursorState);
         else pc.UpdateCursor(PlayerController.CursorState.Default);
 // Unit is selected - Grid contextuals
@@ -279,13 +283,13 @@ public class PlayerManager : UnitManager {
                         else {
                             contextuals.ChangeLineColor(3); // 3 is invalid color index
                             pc.ToggleCursorValid(false);
-                            currentGrid.UpdateTargetCursor(state, pos, true, false);
+                            UpdateTargetCursor(state, pos, true, false);
                         }
                     }
                     else {
                         contextuals.ToggleValid(false);
                         pc.ToggleCursorValid(false);
-                        currentGrid.UpdateTargetCursor(state, pos, true, false);
+                        UpdateTargetCursor(state, pos, true, false);
                     }
                 }
             }
@@ -362,6 +366,25 @@ public class PlayerManager : UnitManager {
             }
         }
     }
+
+    public void UpdateTargetCursor(bool state, Vector2 coord, bool fill = false, bool _valid = true) {
+        gridCursor.SetActive(state);
+        gridCursor.transform.position = currentGrid.PosFromCoord(coord);
+        Color c = _valid ? contextuals.validColor : contextuals.invalidColor;
+
+        SpriteShapeRenderer ssr = gridCursor.GetComponentInChildren<SpriteShapeRenderer>();
+        if (ssr) {
+            ssr.color = new Color(c.r, c.g, c.b, fill ? 0.25f : 0);
+            ssr.sortingOrder = currentGrid.SortOrderFromCoord(coord);
+        }
+        LineRenderer lr = gridCursor.GetComponentInChildren<LineRenderer>();
+        if (lr) {
+            lr.startColor = new Color(c.r, c.g, c.b, 0.75f); lr.endColor = new Color(c.r, c.g, c.b, 0.75f);
+            lr.sortingOrder = currentGrid.SortOrderFromCoord(coord);
+        }
+    }
+
+#endregion
 
     public override void SelectUnit(Unit u)
     {

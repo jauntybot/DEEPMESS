@@ -24,13 +24,12 @@ public class EnemyManager : UnitManager {
         if (scenario.currentEnemy == this && scenario.currentTurn != ScenarioManager.Turn.Descent) {
             if (units.Count <= 0) {
                 EndTurnEarly();
-                scenario.player.TriggerDescent();
+                floorManager.Descend();
             }
         }
     }
 
     public virtual IEnumerator TakeTurn(bool scatter) {
-
 // Reset manager and units for turn
         foreach(Unit u in units) {
             u.energyCurrent = u.energyMax;
@@ -38,6 +37,7 @@ public class EnemyManager : UnitManager {
                 u.moved = false;
             u.elementCanvas.UpdateStatsDisplay();
         }
+        ResolveConditions();
 
         yield return new WaitForSecondsRealtime(1/Util.fps);
 // Loop through each unit to take it's action

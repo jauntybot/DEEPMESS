@@ -2196,29 +2196,25 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1272466583}
     m_Modifications:
+    - target: {fileID: 810380113123956363, guid: 77910660d9e94bc4db37063ecc2bb510, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7493072995628922177, guid: 77910660d9e94bc4db37063ecc2bb510, type: 3}
-      propertyPath: enemyColor.a
+      propertyPath: validColor.a
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7493072995628922177, guid: 77910660d9e94bc4db37063ecc2bb510, type: 3}
-      propertyPath: equipColor.a
-      value: 1
+      propertyPath: validColor.b
+      value: 0.9528302
       objectReference: {fileID: 0}
     - target: {fileID: 7493072995628922177, guid: 77910660d9e94bc4db37063ecc2bb510, type: 3}
-      propertyPath: playerColor.a
-      value: 1
+      propertyPath: validColor.g
+      value: 0.30621496
       objectReference: {fileID: 0}
     - target: {fileID: 7493072995628922177, guid: 77910660d9e94bc4db37063ecc2bb510, type: 3}
-      propertyPath: invalidColor.a
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7493072995628922179, guid: 77910660d9e94bc4db37063ecc2bb510, type: 3}
-      propertyPath: pointerAnchor.x
-      value: 5.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7493072995628922179, guid: 77910660d9e94bc4db37063ecc2bb510, type: 3}
-      propertyPath: pointerAnchor.y
-      value: 17.36
+      propertyPath: validColor.r
+      value: 0.16779393
       objectReference: {fileID: 0}
     - target: {fileID: 7493072995628922205, guid: 77910660d9e94bc4db37063ecc2bb510, type: 3}
       propertyPath: loadout

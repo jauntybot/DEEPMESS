@@ -18,9 +18,11 @@ public class Unit : GridElement {
     public List<Vector2> validActionCoords;
     public List<Vector2> inRangeCoords;
     
-    public enum Status { Normal, Immobilized, Restricted, Disabled, Weakened }
+    public enum Status { Normal, Immobilized, Restricted, Disabled, Weakened, Stunned }
+
     [Header("Modifiers")]
     public List<Status> conditions;
+    public UnitConditionVFX conditionDisplay;
     private int prevMod;
     public int moveMod;
     public int attackMod;
@@ -45,6 +47,7 @@ public class Unit : GridElement {
             gfxAnim = gfx[0].GetComponent<Animator>();
             gfxAnim.keepAnimatorStateOnDisable = true;
         }
+        if (conditionDisplay) conditionDisplay.Init(this);
     }
 
     public virtual void UpdateAction(EquipmentData equipment = null, int mod = 0) {
@@ -162,6 +165,7 @@ public class Unit : GridElement {
     public virtual void ApplyCondition(Status s) {
         if (!conditions.Contains(s)) {
             conditions.Add(s);
+            conditionDisplay.UpdateCondition(s);
             switch(s) {
                 default: return;
                 case Status.Normal: return;
@@ -175,7 +179,7 @@ public class Unit : GridElement {
                     elementCanvas.UpdateStatsDisplay();
                 break;
                 case Status.Weakened:
-                    elementCanvas.UpdateStatsDisplay();
+                    //elementCanvas.UpdateStatsDisplay();
                 break;
             }
         }
@@ -183,6 +187,7 @@ public class Unit : GridElement {
 
     public virtual void RemoveCondition(Status s) {
         if (conditions.Contains(s)) {
+            conditionDisplay.RemoveCondition(s);
             conditions.Remove(s);
             switch(s) {
                 default: return;
@@ -204,6 +209,8 @@ public class Unit : GridElement {
                     StartCoroutine(TakeDamage(-1));
                     moved = false;
                     energyCurrent = 1;
+                break;
+                case Status.Weakened:
                 break;
             }
         }

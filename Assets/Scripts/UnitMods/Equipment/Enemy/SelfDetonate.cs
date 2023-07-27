@@ -35,7 +35,7 @@ public class SelfDetonate : EquipmentData
             u.PrimeSelf();
         } else {
 
-            //animation stuff
+            u.Explode();
 
 // Apply damage to units in AOE
             List<Vector2> aoe = EquipmentAdjacency.GetAdjacent(user, range, this, targetTypes);

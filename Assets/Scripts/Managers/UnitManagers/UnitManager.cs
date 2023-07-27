@@ -90,9 +90,11 @@ public class UnitManager : MonoBehaviour {
 
     public virtual void ResolveConditions() {
         foreach(Unit u in units) {
-            if (u.conditions != null) {
-                foreach (Unit.Status s in u.conditions) 
-                u.RemoveCondition(s);
+            if (u.conditions.Count > 0) {
+                for (int i = u.conditions.Count - 1; i >= 0; i--) {
+                    if (u.conditions[i] is Unit.Status.Weakened) u.RemoveCondition(u.conditions[i]);
+                }
+                
             }
         }
     }

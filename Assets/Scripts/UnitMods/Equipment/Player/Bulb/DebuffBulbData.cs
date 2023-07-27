@@ -32,7 +32,7 @@ public class DebuffBulbData : BulbEquipmentData
                 foreach(Vector2 coord in aoe) {
                     if (user.grid.CoordContents(coord).Count > 0) {
                         foreach (GridElement ge in user.grid.CoordContents(coord)) {
-                            if (ge is Unit u) {
+                            if (ge is Unit u && ge is not Anvil) {
                                 u.ApplyCondition(Unit.Status.Weakened);
                                 if (ge != target) {
                                     GameObject bulb = Instantiate(bulbPrefab, ge.transform.position, Quaternion.identity, ge.transform);

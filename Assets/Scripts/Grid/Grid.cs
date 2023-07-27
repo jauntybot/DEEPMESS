@@ -18,10 +18,9 @@ public class Grid : MonoBehaviour {
     [SerializeField] GameObject enemyPrefab;
 
     [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.15f, 0.35f);
-    [SerializeField] GameObject sqrPrefab, bloodTilePrefab, bileTilePrefab, bulbTilePrefab, gridCursor, selectedCursor;
+    [SerializeField] GameObject sqrPrefab, bloodTilePrefab, bileTilePrefab, bulbTilePrefab, selectedCursor;
     [SerializeField] static float fadeInDur = 0.25f;
     public FloorDefinition lvlDef;
-    [SerializeField] Color valid, invalid;
 
     public List<Tile> sqrs = new List<Tile>();
     public List<GridElement> gridElements = new List<GridElement>();
@@ -65,8 +64,6 @@ public class Grid : MonoBehaviour {
         
         selectedCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
         selectedCursor.transform.SetAsLastSibling();
-        gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
-        gridCursor.transform.SetAsLastSibling();
         index = i;
 
         SpawnLevelDefinition(enemyOverride);
@@ -130,25 +127,6 @@ public class Grid : MonoBehaviour {
     public void RemoveElement(GridElement ge) 
     {
         gridElements.Remove(ge);
-    }
-
-    public void UpdateTargetCursor(bool state, Vector2 coord, bool fill = false, bool _valid = true) {
-        gridCursor.SetActive(state);
-        gridCursor.transform.position = PosFromCoord(coord);
-        Color c = _valid ? valid : invalid;
-
-        SpriteShapeRenderer ssr = gridCursor.GetComponentInChildren<SpriteShapeRenderer>();
-        if (ssr) {
-            ssr.color = new Color(c.r, c.g, c.b, fill ? 0.25f : 0);
-            ssr.sortingOrder = SortOrderFromCoord(coord);
-        }
-        LineRenderer lr = gridCursor.GetComponentInChildren<LineRenderer>();
-        if (lr) {
-            lr.startColor = new Color(c.r, c.g, c.b, 0.75f); lr.endColor = new Color(c.r, c.g, c.b, 0.75f);
-            lr.sortingOrder = SortOrderFromCoord(coord);
-        }
-        if (overrideHighlight)
-            gridCursor.SetActive(false);
     }
 
     public void UpdateSelectedCursor(bool state, Vector2 coord) {

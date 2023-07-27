@@ -16,7 +16,7 @@ public class GridContextuals : MonoBehaviour
     [SerializeField] GameObject contextCursor;
     Animator cursorAnimator;
 
-    [SerializeField] Color playerColor, enemyColor, equipColor, invalidColor;
+    [SerializeField] public Color playerColor, enemyColor, equipColor, validColor, invalidColor;
     
     [SerializeField] LineRenderer lr;
     int lrI = 0;

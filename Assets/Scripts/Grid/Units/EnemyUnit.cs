@@ -69,7 +69,7 @@ public class EnemyUnit : Unit {
         grid.DisableGridHighlight();
     }
 
-
+// PROBLEM FUNCTION
     public virtual Vector2 SelectOptimalCoord(Pathfinding path) {
         Vector2 coord = Vector2.zero;
         

@@ -5,13 +5,19 @@ using UnityEngine;
 public class EnemyDetonateUnit : EnemyUnit
 {
 
-    public bool primed;
 
+    public bool primed;
+    [SerializeField] Animator explosion;
 
     public void PrimeSelf() {
         primed = true;
         Debug.Log("Primed");
-        // animation stuff
+        gfxAnim.SetBool("Primed", true);
+    }
+
+    public void Explode() {
+        gfxAnim.SetTrigger("Explode");
+        explosion.gameObject.SetActive(true);
     }
 
     public override IEnumerator CalculateAction()
