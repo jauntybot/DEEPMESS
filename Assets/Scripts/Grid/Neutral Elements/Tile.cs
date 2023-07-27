@@ -55,9 +55,6 @@ public class Tile : GridElement {
         if (ssr) {
             ssr.color = new Color(color.r, color.g, color.b, fill ? color.a : 0);
             ssr.sortingOrder = grid.SortOrderFromCoord(coord);
-        } else {
-            highlight.GetComponent<SpriteRenderer>().color = color;
-            highlight.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = .25f;
         }
         LineRenderer lr = highlight.GetComponentInChildren<LineRenderer>();
         if (lr) {

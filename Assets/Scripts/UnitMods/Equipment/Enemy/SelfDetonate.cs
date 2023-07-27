@@ -10,9 +10,18 @@ public class SelfDetonate : EquipmentData
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this, targetTypes);
+        bool valid = false;
+        for (int i = validCoords.Count - 1; i >= 0; i--) {
+            if (user.grid.CoordContents(validCoords[i]).Count > 0) {
+                foreach (GridElement ge in user.grid.CoordContents(validCoords[i])) {
+                    if (filters.Find(g => g.GetType() == ge.GetType()) != null) {
+                        valid = true;
+                    }
+                }
+            }
+            if (!valid) validCoords.Remove(validCoords[i]);
+        }
 
-
-        
         return validCoords;
     }
 

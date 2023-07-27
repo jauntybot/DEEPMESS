@@ -29,7 +29,6 @@ public class DebuffBulbData : BulbEquipmentData
             case DebuffType.Weaken:
                 List<Vector2> aoe = EquipmentAdjacency.OrthagonalAdjacency(target, 1, null, null);
                 aoe.Add(target.coord);
-                foreach (Vector2 v in aoe) Debug.Log("AOE: " + v);
                 foreach(Vector2 coord in aoe) {
                     if (user.grid.CoordContents(coord).Count > 0) {
                         foreach (GridElement ge in user.grid.CoordContents(coord)) {

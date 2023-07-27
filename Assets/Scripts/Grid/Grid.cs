@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D;
 
 // Script that generates and maintains the grid
 // Stores all Grid Elements that are created
@@ -20,7 +21,7 @@ public class Grid : MonoBehaviour {
     [SerializeField] GameObject sqrPrefab, bloodTilePrefab, bileTilePrefab, bulbTilePrefab, gridCursor, selectedCursor;
     [SerializeField] static float fadeInDur = 0.25f;
     public FloorDefinition lvlDef;
-    [SerializeField] Color offWhite;
+    [SerializeField] Color valid, invalid;
 
     public List<Tile> sqrs = new List<Tile>();
     public List<GridElement> gridElements = new List<GridElement>();
@@ -33,7 +34,7 @@ public class Grid : MonoBehaviour {
         if (PlayerManager.instance) player = PlayerManager.instance;
     }
 
-// loop through grid x,y, generate sqr grid elements, update them and add to list
+// loop through grid x,y, generate Tile grid elements, update them and add to list
     public IEnumerator GenerateGrid(int i, GameObject enemyOverride = null) {
         List<Vector2> altTiles = new List<Vector2>();
 
@@ -44,21 +45,21 @@ public class Grid : MonoBehaviour {
         }
         for (int y = 0; y < FloorManager.gridSize; y++) {
             for (int x = 0; x < FloorManager.gridSize; x++) {
-                Tile sqr = null;
+                Tile tile = null;
                 if (altTiles.Contains(new Vector2(x,y)))
-                    sqr = Instantiate(lvlDef.initSpawns.Find(s => s.coord == new Vector2(x,y)).asset.prefab, this.transform).GetComponent<Tile>();
+                    tile = Instantiate(lvlDef.initSpawns.Find(s => s.coord == new Vector2(x,y)).asset.prefab, this.transform).GetComponent<Tile>();
                 else
-                    sqr = Instantiate(sqrPrefab, this.transform).GetComponent<Tile>();
-//store bool for white sqrs
-                sqr.white=false;
-                if (x%2==0) { if (y%2==0) sqr.white=true; } 
-                else { if (y%2!=0) sqr.white=true; }
+                    tile = Instantiate(sqrPrefab, this.transform).GetComponent<Tile>();
+// Assign Tile white or black
+                tile.white=false;
+                if (x%2==0) { if (y%2==0) tile.white=true; } 
+                else { if (y%2!=0) tile.white=true; }
 
-                sqr.StoreInGrid(this);
-                sqr.UpdateElement(new Vector2(x,y));
+                tile.StoreInGrid(this);
+                tile.UpdateElement(new Vector2(x,y));
 
-                sqrs.Add(sqr);
-                sqr.transform.parent = gridContainer.transform;
+                sqrs.Add(tile);
+                tile.transform.parent = gridContainer.transform;
             }
         }
         
@@ -131,10 +132,21 @@ public class Grid : MonoBehaviour {
         gridElements.Remove(ge);
     }
 
-    public void UpdateTargetCursor(bool state, Vector2 coord) {
+    public void UpdateTargetCursor(bool state, Vector2 coord, bool fill = false, bool _valid = true) {
         gridCursor.SetActive(state);
         gridCursor.transform.position = PosFromCoord(coord);
-        gridCursor.GetComponentInChildren<SpriteRenderer>().sortingOrder = SortOrderFromCoord(coord);
+        Color c = _valid ? valid : invalid;
+
+        SpriteShapeRenderer ssr = gridCursor.GetComponentInChildren<SpriteShapeRenderer>();
+        if (ssr) {
+            ssr.color = new Color(c.r, c.g, c.b, fill ? 0.25f : 0);
+            ssr.sortingOrder = SortOrderFromCoord(coord);
+        }
+        LineRenderer lr = gridCursor.GetComponentInChildren<LineRenderer>();
+        if (lr) {
+            lr.startColor = new Color(c.r, c.g, c.b, 0.75f); lr.endColor = new Color(c.r, c.g, c.b, 0.75f);
+            lr.sortingOrder = SortOrderFromCoord(coord);
+        }
         if (overrideHighlight)
             gridCursor.SetActive(false);
     }
@@ -142,7 +154,7 @@ public class Grid : MonoBehaviour {
     public void UpdateSelectedCursor(bool state, Vector2 coord) {
         selectedCursor.SetActive(state);
         selectedCursor.transform.position = PosFromCoord(coord);
-        selectedCursor.GetComponentInChildren<SpriteRenderer>().sortingOrder = SortOrderFromCoord(coord);
+        selectedCursor.GetComponentInChildren<LineRenderer>().sortingOrder = SortOrderFromCoord(coord);
         if (overrideHighlight)
             selectedCursor.SetActive(false);
     }
@@ -158,8 +170,8 @@ public class Grid : MonoBehaviour {
 
         if (coords != null) {
             foreach (Vector2 coord in coords) {
-                if (sqrs.Find(sqr => sqr.coord == coord))
-                    sqrs.Find(sqr => sqr.coord == coord).ToggleValidCoord(true, c, fill);
+                if (sqrs.Find(tile => tile.coord == coord))
+                    sqrs.Find(tile => tile.coord == coord).ToggleValidCoord(true, c, fill);
             }
         }
 
@@ -168,13 +180,13 @@ public class Grid : MonoBehaviour {
 
 // Disable Tile highlights
     public void DisableGridHighlight() {
-        foreach(Tile sqr in sqrs)
-            sqr.ToggleValidCoord(false);
+        foreach(Tile tile in sqrs)
+            tile.ToggleValidCoord(false);
     }
 
     public void LockGrid(bool state) {
-        foreach (Tile sqr in sqrs)
-            sqr.ToggleHitBox(!state);
+        foreach (Tile tile in sqrs)
+            tile.ToggleHitBox(!state);
     }
 
     public List<GridElement> CoordContents(Vector2 coord) {

@@ -263,7 +263,7 @@ public class PlayerManager : UnitManager {
     }
 
     public void GridMouseOver(Vector2 pos, bool state) {
-        currentGrid.UpdateTargetCursor(state, pos);
+        currentGrid.UpdateTargetCursor(state, pos, selectedUnit && selectedUnit.selectedEquipment);
         if (Mathf.Sign(pos.x) >= 0) pc.UpdateCursor(targetCursorState);
         else pc.UpdateCursor(PlayerController.CursorState.Default);
 // Unit is selected - Grid contextuals
@@ -279,11 +279,13 @@ public class PlayerManager : UnitManager {
                         else {
                             contextuals.ChangeLineColor(3); // 3 is invalid color index
                             pc.ToggleCursorValid(false);
+                            currentGrid.UpdateTargetCursor(state, pos, true, false);
                         }
                     }
                     else {
                         contextuals.ToggleValid(false);
                         pc.ToggleCursorValid(false);
+                        currentGrid.UpdateTargetCursor(state, pos, true, false);
                     }
                 }
             }
