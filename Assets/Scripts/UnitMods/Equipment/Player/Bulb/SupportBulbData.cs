@@ -12,7 +12,7 @@ public class SupportBulbData : BulbEquipmentData
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0)
     {
 
-        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this);
+        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this);
 
         if (user is PlayerUnit u) {
             u.ui.ToggleEquipmentButtons();

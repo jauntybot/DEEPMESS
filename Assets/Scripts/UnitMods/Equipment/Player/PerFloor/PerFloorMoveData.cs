@@ -19,7 +19,7 @@ public class PerFloorMoveData : PerFloorEquipmentData
                 return base.TargetEquipment(user, mod);
             case MoveType.Throw:
                 if (firstTarget == null) {
-                    List<Vector2> validCoords = EquipmentAdjacency.OrthagonalAdjacency(user, 1, firstTargets, firstTargets);
+                    List<Vector2> validCoords = EquipmentAdjacency.OrthagonalAdjacency(user.coord, 1, firstTargets, firstTargets);
                     Unit u = (Unit)user;
                     u.inRangeCoords = validCoords;
                     user.grid.DisplayValidCoords(validCoords, gridColor);
@@ -44,7 +44,7 @@ public class PerFloorMoveData : PerFloorEquipmentData
                     }
                     return validCoords;
                 } else {
-                    List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this);
+                    List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this);
                     user.grid.DisplayValidCoords(validCoords, gridColor);
                     if (user is PlayerUnit u) u.ui.ToggleEquipmentButtons();
                     return validCoords;

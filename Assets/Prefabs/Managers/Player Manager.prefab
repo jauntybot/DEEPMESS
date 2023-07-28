@@ -229,6 +229,7 @@ MonoBehaviour:
   cascadeMovement: {fileID: 11400000, guid: cfb129f02c32c39469e9cb8361751f64, type: 2}
   overrideEquipment: {fileID: 0}
   contextuals: {fileID: 7493072995628922177}
+  lastHoveredCoord: {x: 0, y: 0}
   nailPrefab: {fileID: 2911188987296525511, guid: 3c53f14dfc3e6174e874415021915958, type: 3}
   hammerPrefab: {fileID: 3955549777479365904, guid: a8ad447d87fd54d3284fc69a0b042b16, type: 3}
   gridCursor: {fileID: 810380113123956363}
@@ -266,11 +267,13 @@ MonoBehaviour:
   grid: {fileID: 0}
   currentContext: 0
   displaying: 0
+  gridCursorPrefab: {fileID: 0}
+  gridCursor: {fileID: 810380113123956363}
   contextCursor: {fileID: 7493072996218028450}
   playerColor: {r: 0.3486372, g: 1, b: 0.09811318, a: 1}
   enemyColor: {r: 0.98039216, g: 0.21176471, b: 0.49019608, a: 1}
   equipColor: {r: 1, g: 0.9147424, b: 0.088679194, a: 1}
-  validColor: {r: 0, g: 0, b: 0, a: 0}
+  validColor: {r: 0.16779393, g: 0.30621496, b: 0.9528302, a: 1}
   invalidColor: {r: 0.9245283, g: 0.15176214, b: 0.15176214, a: 1}
   lr: {fileID: 7493072995555432913}
 --- !u!1 &7493072996218028450

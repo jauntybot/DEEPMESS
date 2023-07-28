@@ -14,20 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Weaken Bulb
   icon: {fileID: 21300000, guid: a65ca3b30ef10d94eb0db1d8ad9d638f, type: 3}
-  contextualAnimGO: {fileID: 0}
+  contextualAnimGO: {fileID: 8520285910072904261, guid: a5deff5ee6b2fcc4a84a08793edd8206, type: 3}
   contextDisplay: 4
   multiContext: 0
   gridColor: 2
   vfx: {fileID: 0}
   multiselect: 0
-  adjacency: 6
   firstTarget: {fileID: 0}
-  energyCost: 0
+  adjacency: 6
   range: 3
+  aoeAdjacency: 1
+  aoeRange: 1
+  energyCost: 0
   animDur: 0.15
-  filterValid: 0
   filters: []
   targetTypes: []
   selectSFX: {fileID: 0}
   useSFX: {fileID: 0}
   bulbPrefab: {fileID: 8520285910072904261, guid: a5deff5ee6b2fcc4a84a08793edd8206, type: 3}
+  debuffType: 0

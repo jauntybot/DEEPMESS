@@ -19,17 +19,17 @@ public class EquipmentData : ScriptableObject {
     
     [Header("MODIFIERS")]
     public bool multiselect;
-    public AdjacencyType adjacency;
-    public enum AdjacencyType { Diamond, Orthogonal, Diagonal, Star, Box, OfType, OfTypeInRange };
     public GridElement firstTarget;
-    public int energyCost;
+    public enum AdjacencyType { Diamond, Orthogonal, Diagonal, Star, Box, OfType, OfTypeInRange };
+    public AdjacencyType adjacency;
     public int range;
+    public AdjacencyType aoeAdjacency;
+    public int aoeRange;
+    public int energyCost;
     
     [SerializeField] protected float animDur = 0.5f;
 
     [Header("FILTERS")]
-// When false, filters out listed elements from adjacenecy checks, when true, only allows listed elements in adjacency checks
-    public bool filterValid;
     public List<GridElement> filters; 
     public List<GridElement> targetTypes;
 
@@ -38,7 +38,7 @@ public class EquipmentData : ScriptableObject {
     public SFX useSFX;
 
     public virtual List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
-        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this);
+        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this);
 
         user.grid.DisplayValidCoords(validCoords, gridColor);
         if (user is PlayerUnit u) {

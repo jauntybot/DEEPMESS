@@ -6,11 +6,10 @@ public class EquipmentAdjacency : MonoBehaviour
 {
 
 // Equations used for calculating adjacent coordinates
-// Should be refactored into it's own utility class - each instanced unit does not need these
 #region Coordinate Adjacency
 
 // Accessor function, pass all params here and it will use the appropriate equation
-    public static List<Vector2> GetAdjacent(GridElement from, int range, EquipmentData data, List<GridElement> targetLast = null)
+    public static List<Vector2> GetAdjacent(Vector2 from, int range, EquipmentData data, List<GridElement> targetLast = null, Grid grid = null, bool offGrid = false)
     {
         List<Vector2> _coords = new List<Vector2>();
 
@@ -23,7 +22,7 @@ public class EquipmentAdjacency : MonoBehaviour
                 _coords = OrthagonalAdjacency(from, range, data.filters, targetLast);
             break;
             case EquipmentData.AdjacencyType.OfType:
-                _coords = OfTypeOnBoardAdjacency(from, data.filters, from.coord);
+                _coords = OfTypeOnBoardAdjacency(from, data.filters, from, grid);
             break;
             case EquipmentData.AdjacencyType.OfTypeInRange:
                 _coords = DiamondAdjacency(from, range, data, targetLast, true);
@@ -32,15 +31,16 @@ public class EquipmentAdjacency : MonoBehaviour
                 _coords = BoxAdjacency(from, range, data, targetLast);
             break;
         }
-
+        if (offGrid == false) _coords = RemoveOffGridCoords(_coords);
+        
         return _coords;
     }
 
-    protected static List<Vector2> DiamondAdjacency(GridElement from, int range, EquipmentData data, List<GridElement> targetLast, bool ofType = false) 
+    protected static List<Vector2> DiamondAdjacency(Vector2 from, int range, EquipmentData data, List<GridElement> targetLast, bool ofType = false) 
     {
         List<Vector2> _coords = new List<Vector2>();
         List<Vector2> frontier = new List<Vector2>();
-        frontier.Add(from.coord);
+        frontier.Add(from);
 
         for (int r = 1; r <= range; r++) {
             for (int f = frontier.Count - 1; f >= 0; f--) {
@@ -131,7 +131,7 @@ public class EquipmentAdjacency : MonoBehaviour
                 }
             }            
         }
-        _coords = RemoveOffGridCoords(_coords);
+
         return _coords;
     }
 
@@ -198,6 +198,7 @@ public class EquipmentAdjacency : MonoBehaviour
             }            
         }
         Dictionary<Vector2, Vector2> _fromTo = new Dictionary<Vector2, Vector2>();
+// Reverse dictionary
         current = to;
         while (!Vector2.Equals(current, from)) {
             _fromTo.Add(_toFrom[current], current);
@@ -207,7 +208,7 @@ public class EquipmentAdjacency : MonoBehaviour
         return _fromTo;
     }
 
-    public static List<Vector2> OrthagonalAdjacency(GridElement from, int range, List<GridElement> filters, List<GridElement> targetLast) 
+    public static List<Vector2> OrthagonalAdjacency(Vector2 from, int range, List<GridElement> filters, List<GridElement> targetLast) 
     {
         List<Vector2> _coords = new List<Vector2>();
         Vector2 dir = Vector2.zero;
@@ -223,7 +224,7 @@ public class EquipmentAdjacency : MonoBehaviour
             for (int r = 1; r <= range; r++) 
             {
                 if (blocked) break;
-                Vector2 coord = from.coord + dir * r;
+                Vector2 coord = from + dir * r;
                 bool occupied = false;
                 foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                     occupied = true;
@@ -244,27 +245,26 @@ public class EquipmentAdjacency : MonoBehaviour
                 if (!occupied)
                     _coords.Add(coord);
             }
-            _coords = RemoveOffGridCoords(_coords);
         }
         return _coords;
     }
 
     
-        public static List<Vector2> OfTypeOnBoardAdjacency(GridElement from, List<GridElement> elements, Vector2 origin) {
+        public static List<Vector2> OfTypeOnBoardAdjacency(Vector2 from, List<GridElement> elements, Vector2 origin, Grid grid) {
         List<Vector2> _coords = new List<Vector2>();
         
         foreach (GridElement type in elements) {
             if (type is Tile) {
-                foreach(Tile sqr in from.grid.sqrs) {
+                foreach(Tile sqr in grid.sqrs) {
                     bool occupied = false;
-                    foreach (GridElement ge in from.grid.CoordContents(sqr.coord)) {
+                    foreach (GridElement ge in grid.CoordContents(sqr.coord)) {
                         if (ge is not GroundElement) occupied = true;
                     }
                     if (!occupied && !_coords.Contains(sqr.coord)) _coords.Add(sqr.coord);
                 }
             }
         }
-        foreach (GridElement ge in from.grid.gridElements) {
+        foreach (GridElement ge in grid.gridElements) {
             foreach (GridElement type in elements) {
                 if (ge.GetType() == type.GetType() && !_coords.Contains(ge.coord)) {
                     _coords.Add(ge.coord);
@@ -273,6 +273,22 @@ public class EquipmentAdjacency : MonoBehaviour
         }
         return _coords;
     } 
+    protected static List<Vector2> BoxAdjacency(Vector2 from, int range, EquipmentData data, List<GridElement> targetLast) {
+        List<Vector2> _coords = new List<Vector2>();
+
+        for (int i = 1; i <= range; i++) {
+            _coords.Add(new Vector2(from.x + i, from.y));
+            _coords.Add(new Vector2(from.x - i, from.y));
+            _coords.Add(new Vector2(from.x, from.y + i));
+            _coords.Add(new Vector2(from.x, from.y - i));
+            _coords.Add(new Vector2(from.x + i, from.y + i));
+            _coords.Add(new Vector2(from.x - i, from.y + i));
+            _coords.Add(new Vector2(from.x + i, from.y - i));
+            _coords.Add(new Vector2(from.x - i, from.y - i));        
+        }
+
+        return _coords;
+    }
 
     protected static List<Vector2> RemoveOffGridCoords(List<Vector2> list) {
         // check if coords are off the board
@@ -284,23 +300,6 @@ public class EquipmentAdjacency : MonoBehaviour
         return list;
     }
 
-    protected static List<Vector2> BoxAdjacency(GridElement from, int range, EquipmentData data, List<GridElement> targetLast) {
-        List<Vector2> _coords = new List<Vector2>();
-
-        for (int i = 1; i <= range; i++) {
-            _coords.Add(new Vector2(from.coord.x + i, from.coord.y));
-            _coords.Add(new Vector2(from.coord.x - i, from.coord.y));
-            _coords.Add(new Vector2(from.coord.x, from.coord.y + i));
-            _coords.Add(new Vector2(from.coord.x, from.coord.y - i));
-            _coords.Add(new Vector2(from.coord.x + i, from.coord.y + i));
-            _coords.Add(new Vector2(from.coord.x - i, from.coord.y + i));
-            _coords.Add(new Vector2(from.coord.x + i, from.coord.y - i));
-            _coords.Add(new Vector2(from.coord.x - i, from.coord.y - i));        
-        }
-        _coords = RemoveOffGridCoords(_coords);
-
-        return _coords;
-    }
 /*
     protected static List<Vector2> DiagonalAdjacency(Vector2 origin, EquipmentData e) 
     {
@@ -348,25 +347,6 @@ public class EquipmentAdjacency : MonoBehaviour
         return _coords;
     }
 
-*/
-
-    /*
-    protected virtual List<Vector2> DirectionalAdjacency(Vector2 origin, int range, List<Vector2> dirs) 
-    {    
-        List<Vector2> _coords = new List<Vector2>();
-
-        foreach (Vector2 dir in dirs) 
-        {
-            for (int i = 1; i <= range; i++) 
-            {
-                if (dir.magnitude > 1)  _coords.Add(origin + dir * (i - 1));
-                else _coords.Add(origin + dir * i);
-            }
-        }
-        _coords = RemoveOffGridCoords(_coords);
-
-        return _coords;
-    }
 */
 
 #endregion

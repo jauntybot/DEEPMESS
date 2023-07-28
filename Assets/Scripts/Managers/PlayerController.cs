@@ -52,34 +52,37 @@ public class PlayerController : MonoBehaviour {
 // Coroutine that runs while the player is allowed to select elements on the grid
     public IEnumerator GridInput() {
         while (manager.scenario.currentTurn == ScenarioManager.Turn.Player || manager.scenario.currentTurn == ScenarioManager.Turn.Cascade) {
-            clickable = true;
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-            RaycastHit2D hit = ClickInput();
+            if (!FloorManager.instance.peeking) {
+                clickable = true;
+                yield return new WaitForSecondsRealtime(1/Util.fps);
+                RaycastHit2D hit = ClickInput();
 // On mouseover
-            if (hit != default(RaycastHit2D)) {
-                if (hit.transform.GetComponent<GridElement>()) {
+                if (hit != default(RaycastHit2D)) {
+                    if (hit.transform.GetComponent<GridElement>()) {
 // On click
-                    manager.GridMouseOver(hit.transform.GetComponent<GridElement>().coord, true);
+                        manager.GridMouseOver(hit.transform.GetComponent<GridElement>().coord, true);
 // Disable input under these conditions
-                    if (!manager.unitActing && !(FloorManager.instance.peeking && manager.scenario.currentTurn != ScenarioManager.Turn.Cascade)) {
-                        if (Input.GetMouseButtonDown(0)) {
+                        if (!manager.unitActing && !(FloorManager.instance.peeking && manager.scenario.currentTurn != ScenarioManager.Turn.Cascade)) {
+                            if (Input.GetMouseButtonDown(0)) {
 // Pass call to contextualize click to manager
-                            manager.GridInput(hit.transform.GetComponent<GridElement>());       
-                            yield return new WaitForSecondsRealtime(1/Util.fps);
+                                manager.GridInput(hit.transform.GetComponent<GridElement>());       
+                                yield return new WaitForSecondsRealtime(1/Util.fps);
+                            }
                         }
-                    }
-                }    
-                else
+                    }    
+                    else
+                        manager.GridMouseOver(new Vector2(-32, -32), false);
+                } else
                     manager.GridMouseOver(new Vector2(-32, -32), false);
-            } else
-                manager.GridMouseOver(new Vector2(-32, -32), false);
 
-            if (Input.GetKeyDown(KeyCode.Tab)) {
-                manager.DisplayAllHP(true);
-            } 
-            if (Input.GetKeyUp(KeyCode.Tab)) {
-                manager.DisplayAllHP(false);
-            }
+                if (Input.GetKeyDown(KeyCode.Tab)) {
+                    manager.DisplayAllHP(true);
+                } 
+                if (Input.GetKeyUp(KeyCode.Tab)) {
+                    manager.DisplayAllHP(false);
+                }
+            } else
+                yield return new WaitForSecondsRealtime(1/Util.fps);
         }
         clickable = false;
     }

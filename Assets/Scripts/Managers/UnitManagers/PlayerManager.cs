@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.U2D;
+
 
 // Class that controls the player's functionality, recieves input from PlayerController and ScenarioManager
 // tbh I'm not commenting this one bc it's the most heavily edited and refactors are incoming
@@ -20,6 +20,7 @@ public class PlayerManager : UnitManager {
     [SerializeField] EquipmentData cascadeMovement;
      public EquipmentData overrideEquipment = null;
     [SerializeField] public GridContextuals contextuals;
+    [HideInInspector] public Vector2 lastHoveredCoord;
 
     [Header("PREFABS")]
     [SerializeField] public GameObject nailPrefab;
@@ -134,7 +135,7 @@ public class PlayerManager : UnitManager {
 // End Turn
         } else {
             DeselectUnit();
-            UpdateTargetCursor(false, Vector2.one * -32);
+            contextuals.UpdateGridCursor(false);
             if (scenario.prevTurn != ScenarioManager.Turn.Descent && scenario.currentTurn != ScenarioManager.Turn.Descent) {
                 if (nail.nailState == Nail.NailState.Buried)
                     nail.ToggleNailState(Nail.NailState.Primed);
@@ -191,6 +192,7 @@ public class PlayerManager : UnitManager {
         return u;
     }
 
+#region Player Controller interface
 // Get grid input from player controller, translate it to functionality
     public void GridInput(GridElement input) {
 // Player clicks on unit
@@ -264,10 +266,12 @@ public class PlayerManager : UnitManager {
         }
     }
 
-#region Player Controller interface
 
     public void GridMouseOver(Vector2 pos, bool state) {
-        UpdateTargetCursor(state, pos, selectedUnit && selectedUnit.selectedEquipment);
+        if (pos == new Vector2(-32,-32)) pos = lastHoveredCoord;
+        else lastHoveredCoord = pos;
+
+        contextuals.UpdateGridCursor(state, pos, selectedUnit && selectedUnit.selectedEquipment);
         if (Mathf.Sign(pos.x) >= 0) pc.UpdateCursor(targetCursorState);
         else pc.UpdateCursor(PlayerController.CursorState.Default);
 // Unit is selected - Grid contextuals
@@ -283,13 +287,13 @@ public class PlayerManager : UnitManager {
                         else {
                             contextuals.ChangeLineColor(3); // 3 is invalid color index
                             pc.ToggleCursorValid(false);
-                            UpdateTargetCursor(state, pos, true, false);
+                            contextuals.UpdateGridCursor(state, pos, true, false);
                         }
                     }
                     else {
                         contextuals.ToggleValid(false);
                         pc.ToggleCursorValid(false);
-                        UpdateTargetCursor(state, pos, true, false);
+                        contextuals.UpdateGridCursor(state, pos, true, false);
                     }
                 }
             }
@@ -367,23 +371,6 @@ public class PlayerManager : UnitManager {
         }
     }
 
-    public void UpdateTargetCursor(bool state, Vector2 coord, bool fill = false, bool _valid = true) {
-        gridCursor.SetActive(state);
-        gridCursor.transform.position = currentGrid.PosFromCoord(coord);
-        Color c = _valid ? contextuals.validColor : contextuals.invalidColor;
-
-        SpriteShapeRenderer ssr = gridCursor.GetComponentInChildren<SpriteShapeRenderer>();
-        if (ssr) {
-            ssr.color = new Color(c.r, c.g, c.b, fill ? 0.25f : 0);
-            ssr.sortingOrder = currentGrid.SortOrderFromCoord(coord);
-        }
-        LineRenderer lr = gridCursor.GetComponentInChildren<LineRenderer>();
-        if (lr) {
-            lr.startColor = new Color(c.r, c.g, c.b, 0.75f); lr.endColor = new Color(c.r, c.g, c.b, 0.75f);
-            lr.sortingOrder = currentGrid.SortOrderFromCoord(coord);
-        }
-    }
-
 #endregion
 
     public override void SelectUnit(Unit u)
@@ -405,9 +392,9 @@ public class PlayerManager : UnitManager {
                 contextuals.StartUpdateCoroutine();
             }
             if (equip.contextualAnimGO != null) {
-                contextuals.DisplayGridContextuals(selectedUnit, equip.contextualAnimGO, equip.contextDisplay, equip.gridColor);
+                contextuals.DisplayGridContextuals(selectedUnit, equip, equip.gridColor);
             } else {
-                contextuals.DisplayGridContextuals(selectedUnit, selectedUnit.gameObject, equip.contextDisplay, equip.gridColor);
+                contextuals.DisplayGridContextuals(selectedUnit, equip, equip.gridColor, selectedUnit.gameObject);
             }
             targetCursorState = equip is MoveData ? PlayerController.CursorState.Move : PlayerController.CursorState.Target;
         } else targetCursorState = PlayerController.CursorState.Default;

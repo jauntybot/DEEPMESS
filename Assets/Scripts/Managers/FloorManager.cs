@@ -32,7 +32,7 @@ public class FloorManager : MonoBehaviour
     public Transform transitionParent;
     public float floorOffset, transitionDur, unitDropDur;
     public AnimationCurve dropCurve;
-    [HideInInspector] public bool transitioning, peeking;
+     public bool transitioning, peeking;
     [SerializeField] public GameObject upButton, downButton;
     [SerializeField] ParallaxImageScroll parallax;
     public DescentPreviewManager previewManager;
@@ -67,7 +67,7 @@ public class FloorManager : MonoBehaviour
         betweenFloor = GetComponent<BetweenFloorManager>();
     }
 
-    public IEnumerator GenerateFloor(GameObject floorOverride = null, GameObject enemyOverride = null) {
+    public IEnumerator GenerateFloor(bool first = false, GameObject floorOverride = null, GameObject enemyOverride = null) {
         int index = floors.Count;
 
         Grid newFloor = Instantiate(floorOverride == null ? floorPrefab : floorOverride, this.transform).GetComponent<Grid>();
@@ -90,8 +90,7 @@ public class FloorManager : MonoBehaviour
 // Check if player wins
         if (currentFloor.index >= floorDefinitions.Count - 2) {
 
-            StartCoroutine(scenario.Win());
-
+            
         } else {
 
             yield return StartCoroutine(TransitionFloors(true, false));
@@ -100,8 +99,8 @@ public class FloorManager : MonoBehaviour
             previewManager.UpdateFloors(floors[currentFloor.index]);
 
             yield return new WaitForSeconds(0.5f);
-            if (TutorialSequence.instance)
-                yield return (TutorialSequence.instance.GetComponent<LaterTutorials>().CheckFloorDef(floors[currentFloor.index].lvlDef));
+            // if (TutorialSequence.instance)
+            //     yield return (TutorialSequence.instance.GetComponent<LaterTutorials>().CheckFloorDef(floors[currentFloor.index].lvlDef));
 
             yield return StartCoroutine(previewManager.PreviewFloor(false, false));
         }

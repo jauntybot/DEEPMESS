@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D;
 
 public class GridContextuals : MonoBehaviour
 {
@@ -13,7 +14,10 @@ public class GridContextuals : MonoBehaviour
     [SerializeField] private ContextDisplay currentContext = ContextDisplay.None;
 
     public bool displaying;
-    [SerializeField] GameObject contextCursor;
+
+    [SerializeField] GameObject gridCursorPrefab;
+    [SerializeField] GameObject gridCursor, contextCursor;
+    List<GameObject> aoeCursors = new List<GameObject>();
     Animator cursorAnimator;
 
     [SerializeField] public Color playerColor, enemyColor, equipColor, validColor, invalidColor;
@@ -26,17 +30,66 @@ public class GridContextuals : MonoBehaviour
         manager = m;
         grid = manager.currentGrid;
         cursorAnimator = contextCursor.GetComponentInChildren<Animator>();
-        
+    
         ToggleValid(false);
     }
 
-    public void DisplayGridContextuals(GridElement origin, GameObject refTrans, ContextDisplay context, int gridColor) {
-        if (toggled) {
-            ToggleValid(context != ContextDisplay.None);
+    public void ToggleValid(bool state = false) {
+        contextCursor.SetActive(state);
+        if (state == false && !displaying) {
+            for (int i = aoeCursors.Count - 1; i >= 0; i--) {
+                GameObject del = aoeCursors[i];
+                aoeCursors.Remove(del);
+                Destroy(del);
+            }
+        }
+    }
 
-            if (refTrans)
+    public void UpdateGridCursor(bool state, Vector2 coord, bool fill = false, bool _valid = true) {
+        gridCursor.SetActive(state);
+        gridCursor.transform.position = grid.PosFromCoord(coord);
+
+        Color c = _valid ? validColor : invalidColor;
+        List<GameObject> cursors = new List<GameObject>();
+        foreach (GameObject curs in aoeCursors) cursors.Add(curs);
+        cursors.Add(gridCursor);
+        foreach (GameObject cursor in cursors) {
+            SpriteShapeRenderer ssr = cursor.GetComponentInChildren<SpriteShapeRenderer>();
+            if (ssr) {
+                ssr.color = new Color(c.r, c.g, c.b, fill ? 0.25f : 0);
+                ssr.sortingOrder = grid.SortOrderFromCoord(coord);
+            }
+            LineRenderer lr = cursor.GetComponentInChildren<LineRenderer>();
+            if (lr) {
+                lr.startColor = new Color(c.r, c.g, c.b, 0.75f); lr.endColor = new Color(c.r, c.g, c.b, 0.75f);
+                lr.sortingOrder = grid.SortOrderFromCoord(coord);
+            }
+        }
+    }
+
+// Update call w/o Vector2 reference
+    public void UpdateGridCursor(bool state, bool fill = false, bool _valid = true) {
+        gridCursor.SetActive(state);
+        Color c = _valid ? validColor : invalidColor;
+
+        SpriteShapeRenderer ssr = gridCursor.GetComponentInChildren<SpriteShapeRenderer>();
+        if (ssr) {
+            ssr.color = new Color(c.r, c.g, c.b, fill ? 0.25f : 0);
+        }
+        LineRenderer lr = gridCursor.GetComponentInChildren<LineRenderer>();
+        if (lr) {
+            lr.startColor = new Color(c.r, c.g, c.b, 0.75f); lr.endColor = new Color(c.r, c.g, c.b, 0.75f);
+        }
+    }
+
+    public void DisplayGridContextuals(GridElement origin, EquipmentData data, int gridColor, GameObject refTrans = null) {
+        if (toggled) {
+            ToggleValid(data.contextDisplay != ContextDisplay.None);
+            if (data.contextualAnimGO != null)
+                UpdateCursorAnim(data.contextualAnimGO.transform);
+            else if (refTrans)
                 UpdateCursorAnim(refTrans.transform);
-            UpdateContext(context, gridColor);        
+            UpdateContext(data, gridColor);        
             
             if (origin)
                 UpdateCursor((Unit)origin, origin.coord);
@@ -64,14 +117,6 @@ public class GridContextuals : MonoBehaviour
         fromOverride = null;
         ToggleValid(false);
         displaying = false;
-    }
-
-    public void UpdateCursorAnim(Transform refTrans) {
-        cursorAnimator.GetComponent<NestedFadeGroup.NestedFadeGroupSpriteRenderer>().AlphaSelf = 0.5f;
-        Animator anim = refTrans.GetComponentInChildren<Animator>();
-        cursorAnimator.runtimeAnimatorController = anim.runtimeAnimatorController;
-        cursorAnimator.transform.localScale = anim.transform.localScale;
-        cursorAnimator.transform.localPosition = anim.transform.localPosition;
     }
 
     // Update grid position and coordinate
@@ -125,8 +170,8 @@ public class GridContextuals : MonoBehaviour
         }
     }
 
-    public void UpdateContext(ContextDisplay context, int highlightIndex, GridElement newAnim = null, GridElement newFrom = null) {
-        currentContext = context;
+    public void UpdateContext(EquipmentData data, int highlightIndex, GridElement newAnim = null, GridElement newFrom = null) {
+        currentContext = data.contextDisplay;
         lrI = lr.positionCount;
         ChangeLineColor(highlightIndex);
 
@@ -136,7 +181,31 @@ public class GridContextuals : MonoBehaviour
         if (newFrom != null) {
             fromOverride = newFrom;  
         }
+
+        for (int i = aoeCursors.Count - 1; i >= 0; i--) {
+            GameObject del = aoeCursors[i];
+            aoeCursors.Remove(del);
+            Destroy(del);
+        }
+        List<Vector2> aoeCoords = EquipmentAdjacency.GetAdjacent(manager.lastHoveredCoord, data.aoeRange, data, null, null, true);
+        for (int i = aoeCoords.Count - 1; i >= 0; i--) {
+            GameObject cursor = Instantiate(gridCursorPrefab);
+            cursor.transform.position = grid.PosFromCoord(aoeCoords[i]);
+            cursor.transform.parent = gridCursor.transform;
+            cursor.transform.localScale = Vector3.one;
+            cursor.SetActive(true);
+            aoeCursors.Add(cursor);
+        }
+
     }  
+
+    public void UpdateCursorAnim(Transform refTrans) {
+        cursorAnimator.GetComponent<NestedFadeGroup.NestedFadeGroupSpriteRenderer>().AlphaSelf = 0.5f;
+        Animator anim = refTrans.GetComponentInChildren<Animator>();
+        cursorAnimator.runtimeAnimatorController = anim.runtimeAnimatorController;
+        cursorAnimator.transform.localScale = anim.transform.localScale;
+        cursorAnimator.transform.localPosition = anim.transform.localPosition;
+    }
 
     public void ChangeLineColor(int highlightIndex) {
         Color gridColor = FloorManager.instance.GetFloorColor(highlightIndex);
@@ -156,8 +225,5 @@ public class GridContextuals : MonoBehaviour
         cursorAnimator.GetComponent<SpriteRenderer>().sortingOrder = sort;
     }
 
-    public void ToggleValid(bool state = false) {
-        contextCursor.SetActive(state);
-    }
 
 }

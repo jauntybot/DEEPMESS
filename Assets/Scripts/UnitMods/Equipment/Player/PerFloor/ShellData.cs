@@ -9,8 +9,12 @@ public class ShellData : PerFloorEquipmentData
 {
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod) {
-        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this);
-        if (user is PlayerUnit u) u.ui.ToggleEquipmentButtons();
+        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this, null, user.grid);
+        
+        if (user is PlayerUnit u) {
+          u.ui.ToggleEquipmentButtons();
+          u.inRangeCoords = validCoords;  
+        } 
         for (int i = validCoords.Count - 1; i >= 0; i--) {
             foreach(GridElement ge in user.grid.CoordContents(validCoords[i])) {
                 if (ge.shell) {

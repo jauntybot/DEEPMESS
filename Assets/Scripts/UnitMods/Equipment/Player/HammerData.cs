@@ -25,8 +25,8 @@ public class HammerData : EquipmentData
             pu.SwitchAnim(PlayerUnit.AnimState.Idle);
             hammer.SetActive(true);
             pu.ui.ToggleEquipmentButtons();
-            pu.inRangeCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this, targetTypes);
-            List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this, targetTypes);
+            List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this, targetTypes);
+            pu.inRangeCoords = validCoords;
             Debug.Log(pu.inRangeCoords.Count);
             user.grid.DisplayValidCoords(validCoords, gridColor);
             for (int i = validCoords.Count - 1; i >= 0; i--) {
@@ -65,7 +65,7 @@ public class HammerData : EquipmentData
             return validCoords;
         } else {
             List<GridElement> targets = new List<GridElement>(); targets.Add(user);
-            List<Vector2> _coords = EquipmentAdjacency.OfTypeOnBoardAdjacency(user, targets, user.coord);        
+            List<Vector2> _coords = EquipmentAdjacency.OfTypeOnBoardAdjacency(user.coord, targets, user.coord, user.grid);        
             
             Unit unit = (Unit)user;
 

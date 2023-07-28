@@ -8,7 +8,7 @@ public class CascadeMoveData : MoveData
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0)
     {
-        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user, range + mod, this);
+        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this);
         List<Vector2> invalidCoords = new List<Vector2>();
         Unit unit = (Unit)user;
         foreach (Unit u in unit.manager.units) {
