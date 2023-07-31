@@ -59,7 +59,7 @@ public class PlayerUnit : Unit {
             }
             else if (equip.firstTarget != null) {
                 GridElement anim = equip.contextualAnimGO ? equip.contextualAnimGO.GetComponent<GridElement>() : null;
-                pManager.contextuals.UpdateContext(equip, equip.gridColor, anim, target);
+                pManager.contextuals.UpdateContext(equip, equip.gridColor, equip.multiContext, anim, target);
             } else {
                 pManager.DeselectUnit();
                 pManager.StartCoroutine(pManager.UnitIsActing());

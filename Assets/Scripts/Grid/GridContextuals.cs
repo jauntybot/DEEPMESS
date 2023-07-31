@@ -170,8 +170,10 @@ public class GridContextuals : MonoBehaviour
         }
     }
 
-    public void UpdateContext(EquipmentData data, int highlightIndex, GridElement newAnim = null, GridElement newFrom = null) {
+    public void UpdateContext(EquipmentData data, int highlightIndex, ContextDisplay newContext = ContextDisplay.None, GridElement newAnim = null, GridElement newFrom = null) {
         currentContext = data.contextDisplay;
+        if (newContext != ContextDisplay.None) currentContext = newContext;
+
         lrI = lr.positionCount;
         ChangeLineColor(highlightIndex);
 

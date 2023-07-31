@@ -30,7 +30,8 @@ public class EquipmentData : ScriptableObject {
     [SerializeField] protected float animDur = 0.5f;
 
     [Header("FILTERS")]
-    public List<GridElement> filters; 
+    public List<GridElement> filters;
+    public List<Component> _filters; 
     public List<GridElement> targetTypes;
 
     [Header("AUDIO")]

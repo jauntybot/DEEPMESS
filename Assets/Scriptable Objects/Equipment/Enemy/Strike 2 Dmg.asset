@@ -9,33 +9,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ce87d6308b0d5f42912c20aa097e3dc, type: 3}
-  m_Name: Move3Diamond
+  m_Script: {fileID: 11500000, guid: a51220ee3cfa3d74ab370dc769e0be48, type: 3}
+  m_Name: Strike 2 Dmg
   m_EditorClassIdentifier: 
-  name: MOVE 3 SQRS
+  name: Attack 1 Diamond
   icon: {fileID: 0}
   contextualAnimGO: {fileID: 0}
   contextDisplay: 0
   multiContext: 0
-  gridColor: 0
-  vfx: {fileID: 0}
+  gridColor: 1
   multiselect: 0
-  firstTarget: {fileID: 0}
   adjacency: 0
-  range: 3
-  aoeAdjacency: 0
-  aoeRange: 0
-  energyCost: 0
-  animDur: 0.2
+  firstTarget: {fileID: 0}
+  energyCost: 1
+  range: 1
+  animDur: 0.5
+  filterValid: 0
   filters:
+  - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
   - {fileID: 4634978180570587290, guid: c7249e601f4730c4999df2560c657aac, type: 3}
+  - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
   - {fileID: 125915573521978910, guid: d76049925455d44278c9e3b58ed31c3d, type: 3}
+  - {fileID: 2897877390811545440, guid: d00e722c41845a742aba65c37f6e0450, type: 3}
+  targetTypes:
   - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
   - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
   - {fileID: 2897877390811545440, guid: d00e722c41845a742aba65c37f6e0450, type: 3}
-  - {fileID: -2553350826419457478, guid: 41d15b15104197a4a986c3b9a82a1315, type: 3}
-  _filters: []
-  targetTypes: []
   selectSFX: {fileID: 0}
-  useSFX: {fileID: 0}
-  animType: 1
+  useSFX: {fileID: 11400000, guid: fd03f8f4655fdf44a954d188be53b497, type: 2}
+  dmg: 1
