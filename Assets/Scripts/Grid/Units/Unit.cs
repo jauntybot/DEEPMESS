@@ -194,7 +194,6 @@ public class Unit : GridElement {
                 case Status.Normal: return;
                 case Status.Immobilized:
                     moved = false;
-                    ui.UpdateEquipmentButtonMods();
                     foreach(GridElement ge in grid.CoordContents(coord)) {
                         if (ge is ImmobilizeGoo goo) {
                             Destroy(goo.gameObject);

@@ -73,8 +73,9 @@ public class EquipmentData : ScriptableObject {
 
     }
 
-    public virtual void UnequipEquipment(GridElement user) {
-
+    public virtual void UnequipEquipment(Unit user) {
+        if (user.equipment.Contains(this)) user.equipment.Remove(this);
+        user.ui.UpdateEquipmentButtons();
     }
 
     public virtual IEnumerator UntargetDelay(Unit unit) {

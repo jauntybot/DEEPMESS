@@ -47,10 +47,9 @@ public class MoveData : EquipmentData
             }
             manager.undoableMoves.Add(unit, unit.coord);
             manager.undoOrder.Add(unit);
-            foreach (GridElement ge in unit.grid.CoordContents(moveTo)) {
-                if (ge is GroundElement) {
-                    manager.StoreForUndo(ge);
-                }
+            Tile tile = unit.grid.sqrs.Find(s => s.coord == moveTo);
+            if (tile is TileBulb tb && !unit.equipment.Find(e => e is BulbEquipmentData)) {
+                manager.harvestedByMove.Add(unit, tb);
             }
         }
 // Build frontier dictionary for stepped lerp

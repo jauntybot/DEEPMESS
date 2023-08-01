@@ -146,7 +146,6 @@ public class UnitUI : MonoBehaviour
                 if (newButt.data is BulbEquipmentData) bulb = newButt;
             }
         }
-        UpdateEquipmentButtonMods();
         if (overview != null )
             overview.UpdateOverview(unit.hpCurrent);
         ToggleEquipmentButtons();
@@ -162,13 +161,6 @@ public class UnitUI : MonoBehaviour
 
     public void ToggleEquipmentOptionsOff() {
         equipmentOptions.SetActive(false);
-    }
-
-    public void UpdateEquipmentButtonMods() {
-        if (perFloor) perFloor.UpdateMod();
-        if (hammer) hammer.UpdateMod();
-        if (bulb) bulb.UpdateMod();
-        
     }
 
     public void UpdateLoadout(EquipmentData equip) {

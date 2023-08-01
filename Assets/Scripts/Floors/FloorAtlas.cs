@@ -9,7 +9,7 @@ public class FloorAtlas : ScriptableObject
     public FloorAsset baseTile;
     public List<FloorAsset> environmentAssets;
     public List<FloorAsset> unitAssets;
-    
+    public List<FloorAsset> debugAssets;
 }
 
 

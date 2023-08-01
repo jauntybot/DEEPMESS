@@ -30,7 +30,7 @@ public class PlayerManager : UnitManager {
     [Header("UNDO")]
     public bool unitActing = false;
     public Dictionary<Unit, Vector2> undoableMoves = new Dictionary<Unit, Vector2>();
-    public Dictionary<Unit, GridElement> destroyedByMove = new Dictionary<Unit, GridElement>();
+    public Dictionary<Unit, GridElement> harvestedByMove = new Dictionary<Unit, GridElement>();
     public List<Unit> undoOrder;
 
     [Header("GRID VIS")]
@@ -432,12 +432,11 @@ public class PlayerManager : UnitManager {
 
         if (undoableMoves.Count > 0 && undoOrder.Count > 0) {
             Unit lastMoved = undoOrder[undoOrder.Count - 1];
-            if (destroyedByMove.ContainsKey(lastMoved)) {
-                // TilePad pad = (TilePad)destroyedByMove[lastMoved];
-                // pad.UndoDestroy();
-                // lastMoved.hpCurrent -= pad.usedValue;
-                // lastMoved.elementCanvas.UpdateStatsDisplay();
-                // destroyedByMove.Remove(lastMoved);
+            if (harvestedByMove.ContainsKey(lastMoved)) {
+                TileBulb harvested = (TileBulb)harvestedByMove[lastMoved];
+                harvested.UndoHarvest();
+                lastMoved.equipment.Find(e => e is BulbEquipmentData).UnequipEquipment(lastMoved);
+                harvestedByMove.Remove(lastMoved);
             }
             MoveData move = (MoveData)cascadeMovement;
             StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved], true));
@@ -451,12 +450,12 @@ public class PlayerManager : UnitManager {
         } else if ((undoableMoves.Count > 0 && undoOrder.Count == 0) ||(undoableMoves.Count == 0 && undoOrder.Count > 0)) {
             undoOrder = new List<Unit>();
             undoableMoves = new Dictionary<Unit, Vector2>();
-            destroyedByMove = new Dictionary<Unit, GridElement>();
+            harvestedByMove = new Dictionary<Unit, GridElement>();
         }
     }
 
     public virtual void StoreForUndo(GridElement ge) {
-        destroyedByMove.Add(undoOrder[undoOrder.Count-1], ge);
+        harvestedByMove.Add(undoOrder[undoOrder.Count-1], ge);
     }
 
     public void TriggerDescent(bool tut = false) {

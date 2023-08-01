@@ -14,7 +14,7 @@ public class FloorEditor : EditorWindow {
     static Dictionary<string, Texture> options = new Dictionary<string, Texture>();
 
     static Vector2 activeCoord;
-    enum AssetType { Environment, Unit };
+    enum AssetType { Environment, Unit, Debug };
     static AssetType assetDropdown;
     static FloorAsset activeAsset;
 
@@ -148,6 +148,9 @@ public class FloorEditor : EditorWindow {
             break;
             case AssetType.Unit:
                 currentAssets = lvl.atlas.unitAssets;
+            break;
+            case AssetType.Debug:
+                currentAssets = lvl.atlas.debugAssets;
             break;
         }
 

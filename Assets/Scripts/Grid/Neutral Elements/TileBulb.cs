@@ -12,21 +12,17 @@ public class TileBulb : Tile
     public bool harvested;
 
     public void HarvestBulb(PlayerUnit pu) {
-        anim.SetBool("Harvested", true);
-        pu.ui.UpdateLoadout(bulb);
-        harvested = true;
+        if (!harvested) {
+            anim.SetBool("Harvest", true);
+            pu.ui.UpdateLoadout(bulb);
+            harvested = true;
+        }
     }
 
-    IEnumerator WaitForUndoClear(PlayerManager manager) {
-        foreach (SpriteRenderer sr in gfx) sr.enabled = false;
-        while (manager.undoableMoves.Count > 0) yield return null;
-        yield return new WaitForSecondsRealtime(0.125f);
-        StartCoroutine(DestroyElement());
-    }
-
-    public void UndoDestroy() {
+    public void UndoHarvest() {
         StopAllCoroutines();
-        foreach (SpriteRenderer sr in gfx) sr.enabled = true;
+        harvested = false;
+        anim.SetTrigger("Undo");
     }
 
 }

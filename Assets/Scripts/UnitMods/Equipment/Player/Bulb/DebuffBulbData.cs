@@ -30,14 +30,16 @@ public class DebuffBulbData : BulbEquipmentData
                 List<Vector2> aoe = EquipmentAdjacency.OrthagonalAdjacency(target.coord, 1, null, null);
                 aoe.Add(target.coord);
                 foreach(Vector2 coord in aoe) {
+                    if (coord != target.coord) {
+                        GameObject bulb = Instantiate(bulbPrefab, user.grid.PosFromCoord(coord), Quaternion.identity);
+                        bulb.GetComponent<SpriteRenderer>().sortingOrder = user.grid.SortOrderFromCoord(coord);
+                        bulb.GetComponent<Animator>().SetTrigger("Apply");
+                    }
                     if (user.grid.CoordContents(coord).Count > 0) {
                         foreach (GridElement ge in user.grid.CoordContents(coord)) {
                             if (ge is Unit u && ge is not Anvil) {
                                 u.ApplyCondition(Unit.Status.Weakened);
                                 if (ge != target) {
-                                    GameObject bulb = Instantiate(bulbPrefab, ge.transform.position, Quaternion.identity, ge.transform);
-                                    bulb.GetComponent<SpriteRenderer>().sortingOrder = user.grid.SortOrderFromCoord(ge.coord);
-                                    bulb.GetComponent<Animator>().SetTrigger("Apply");
                                 }
                             }
                         }

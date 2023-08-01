@@ -25,9 +25,9 @@ public class HammerData : EquipmentData
             pu.SwitchAnim(PlayerUnit.AnimState.Idle);
             hammer.SetActive(true);
             pu.ui.ToggleEquipmentButtons();
+            pu.inRangeCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this, targetTypes);
             List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this, targetTypes);
-            pu.inRangeCoords = validCoords;
-            Debug.Log(pu.inRangeCoords.Count);
+            
             user.grid.DisplayValidCoords(validCoords, gridColor);
             for (int i = validCoords.Count - 1; i >= 0; i--) {
                 bool occupied = false;
