@@ -70,22 +70,27 @@ public class FloorManager : MonoBehaviour
     public IEnumerator GenerateFloor(bool first = false, GameObject floorOverride = null, GameObject enemyOverride = null) {
         int index = floors.Count;
 
+        Grid floor = currentFloor;
         Grid newFloor = Instantiate(floorOverride == null ? floorPrefab : floorOverride, this.transform).GetComponent<Grid>();
         currentFloor = newFloor;
         FloorDefinition floorDef = floorDefinitions[index];
         newFloor.lvlDef = floorDef;
     
+        newFloor.transform.localPosition = new Vector3(0, index * -floorOffset);
+        if (!first) {
+            newFloor.transform.localScale = Vector3.one * 0.75f;
+            newFloor.GetComponent<SortingGroup>().sortingOrder = -1;
+        }
+
         Coroutine co = StartCoroutine(newFloor.GenerateGrid(index, enemyOverride));
         yield return co;
+        newFloor.gameObject.name = "Floor" + newFloor.index;
         
         newFloor.ToggleChessNotation(notation);
         newFloor.overrideHighlight = gridHightlightOverride;
     
-        newFloor.gameObject.name = "Floor" + newFloor.index;
-        newFloor.transform.SetParent(floorParent);
-        newFloor.transform.localPosition = new Vector3(0, index * -floorOffset);
         floors.Add(newFloor);
-
+        if (floor) currentFloor = floor;
     }
 
     public IEnumerator GenerateNextFloor(GameObject floorPrefab = null, GameObject enemyPrefab = null) {
@@ -95,16 +100,16 @@ public class FloorManager : MonoBehaviour
             
         } else {
 
-            yield return StartCoroutine(TransitionFloors(true, false));
+            //yield return StartCoroutine(TransitionFloors(true, false));
 
             yield return StartCoroutine(GenerateFloor(floorPrefab, enemyPrefab));
-            previewManager.UpdateFloors(floors[currentFloor.index]);
+            previewManager.UpdateFloors(floors[currentFloor.index + 1]);
 
             yield return new WaitForSeconds(0.5f);
             // if (TutorialSequence.instance)
             //     yield return (TutorialSequence.instance.GetComponent<LaterTutorials>().CheckFloorDef(floors[currentFloor.index].lvlDef));
 
-            yield return StartCoroutine(previewManager.PreviewFloor(false, false));
+            //yield return StartCoroutine(previewManager.PreviewFloor(false, false));
         }
     }
 

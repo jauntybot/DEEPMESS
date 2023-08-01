@@ -53,7 +53,7 @@ public class ScenarioManager : MonoBehaviour
             floorManager = FloorManager.instance;
             if (tutorial) {
                 if (tutorial.skip)
-                    yield return StartCoroutine(floorManager.GenerateFloor()); 
+                    yield return StartCoroutine(floorManager.GenerateFloor(true)); 
                 else {
                     tut = true;
                     for (int i = 0; i <= tutorial.scriptedFloors.Count - 1; i++) 
@@ -61,7 +61,7 @@ public class ScenarioManager : MonoBehaviour
                     yield return StartCoroutine(floorManager.GenerateFloor(tutorial.tutorialFloorPrefab, tutorial.tutorialEnemyPrefab));
                 }
             } else
-                yield return StartCoroutine(floorManager.GenerateFloor()); 
+                yield return StartCoroutine(floorManager.GenerateFloor(true)); 
             currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
             player.transform.parent = floorManager.currentFloor.transform;
         }
