@@ -71,12 +71,11 @@ public class FloorManager : MonoBehaviour
         int index = floors.Count;
 
         Grid floor = currentFloor;
-        Grid newFloor = Instantiate(floorOverride == null ? floorPrefab : floorOverride, this.transform).GetComponent<Grid>();
+        Grid newFloor = Instantiate(floorOverride == null ? floorPrefab : floorOverride, floorParent).GetComponent<Grid>();
         currentFloor = newFloor;
         FloorDefinition floorDef = floorDefinitions[index];
         newFloor.lvlDef = floorDef;
     
-        newFloor.transform.localPosition = new Vector3(0, index * -floorOffset);
         if (!first) {
             newFloor.transform.localScale = Vector3.one * 0.75f;
             newFloor.GetComponent<SortingGroup>().sortingOrder = -1;

@@ -74,5 +74,6 @@ public class DescentPreviewManager : MonoBehaviour
         alignmentFloor = floorManager.floors[newFloor.index-1];
         transform.parent = newFloor.transform;
         transform.localPosition = Vector3.zero;
+        transform.localScale = Vector3.one;
     }
 }

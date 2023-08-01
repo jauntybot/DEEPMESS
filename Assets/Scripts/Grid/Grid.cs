@@ -70,6 +70,8 @@ public class Grid : MonoBehaviour {
        
         NestedFadeGroup.NestedFadeGroup fade = GetComponent<NestedFadeGroup.NestedFadeGroup>();
 
+        this.transform.localPosition = new Vector3(0, index * -floorManager.floorOffset);
+
         float timer = 0;
         while (timer <= fadeInDur) {
             fade.AlphaSelf = Mathf.Lerp(0, 1, timer/fadeInDur);
