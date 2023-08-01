@@ -77,11 +77,13 @@ public class FloorManager : MonoBehaviour
     
         Coroutine co = StartCoroutine(newFloor.GenerateGrid(index, enemyOverride));
         yield return co;
+        
         newFloor.ToggleChessNotation(notation);
         newFloor.overrideHighlight = gridHightlightOverride;
     
         newFloor.gameObject.name = "Floor" + newFloor.index;
         newFloor.transform.SetParent(floorParent);
+        newFloor.transform.localPosition = new Vector3(0, index * -floorOffset);
         floors.Add(newFloor);
 
     }
