@@ -67,7 +67,7 @@ public class GridElement : MonoBehaviour{
     public virtual void UpdateElement(Vector2 c) 
     {
         ElementUpdated?.Invoke(this);
-        transform.localPosition = grid.PosFromCoord(c);
+        transform.localPosition = grid.LocalPosFromCoord(c);
         UpdateSortOrder(c);
         coord=c;
         foreach (GridElement ge in grid.CoordContents(c)) {

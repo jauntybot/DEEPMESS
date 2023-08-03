@@ -105,6 +105,7 @@ public class EnemyManager : UnitManager {
 
     public virtual void SeedUnits(Grid newGrid) {
         EnemyManager eManager = (EnemyManager) newGrid.enemy;
+        eManager.transform.position = new Vector3(eManager.transform.position.x, transform.position.y);
         for (int i = units.Count - 1; i >= 0; i--) {
             newGrid.enemy.units.Add(units[i]);
 

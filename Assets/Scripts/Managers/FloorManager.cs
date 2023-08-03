@@ -328,6 +328,7 @@ public class FloorManager : MonoBehaviour
 
         scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
         yield return drop;
+        
         if (enemy)
             enemy.SeedUnits(currentFloor);
 

@@ -181,6 +181,14 @@ public class Grid : MonoBehaviour {
             0);
     }
 
+    public Vector3 LocalPosFromCoord(Vector2 coord) {
+        return new Vector3(
+// offset from scene origin + coord to pos conversion + ortho offset + center measure
+            transform.localPosition.x - (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.x/1.355f) + (coord.x * FloorManager.sqrSize * ORTHO_OFFSET.x/2.5f) + (ORTHO_OFFSET.x * FloorManager.sqrSize * coord.y) + (FloorManager.sqrSize * ORTHO_OFFSET.x), 
+            transform.localPosition.y + (FloorManager.sqrSize * FloorManager.gridSize * ORTHO_OFFSET.y/1.75f) + (coord.y * FloorManager.sqrSize * ORTHO_OFFSET.y/1.1f) - (ORTHO_OFFSET.y*2.1f * FloorManager.sqrSize * coord.x),             
+            0);
+    }
+
     public int SortOrderFromCoord(Vector2 coord) {
         return 8 + (int)coord.x - (int)coord.y;
     }
