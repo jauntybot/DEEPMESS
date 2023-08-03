@@ -53,7 +53,7 @@ public class FloorManager : MonoBehaviour
     public static FloorManager instance;
     private void Awake() {
         if (FloorManager.instance) {
-            Debug.Log("Warning! More than one instance of Grid found!");
+            Debug.Log("Warning! More than one instance of FloorManager found!");
             return;
         }
         FloorManager.instance = this;
@@ -261,8 +261,13 @@ public class FloorManager : MonoBehaviour
         
         currentFloor.DisableGridHighlight();
         currentFloor.LockGrid(true);
-        yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
 
+        ScenarioManager.Scenario scen = ScenarioManager.Scenario.Null;
+            if (floors.Count >= floorSequence.reqBoss) scen = ScenarioManager.Scenario.Boss;
+
+        yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, scen));
+
+        scenario.player.nail.ToggleNailState(Nail.NailState.Primed);
 // Pan to next floor        
         // if (cascade) {
         //     yield return StartCoroutine(previewManager.PreviewFloor(true, true));
@@ -271,42 +276,49 @@ public class FloorManager : MonoBehaviour
         // else
         yield return StartCoroutine(TransitionFloors(true, false));
 
-        scenario.player.nail.ToggleNailState(Nail.NailState.Primed);
-
+// Check if at the end of packet
+        Debug.Log("floors: " + floors.Count + ", currentFloor: " + currentFloor.index);
+        if (floors.Count - 1 >= currentFloor.index) {
 // Yield for Slots sequence
-        yield return new WaitForSecondsRealtime(0.25f);
-        if (betweenFloor.InbetweenTrigger(currentFloor.index-1)) {
-            yield return StartCoroutine(betweenFloor.BetweenFloorSegment(currentFloor.index-1));
-            
             yield return new WaitForSecondsRealtime(0.25f);
-        }
+            if (betweenFloor.InbetweenTrigger(currentFloor.index-1)) {
+                yield return StartCoroutine(betweenFloor.BetweenFloorSegment(currentFloor.index-1));
+                
+                yield return new WaitForSecondsRealtime(0.25f);
+            }
 
 // Yield for cascade sequence
-        if (cascade) {
-            //yield return StartCoroutine(ChooseLandingPositions());
-            //yield return new WaitForSecondsRealtime(1.25f);
-            downButton.SetActive(true); upButton.SetActive(false);
-        }
-
+            if (cascade) {
+                //yield return StartCoroutine(ChooseLandingPositions());
+                //yield return new WaitForSecondsRealtime(1.25f);
+                downButton.SetActive(true); upButton.SetActive(false);
+            }
 // Descend units from previous floor
-        yield return StartCoroutine(DescendUnits(floors[currentFloor.index -1].gridElements, enemy));
+            yield return StartCoroutine(DescendUnits(floors[currentFloor.index -1].gridElements, enemy));
 
 // Tutorial bloat
-        if (tut) {
-            if (currentFloor.index < 2)
-                yield return StartCoroutine(GenerateNextFloor(TutorialSequence.instance.tutorialFloorPrefab, TutorialSequence.instance.tutorialEnemyPrefab));
-            else
-                yield return StartCoroutine(GenerateNextFloor());
-            yield return new WaitForSeconds(0.5f);
-            scenario.currentTurn = ScenarioManager.Turn.Null;
+            if (tut) {
+                if (currentFloor.index < 2)
+                    yield return StartCoroutine(GenerateNextFloor(TutorialSequence.instance.tutorialFloorPrefab, TutorialSequence.instance.tutorialEnemyPrefab));
+                else
+                    yield return StartCoroutine(GenerateNextFloor());
+                yield return new WaitForSeconds(0.5f);
+                scenario.currentTurn = ScenarioManager.Turn.Null;
+            } else {
+                if (!floorSequence.ThresholdCheck(floors.Count + 1)) {
+                    yield return StartCoroutine(GenerateNextFloor());
+                    yield return new WaitForSeconds(0.5f);
+                    StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
+                } else {
+// END OF PACKET LOGIC
+                    yield return new WaitForSeconds(0.5f);
+                    StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
+                }
+            }
         } else {
-            yield return StartCoroutine(GenerateNextFloor());
-            yield return new WaitForSeconds(0.5f);
+// NODE LOGIC
+            
 
-            ScenarioManager.Scenario scen = ScenarioManager.Scenario.Null;
-            if (floors.Count >= floorSequence.bossThreshold) scen = ScenarioManager.Scenario.Boss;
-
-            StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy, scen));
         }
     }
 
@@ -315,6 +327,7 @@ public class FloorManager : MonoBehaviour
 
         scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
         yield return drop;
+
         if (enemy)
             enemy.SeedUnits(currentFloor);
 

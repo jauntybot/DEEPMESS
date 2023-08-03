@@ -133,6 +133,23 @@ public class ScenarioManager : MonoBehaviour
         }
         prevTurn = currentTurn;
         uiManager.LockHUDButtons(true);
+// Scenario state machine (more optional)        
+        switch(toScenario) {
+            default:
+            case Scenario.Null: break;
+            case Scenario.Combat:
+                scenario = toScenario;
+            break;
+            case Scenario.Boss:
+                scenario = toScenario;
+            break;
+            case Scenario.Provision:
+            
+            break;
+            case Scenario.Barrier:
+            
+            break;
+        }
 // Turn state machine
         switch(toTurn) 
         {
@@ -220,23 +237,6 @@ public class ScenarioManager : MonoBehaviour
                 yield return new WaitForSecondsRealtime(0.2f);
                 if (uiManager.gameObject.activeSelf)
                     yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Position));
-            break;
-        }
-// Scenario state machine (more optional)        
-        switch(toScenario) {
-            default:
-            case Scenario.Null: break;
-            case Scenario.Combat:
-
-            break;
-            case Scenario.Boss:
-            
-            break;
-            case Scenario.Provision:
-            
-            break;
-            case Scenario.Barrier:
-            
             break;
         }
     }

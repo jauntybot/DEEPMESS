@@ -122,7 +122,7 @@ public class EnemyManager : UnitManager {
         }
         eManager.DescentTriggerCheck();
         UIManager.instance.metaDisplay.UpdateEnemiesRemaining(newGrid.enemy.units.Count);
-        Destroy(this);
+        Destroy(this.gameObject);
     }
 
     protected override void RemoveUnit(GridElement ge)

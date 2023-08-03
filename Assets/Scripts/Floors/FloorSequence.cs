@@ -10,7 +10,7 @@ public class FloorSequence : ScriptableObject {
     List<FloorPacket> localPackets;
     public FloorPacket activePacket;
 
-    public int iiThreshold, iiiThreshold, bossThreshold;
+    public int reqII, reqIII, reqBoss, reqBarrier;
     FloorPacket.PacketType currentThreshold;
 
     public void Init() {
@@ -35,19 +35,25 @@ public class FloorSequence : ScriptableObject {
         localPackets.Remove(options[index]);
     }
 
-    public FloorDefinition GetFloor(int index) {
-        if (index < iiThreshold)
+// Returns true if threshold is passed
+    public bool ThresholdCheck(int index) {
+        FloorPacket.PacketType prevThreshold = currentThreshold;
+        if (index < reqII)
             currentThreshold = FloorPacket.PacketType.I;
-        else if (index >= iiThreshold && index < iiiThreshold) 
+        else if (index >= reqII && index - reqII < reqIII) 
             currentThreshold = FloorPacket.PacketType.II;
-        else if (index >= iiiThreshold && index < bossThreshold) 
+        else if (index - reqII >= reqIII && index - reqII - reqIII < reqBoss) 
             currentThreshold = FloorPacket.PacketType.III;
-        else if (index >= bossThreshold) 
+        else if (index - reqII - reqIII >= reqBoss) 
             currentThreshold = FloorPacket.PacketType.BOSS;
-        
+
+        return currentThreshold != prevThreshold;
+    }
+
+    public FloorDefinition GetFloor(int index) {
+        ThresholdCheck(index);
 
         if (activePacket == null || activePacket.packetType != currentThreshold || activePacket.floors.Count == 0) {
-            Debug.Log(index + " " + currentThreshold);
             StartPacket(currentThreshold);
         }
 

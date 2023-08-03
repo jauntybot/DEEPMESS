@@ -62,8 +62,8 @@ public class FloorEditor : EditorWindow {
         assetSection.height = gridSection.height;
         headerSection.width = gridSection.xMax;
 
-        //window.minSize = new Vector2(gridSection.xMax, gridSection.yMax);
-        //window.maxSize = new Vector2(gridSection.xMax, gridSection.yMax);
+        window.minSize = new Vector2(gridSection.xMax, gridSection.yMax);
+        window.maxSize = new Vector2(gridSection.xMax, gridSection.yMax);
 
     }
 
@@ -184,18 +184,18 @@ public class FloorEditor : EditorWindow {
 
         GUILayout.BeginArea(r);
 
-        for (int y = 0; y < 8; y++) {
-            for (int x = 7; x >= 0; x--) {
+        for (int y = 7; y >= 0; y--) {
+            for (int x = 0; x <= 7; x++) {
                 FloorDefinition.Spawn spawn = null;
                 if (lvl.initSpawns.Count > 0)
-                    spawn = lvl.initSpawns.Find(s => s.coord == new Vector2(x, y));
+                    spawn = lvl.initSpawns.Find(s => s.coord == new Vector2(7-y, x));
                 Texture2D buttonSprite = AssetPreview.GetAssetPreview(lvl.atlas.baseTile.icon);
                 if (spawn != null) buttonSprite = AssetPreview.GetAssetPreview(spawn.asset.icon);
                 
                 GUILayout.BeginArea(new Rect(x*(assetDim.x+1), (7-y)*(assetDim.y+1), assetDim.x, assetDim.y));
     
                 if (GUILayout.Button(buttonSprite, GUILayout.Width(assetDim.x), GUILayout.Height(assetDim.y))) {
-                    activeCoord = new Vector2(x,y);
+                    activeCoord = new Vector2(7-y, x);
                     UpdateCoord(activeAsset);
                 }
                 GUILayout.EndArea();

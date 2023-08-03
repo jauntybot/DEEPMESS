@@ -20,7 +20,7 @@ public class UnitConditionVFX : MonoBehaviour
         
         GameObject s;
         switch (condition) {
-            default:
+            default: break;
             case Unit.Status.Weakened:
                 s = Instantiate(weakenedPrefab, this.transform);
                 activeStatus.Add(s);
@@ -38,7 +38,7 @@ public class UnitConditionVFX : MonoBehaviour
     public void RemoveCondition( Unit.Status condition) {
 
         switch (condition) {
-            default:
+            default: break;
             case Unit.Status.Weakened:
                 for (int i = activeStatus.Count - 1; i >=0; i--) {
                     if (activeStatus[i].GetComponent<Animator>().runtimeAnimatorController == weakenedPrefab.GetComponent<Animator>().runtimeAnimatorController) {

@@ -144,7 +144,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3908257913917299124}
-  - component: {fileID: 125915573521978910}
+  - component: {fileID: 6282613663567032689}
   - component: {fileID: 4823752203447007031}
   - component: {fileID: 2129399137958654533}
   - component: {fileID: 5572163279593086754}
@@ -175,7 +175,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &125915573521978910
+--- !u!114 &6282613663567032689
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -184,7 +184,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3908257913917299126}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d30f87537f4b724290b20bab561f42e, type: 3}
+  m_Script: {fileID: 11500000, guid: 75116a08aa26a5a45bd9cfeb0e27d56f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
@@ -202,11 +202,11 @@ MonoBehaviour:
   shell: 0
   shellGFX: {fileID: 8171586899823157194}
   energyCurrent: 0
-  energyMax: 2
+  energyMax: 0
   audioSource: {fileID: 0}
   selectedSFX: {fileID: 0}
   dmgdSFX: {fileID: 0}
-  healedSFX: {fileID: 11400000, guid: c6850de864e4bc94b9c18e4bffe96839, type: 2}
+  healedSFX: {fileID: 0}
   destroyedSFX: {fileID: 11400000, guid: f29e82bf2f6b7b047b42170d9cdf72ad, type: 2}
   descentVFX: {fileID: 1138166803973238496}
   manager: {fileID: 0}

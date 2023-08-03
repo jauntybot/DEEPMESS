@@ -137,7 +137,7 @@ public class PlayerManager : UnitManager {
         } else {
             DeselectUnit();
             contextuals.UpdateGridCursor(false);
-            if (scenario.prevTurn != ScenarioManager.Turn.Descent && scenario.currentTurn != ScenarioManager.Turn.Descent) {
+            if (scenario.prevTurn != ScenarioManager.Turn.Descent && scenario.currentTurn != ScenarioManager.Turn.Descent && scenario.scenario != ScenarioManager.Scenario.Boss) {
                 if (nail.nailState == Nail.NailState.Buried)
                     nail.ToggleNailState(Nail.NailState.Primed);
             }

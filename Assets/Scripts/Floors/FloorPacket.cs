@@ -7,7 +7,7 @@ using UnityEngine;
 [System.Serializable]
 public class FloorPacket : ScriptableObject {
 
-    public enum PacketType { I, II, III, BOSS };
+    public enum PacketType { I, II, III, BOSS, BARRIER };
     public PacketType packetType;
     public List<FloorDefinition> floors;
 
