@@ -61,7 +61,7 @@ public class HammerData : EquipmentData
                         validCoords.Remove(validCoords[i]);
                 }
             }
-            Debug.Log(pu.inRangeCoords.Count);
+            
             return validCoords;
         } else {
             List<GridElement> targets = new List<GridElement>(); targets.Add(user);

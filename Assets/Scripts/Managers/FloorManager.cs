@@ -16,7 +16,7 @@ public class FloorManager : MonoBehaviour
     [Header("Floor Serialization")]
     [SerializeField] GameObject floorPrefab;
     [SerializeField] Transform floorParent;
-    [SerializeField] public List<FloorDefinition> floorDefinitions;
+    [SerializeField] public FloorSequence floorSequence;
     public bool gridHightlightOverride;
     public Grid currentFloor;
     public List<Grid> floors;
@@ -58,6 +58,7 @@ public class FloorManager : MonoBehaviour
         }
         FloorManager.instance = this;
         gridSize = _gridSize; sqrSize = _sqrSize;
+        floorSequence.Init();
     }
     #endregion
 
@@ -70,42 +71,38 @@ public class FloorManager : MonoBehaviour
     public IEnumerator GenerateFloor(bool first = false, GameObject floorOverride = null, GameObject enemyOverride = null) {
         int index = floors.Count;
 
-        Grid newFloor = Instantiate(floorOverride == null ? floorPrefab : floorOverride, this.transform).GetComponent<Grid>();
+        Grid newFloor = Instantiate(floorOverride == null ? floorPrefab : floorOverride, floorParent).GetComponent<Grid>();
+        newFloor.transform.localPosition = new Vector3(0, index * -floorOffset);
+        
         currentFloor = newFloor;
-        FloorDefinition floorDef = floorDefinitions[index];
+        FloorDefinition floorDef = floorSequence.GetFloor(index);
+
         newFloor.lvlDef = floorDef;
     
         Coroutine co = StartCoroutine(newFloor.GenerateGrid(index, enemyOverride));
         yield return co;
+        newFloor.gameObject.name = "Floor" + newFloor.index;
         
         newFloor.ToggleChessNotation(notation);
         newFloor.overrideHighlight = gridHightlightOverride;
     
-        newFloor.gameObject.name = "Floor" + newFloor.index;
-        newFloor.transform.SetParent(floorParent);
-        newFloor.transform.localPosition = new Vector3(0, index * -floorOffset);
         floors.Add(newFloor);
 
     }
 
     public IEnumerator GenerateNextFloor(GameObject floorPrefab = null, GameObject enemyPrefab = null) {
-// Check if player wins
-        if (currentFloor.index >= floorDefinitions.Count - 2) {
 
-            
-        } else {
+        yield return StartCoroutine(TransitionFloors(true, false));
 
-            yield return StartCoroutine(TransitionFloors(true, false));
+        yield return StartCoroutine(GenerateFloor(floorPrefab, enemyPrefab));
+        previewManager.UpdateFloors(floors[currentFloor.index]);
 
-            yield return StartCoroutine(GenerateFloor(floorPrefab, enemyPrefab));
-            previewManager.UpdateFloors(floors[currentFloor.index]);
+        yield return new WaitForSeconds(0.5f);
+        // if (TutorialSequence.instance)
+        //     yield return (TutorialSequence.instance.GetComponent<LaterTutorials>().CheckFloorDef(floors[currentFloor.index].lvlDef));
 
-            yield return new WaitForSeconds(0.5f);
-            // if (TutorialSequence.instance)
-            //     yield return (TutorialSequence.instance.GetComponent<LaterTutorials>().CheckFloorDef(floors[currentFloor.index].lvlDef));
-
-            yield return StartCoroutine(previewManager.PreviewFloor(false, false));
-        }
+        yield return StartCoroutine(previewManager.PreviewFloor(false, false));
+        
     }
 
     
@@ -113,21 +110,11 @@ public class FloorManager : MonoBehaviour
         Color c = equipmentColor;
         
         switch (i) {
-            case 0:
-            c = playerColor;
-            break;
-            case 1:
-            c = enemyColor;
-            break;
-            case 2:
-            c = equipmentColor;
-             break;
-            case 3:
-            c = movePreview;
-            break;
-            case 4:
-            c = enemyMovePreview;
-            break;
+            case 0: c = playerColor; break; 
+            case 1: c = enemyColor; break;
+            case 2: c = equipmentColor; break;
+            case 3: c = movePreview; break;
+            case 4: c = enemyMovePreview; break;
         }
         return c;
     }
@@ -315,7 +302,11 @@ public class FloorManager : MonoBehaviour
         } else {
             yield return StartCoroutine(GenerateNextFloor());
             yield return new WaitForSeconds(0.5f);
-            StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
+
+            ScenarioManager.Scenario scen = ScenarioManager.Scenario.Null;
+            if (floors.Count >= floorSequence.bossThreshold) scen = ScenarioManager.Scenario.Boss;
+
+            StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy, scen));
         }
     }
 

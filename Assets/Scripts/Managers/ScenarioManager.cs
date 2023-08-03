@@ -32,6 +32,8 @@ public class ScenarioManager : MonoBehaviour
 
 
 // State machines
+    public enum Scenario { Null, Combat, Boss, Provision, Barrier };
+    public Scenario scenario;
     public enum Turn { Null, Player, Enemy, Descent, Cascade, Loadout, Slots }
     public Turn currentTurn, prevTurn;
 
@@ -57,7 +59,7 @@ public class ScenarioManager : MonoBehaviour
                 else {
                     tut = true;
                     for (int i = 0; i <= tutorial.scriptedFloors.Count - 1; i++) 
-                        floorManager.floorDefinitions.Insert(i, tutorial.scriptedFloors[i]);
+                        //floorManager.floorDefinitions.Insert(i, tutorial.scriptedFloors[i]);
                     yield return StartCoroutine(floorManager.GenerateFloor(tutorial.tutorialFloorPrefab, tutorial.tutorialEnemyPrefab));
                 }
             } else
@@ -88,7 +90,7 @@ public class ScenarioManager : MonoBehaviour
                 foreach (GridElement ge in player.units)
                     floorManager.currentFloor.RemoveElement(ge);
                     
-                yield return StartCoroutine(SwitchTurns(Turn.Descent));
+                yield return StartCoroutine(SwitchTurns(Turn.Descent, Scenario.Combat));
                 yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3]} ));
                 yield return StartCoroutine(floorManager.GenerateNextFloor(TutorialSequence.instance.tutorialFloorPrefab, TutorialSequence.instance.tutorialEnemyPrefab));
                 StartCoroutine(tutorial.Tutorial());
@@ -107,7 +109,7 @@ public class ScenarioManager : MonoBehaviour
         // yield return StartCoroutine(floorManager.ChooseLandingPositions());
         // yield return new WaitForSecondsRealtime(1.25f);
         
-        yield return StartCoroutine(SwitchTurns(Turn.Descent));
+        yield return StartCoroutine(SwitchTurns(Turn.Descent, Scenario.Combat));
         yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3]} ));
         yield return StartCoroutine(floorManager.GenerateNextFloor());
         StartCoroutine(SwitchTurns(Turn.Enemy));
@@ -116,8 +118,8 @@ public class ScenarioManager : MonoBehaviour
 #endregion
 
 // Overload allows you to specify which turn to switch to, otherwise inverts the binary
-    public IEnumerator SwitchTurns(Turn toTurn = default) 
-    {
+    public IEnumerator SwitchTurns(Turn toTurn = default, Scenario toScenario = default) {
+
         foreach(GridElement ge in floorManager.currentFloor.gridElements) 
                 ge.TargetElement(false);
         if (toTurn == default) {
@@ -131,8 +133,11 @@ public class ScenarioManager : MonoBehaviour
         }
         prevTurn = currentTurn;
         uiManager.LockHUDButtons(true);
+// Turn state machine
         switch(toTurn) 
         {
+            default:
+            case Turn.Null: break;
             case Turn.Enemy:
                 if (currentEnemy.units.Count > 0) {
                     currentTurn = Turn.Enemy;
@@ -173,6 +178,7 @@ public class ScenarioManager : MonoBehaviour
                     yield return StartCoroutine(Lose());
                 }
             break;
+// Is not in control, this is called only to display message, coroutine continued in FloorManager
             case Turn.Descent:
                 floorManager.previewManager.TogglePreivews(false);
                 
@@ -186,6 +192,7 @@ public class ScenarioManager : MonoBehaviour
                 }
                 currentTurn = Turn.Descent;
                 player.StartEndTurn(false);
+// Reset per floor equipment on PlayerUnits
                 foreach(Unit u in player.units)
                     u.usedEquip = false;
                 if (uiManager.gameObject.activeSelf)
@@ -213,6 +220,23 @@ public class ScenarioManager : MonoBehaviour
                 yield return new WaitForSecondsRealtime(0.2f);
                 if (uiManager.gameObject.activeSelf)
                     yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Position));
+            break;
+        }
+// Scenario state machine (more optional)        
+        switch(toScenario) {
+            default:
+            case Scenario.Null: break;
+            case Scenario.Combat:
+
+            break;
+            case Scenario.Boss:
+            
+            break;
+            case Scenario.Provision:
+            
+            break;
+            case Scenario.Barrier:
+            
             break;
         }
     }

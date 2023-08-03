@@ -16,6 +16,7 @@ public class FloorDefinition : ScriptableObject
     [SerializeField]
     public List<Spawn> initSpawns = new List<Spawn>();
 
+
 // Slot machine floor refs
     public enum SlotsType { Equipment, Upgrades };
     public SlotsType slotsType;

@@ -131,6 +131,7 @@ public class PlayerManager : UnitManager {
             }
             undoableMoves = new Dictionary<Unit, Vector2>();
             undoOrder = new List<Unit>();
+            harvestedByMove = new Dictionary<Unit, GridElement>();
             ResolveConditions();
 // End Turn
         } else {
@@ -452,10 +453,6 @@ public class PlayerManager : UnitManager {
             undoableMoves = new Dictionary<Unit, Vector2>();
             harvestedByMove = new Dictionary<Unit, GridElement>();
         }
-    }
-
-    public virtual void StoreForUndo(GridElement ge) {
-        harvestedByMove.Add(undoOrder[undoOrder.Count-1], ge);
     }
 
     public void TriggerDescent(bool tut = false) {

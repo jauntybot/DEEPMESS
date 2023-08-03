@@ -106,10 +106,10 @@ public class GridElement : MonoBehaviour{
             }
 
             hpCurrent -= dmg;
-            Debug.Log("Taking " + dmg + " damage");
+            
             if (hpCurrent < 0) hpCurrent = 0;
             if (hpCurrent > hpMax) hpCurrent = hpMax;
-            Debug.Log(hpCurrent);
+            
 
         } else {
             RemoveShell();
