@@ -7,7 +7,7 @@ using UnityEngine;
 public class FloorSequence : ScriptableObject {
 
     public List<FloorPacket> packets;
-    [SerializeField] List<FloorPacket> localPackets;
+    List<FloorPacket> localPackets;
     public FloorPacket activePacket;
 
     public int iiThreshold, iiiThreshold, bossThreshold;
