@@ -10,21 +10,21 @@ public class FloorSequence : ScriptableObject {
     List<FloorPacket> localPackets;
     public FloorPacket activePacket;
 
-    public int reqII, reqIII, reqBoss, reqBarrier;
-    FloorPacket.PacketType currentThreshold;
+    public int floorsTutorial, floorsI, floorsII, floorsIII, floorsBoss;
+    public FloorPacket.PacketType currentThreshold;
     int floorsGot = 0;
 
     public void Init() {
         localPackets = new List<FloorPacket>();
         foreach (FloorPacket packet in packets) localPackets.Add(packet);
         activePacket.floors = new List<FloorDefinition>();
-        currentThreshold = FloorPacket.PacketType.I;
-        Debug.Log("init");
+        
+        floorsGot = 0;
+        currentThreshold = FloorPacket.PacketType.Tutorial;
+        if (floorsTutorial == 0) currentThreshold = FloorPacket.PacketType.I;
     }
 
     public void StartPacket(FloorPacket.PacketType type) {
-        floorsGot = 0;
-        Debug.Log("start packet");
         List<FloorPacket> options = new List<FloorPacket>();
         for (int i = localPackets.Count - 1; i >= 0; i--) 
             if (localPackets[i].packetType == type) options.Add(localPackets[i]);
@@ -48,25 +48,29 @@ public class FloorSequence : ScriptableObject {
 // Returns true if threshold is passed
     public bool ThresholdCheck() {
         FloorPacket.PacketType prevThreshold = currentThreshold;
-        switch (currentThreshold) {
-            default: break;
+        switch(prevThreshold) {
             case FloorPacket.PacketType.Tutorial:
+                if (floorsGot >= floorsTutorial) currentThreshold = FloorPacket.PacketType.II;
             break;
             case FloorPacket.PacketType.I:
-                if (floorsGot >= reqII) currentThreshold = FloorPacket.PacketType.II;
+                if (floorsGot >= floorsI) currentThreshold = FloorPacket.PacketType.II;
             break;
             case FloorPacket.PacketType.II:
-                if (floorsGot >= reqIII) currentThreshold = FloorPacket.PacketType.III;
+                if (floorsGot >= floorsI) currentThreshold = FloorPacket.PacketType.III;
             break;
             case FloorPacket.PacketType.III:
-                if (floorsGot >= reqBoss) currentThreshold = FloorPacket.PacketType.BOSS;
+                if (floorsGot >= floorsI) currentThreshold = FloorPacket.PacketType.BOSS;
             break;
             case FloorPacket.PacketType.BOSS:
-                if (floorsGot >= reqBarrier) currentThreshold = FloorPacket.PacketType.BARRIER;
+                if (floorsGot >= floorsI) currentThreshold = FloorPacket.PacketType.BARRIER;
             break;
         }
 
-        return currentThreshold != prevThreshold;
+        if (currentThreshold != prevThreshold) {
+            floorsGot = 0;
+            return true;
+        }
+        return false;
     }
 
     public FloorDefinition GetFloor() {
@@ -74,10 +78,17 @@ public class FloorSequence : ScriptableObject {
 
         if (activePacket.packetType != currentThreshold || activePacket.floors.Count == 0) {
             StartPacket(currentThreshold);
-            FloorDefinition firstFloor = activePacket.firstFloors[Random.Range(0, activePacket.firstFloors.Count-1)];
-            activePacket.firstFloors.Remove(firstFloor);
-            floorsGot += 1;
-            return firstFloor;
+            if (activePacket.packetType != FloorPacket.PacketType.BOSS) {
+                FloorDefinition firstFloor = activePacket.firstFloors[Random.Range(0, activePacket.firstFloors.Count-1)];
+                activePacket.firstFloors.Remove(firstFloor);
+                floorsGot += 1;
+                return firstFloor;
+            } else {
+                FloorDefinition firstFloor = activePacket.floors[Random.Range(0, activePacket.floors.Count-1)];
+                activePacket.floors.Remove(firstFloor);
+                floorsGot += 1;
+                return firstFloor;
+            }
         } else {
             FloorDefinition floor = activePacket.floors[Random.Range(0, activePacket.floors.Count-1)];
             activePacket.floors.Remove(floor);

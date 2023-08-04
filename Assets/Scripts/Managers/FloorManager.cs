@@ -269,7 +269,7 @@ public class FloorManager : MonoBehaviour
         currentFloor.LockGrid(true);
 
         ScenarioManager.Scenario scen = ScenarioManager.Scenario.Null;
-            if (floors.Count >= floorSequence.reqII + floorSequence.reqIII + floorSequence.reqBoss) scen = ScenarioManager.Scenario.Boss;
+            if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) scen = ScenarioManager.Scenario.Boss;
 
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, scen));
 
@@ -312,7 +312,7 @@ public class FloorManager : MonoBehaviour
                 scenario.currentTurn = ScenarioManager.Turn.Null;
             } else {
 // Generate next floor if still mid packet
-                if (!floorSequence.ThresholdCheck()) {
+                if (!floorSequence.ThresholdCheck() || floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) {
                     yield return StartCoroutine(GenerateNextFloor());
                     yield return new WaitForSeconds(0.25f);
                     StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
@@ -489,9 +489,9 @@ public class FloorManager : MonoBehaviour
                 NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
                 units[i].transform.position = Vector3.Lerp(to[i] + new Vector2(0, floorOffset*2), to[i], dropCurve.Evaluate(timer/unitDropDur));
                 fade.AlphaSelf = Mathf.Lerp(0, 1, timer/(unitDropDur/3));
-                yield return null;
-                timer += Time.deltaTime;
             }
+            yield return null;
+            timer += Time.deltaTime;
         }
         
         //StartCoroutine(DropUnits(units, currentFloor));
@@ -520,7 +520,7 @@ public class FloorManager : MonoBehaviour
         units[3].transform.parent = currentFloor.transform;
 
         timer = 0;
-        while (timer <= 0.25f) {
+        while (timer <= 0.5f) {
             parallax.ScrollParallax(-1);
             timer += Time.deltaTime;
         }
