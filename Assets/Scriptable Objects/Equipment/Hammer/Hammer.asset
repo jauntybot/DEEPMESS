@@ -20,22 +20,25 @@ MonoBehaviour:
   gridColor: 2
   vfx: {fileID: 5594480275710007220, guid: 90583eee47efcbd4fb3c7ac0bf4ce3d0, type: 3}
   multiselect: 1
-  adjacency: 1
   firstTarget: {fileID: 0}
-  energyCost: 1
+  adjacency: 1
   range: 8
+  aoeAdjacency: 0
+  aoeRange: 0
+  energyCost: 1
   animDur: 0.1
-  filterValid: 0
   filters:
   - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
   - {fileID: 4634978180570587290, guid: c7249e601f4730c4999df2560c657aac, type: 3}
   - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
   - {fileID: 2016796106260804354, guid: b12bed586f9b98a4b9f6045893aeb48a, type: 3}
   - {fileID: 2916689396987693090, guid: 9196974c7f601814c8c816639c833a0c, type: 3}
+  _filters: []
   targetTypes:
   - {fileID: 2016796106260804354, guid: b12bed586f9b98a4b9f6045893aeb48a, type: 3}
   - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
   - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
+  - {fileID: 4634978180570587290, guid: d6246858a35ef47b5b417b2120169c9c, type: 3}
   selectSFX: {fileID: 0}
   useSFX: {fileID: 11400000, guid: fd03f8f4655fdf44a954d188be53b497, type: 2}
   hammer: {fileID: 0}

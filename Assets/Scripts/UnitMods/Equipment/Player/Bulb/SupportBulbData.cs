@@ -23,7 +23,7 @@ public class SupportBulbData : BulbEquipmentData
         for (int i = validCoords.Count - 1; i >= 0; i--) {
             if (user.grid.CoordContents(validCoords[i]).Count != 0) {
                 foreach(GridElement ge in user.grid.CoordContents(validCoords[i])) {
-                    if (ge is not PlayerUnit)
+                    if (ge is not PlayerUnit && ge is not Nail)
                         validCoords.Remove(validCoords[i]);
                 }
             } else 
