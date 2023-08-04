@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2f6d51c1e9f52f47b0a682683df3570, type: 3}
+  m_Name: Boss Floor 1
+  m_EditorClassIdentifier: 
+  floorType: 0
+  genPool: 0
+  atlas: {fileID: 11400000, guid: bd75c3133639f4604a4aa9a39c1ef6d0, type: 2}
+  initSpawns:
+  - asset: {fileID: 11400000, guid: 19954b7619f1d234896c6ccce233dec9, type: 2}
+    coord: {x: 0, y: 1}
+  - asset: {fileID: 11400000, guid: 19954b7619f1d234896c6ccce233dec9, type: 2}
+    coord: {x: 0, y: 3}
+  - asset: {fileID: 11400000, guid: 19954b7619f1d234896c6ccce233dec9, type: 2}
+    coord: {x: 0, y: 4}
+  - asset: {fileID: 11400000, guid: 19954b7619f1d234896c6ccce233dec9, type: 2}
+    coord: {x: 0, y: 6}
+  - asset: {fileID: 11400000, guid: 19954b7619f1d234896c6ccce233dec9, type: 2}
+    coord: {x: 0, y: 7}
+  - asset: {fileID: 11400000, guid: 19954b7619f1d234896c6ccce233dec9, type: 2}
+    coord: {x: 1, y: 7}
+  - asset: {fileID: 11400000, guid: 19954b7619f1d234896c6ccce233dec9, type: 2}
+    coord: {x: 2, y: 7}
+  - asset: {fileID: 11400000, guid: 19954b7619f1d234896c6ccce233dec9, type: 2}
+    coord: {x: 3, y: 7}
+  - asset: {fileID: 11400000, guid: 19954b7619f1d234896c6ccce233dec9, type: 2}
+    coord: {x: 4, y: 5}
+  - asset: {fileID: 11400000, guid: 19954b7619f1d234896c6ccce233dec9, type: 2}
+    coord: {x: 4, y: 4}
+  - asset: {fileID: 11400000, guid: 19954b7619f1d234896c6ccce233dec9, type: 2}
+    coord: {x: 5, y: 2}
+  - asset: {fileID: 11400000, guid: 19954b7619f1d234896c6ccce233dec9, type: 2}
+    coord: {x: 7, y: 4}
+  - asset: {fileID: 11400000, guid: 43f2fc8b9f5f0004bac210c59de04d9a, type: 2}
+    coord: {x: 7, y: 6}
+  - asset: {fileID: 11400000, guid: 43f2fc8b9f5f0004bac210c59de04d9a, type: 2}
+    coord: {x: 7, y: 7}
+  - asset: {fileID: 11400000, guid: 43f2fc8b9f5f0004bac210c59de04d9a, type: 2}
+    coord: {x: 7, y: 1}
+  - asset: {fileID: 11400000, guid: 43f2fc8b9f5f0004bac210c59de04d9a, type: 2}
+    coord: {x: 7, y: 0}
+  - asset: {fileID: 11400000, guid: 43f2fc8b9f5f0004bac210c59de04d9a, type: 2}
+    coord: {x: 6, y: 0}
+  - asset: {fileID: 11400000, guid: 43f2fc8b9f5f0004bac210c59de04d9a, type: 2}
+    coord: {x: 4, y: 0}
+  - asset: {fileID: 11400000, guid: 43f2fc8b9f5f0004bac210c59de04d9a, type: 2}
+    coord: {x: 3, y: 0}
+  - asset: {fileID: 11400000, guid: 43f2fc8b9f5f0004bac210c59de04d9a, type: 2}
+    coord: {x: 2, y: 0}
+  - asset: {fileID: 11400000, guid: 19954b7619f1d234896c6ccce233dec9, type: 2}
+    coord: {x: 2, y: 1}
+  - asset: {fileID: 11400000, guid: 6c5c341853683244f9a768e039de3826, type: 2}
+    coord: {x: 1, y: 3}
+  - asset: {fileID: 11400000, guid: 6c5c341853683244f9a768e039de3826, type: 2}
+    coord: {x: 1, y: 4}
+  - asset: {fileID: 11400000, guid: 6c5c341853683244f9a768e039de3826, type: 2}
+    coord: {x: 1, y: 5}
+  - asset: {fileID: 11400000, guid: 6c5c341853683244f9a768e039de3826, type: 2}
+    coord: {x: 2, y: 6}
+  - asset: {fileID: 11400000, guid: 6c5c341853683244f9a768e039de3826, type: 2}
+    coord: {x: 3, y: 6}
+  - asset: {fileID: 11400000, guid: 6c5c341853683244f9a768e039de3826, type: 2}
+    coord: {x: 5, y: 6}
+  - asset: {fileID: 11400000, guid: 6aa8c84dc491cae4496282132b692576, type: 2}
+    coord: {x: 1, y: 6}
+  - asset: {fileID: 11400000, guid: 23e9ba67a50c3394fb0ef1a1b7ee0d06, type: 2}
+    coord: {x: 2, y: 5}
+  - asset: {fileID: 11400000, guid: 459f4eea78540974aa040a0b7f443cac, type: 2}
+    coord: {x: 1, y: 2}
+  - asset: {fileID: 11400000, guid: 459f4eea78540974aa040a0b7f443cac, type: 2}
+    coord: {x: 4, y: 7}
+  slotsType: 0
+  equipmentTable: []
