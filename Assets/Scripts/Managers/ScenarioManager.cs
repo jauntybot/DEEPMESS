@@ -75,11 +75,6 @@ public class ScenarioManager : MonoBehaviour
             tutorial.Initialize(this);
     }
 
-// Triggered by scene
-    public void InitialDescent() {
-        StartCoroutine(FirstTurn());
-    }
-
     public IEnumerator FirstTurn() {
         foreach (Unit u in player.units) {
             u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
@@ -102,10 +97,11 @@ public class ScenarioManager : MonoBehaviour
 
     IEnumerator PlayerEnter() {
         uiManager.LockFloorButtons(true);
-        floorManager.previewManager.InitialPreview();
+        //floorManager.previewManager.InitialPreview();
         
-        foreach (GridElement ge in player.units)
+        foreach (GridElement ge in player.units) {
             floorManager.currentFloor.RemoveElement(ge);
+        }
         // yield return StartCoroutine(floorManager.ChooseLandingPositions());
         // yield return new WaitForSecondsRealtime(1.25f);
         

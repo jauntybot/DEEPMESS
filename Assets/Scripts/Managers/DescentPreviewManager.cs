@@ -62,11 +62,14 @@ public class DescentPreviewManager : MonoBehaviour
     }
 
     public void PreviewButton(bool down) {
+        int dir = down ? 1 : -1;
+
         scenario.player.DeselectUnit();
-        if (!floorManager.transitioning)
+        if (!floorManager.transitioning && floorManager.floors.Count - 1 >= floorManager.currentFloor.index + dir) {
             StartCoroutine(PreviewFloor(down, true));
-        if (UIManager.instance.gameObject.activeSelf)
-            UIManager.instance.PlaySound(down ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
+            if (UIManager.instance.gameObject.activeSelf)
+                UIManager.instance.PlaySound(down ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
+        }
     }
 
     public void UpdateFloors(Grid newFloor) {

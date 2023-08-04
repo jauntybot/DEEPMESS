@@ -16,7 +16,8 @@ public class UnitUI : MonoBehaviour
     public Image gfx;
 
     [Header("Equipment")]
-    public EquipmentButton perFloor, hammer, bulb;
+    public EquipmentButton perFloor;
+    public EquipmentButton hammer, bulb;
     [SerializeField] GameObject equipmentPanel, hammerPanel, perFloorButtonPrefab, hammerButtonPrefab, bulbButtonPrefab;
 
     [Header("Loadout")]

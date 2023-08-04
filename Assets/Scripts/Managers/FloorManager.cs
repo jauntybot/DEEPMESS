@@ -68,14 +68,18 @@ public class FloorManager : MonoBehaviour
         betweenFloor = GetComponent<BetweenFloorManager>();
     }
 
-    public IEnumerator GenerateFloor(bool first = false, GameObject floorOverride = null, GameObject enemyOverride = null) {
+    public IEnumerator GenerateFloor(bool first = false, GameObject floorOverride = null, GameObject enemyOverride = null, FloorDefinition definitionOverride = null) {
         int index = floors.Count;
 
         Grid newFloor = Instantiate(floorOverride == null ? floorPrefab : floorOverride, floorParent).GetComponent<Grid>();
         newFloor.transform.localPosition = new Vector3(0, index * -floorOffset);
         
         currentFloor = newFloor;
-        FloorDefinition floorDef = floorSequence.GetFloor(index);
+        FloorDefinition floorDef;
+        if (definitionOverride)
+            floorDef = definitionOverride;
+        else 
+            floorDef = floorSequence.GetFloor();
 
         newFloor.lvlDef = floorDef;
     
@@ -95,6 +99,7 @@ public class FloorManager : MonoBehaviour
         yield return StartCoroutine(TransitionFloors(true, false));
 
         yield return StartCoroutine(GenerateFloor(floorPrefab, enemyPrefab));
+      
         previewManager.UpdateFloors(floors[currentFloor.index]);
 
         yield return new WaitForSeconds(0.5f);
@@ -140,11 +145,12 @@ public class FloorManager : MonoBehaviour
         int dir = down? 1 : -1;
         Grid toFloor = null; // After a descent the next floor hasn't generated before panning to it
 
-// Block player from selecting units
-        scenario.player.ToggleUnitSelectability(dir == -1);
 
         if (floors.Count - 1 >= currentFloor.index + dir) // Checks if there is a floor in the direction transitioning
             toFloor = floors[currentFloor.index + dir];
+// Block player from selecting units
+        scenario.player.ToggleUnitSelectability(dir == -1);
+
 // Adjust sorting orders contextually
         Vector3 toFromScale = Vector3.one;
         if (toFloor) {
@@ -263,7 +269,7 @@ public class FloorManager : MonoBehaviour
         currentFloor.LockGrid(true);
 
         ScenarioManager.Scenario scen = ScenarioManager.Scenario.Null;
-            if (floors.Count >= floorSequence.reqBoss) scen = ScenarioManager.Scenario.Boss;
+            if (floors.Count >= floorSequence.reqII + floorSequence.reqIII + floorSequence.reqBoss) scen = ScenarioManager.Scenario.Boss;
 
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, scen));
 
@@ -274,11 +280,11 @@ public class FloorManager : MonoBehaviour
         //     currentFloor.LockGrid(false);
         // }
         // else
-        yield return StartCoroutine(TransitionFloors(true, false));
 
 // Check if at the end of packet
         Debug.Log("floors: " + floors.Count + ", currentFloor: " + currentFloor.index);
-        if (floors.Count - 1 >= currentFloor.index) {
+        if (floors.Count - 1 > currentFloor.index) {
+            yield return StartCoroutine(TransitionFloors(true, false));
 // Yield for Slots sequence
             yield return new WaitForSecondsRealtime(0.25f);
             if (betweenFloor.InbetweenTrigger(currentFloor.index-1)) {
@@ -302,23 +308,23 @@ public class FloorManager : MonoBehaviour
                     yield return StartCoroutine(GenerateNextFloor(TutorialSequence.instance.tutorialFloorPrefab, TutorialSequence.instance.tutorialEnemyPrefab));
                 else
                     yield return StartCoroutine(GenerateNextFloor());
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.25f);
                 scenario.currentTurn = ScenarioManager.Turn.Null;
             } else {
-                if (!floorSequence.ThresholdCheck(floors.Count + 1)) {
+// Generate next floor if still mid packet
+                if (!floorSequence.ThresholdCheck()) {
                     yield return StartCoroutine(GenerateNextFloor());
-                    yield return new WaitForSeconds(0.5f);
+                    yield return new WaitForSeconds(0.25f);
                     StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
                 } else {
-// END OF PACKET LOGIC
-                    yield return new WaitForSeconds(0.5f);
+// Stop from generating next floor if end of packet
+                    yield return new WaitForSeconds(0.25f);
                     StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
                 }
             }
         } else {
 // NODE LOGIC
-            
-
+            yield return StartCoroutine(TransitionPackets());
         }
     }
 
@@ -381,7 +387,8 @@ public class FloorManager : MonoBehaviour
         }
         yield return new WaitForSecondsRealtime(0.75f);
         
-        yield return StartCoroutine(DropNail(nail));
+        if (nail)
+            yield return StartCoroutine(DropNail(nail));
     }
 
 // Coroutine that houses the logic to descend a single unit
@@ -465,5 +472,64 @@ public class FloorManager : MonoBehaviour
 
         if (subElement) 
             StartCoroutine(subElement.CollideFromBelow(nail));
+    }
+
+
+    public IEnumerator TransitionPackets() {
+        List<Unit> units = new List<Unit> { scenario.player.units[0], scenario.player.units[1], scenario.player.units[2], scenario.player.units[3] };
+        List<Vector2> to = new List<Vector2> { currentFloor.PosFromCoord(new Vector2(3, 3)), currentFloor.PosFromCoord(new Vector2(4, 3)), currentFloor.PosFromCoord(new Vector2(3, 2)), currentFloor.PosFromCoord(new Vector2(5, 4)) };
+        units[0].manager.transform.parent = transitionParent;
+        units[3].transform.parent = transitionParent;
+        //units[4].
+        yield return StartCoroutine(TransitionFloors(true, false));
+        float timer = 0;
+        while (timer <= unitDropDur) {
+            parallax.ScrollParallax(-1);
+            for (int i = 0; i <= units.Count - 1; i++) {
+                NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
+                units[i].transform.position = Vector3.Lerp(to[i] + new Vector2(0, floorOffset*2), to[i], dropCurve.Evaluate(timer/unitDropDur));
+                fade.AlphaSelf = Mathf.Lerp(0, 1, timer/(unitDropDur/3));
+                yield return null;
+                timer += Time.deltaTime;
+            }
+        }
+        
+        //StartCoroutine(DropUnits(units, currentFloor));
+        timer = 0;
+        while(true) {
+            yield return null;
+            parallax.ScrollParallax(-1);
+            transitionParent.transform.position = new Vector3(0, Mathf.Sin(timer), 0);
+
+            timer += Time.deltaTime;
+            if (Input.GetMouseButtonDown(0)) break;
+        }
+        timer = 0;
+        while (timer <= unitDropDur) {
+            parallax.ScrollParallax(-1);
+            for (int i = 0; i <= units.Count - 1; i++) {
+                NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
+                units[i].transform.position = Vector3.Lerp(to[i], to[i] + new Vector2(0, floorOffset*2), dropCurve.Evaluate(timer/unitDropDur));
+                fade.AlphaSelf = Mathf.Lerp(1, 0, (timer - (unitDropDur*2/3))/(unitDropDur/3));
+                yield return null;
+                timer += Time.deltaTime;
+            }
+        }
+        
+        units[0].manager.transform.parent = floors[currentFloor.index - 1].transform;
+        units[3].transform.parent = currentFloor.transform;
+
+        timer = 0;
+        while (timer <= 0.25f) {
+            parallax.ScrollParallax(-1);
+            timer += Time.deltaTime;
+        }
+        //yield return StartCoroutine(TransitionFloors(false, true));
+        yield return StartCoroutine(GenerateFloor());
+        yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
+        yield return StartCoroutine(DescendUnits(new List<GridElement>{ units[0], units[1], units[2], units[3]} ));
+        yield return StartCoroutine(GenerateNextFloor());
+        yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
+
     }
 }
