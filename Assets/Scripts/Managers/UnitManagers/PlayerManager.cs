@@ -54,7 +54,7 @@ public class PlayerManager : UnitManager {
     }
     #endregion
 
-    public override IEnumerator Initialize(bool tut = false)
+    public override IEnumerator Initialize()
     {
         yield return base.Initialize();
         if (FloorManager.instance) floorManager = FloorManager.instance;
@@ -67,13 +67,6 @@ public class PlayerManager : UnitManager {
             new Vector2(-4,-4),
             new Vector2(-3,-3)
         };
-        if (tut) {
-            spawnCoords = new List<Vector2>{
-                new Vector2(4,1),
-                new Vector2(1,2),
-                new Vector2(3,3)
-            };
-        }
 
         List<Unit> initU = new List<Unit>() {
             SpawnUnit(spawnCoords[0], loadout.unitPrefabs[0]),
@@ -90,10 +83,6 @@ public class PlayerManager : UnitManager {
         nail.gameObject.transform.parent = unitParent.transform;      
 
         pc = GetComponent<PlayerController>();
-
-// NEEDS IF STATEMENT FOR BOOL USED IN LOADOUT INITIALIZATION
-        scenario.StartCoroutine(scenario.FirstTurn());
-// END HERE
     }
 
 // Overriden functionality

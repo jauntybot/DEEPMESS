@@ -33,7 +33,6 @@ public class TutorialSequence : MonoBehaviour
     [SerializeField] Transform peekButton, undoButton;
 
     int coStep = 0;
-    public bool skip;
 
 
     public void Initialize(ScenarioManager manager) {
