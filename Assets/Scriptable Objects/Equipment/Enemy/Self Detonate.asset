@@ -20,17 +20,21 @@ MonoBehaviour:
   gridColor: 1
   vfx: {fileID: 0}
   multiselect: 0
-  adjacency: 4
   firstTarget: {fileID: 0}
-  energyCost: 1
+  adjacency: 4
   range: 1
+  aoeAdjacency: 0
+  aoeRange: 0
+  energyCost: 1
   animDur: 0.5
-  filterValid: 0
   filters:
   - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
   - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
+  _filters: []
   targetTypes:
   - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
   - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
   selectSFX: {fileID: 0}
   useSFX: {fileID: 0}
+  selfDetonateSFX: {fileID: 11400000, guid: 731af6dd17c754441bc9a6a6f48185f9, type: 2}
+  chargeSFX: {fileID: 11400000, guid: f8ab0cf6cd0c147e58924800fe1ff5c6, type: 2}

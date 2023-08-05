@@ -6,6 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Equipment/Attack/Detonate")]
 public class SelfDetonate : EquipmentData
 {
+    [SerializeField] private SFX selfDetonateSFX, chargeSFX;
 
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
@@ -33,9 +34,11 @@ public class SelfDetonate : EquipmentData
         EnemyDetonateUnit u = (EnemyDetonateUnit)user;
         if (!u.primed) {
             u.PrimeSelf();
+            user.PlaySound(chargeSFX);
         } else {
 
             u.Explode();
+            user.PlaySound(selfDetonateSFX);
 
 // Apply damage to units in AOE
             List<Vector2> aoe = EquipmentAdjacency.GetAdjacent(user.coord, range, this, targetTypes);

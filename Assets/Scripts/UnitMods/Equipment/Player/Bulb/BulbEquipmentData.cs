@@ -7,6 +7,7 @@ public class BulbEquipmentData : EquipmentData
 {
 
     [SerializeField] protected GameObject bulbPrefab;
+    [SerializeField] SFX bulbExplodeSFX, bulbThrowSFX;
 
     public override void EquipEquipment(GridElement user)
     {
@@ -19,9 +20,9 @@ public class BulbEquipmentData : EquipmentData
     {
         GameObject bulb = Instantiate(bulbPrefab, user.transform.position, Quaternion.identity, user.transform);
         bulb.GetComponent<SpriteRenderer>().sortingOrder = user.grid.SortOrderFromCoord(target.coord);
-
-
-
+        
+        user.PlaySound(bulbThrowSFX);
+        
         Vector3 origin = user.grid.PosFromCoord(user.coord);
         Vector3 dest = user.grid.PosFromCoord(target.coord);
         float h = 0.25f + Vector2.Distance(user.coord, target.coord) / 2;
@@ -33,6 +34,7 @@ public class BulbEquipmentData : EquipmentData
             yield return new WaitForSecondsRealtime(1/Util.fps);
             timer += Time.deltaTime;    
         }
+        user.PlaySound(bulbExplodeSFX);
         
         bulb.GetComponent<Animator>().SetTrigger("Apply");
         yield return base.UseEquipment(user, target);

@@ -20,16 +20,20 @@ MonoBehaviour:
   gridColor: 2
   vfx: {fileID: 0}
   multiselect: 0
-  adjacency: 6
   firstTarget: {fileID: 0}
-  energyCost: 0
+  adjacency: 6
   range: 3
+  aoeAdjacency: 0
+  aoeRange: 0
+  energyCost: 0
   animDur: 0.15
-  filterValid: 0
   filters: []
+  _filters: []
   targetTypes:
   - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
   selectSFX: {fileID: 0}
   useSFX: {fileID: 0}
   bulbPrefab: {fileID: 3021389937733381571, guid: a5558a63d761952419717efbbcd76f8e, type: 3}
+  bulbExplodeSFX: {fileID: 11400000, guid: c0757357109824712a83a45a8007530f, type: 2}
+  bulbThrowSFX: {fileID: 11400000, guid: 17cc868967e9ebb43b978a6968af8d58, type: 2}
   supportType: 1

@@ -10,12 +10,14 @@ public class TileBulb : Tile
     
     public BulbEquipmentData bulb;
     public bool harvested;
+    public SFX harvestSFX;
 
     public void HarvestBulb(PlayerUnit pu) {
         if (!harvested) {
             anim.SetBool("Harvest", true);
             pu.ui.UpdateLoadout(bulb);
             harvested = true;
+            PlaySound(harvestSFX);
         }
     }
 
