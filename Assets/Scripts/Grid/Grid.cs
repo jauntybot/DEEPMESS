@@ -18,7 +18,7 @@ public class Grid : MonoBehaviour {
     [SerializeField] GameObject enemyPrefab;
 
     [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.15f, 0.35f);
-    [SerializeField] GameObject sqrPrefab, bloodTilePrefab, bileTilePrefab, bulbTilePrefab, selectedCursor;
+    [SerializeField] GameObject tilePrefab, selectedCursor;
     [SerializeField] static float fadeInDur = 0.25f;
     public FloorDefinition lvlDef;
 
@@ -34,7 +34,7 @@ public class Grid : MonoBehaviour {
     }
 
 // loop through grid x,y, generate Tile grid elements, update them and add to list
-    public IEnumerator GenerateGrid(int i, GameObject enemyOverride = null) {
+    public IEnumerator GenerateGrid(int i) {
         List<Vector2> altTiles = new List<Vector2>();
 
         foreach (FloorDefinition.Spawn spawn in lvlDef.initSpawns) {
@@ -46,9 +46,9 @@ public class Grid : MonoBehaviour {
             for (int x = 0; x < FloorManager.gridSize; x++) {
                 Tile tile = null;
                 if (altTiles.Contains(new Vector2(x,y)))
-                    tile = Instantiate(lvlDef.initSpawns.Find(s => s.coord == new Vector2(x,y)).asset.prefab, this.transform).GetComponent<Tile>();
+                    tile = Instantiate(lvlDef.initSpawns.Find(s => s.coord == new Vector2(x,y)).asset.prefab, transform).GetComponent<Tile>();
                 else
-                    tile = Instantiate(sqrPrefab, this.transform).GetComponent<Tile>();
+                    tile = Instantiate(tilePrefab, transform).GetComponent<Tile>();
 // Assign Tile white or black
                 tile.white=false;
                 if (x%2==0) { if (y%2==0) tile.white=true; } 
@@ -66,7 +66,7 @@ public class Grid : MonoBehaviour {
         selectedCursor.transform.SetAsLastSibling();
         index = i;
 
-        SpawnLevelDefinition(enemyOverride);
+        SpawnLevelDefinition();
        
         NestedFadeGroup.NestedFadeGroup fade = GetComponent<NestedFadeGroup.NestedFadeGroup>();
 
@@ -82,11 +82,11 @@ public class Grid : MonoBehaviour {
     }
 
 // Function that instantiates and houses FloorAssets that are defined by the currently loaded Floor Definition
-    void SpawnLevelDefinition(GameObject enemyOverride = null) {
+    void SpawnLevelDefinition() {
         List<Vector2> nailSpawns = new List<Vector2>();
         List<Vector2> slagSpawns = new List<Vector2>();
 // Create new EnemyManager if this floor is not overriden by Tutorial
-        enemy = Instantiate(enemyOverride == null ? enemyPrefab : enemyOverride, this.transform).GetComponent<EnemyManager>(); 
+        enemy = Instantiate(enemyPrefab, transform).GetComponent<EnemyManager>(); 
         enemy.transform.SetSiblingIndex(2);
         enemy.StartCoroutine(enemy.Initialize());
         
@@ -115,6 +115,8 @@ public class Grid : MonoBehaviour {
                 neutralGE.UpdateElement(spawn.coord);
             }
         }
+        if (slagSpawns.Count > 0)
+
         floorManager.nailSpawnOverrides = nailSpawns;
         floorManager.playerDropOverrides = slagSpawns;
     }

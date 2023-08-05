@@ -8,7 +8,7 @@ public class EnemyManager : UnitManager {
     public event OnEnemyCondition WipedOutCallback;
     protected Coroutine ongoingTurn;
 
-    public override IEnumerator Initialize(bool tut = false)
+    public override IEnumerator Initialize()
     {
         yield return base.Initialize();
     }

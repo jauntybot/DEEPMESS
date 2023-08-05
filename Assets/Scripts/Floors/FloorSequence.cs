@@ -7,10 +7,11 @@ using UnityEngine;
 public class FloorSequence : ScriptableObject {
 
     public List<FloorPacket> packets;
-    List<FloorPacket> localPackets;
+    [HideInInspector] public List<FloorPacket> localPackets;
     public FloorPacket activePacket;
 
-    public int floorsTutorial, floorsI, floorsII, floorsIII, floorsBoss;
+    [HideInInspector] public int floorsTutorial;
+    public int floorsI, floorsII, floorsIII, floorsBoss;
     public FloorPacket.PacketType currentThreshold;
     int floorsGot = 0;
 
@@ -34,11 +35,11 @@ public class FloorSequence : ScriptableObject {
         activePacket.packetType = options[index].packetType;
 
         activePacket.firstFloors = new List<FloorDefinition>();
-        for (int i = options[index].firstFloors.Count - 1; i >= 0; i--) {
+        for (int i = 0; i <= options[index].firstFloors.Count - 1; i++) {
             activePacket.firstFloors.Add(options[index].firstFloors[i]);
         }
         activePacket.floors = new List<FloorDefinition>();
-        for (int i = options[index].floors.Count - 1; i >= 0; i--) {
+        for (int i = 0; i <= options[index].floors.Count - 1; i++) {
             activePacket.floors.Add(options[index].floors[i]);
         }
 
@@ -73,24 +74,27 @@ public class FloorSequence : ScriptableObject {
         return false;
     }
 
-    public FloorDefinition GetFloor() {
+    public FloorDefinition GetFloor(bool ordered = false) {
         ThresholdCheck();
 
         if (activePacket.packetType != currentThreshold || activePacket.floors.Count == 0) {
             StartPacket(currentThreshold);
             if (activePacket.packetType != FloorPacket.PacketType.BOSS) {
-                FloorDefinition firstFloor = activePacket.firstFloors[Random.Range(0, activePacket.firstFloors.Count-1)];
+                int index = ordered ? 0 : Random.Range(0, activePacket.firstFloors.Count-1);
+                FloorDefinition firstFloor = activePacket.firstFloors[index];
                 activePacket.firstFloors.Remove(firstFloor);
                 floorsGot += 1;
                 return firstFloor;
             } else {
-                FloorDefinition firstFloor = activePacket.floors[Random.Range(0, activePacket.floors.Count-1)];
+                int index = ordered ? 0 : Random.Range(0, activePacket.floors.Count-1);
+                FloorDefinition firstFloor = activePacket.floors[index];
                 activePacket.floors.Remove(firstFloor);
                 floorsGot += 1;
                 return firstFloor;
             }
         } else {
-            FloorDefinition floor = activePacket.floors[Random.Range(0, activePacket.floors.Count-1)];
+            int index = ordered ? 0 : Random.Range(0, activePacket.floors.Count-1);
+            FloorDefinition floor = activePacket.floors[index];
             activePacket.floors.Remove(floor);
             floorsGot += 1;
             return floor;

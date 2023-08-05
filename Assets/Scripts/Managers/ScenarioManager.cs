@@ -23,12 +23,12 @@ public class ScenarioManager : MonoBehaviour
 // Instanced refs
     [HideInInspector] public UIManager uiManager;
     TutorialSequence tutorial;
-    FloorManager floorManager;
+    [HideInInspector] public FloorManager floorManager;
     [SerializeField] string resetSceneString;
     public EnemyManager currentEnemy;
     public PlayerManager player;
 
-    [SerializeField] MessagePanel messagePanel;
+    [SerializeField] public MessagePanel messagePanel;
 
 
 // State machines
@@ -44,35 +44,26 @@ public class ScenarioManager : MonoBehaviour
     {
         if (UIManager.instance)
             uiManager = UIManager.instance;
-        if (TutorialSequence.instance) 
-            tutorial = TutorialSequence.instance;
-            
-        
-        bool tut = false;
 
         if (FloorManager.instance) 
         {
             floorManager = FloorManager.instance;
-            if (tutorial) {
-                if (tutorial.skip)
-                    yield return StartCoroutine(floorManager.GenerateFloor()); 
-                else {
-                    tut = true;
-                    for (int i = 0; i <= tutorial.scriptedFloors.Count - 1; i++) 
-                        //floorManager.floorDefinitions.Insert(i, tutorial.scriptedFloors[i]);
-                    yield return StartCoroutine(floorManager.GenerateFloor(tutorial.tutorialFloorPrefab, tutorial.tutorialEnemyPrefab));
-                }
-            } else
-                yield return StartCoroutine(floorManager.GenerateFloor()); 
+            floorManager.floorSequence.Init();
+            if (TutorialSequence.instance) {
+                tutorial = TutorialSequence.instance;
+                tutorial.Initialize(this);
+            }
+            
+            yield return StartCoroutine(floorManager.GenerateFloor()); 
+
             currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
             player.transform.parent = floorManager.currentFloor.transform;
         }
         resetSceneString = SceneManager.GetActiveScene().name;
     
-        yield return StartCoroutine(player.Initialize(tut));
+        yield return StartCoroutine(player.Initialize());
 
-        if (tutorial)
-            tutorial.Initialize(this);
+        StartCoroutine(FirstTurn());
     }
 
     public IEnumerator FirstTurn() {
@@ -81,16 +72,10 @@ public class ScenarioManager : MonoBehaviour
             u.hitbox.enabled = false;
         }
         if (tutorial) {
-            if (!tutorial.skip) {
                 foreach (GridElement ge in player.units)
                     floorManager.currentFloor.RemoveElement(ge);
                     
-                yield return StartCoroutine(SwitchTurns(Turn.Descent, Scenario.Combat));
-                yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3]} ));
-                yield return StartCoroutine(floorManager.GenerateNextFloor(TutorialSequence.instance.tutorialFloorPrefab, TutorialSequence.instance.tutorialEnemyPrefab));
                 StartCoroutine(tutorial.Tutorial());
-            } else 
-                yield return StartCoroutine(PlayerEnter());
         } else 
             yield return StartCoroutine(PlayerEnter());
     }
@@ -165,7 +150,7 @@ public class ScenarioManager : MonoBehaviour
                         StartCoroutine(currentEnemy.TakeTurn(false));
                 }
                 else if (currentEnemy.units.Count <= 0) {
-                   floorManager.Descend(prevTurn == Turn.Descent, currentEnemy is TutorialEnemyManager);
+                   floorManager.Descend(prevTurn == Turn.Descent);
                    Debug.Log("Empty floor descent");
                 }
             break;
@@ -240,7 +225,10 @@ public class ScenarioManager : MonoBehaviour
 // public function for UI buttons
     public void EndTurn() 
     {
-        StartCoroutine(SwitchTurns());
+        if (floorManager.floorSequence.currentThreshold == FloorPacket.PacketType.Tutorial)
+            tutorial.SwitchTurns();
+        else
+            StartCoroutine(SwitchTurns());
     }
 
     public IEnumerator Win() 

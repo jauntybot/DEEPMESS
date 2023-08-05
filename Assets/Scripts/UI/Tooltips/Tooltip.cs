@@ -12,21 +12,27 @@ public class Tooltip : MonoBehaviour
     public TextMeshProUGUI headerField;
     public TextMeshProUGUI contentField;
     public LayoutElement layoutElement;
+    [SerializeField] GameObject gifContainer;
+    [SerializeField] Animator anim;
     
     public int textWrapLimit;
 
     [SerializeField] RectTransform rectTransform;
 
-    public virtual void SetText(string content, string header = "", bool clickToSkip = false)
+    public virtual void SetText(string content, string header = "", bool clickToSkip = false, Animator gif = null)
     {
-        if (string.IsNullOrEmpty(header))
-        {
+        if (string.IsNullOrEmpty(header)) 
             headerField.gameObject.SetActive(false);
-        }
-        else
-        {
+        else {
             headerField.gameObject.SetActive(true);
             headerField.text = header;
+        }
+
+        if (gif == null)
+            gifContainer.SetActive(false);
+        else {
+            gifContainer.SetActive(true);
+            anim.runtimeAnimatorController = gif.runtimeAnimatorController;
         }
 
         contentField.text = content;
@@ -40,17 +46,20 @@ public class Tooltip : MonoBehaviour
         transform.GetChild(0).gameObject.SetActive(true);
     }
 
-    public virtual void SetText(Vector2 pos, string content, string header = "",  bool clickToSkip = false) {
-        if (string.IsNullOrEmpty(header))
-        {
+    public virtual void SetText(Vector2 pos, string content, string header = "",  bool clickToSkip = false,  RuntimeAnimatorController gif = null) {
+        if (string.IsNullOrEmpty(header)) 
             headerField.gameObject.SetActive(false);
-        }
-        else
-        {
+        else {
             headerField.gameObject.SetActive(true);
             headerField.text = header;
         }
 
+        if (gif == null)
+            gifContainer.SetActive(false);
+        else {
+            gifContainer.SetActive(true);
+            anim.runtimeAnimatorController = gif;
+        }
         contentField.text = content;
 
         //limit text width

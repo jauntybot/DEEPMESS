@@ -10,14 +10,15 @@ public class DialogueTooltip : Tooltip
     [SerializeField] Button clickToSkip;
     [SerializeField] SFX nailSpeak;
     [SerializeField] GameObject clickToAdvanceText;
+
     AudioSource audioSource;
 
     void Start() {
         audioSource = GetComponent<AudioSource>();
     }
 
-    public override void SetText(Vector2 pos, string content, string header = "", bool clickToSkip = false) {
-        base.SetText(pos, content, header, clickToSkip);
+    public override void SetText(Vector2 pos, string content, string header = "", bool clickToSkip = false,  RuntimeAnimatorController gif = null) {
+        base.SetText(pos, content, header, clickToSkip, gif);
         PlaySound(nailSpeak);
         if (clickToSkip)     
             StartCoroutine(WaitForClick());

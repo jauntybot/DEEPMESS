@@ -14,7 +14,7 @@ public class TutorialEnemyManager : EnemyManager
         if (scenario.currentEnemy == this && scenario.currentTurn != ScenarioManager.Turn.Descent) {
             if (units.Count <= 0) {
                 EndTurnEarly();
-                scenario.player.TriggerDescent(true);
+                scenario.player.TriggerDescent();
             }
         }
     }
