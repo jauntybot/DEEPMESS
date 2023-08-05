@@ -444,8 +444,8 @@ public class PlayerManager : UnitManager {
         }
     }
 
-    public void TriggerDescent(bool tut = false) {
-        floorManager.Descend(false, tut);
+    public void TriggerDescent() {
+        floorManager.Descend(false);
     }
 
     public virtual void DescendGrids(Grid newGrid) {

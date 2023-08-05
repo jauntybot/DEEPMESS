@@ -207,7 +207,7 @@ public class HammerData : EquipmentData
         if (target is Nail) {
             PlayerManager manager = (PlayerManager)user.manager;
             yield return new WaitForSecondsRealtime(0.25f);
-            manager.TriggerDescent(user.grid.enemy is TutorialEnemyManager);
+            manager.TriggerDescent();
         }
 
     }

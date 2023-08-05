@@ -158,6 +158,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9872673b7ffca7246a19b5fb28103deb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
   index: 0
   gridContainer: {fileID: 5672955730525473585}
   neutralGEContainer: {fileID: 6633346900185328516}
@@ -165,13 +166,9 @@ MonoBehaviour:
   enemy: {fileID: 0}
   enemyPrefab: {fileID: 8294248095137744425, guid: 317783b74d19859469fed42b0fab219b, type: 3}
   ORTHO_OFFSET: {x: 1.12, y: 0.35}
-  sqrPrefab: {fileID: 8989576065795441841, guid: fa0dbb52d1a1543a2b64b9ca668137e5, type: 3}
-  bloodTilePrefab: {fileID: 8989576065795441841, guid: 0e8a81fb4ddde9e41b216d8f13ac1144, type: 3}
-  bileTilePrefab: {fileID: 8989576065795441841, guid: 41d15b15104197a4a986c3b9a82a1315, type: 3}
-  gridCursor: {fileID: 675793754582529034}
+  tilePrefab: {fileID: 8989576065795441841, guid: fa0dbb52d1a1543a2b64b9ca668137e5, type: 3}
   selectedCursor: {fileID: 3587223527213720723}
   lvlDef: {fileID: 0}
-  offWhite: {r: 0.9150943, g: 0.9150943, b: 0.9150943, a: 1}
   sqrs: []
   gridElements: []
   overrideHighlight: 0
@@ -380,11 +377,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 896d4e562711d9544907b933c391bc46, type: 3}
---- !u!1 &675793754582529034 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7837303882697225820, guid: 896d4e562711d9544907b933c391bc46, type: 3}
-  m_PrefabInstance: {fileID: 7323790385206297174}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7816673094121499447 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 709653730698701153, guid: 896d4e562711d9544907b933c391bc46, type: 3}

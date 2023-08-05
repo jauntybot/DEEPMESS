@@ -23,12 +23,12 @@ public class ScenarioManager : MonoBehaviour
 // Instanced refs
     [HideInInspector] public UIManager uiManager;
     TutorialSequence tutorial;
-    FloorManager floorManager;
+    [HideInInspector] public FloorManager floorManager;
     [SerializeField] string resetSceneString;
     public EnemyManager currentEnemy;
     public PlayerManager player;
 
-    [SerializeField] MessagePanel messagePanel;
+    [SerializeField] public MessagePanel messagePanel;
 
 
 // State machines
@@ -44,15 +44,16 @@ public class ScenarioManager : MonoBehaviour
     {
         if (UIManager.instance)
             uiManager = UIManager.instance;
-        if (TutorialSequence.instance) 
-            tutorial = TutorialSequence.instance;
 
         if (FloorManager.instance) 
         {
             floorManager = FloorManager.instance;
-            if (tutorial) {
-                floorManager.floorSequence.currentThreshold = FloorPacket.PacketType.Tutorial;    
+            floorManager.floorSequence.Init();
+            if (TutorialSequence.instance) {
+                tutorial = TutorialSequence.instance;
+                tutorial.Initialize(this);
             }
+            
             yield return StartCoroutine(floorManager.GenerateFloor()); 
 
             currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
@@ -61,9 +62,6 @@ public class ScenarioManager : MonoBehaviour
         resetSceneString = SceneManager.GetActiveScene().name;
     
         yield return StartCoroutine(player.Initialize());
-
-        if (tutorial)
-            tutorial.Initialize(this);
 
         StartCoroutine(FirstTurn());
     }
@@ -152,7 +150,7 @@ public class ScenarioManager : MonoBehaviour
                         StartCoroutine(currentEnemy.TakeTurn(false));
                 }
                 else if (currentEnemy.units.Count <= 0) {
-                   floorManager.Descend(prevTurn == Turn.Descent, currentEnemy is TutorialEnemyManager);
+                   floorManager.Descend(prevTurn == Turn.Descent);
                    Debug.Log("Empty floor descent");
                 }
             break;
@@ -227,7 +225,10 @@ public class ScenarioManager : MonoBehaviour
 // public function for UI buttons
     public void EndTurn() 
     {
-        StartCoroutine(SwitchTurns());
+        if (floorManager.floorSequence.currentThreshold == FloorPacket.PacketType.Tutorial)
+            tutorial.SwitchTurns();
+        else
+            StartCoroutine(SwitchTurns());
     }
 
     public IEnumerator Win() 

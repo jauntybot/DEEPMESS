@@ -19,6 +19,9 @@ public class BulbEquipmentData : EquipmentData
     {
         GameObject bulb = Instantiate(bulbPrefab, user.transform.position, Quaternion.identity, user.transform);
         bulb.GetComponent<SpriteRenderer>().sortingOrder = user.grid.SortOrderFromCoord(target.coord);
+
+
+
         Vector3 origin = user.grid.PosFromCoord(user.coord);
         Vector3 dest = user.grid.PosFromCoord(target.coord);
         float h = 0.25f + Vector2.Distance(user.coord, target.coord) / 2;
