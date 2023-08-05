@@ -17,12 +17,12 @@ public class DialogueTooltip : Tooltip
         audioSource = GetComponent<AudioSource>();
     }
 
-    public override void SetText(Vector2 pos, string content, string header = "", bool clickToSkip = false,  List<RuntimeAnimatorController> gif = null) {
-        base.SetText(pos, content, header, clickToSkip, gif);
+    public override void SetText(string content, string header = "", bool clickToSkip = false,  List<RuntimeAnimatorController> gif = null) {
+        base.SetText(content, header, clickToSkip, gif);
+        
         PlaySound(nailSpeak);
         if (clickToSkip)     
             StartCoroutine(WaitForClick());
-        
     }
 
     public IEnumerator WaitForClick() {

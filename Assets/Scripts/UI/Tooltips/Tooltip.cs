@@ -6,21 +6,23 @@ using UnityEngine.UI;
 
 public class Tooltip : MonoBehaviour
 {
-    public enum Alignment { ToCursor, Fixed };
+    public enum Alignment { ToCursor, CenterScreen, Fixed };
     public Alignment align;
 
     public TextMeshProUGUI headerField;
     public TextMeshProUGUI contentField;
     public LayoutElement layoutElement;
     [SerializeField] GameObject gifContainer;
-    [SerializeField] Animator anim;
+    [SerializeField] List<Animator> gifAnims;
     
     public int textWrapLimit;
 
     [SerializeField] RectTransform rectTransform;
 
-    public virtual void SetText(string content, string header = "", bool clickToSkip = false, Animator gif = null)
+    public virtual void SetText(string content, string header = "", bool clickToSkip = false, List<RuntimeAnimatorController> gif = null)
     {
+        transform.GetChild(0).gameObject.SetActive(true);
+        
         if (string.IsNullOrEmpty(header)) 
             headerField.gameObject.SetActive(false);
         else {
@@ -32,60 +34,52 @@ public class Tooltip : MonoBehaviour
             gifContainer.SetActive(false);
         else {
             gifContainer.SetActive(true);
-            anim.runtimeAnimatorController = gif.runtimeAnimatorController;
+            gifAnims[0].runtimeAnimatorController = gif[0];
+            for (int i = 1; i <= gifAnims.Count - 1; i++) {
+                if (gif.Count - 1 < i)
+                    gifAnims[i].gameObject.SetActive(false);
+                else {
+                    gifAnims[i].runtimeAnimatorController = gif[i];
+                    gifAnims[i].gameObject.SetActive(true);
+                }
+            }
         }
 
         contentField.text = content;
 
         //limit text width
-        int headerLength = headerField.text.Length;
-        int contentLength = contentField.text.Length;
+        //int headerLength = headerField.text.Length;
+        //int contentLength = contentField.text.Length;
 
-        layoutElement.enabled = (headerLength > textWrapLimit || contentLength > textWrapLimit) ? true : false;
+        //layoutElement.enabled = (headerLength > textWrapLimit || contentLength > textWrapLimit) ? true : false;
 
-        transform.GetChild(0).gameObject.SetActive(true);
-    }
 
-    public virtual void SetText(Vector2 pos, string content, string header = "",  bool clickToSkip = false,  List<RuntimeAnimatorController> gifs = null) {
-        if (string.IsNullOrEmpty(header)) 
-            headerField.gameObject.SetActive(false);
-        else {
-            headerField.gameObject.SetActive(true);
-            headerField.text = header;
-        }
-
-        if (gifs == null)
-            gifContainer.SetActive(false);
-        else {
-            gifContainer.SetActive(true);
-            foreach (RuntimeAnimatorController gif in gifs)
-                anim.runtimeAnimatorController = gif;
-        }
-        contentField.text = content;
-
-        //limit text width
-        int headerLength = headerField.text.Length;
-        int contentLength = contentField.text.Length;
-
-        layoutElement.enabled = (headerLength > textWrapLimit || contentLength > textWrapLimit) ? true : false;
-
-        GetComponent<RectTransform>().anchoredPosition = pos;
-        transform.GetChild(0).gameObject.SetActive(true);
     }
 
     private void Update()
     {
+        switch (align) {
+            case Alignment.CenterScreen:
+                RectTransform anchor = transform.GetChild(0).GetComponent<RectTransform>();
+                anchor.anchorMin = new Vector2(0.5f, 0.5f);
+                anchor.anchorMax = new Vector2(0.5f, 0.5f);
+                anchor.anchoredPosition = new Vector2(0, anchor.rect.height/2);
+
+            break;
+            case Alignment.ToCursor:
+                Vector2 position = Input.mousePosition;
+                transform.position = position;
+
+                Vector2 localAnchor = Vector2.zero;
+                localAnchor.x = position.x < Screen.width/2 ? 0 : 1;
+                localAnchor.y = position.y < Screen.height/2 ? 0 : 1;
+
+                rectTransform.anchorMax = localAnchor; rectTransform.anchorMin = localAnchor; 
+                rectTransform.pivot = localAnchor;
+                rectTransform.anchoredPosition = new Vector2(25 - localAnchor.x * 50, 25 - localAnchor.y * 50);
+            break;
+        }
         if (align == Alignment.ToCursor) {
-            Vector2 position = Input.mousePosition;
-            transform.position = position;
-
-            Vector2 anchor = Vector2.zero;
-            anchor.x = position.x < Screen.width/2 ? 0 : 1;
-            anchor.y = position.y < Screen.height/2 ? 0 : 1;
-
-            rectTransform.anchorMax = anchor; rectTransform.anchorMin = anchor; 
-            rectTransform.pivot = anchor;
-            rectTransform.anchoredPosition = new Vector2(25 - anchor.x * 50, 25 - anchor.y * 50);
         }
     }
 }
