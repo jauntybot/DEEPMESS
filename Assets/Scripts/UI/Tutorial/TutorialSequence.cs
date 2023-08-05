@@ -31,6 +31,7 @@ public class TutorialSequence : MonoBehaviour
 
     [Header("GIF Serialization")]
     [SerializeField] RuntimeAnimatorController hittingTheNailAnim;
+    [SerializeField] RuntimeAnimatorController hittingEnemiesAnim, anvilAnim, bigThrowAnim, shieldAnim;
 
     [Header("Button Highlights")]
     [SerializeField] GameObject buttonHighlight;
@@ -87,6 +88,7 @@ public class TutorialSequence : MonoBehaviour
             if (scenario.player.units[0].coord.x == scenario.currentEnemy.units[0].coord.x || scenario.player.units[0].coord.y == scenario.currentEnemy.units[0].coord.y)
                 break;
         }
+        yield return new WaitForSecondsRealtime(0.25f);
         yield return StartCoroutine(HittingAnEnemy());
         while (true) {
             yield return null;
@@ -94,13 +96,14 @@ public class TutorialSequence : MonoBehaviour
         }
 
         yield return StartCoroutine(OnTurnMoveAndAP());
+
         cont = false;
         while (!cont) yield return null;
 
         yield return StartCoroutine(EnemyTurn());
         yield return new WaitForSecondsRealtime(0.25f);
         yield return StartCoroutine(Equipment());
-        floorManager.floorSequence.ThresholdCheck();
+        
         yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
         //PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
 
@@ -183,7 +186,7 @@ public class TutorialSequence : MonoBehaviour
 
         header = "Hitting the Nail";
         body = "The Hammer is our main tool. Throw it in a straight line to strike a target, then select a Slag for the Hammer to bounce back to. Strike the Nail with the Hammer and catch it with the Slag." + '\n';
-        tooltip.SetText(new Vector3(100,0,0), body, header, true, hittingTheNailAnim);
+        tooltip.SetText(new Vector3(100,0,0), body, header, true, new List<RuntimeAnimatorController>{ hittingTheNailAnim });
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -193,22 +196,6 @@ public class TutorialSequence : MonoBehaviour
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
 
-    }
-
-    public IEnumerator EnemyBehavior() {
-        screenFade.gameObject.SetActive(true);
-
-        header = "Enemy Behavior";
-        body = "Enemies can move and attack on their turn. These Monophics can move 2 tiles and strike anything next to them." + '\n';
-        tooltip.SetText(new Vector3(100,0,0), body, header, true);
-
-        while (!tooltip.skip) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-            
-        }
-
-        screenFade.SetTrigger("FadeOut");
-        tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 
     public IEnumerator NailPriming() {
@@ -231,7 +218,7 @@ public class TutorialSequence : MonoBehaviour
 
         header = "Hitting Enemies";
         body = "The Hammer can be bounced between Slags. Strike an enemy and select Squigglespike, the other Slag, to bounce it to." + '\n';
-        tooltip.SetText(new Vector3(100,0,0), body, header, true);
+        tooltip.SetText(new Vector3(100,0,0), body, header, true, new List<RuntimeAnimatorController>{ hittingEnemiesAnim });
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -257,12 +244,13 @@ public class TutorialSequence : MonoBehaviour
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 
+
     public IEnumerator Equipment() {
         screenFade.gameObject.SetActive(true);
 
         header = "Equipment";
         body = "Slags' equipment can be used once per floor. Each Slag has a unique ability that can give you a big advantage on the current floor or the one below." + '\n';
-        tooltip.SetText(new Vector3(100,0,0), body, header, true);
+        tooltip.SetText(new Vector3(100,0,0), body, header, true, new List<RuntimeAnimatorController>{ anvilAnim, bigThrowAnim, shieldAnim });
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -271,6 +259,22 @@ public class TutorialSequence : MonoBehaviour
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
 
+    }
+
+    public IEnumerator EnemyBehavior() {
+        screenFade.gameObject.SetActive(true);
+
+        header = "Enemy Behavior";
+        body = "Enemies can move and attack on their turn. These Monophics can move 2 tiles and strike anything next to them." + '\n';
+        tooltip.SetText(new Vector3(100,0,0), body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 
     public IEnumerator TutorialDescend() {
@@ -295,10 +299,11 @@ public class TutorialSequence : MonoBehaviour
                 floorManager.currentFloor.RemoveElement(scenario.player.units[0]); floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
                 floorManager.playerDropOverrides = new List<Vector2>();
                 yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement> { scenario.player.units[0], scenario.player.units[1], scenario.player.units[3] }));
-                floorManager.playerDropOverrides = new List<Vector2>{ tutorialPacket.floors[0].initSpawns.Find(s => s.asset.prefab.GetComponent<PlayerUnit>()).coord };
+                floorManager.playerDropOverrides = new List<Vector2>{ tutorialPacket.floors[1].initSpawns.Find(s => s.asset.prefab.GetComponent<PlayerUnit>()).coord };
                 floorManager.currentFloor.RemoveElement(scenario.player.units[2]);
                 yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[2] }));
                 yield return new WaitForSecondsRealtime(0.15f);
+                floorManager.floorSequence.ThresholdCheck();
             break;
         }
 
@@ -324,7 +329,7 @@ public class TutorialSequence : MonoBehaviour
     }
 
     public void SwitchTurns() {
-        cont = false;
+        StartCoroutine(EnemyTurn());
     }
 
 }
