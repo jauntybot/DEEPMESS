@@ -22,20 +22,24 @@ public class TutorialSequence : MonoBehaviour
     FloorManager floorManager;
     public FloorPacket tutorialPacket;
     
-    public DialogueTooltip tooltip;
+    public DialogueTooltip tooltip, brTooltip;
     public Animator screenFade;
     [HideInInspector] public string header, body;
     public bool blinking = false;
     bool cont = false;
-    bool enemyBehavior = false;
+    List<Unit> playerUnits = new List<Unit>();
 
     [Header("GIF Serialization")]
     [SerializeField] RuntimeAnimatorController hittingTheNailAnim;
-    [SerializeField] RuntimeAnimatorController hittingEnemiesAnim, anvilAnim, bigThrowAnim, shieldAnim;
+    [SerializeField] RuntimeAnimatorController hittingEnemiesAnim, anvilAnim, bigThrowAnim, shieldAnim, reviveAnim;
 
     [Header("Button Highlights")]
     [SerializeField] GameObject buttonHighlight;
     [SerializeField] Transform peekButton, undoButton;
+
+    [Header("Gameplay Optional Tooltips")]
+    bool enemyBehavior = false;
+    public bool undoEncountered, collisionEncountered, bulbEncountered, deathReviveEncountered, slotsEncountered = false;
 
     public void Initialize(ScenarioManager manager) {
         scenario = manager;
@@ -46,16 +50,25 @@ public class TutorialSequence : MonoBehaviour
         floorManager.floorSequence.floorsTutorial = 3;
         floorManager.floorSequence.localPackets.Add(tutorialPacket);
         
-        enemyBehavior = false;
+        enemyBehavior = false; undoEncountered = false; bulbEncountered = false; deathReviveEncountered = false; slotsEncountered = false;
+
     }
     
     public IEnumerator Tutorial() {
-        yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ scenario.player.units[3] }));
+        for (int i = 0; i <= scenario.player.units.Count - 1; i++) {
+            playerUnits.Add(scenario.player.units[i]);
+            if (scenario.player.units[i] is PlayerUnit pu) {
+                pu.ElementDisabled += StartDeathTut;
+            }
+        }
+        scenario.player.units.RemoveAt(1); scenario.player.units.RemoveAt(1);
+
+
+        yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ scenario.player.units[1] }));
         //foreach (Unit unit in scenario.player.units) unit.gameObject.SetActive(false);
         yield return new WaitForSecondsRealtime(0.15f);
         scenario.player.nail.ToggleNailState(Nail.NailState.Primed);
         yield return StartCoroutine(GenerateNextTutorialFloor(floorManager.floorSequence.GetFloor(true)));
-        yield return new WaitForSecondsRealtime(0.15f);
 
         yield return StartCoroutine(SplashMessage());
         
@@ -74,6 +87,7 @@ public class TutorialSequence : MonoBehaviour
                 break;
         }
 
+        yield return new WaitForSecondsRealtime(0.5f);
         yield return StartCoroutine(HittingTheNail());
         cont = false;
         while (!cont) yield return null;
@@ -81,20 +95,20 @@ public class TutorialSequence : MonoBehaviour
         scenario.currentTurn = ScenarioManager.Turn.Descent;
         yield return StartCoroutine(EnemyTurn());
 
-        yield return new WaitForSecondsRealtime(0.25f);
+        yield return new WaitForSecondsRealtime(1.25f);
         yield return StartCoroutine(NailPriming());
         while (true) {
             yield return null;
             if (scenario.player.units[0].coord.x == scenario.currentEnemy.units[0].coord.x || scenario.player.units[0].coord.y == scenario.currentEnemy.units[0].coord.y)
                 break;
         }
-        yield return new WaitForSecondsRealtime(0.25f);
+        yield return new WaitForSecondsRealtime(0.5f);
         yield return StartCoroutine(HittingAnEnemy());
         while (true) {
             yield return null;
-            if (scenario.player.units[0].energyCurrent == 0 || scenario.player.units[1].energyCurrent == 0) break;
+            if (scenario.player.units[0].energyCurrent == 0 || scenario.player.units[2].energyCurrent == 0) break;
         }
-
+        yield return new WaitForSecondsRealtime(1.5f);
         yield return StartCoroutine(OnTurnMoveAndAP());
 
         cont = false;
@@ -147,7 +161,7 @@ public class TutorialSequence : MonoBehaviour
 
         header = "WELCOME to DEEPMESS";
         body = "I am Bubbletack, an ancillary of the Slimemind that clings above. We've been making good progress through the thick skull of the Grand Designer, unraveling the secrets of the head as we go." + '\n';
-        tooltip.SetText(new Vector3(100,0,0), body, header, true);
+        tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -156,7 +170,7 @@ public class TutorialSequence : MonoBehaviour
         
         header = "";
         body = "We'll split off some more egregore for you to control, three mortal Slags to wield the tools of this depraved excavation. It's time to dig deep and make a mess.";
-        tooltip.SetText(new Vector3(100,0,0), body, header, true);
+        tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -169,7 +183,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         body = "This is one of our Slags, Flathead. It can move around the floor and use the Hammer to strike me and the Nail, sending everything down to the next floor. Click on the Slag to move it in line with the Nail." + '\n';
-        tooltip.SetText(new Vector3(100,0,0), body, header, true);
+        tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -186,7 +200,7 @@ public class TutorialSequence : MonoBehaviour
 
         header = "Hitting the Nail";
         body = "The Hammer is our main tool. Throw it in a straight line to strike a target, then select a Slag for the Hammer to bounce back to. Strike the Nail with the Hammer and catch it with the Slag." + '\n';
-        tooltip.SetText(new Vector3(100,0,0), body, header, true, new List<RuntimeAnimatorController>{ hittingTheNailAnim });
+        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ hittingTheNailAnim });
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -203,7 +217,7 @@ public class TutorialSequence : MonoBehaviour
 
         header = "Nail Priming";
         body = "Since I'm wrapped around the Nail, I need some time to get ready for another descent. When the Nail is not primed, it can't be hit by the Hammer." + '\n';
-        tooltip.SetText(new Vector3(100,0,0), body, header, true);
+        tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -218,7 +232,7 @@ public class TutorialSequence : MonoBehaviour
 
         header = "Hitting Enemies";
         body = "The Hammer can be bounced between Slags. Strike an enemy and select Squigglespike, the other Slag, to bounce it to." + '\n';
-        tooltip.SetText(new Vector3(100,0,0), body, header, true, new List<RuntimeAnimatorController>{ hittingEnemiesAnim });
+        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ hittingEnemiesAnim });
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -234,7 +248,7 @@ public class TutorialSequence : MonoBehaviour
 
         header = "Player Turn: Move and Action";
         body = "On your turn, each Slag can move and take an action. Descending down to the next floor ends your turn." + '\n';
-        tooltip.SetText(new Vector3(100,0,0), body, header, true);
+        tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -250,7 +264,7 @@ public class TutorialSequence : MonoBehaviour
 
         header = "Equipment";
         body = "Slags' equipment can be used once per floor. Each Slag has a unique ability that can give you a big advantage on the current floor or the one below." + '\n';
-        tooltip.SetText(new Vector3(100,0,0), body, header, true, new List<RuntimeAnimatorController>{ anvilAnim, bigThrowAnim, shieldAnim });
+        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ anvilAnim, bigThrowAnim, shieldAnim });
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -266,7 +280,7 @@ public class TutorialSequence : MonoBehaviour
 
         header = "Enemy Behavior";
         body = "Enemies can move and attack on their turn. These Monophics can move 2 tiles and strike anything next to them." + '\n';
-        tooltip.SetText(new Vector3(100,0,0), body, header, true);
+        tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -275,6 +289,89 @@ public class TutorialSequence : MonoBehaviour
 
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        CheckAllDone();
+    }
+
+    public IEnumerator PeekButton() {
+        
+        header = "Peek Button";
+        body = "The peek button lets you preview the next floor. You can see where enemies and other hazards are located." + '\n';
+        brTooltip.SetText(body, header, true);
+
+        while (!brTooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        brTooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
+    
+    public IEnumerator UndoTutorial() {
+        
+        header = "Undo Button";
+        body = "You can undo any Slags' movement. Once any Slag performs an action, however, you can't undo any previous moves. Plan accordingly." + '\n';
+        brTooltip.SetText(body, header, true);
+
+        while (!brTooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        undoEncountered = true;
+        brTooltip.transform.GetChild(0).gameObject.SetActive(false);
+        yield return new WaitForSecondsRealtime(0.15f);
+        scenario.player.UndoMove();
+        CheckAllDone();
+    }
+
+    public IEnumerator DescentDamage() {
+        collisionEncountered = true;
+
+        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
+            yield return null;
+        }
+        yield return new WaitForSecondsRealtime(0.25f);
+        screenFade.gameObject.SetActive(true);
+
+        header = "Descent Damage";
+        body = "Slags and enemies crush anything they land on, but take damage as a result." + '\n';
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        CheckAllDone();
+    }
+
+    void StartDeathTut(GridElement blank) {
+        if (!deathReviveEncountered)
+            StartCoroutine(DeathRevivTut());
+    }
+
+     public IEnumerator DeathRevivTut() {
+        deathReviveEncountered = true;
+
+        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
+            yield return null;
+        }
+        yield return new WaitForSecondsRealtime(0.25f);
+
+        screenFade.gameObject.SetActive(true);
+
+        header = "Unit Revive";
+        body = "Slags that have been downed can brought back into the fight. Strike the downed Slag with the Hammer to transfer 1HP from me to the Slag. It will come back with its move and action refreshed." + '\n';
+        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ reviveAnim });
+
+        while (!tooltip.skip) 
+            yield return new WaitForSecondsRealtime(1/Util.fps);   
+
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        CheckAllDone();
     }
 
     public IEnumerator TutorialDescend() {
@@ -287,19 +384,39 @@ public class TutorialSequence : MonoBehaviour
             case 2:
                 floorManager.currentFloor.RemoveElement(scenario.player.units[0]);
                 floorManager.playerDropOverrides = new List<Vector2>();
-                yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement> { scenario.player.units[0], scenario.player.units[3] }));
+                yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement> { scenario.player.units[0], scenario.player.units[1] }));
                 floorManager.playerDropOverrides = new List<Vector2>{ tutorialPacket.floors[0].initSpawns.Find(s => s.asset.prefab.GetComponent<PlayerUnit>()).coord };
-                floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
-                yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[1] }));
+                scenario.player.units.Add(playerUnits[1]);
+                floorManager.currentFloor.RemoveElement(scenario.player.units[2]);
+                yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[2] }));
                 yield return new WaitForSecondsRealtime(0.15f);
 
 
             break;
             case 3:
+                scenario.player.units = playerUnits;
+
                 floorManager.currentFloor.RemoveElement(scenario.player.units[0]); floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
                 floorManager.playerDropOverrides = new List<Vector2>();
                 yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement> { scenario.player.units[0], scenario.player.units[1], scenario.player.units[3] }));
-                floorManager.playerDropOverrides = new List<Vector2>{ tutorialPacket.floors[1].initSpawns.Find(s => s.asset.prefab.GetComponent<PlayerUnit>()).coord };
+                
+                bool validCoord = false;
+                Vector2 spawn = Vector2.zero;
+
+        // Find a valid coord that a player unit is not in
+                while (!validCoord) {
+                    validCoord = true;
+                    
+                    spawn = new Vector2(Random.Range(0,7), Random.Range(0,7));
+                        
+                    foreach(GridElement ge in floorManager.currentFloor.gridElements) 
+                        if (ge.coord == spawn) validCoord = false;                    
+
+                    if (floorManager.currentFloor.sqrs.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Blood) validCoord = false;
+                }
+                
+                floorManager.playerDropOverrides = new List<Vector2>{ spawn };
+                
                 floorManager.currentFloor.RemoveElement(scenario.player.units[2]);
                 yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[2] }));
                 yield return new WaitForSecondsRealtime(0.15f);
@@ -331,5 +448,15 @@ public class TutorialSequence : MonoBehaviour
     public void SwitchTurns() {
         StartCoroutine(EnemyTurn());
     }
+
+    public void CheckAllDone() {
+        if (enemyBehavior && 
+            undoEncountered && 
+            bulbEncountered &&
+            deathReviveEncountered &&
+            slotsEncountered)
+            Destroy(gameObject);
+    }
+
 
 }

@@ -19,6 +19,7 @@ public class GridContextuals : MonoBehaviour
     [SerializeField] GameObject gridCursor, contextCursor;
     List<GameObject> aoeCursors = new List<GameObject>();
     Animator cursorAnimator;
+    [SerializeField] NeutralElementTooltip neutralTooltip;
 
     [SerializeField] public Color playerColor, enemyColor, equipColor, validColor, invalidColor;
     
@@ -48,6 +49,20 @@ public class GridContextuals : MonoBehaviour
     public void UpdateGridCursor(bool state, Vector2 coord, bool fill = false, bool _valid = true) {
         gridCursor.SetActive(state);
         gridCursor.transform.position = grid.PosFromCoord(coord);
+        
+        bool occupied = false;
+        foreach (GridElement ge in grid.CoordContents(coord)) {
+            if (ge is not Unit) {
+                occupied = true;
+                neutralTooltip.HoverOver(ge);
+            }
+        }
+        if (!occupied) {
+            Tile tile = grid.sqrs.Find(t => t.coord == coord);
+            if (tile != null)
+                neutralTooltip.HoverOver(tile);
+        } 
+
 
         Color c = _valid ? validColor : invalidColor;
         List<GameObject> cursors = new List<GameObject>();

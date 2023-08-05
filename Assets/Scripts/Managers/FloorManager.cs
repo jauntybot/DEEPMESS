@@ -427,6 +427,7 @@ public class FloorManager : MonoBehaviour
             }
 
             if (currentFloor.sqrs.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false;
+            if (currentFloor.sqrs.Find(sqr => sqr.coord == spawn) is TileBulb) validCoord = false;
         }
         
         nail.transform.position = nail.grid.PosFromCoord(spawn);
@@ -464,6 +465,12 @@ public class FloorManager : MonoBehaviour
 
 
     public IEnumerator TransitionPackets() {
+        for (int i = scenario.player.units.Count - 1; i >= 0; i-- ) {
+            Unit u = scenario.player.units[i];
+            if (u is not PlayerUnit && u is not Nail)
+                StartCoroutine(u.DestroyElement());
+        }
+        
         List<Unit> units = new List<Unit> { scenario.player.units[0], scenario.player.units[1], scenario.player.units[2], scenario.player.units[3] };
         List<Vector2> to = new List<Vector2> { currentFloor.PosFromCoord(new Vector2(3, 3)), currentFloor.PosFromCoord(new Vector2(4, 3)), currentFloor.PosFromCoord(new Vector2(3, 2)), currentFloor.PosFromCoord(new Vector2(5, 4)) };
         units[0].manager.transform.parent = transitionParent;

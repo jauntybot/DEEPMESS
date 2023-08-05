@@ -22,7 +22,7 @@ public class ScenarioManager : MonoBehaviour
 
 // Instanced refs
     [HideInInspector] public UIManager uiManager;
-    TutorialSequence tutorial;
+    [HideInInspector] public TutorialSequence tutorial;
     [HideInInspector] public FloorManager floorManager;
     [SerializeField] string resetSceneString;
     public EnemyManager currentEnemy;
@@ -52,6 +52,7 @@ public class ScenarioManager : MonoBehaviour
             if (TutorialSequence.instance) {
                 tutorial = TutorialSequence.instance;
                 tutorial.Initialize(this);
+                floorManager.previewManager.tut = true;
             }
             
             yield return StartCoroutine(floorManager.GenerateFloor()); 

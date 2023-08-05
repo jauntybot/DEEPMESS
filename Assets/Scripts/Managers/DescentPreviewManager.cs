@@ -11,10 +11,13 @@ public class DescentPreviewManager : MonoBehaviour
     public Grid currentFloor, alignmentFloor;
     [SerializeField] public GameObject upButton, downButton;
 
+    [HideInInspector] public bool tut;
 
     void Start() {
-        if (ScenarioManager.instance)
+        if (ScenarioManager.instance) {
             scenario = ScenarioManager.instance;
+            tut = scenario.tutorial != null;
+        }
         if (FloorManager.instance)
             floorManager = FloorManager.instance;
     }
@@ -64,12 +67,25 @@ public class DescentPreviewManager : MonoBehaviour
     public void PreviewButton(bool down) {
         int dir = down ? 1 : -1;
 
-        scenario.player.DeselectUnit();
-        if (!floorManager.transitioning && floorManager.floors.Count - 1 >= floorManager.currentFloor.index + dir) {
-            StartCoroutine(PreviewFloor(down, true));
-            if (UIManager.instance.gameObject.activeSelf)
-                UIManager.instance.PlaySound(down ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
+        if (tut && floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
+            StartCoroutine(PeekTutorial(down));
+        } else {
+            scenario.player.DeselectUnit();
+            if (!floorManager.transitioning && floorManager.floors.Count - 1 >= floorManager.currentFloor.index + dir) {
+                StartCoroutine(PreviewFloor(down, true));
+                if (UIManager.instance.gameObject.activeSelf)
+                    UIManager.instance.PlaySound(down ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
+            }
         }
+
+    }
+
+    IEnumerator PeekTutorial(bool down) {
+
+        tut = false;
+        yield return scenario.tutorial.StartCoroutine(scenario.tutorial.PeekButton());
+        PreviewButton(down);
+
     }
 
     public void UpdateFloors(Grid newFloor) {
