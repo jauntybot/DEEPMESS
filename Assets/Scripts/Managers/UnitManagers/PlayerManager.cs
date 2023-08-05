@@ -60,6 +60,7 @@ public class PlayerManager : UnitManager {
         if (FloorManager.instance) floorManager = FloorManager.instance;
 
         contextuals.Initialize(this);
+        lastHoveredCoord = new Vector2(0,0);
         gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
 
         List<Vector2> spawnCoords =new List<Vector2>{
@@ -415,6 +416,11 @@ public class PlayerManager : UnitManager {
     }
 
     public void UndoMove() {
+        if (scenario.tutorial != null && !scenario.tutorial.undoEncountered && floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
+            scenario.tutorial.StartCoroutine(scenario.tutorial.UndoTutorial());
+            return;
+        }
+
         if (selectedUnit)
             DeselectUnit();
         foreach (Unit u in units) 

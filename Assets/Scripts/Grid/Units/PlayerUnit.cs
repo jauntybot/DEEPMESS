@@ -125,7 +125,7 @@ public class PlayerUnit : Unit {
                 if (!droppedHammer) {
                     List<Unit> possiblePasses = new List<Unit>();
                     foreach (Unit u in pManager.units) {
-                        if (u is not Nail && !u.conditions.Contains(Status.Disabled) && u != this)
+                        if (u is PlayerUnit && !u.conditions.Contains(Status.Disabled) && u != this)
                             possiblePasses.Add(u);
                     }
                     if (possiblePasses.Count > 0) {                

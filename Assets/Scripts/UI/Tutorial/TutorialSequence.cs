@@ -22,21 +22,24 @@ public class TutorialSequence : MonoBehaviour
     FloorManager floorManager;
     public FloorPacket tutorialPacket;
     
-    public DialogueTooltip tooltip;
+    public DialogueTooltip tooltip, brTooltip;
     public Animator screenFade;
     [HideInInspector] public string header, body;
     public bool blinking = false;
     bool cont = false;
-    bool enemyBehavior = false;
     List<Unit> playerUnits = new List<Unit>();
 
     [Header("GIF Serialization")]
     [SerializeField] RuntimeAnimatorController hittingTheNailAnim;
-    [SerializeField] RuntimeAnimatorController hittingEnemiesAnim, anvilAnim, bigThrowAnim, shieldAnim;
+    [SerializeField] RuntimeAnimatorController hittingEnemiesAnim, anvilAnim, bigThrowAnim, shieldAnim, reviveAnim;
 
     [Header("Button Highlights")]
     [SerializeField] GameObject buttonHighlight;
     [SerializeField] Transform peekButton, undoButton;
+
+    [Header("Gameplay Optional Tooltips")]
+    bool enemyBehavior = false;
+    public bool undoEncountered, collisionEncountered, bulbEncountered, deathReviveEncountered, slotsEncountered = false;
 
     public void Initialize(ScenarioManager manager) {
         scenario = manager;
@@ -47,13 +50,17 @@ public class TutorialSequence : MonoBehaviour
         floorManager.floorSequence.floorsTutorial = 3;
         floorManager.floorSequence.localPackets.Add(tutorialPacket);
         
-        enemyBehavior = false;
+        enemyBehavior = false; undoEncountered = false; bulbEncountered = false; deathReviveEncountered = false; slotsEncountered = false;
+
     }
     
     public IEnumerator Tutorial() {
-        for (int i = 0; i <= scenario.player.units.Count - 1; i++) 
+        for (int i = 0; i <= scenario.player.units.Count - 1; i++) {
             playerUnits.Add(scenario.player.units[i]);
-
+            if (scenario.player.units[i] is PlayerUnit pu) {
+                pu.ElementDisabled += StartDeathTut;
+            }
+        }
         scenario.player.units.RemoveAt(1); scenario.player.units.RemoveAt(1);
 
 
@@ -282,6 +289,89 @@ public class TutorialSequence : MonoBehaviour
 
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        CheckAllDone();
+    }
+
+    public IEnumerator PeekButton() {
+        
+        header = "Peek Button";
+        body = "The peek button lets you preview the next floor. You can see where enemies and other hazards are located." + '\n';
+        brTooltip.SetText(body, header, true);
+
+        while (!brTooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        brTooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
+    
+    public IEnumerator UndoTutorial() {
+        
+        header = "Undo Button";
+        body = "You can undo any Slags' movement. Once any Slag performs an action, however, you can't undo any previous moves. Plan accordingly." + '\n';
+        brTooltip.SetText(body, header, true);
+
+        while (!brTooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        undoEncountered = true;
+        brTooltip.transform.GetChild(0).gameObject.SetActive(false);
+        yield return new WaitForSecondsRealtime(0.15f);
+        scenario.player.UndoMove();
+        CheckAllDone();
+    }
+
+    public IEnumerator DescentDamage() {
+        collisionEncountered = true;
+
+        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
+            yield return null;
+        }
+        yield return new WaitForSecondsRealtime(0.25f);
+        screenFade.gameObject.SetActive(true);
+
+        header = "Descent Damage";
+        body = "Slags and enemies crush anything they land on, but take damage as a result." + '\n';
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        CheckAllDone();
+    }
+
+    void StartDeathTut(GridElement blank) {
+        if (!deathReviveEncountered)
+            StartCoroutine(DeathRevivTut());
+    }
+
+     public IEnumerator DeathRevivTut() {
+        deathReviveEncountered = true;
+
+        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
+            yield return null;
+        }
+        yield return new WaitForSecondsRealtime(0.25f);
+
+        screenFade.gameObject.SetActive(true);
+
+        header = "Unit Revive";
+        body = "Slags that have been downed can brought back into the fight. Strike the downed Slag with the Hammer to transfer 1HP from me to the Slag. It will come back with its move and action refreshed." + '\n';
+        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ reviveAnim });
+
+        while (!tooltip.skip) 
+            yield return new WaitForSecondsRealtime(1/Util.fps);   
+
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        CheckAllDone();
     }
 
     public IEnumerator TutorialDescend() {
@@ -319,11 +409,8 @@ public class TutorialSequence : MonoBehaviour
                     
                     spawn = new Vector2(Random.Range(0,7), Random.Range(0,7));
                         
-                    foreach(Unit u in scenario.player.units) 
-                        if (u.coord == spawn) validCoord = false;
-                    foreach(Unit u in scenario.currentEnemy.units) 
-                        if (u.coord == spawn) validCoord = false;
-                    
+                    foreach(GridElement ge in floorManager.currentFloor.gridElements) 
+                        if (ge.coord == spawn) validCoord = false;                    
 
                     if (floorManager.currentFloor.sqrs.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Blood) validCoord = false;
                 }
@@ -361,5 +448,15 @@ public class TutorialSequence : MonoBehaviour
     public void SwitchTurns() {
         StartCoroutine(EnemyTurn());
     }
+
+    public void CheckAllDone() {
+        if (enemyBehavior && 
+            undoEncountered && 
+            bulbEncountered &&
+            deathReviveEncountered &&
+            slotsEncountered)
+            Destroy(gameObject);
+    }
+
 
 }

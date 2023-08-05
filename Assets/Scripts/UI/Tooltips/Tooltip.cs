@@ -11,7 +11,6 @@ public class Tooltip : MonoBehaviour
 
     public TextMeshProUGUI headerField;
     public TextMeshProUGUI contentField;
-    public LayoutElement layoutElement;
     [SerializeField] GameObject gifContainer;
     [SerializeField] List<Animator> gifAnims;
     
@@ -19,7 +18,7 @@ public class Tooltip : MonoBehaviour
 
     [SerializeField] RectTransform rectTransform;
 
-    public virtual void SetText(string content, string header = "", bool clickToSkip = false, List<RuntimeAnimatorController> gif = null)
+    public virtual void SetText(string content = "", string header = "", bool clickToSkip = false, List<RuntimeAnimatorController> gif = null)
     {
         transform.GetChild(0).gameObject.SetActive(true);
         
@@ -56,7 +55,7 @@ public class Tooltip : MonoBehaviour
 
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         switch (align) {
             case Alignment.CenterScreen:

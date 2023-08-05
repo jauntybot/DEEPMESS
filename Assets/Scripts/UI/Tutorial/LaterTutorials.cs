@@ -13,12 +13,7 @@ public class LaterTutorials : MonoBehaviour
 
     public void StartListening(PlayerManager player) {
         Debug.Log("start listening");
-        foreach (Unit u in player.units) {
-            if (u is PlayerUnit pu) {
-                pu.ElementDisabled += StartDeathTut;
-                
-            }
-        }
+
     }
 
     public IEnumerator CheckFloorDef(FloorDefinition floor) {
@@ -96,36 +91,8 @@ public class LaterTutorials : MonoBehaviour
         CheckAllDone();
     }
 
-    void StartDeathTut(GridElement blank) {
-        if (!deathReviveEncountered)
-            StartCoroutine(DeathRevivTut());
-    }
 
-    public IEnumerator DeathRevivTut() {
-        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) yield return null;
-        yield return new WaitForSecondsRealtime(0.25f);
 
-        deathReviveEncountered = true;
-        TutorialSequence.instance.screenFade.gameObject.SetActive(true);
-        content = "Oh no, one of your SLAGS has been downed. Don't worry, we can work together to bring it back into the fight.";
-        tooltip.SetText(content, "", true);
-        while (!tooltip.skip) {
-            yield return null;
-        }
-        content = "You can hit the downed SLAG with the HAMMER to take 1 of my HP and get the unit back on its feet.";
-        tooltip.SetText(content, "", true);
-        while (!tooltip.skip) {
-            yield return null;
-        }
-        TutorialSequence.instance.screenFade.SetTrigger("FadeOut");
-        content = "You can bounce the hammer back to any of your SLAGS, including the one you just revived." + '\n' + "The downed SLAG will come back with its move and action refreshed.";
-        tooltip.SetText(content);
-        while (true) {
-            yield return null;
-            if (Input.GetMouseButtonDown(0)) break;
-        }
-        tooltip.transform.GetChild(0).gameObject.SetActive(false);
-        CheckAllDone();
-    }
+   
 
 }

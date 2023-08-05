@@ -158,6 +158,8 @@ public class Unit : GridElement {
     }
 
     public virtual IEnumerator CollideFromAbove(GridElement subGE) {
+        if (manager.scenario.tutorial != null && !manager.scenario.tutorial.collisionEncountered)
+            manager.scenario.tutorial.StartCoroutine(manager.scenario.tutorial.DescentDamage());
         if (subGE is not GroundElement)
             yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
     }
