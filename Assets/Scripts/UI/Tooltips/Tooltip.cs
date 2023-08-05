@@ -46,7 +46,7 @@ public class Tooltip : MonoBehaviour
         transform.GetChild(0).gameObject.SetActive(true);
     }
 
-    public virtual void SetText(Vector2 pos, string content, string header = "",  bool clickToSkip = false,  RuntimeAnimatorController gif = null) {
+    public virtual void SetText(Vector2 pos, string content, string header = "",  bool clickToSkip = false,  List<RuntimeAnimatorController> gifs = null) {
         if (string.IsNullOrEmpty(header)) 
             headerField.gameObject.SetActive(false);
         else {
@@ -54,11 +54,12 @@ public class Tooltip : MonoBehaviour
             headerField.text = header;
         }
 
-        if (gif == null)
+        if (gifs == null)
             gifContainer.SetActive(false);
         else {
             gifContainer.SetActive(true);
-            anim.runtimeAnimatorController = gif;
+            foreach (RuntimeAnimatorController gif in gifs)
+                anim.runtimeAnimatorController = gif;
         }
         contentField.text = content;
 
