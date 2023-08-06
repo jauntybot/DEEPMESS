@@ -61,11 +61,12 @@ public class FloorManager : MonoBehaviour
     }
     #endregion
 
-    public void Init() {
+    public IEnumerator Init() {
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
         if (UIManager.instance) uiManager = UIManager.instance;
         betweenFloor = GetComponent<BetweenFloorManager>();
         floorSequence.Init();
+        yield return null;
     }
 
     public IEnumerator GenerateFloor(FloorDefinition definitionOverride = null) {

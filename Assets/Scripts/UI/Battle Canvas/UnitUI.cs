@@ -120,7 +120,6 @@ public class UnitUI : MonoBehaviour
         }
         if (pF) {
             Destroy(perFloor.gameObject);
-            Debug.Log("Destroy perfloor");
             perFloor = null;
         } 
         if (h) {
@@ -131,7 +130,7 @@ public class UnitUI : MonoBehaviour
             Destroy(bulb.gameObject);
             bulb = null;
         } 
-        
+
 // Add buttons unit owns but does not have
         for (int i = unit.equipment.Count - 1; i >= 0; i--) {
             if (unit.equipment[i] is not MoveData) {

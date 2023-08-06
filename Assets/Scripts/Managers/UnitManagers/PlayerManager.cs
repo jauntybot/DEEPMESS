@@ -107,8 +107,7 @@ public class PlayerManager : UnitManager {
         //u.UpdateElement(coord);
         //u.transform.position += new Vector3(0, floorManager.floorOffset, 0);
         
-        if (u is Nail)
-            u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
+        u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
             
                 
 // Initialize equipment from prefab

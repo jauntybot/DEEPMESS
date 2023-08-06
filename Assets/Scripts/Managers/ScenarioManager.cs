@@ -48,7 +48,7 @@ public class ScenarioManager : MonoBehaviour
         if (FloorManager.instance) 
         {
             floorManager = FloorManager.instance;
-            floorManager.Init();
+            yield return StartCoroutine(floorManager.Init());
             if (TutorialSequence.instance) {
                 tutorial = TutorialSequence.instance;
                 tutorial.Initialize(this);

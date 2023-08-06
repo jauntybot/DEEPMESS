@@ -41,7 +41,7 @@ public class TutorialSequence : MonoBehaviour
 
     [Header("Gameplay Optional Tooltips")]
     bool enemyBehavior = false;
-    public bool undoEncountered, nailDamageEncountered, bloodEncountered, collisionEncountered, bulbEncountered, basophicEncountered, deathReviveEncountered, slotsEncountered = false;
+    public bool hittingEnemies, undoEncountered, nailDamageEncountered, bloodEncountered, collisionEncountered, bulbEncountered, basophicEncountered, deathReviveEncountered, slotsEncountered = false;
 
     public void Initialize(ScenarioManager manager) {
         scenario = manager;
@@ -51,7 +51,7 @@ public class TutorialSequence : MonoBehaviour
         floorManager.floorSequence.floorsTutorial = 3;
         floorManager.floorSequence.localPackets.Add(tutorialPacket);
         
-        enemyBehavior = false; undoEncountered = false; bulbEncountered = false; deathReviveEncountered = false; slotsEncountered = false;
+        hittingEnemies = false; enemyBehavior = false; undoEncountered = false; bulbEncountered = false; deathReviveEncountered = false; slotsEncountered = false;
         descents = 0;
 
     }
@@ -109,7 +109,8 @@ public class TutorialSequence : MonoBehaviour
         StopCoroutine(co);
         yield return new WaitForSecondsRealtime(0.25f);
         yield return StartCoroutine(Equipment());
-        StartCoroutine(AttackingEnemies());
+        if (!hittingEnemies)
+            StartCoroutine(AttackingEnemies());
         
         yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
     }
@@ -204,6 +205,7 @@ public class TutorialSequence : MonoBehaviour
     }
 
     public IEnumerator AttackingEnemies() {
+        hittingEnemies = true;
         bool aligned = false;
         while (true) {
             yield return null;

@@ -155,7 +155,7 @@ public class EquipmentAdjacency : MonoBehaviour
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered
-                            if (data.filters == null || !data.filters.Find(f => f.GetType() == ge.GetType()) || !data.filters.Find(f => ge.GetType().IsSubclassOf(f.GetType()))) {
+                            if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord,current);
                                 break;
@@ -179,7 +179,7 @@ public class EquipmentAdjacency : MonoBehaviour
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered
-                            if (data.filters == null || !data.filters.Find(f => f.GetType() == ge.GetType()) || !data.filters.Find(f => ge.GetType().IsSubclassOf(f.GetType()))) {
+                            if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord, current);
                                 break;

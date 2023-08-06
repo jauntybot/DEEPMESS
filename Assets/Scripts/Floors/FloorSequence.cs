@@ -21,8 +21,7 @@ public class FloorSequence : ScriptableObject {
         activePacket.floors = new List<FloorDefinition>();
         
         floorsGot = 0;
-        currentThreshold = FloorPacket.PacketType.Tutorial;
-        if (floorsTutorial == 0) currentThreshold = FloorPacket.PacketType.I;
+        currentThreshold = FloorPacket.PacketType.I;
     }
 
     public void StartPacket(FloorPacket.PacketType type) {
