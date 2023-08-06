@@ -10,7 +10,7 @@ public class TileBulb : Tile
     
     public BulbEquipmentData bulb;
     public bool harvested;
-    public SFX harvestSFX;
+    [SerializeField] SFX harvestSFX;
 
     public void HarvestBulb(PlayerUnit pu) {
         if (!harvested) {
