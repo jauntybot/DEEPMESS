@@ -250,7 +250,7 @@ public class EquipmentAdjacency : MonoBehaviour
     }
 
     
-        public static List<Vector2> OfTypeOnBoardAdjacency(Vector2 from, List<GridElement> elements, Vector2 origin, Grid grid) {
+    public static List<Vector2> OfTypeOnBoardAdjacency(Vector2 from, List<GridElement> elements, Vector2 origin, Grid grid) {
         List<Vector2> _coords = new List<Vector2>();
         
         foreach (GridElement type in elements) {

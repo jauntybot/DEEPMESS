@@ -394,11 +394,8 @@ public class PlayerManager : UnitManager {
     }
 
     public override void DeselectUnit()
-    {
-        if (selectedUnit is PlayerUnit pu) {
-            if (pu.ui.perFloor) pu.ui.perFloor.DeselectEquipment(); if (pu.ui.hammer) pu.ui.hammer.DeselectEquipment(); if (pu.ui.bulb) pu.ui.bulb.DeselectEquipment();
-        
-        }
+    {       
+        if (selectedUnit is PlayerUnit pu) pu.ui.equipButtons[0].DeselectEquipment();
         base.DeselectUnit();
         turnBlink.BlinkEndTurn();
         prevCursorTargetState = false;

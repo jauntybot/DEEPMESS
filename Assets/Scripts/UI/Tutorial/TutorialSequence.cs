@@ -210,7 +210,7 @@ public class TutorialSequence : MonoBehaviour
         while (true) {
             yield return null;
             if (scenario.currentTurn == ScenarioManager.Turn.Player) {
-                Unit unit = scenario.player.units.Find(u => u.ui.hammer != null);
+                Unit unit = scenario.player.units.Find(u => u.equipment.Find(e => e is HammerData) != null);
                 foreach (Unit enemy in scenario.currentEnemy.units) {
                     if (unit.coord.x == enemy.coord.x || unit.coord.y == enemy.coord.y)
                         aligned = true;

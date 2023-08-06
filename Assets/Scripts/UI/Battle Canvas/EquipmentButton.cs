@@ -8,7 +8,7 @@ public class EquipmentButton : MonoBehaviour
     UnitUI ui;
     public EquipmentData data;
     bool hammer = false;
-    PlayerUnit unit;
+    [HideInInspector] public PlayerUnit unit;
     [SerializeField] Button button;
 
     Image bg;
@@ -65,13 +65,15 @@ public class EquipmentButton : MonoBehaviour
         }
     }
     public void DeselectEquipment() {
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(SelectEquipment);
+        if (button) {
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(SelectEquipment);
 
-        disarmOverlay.SetActive(false);
-        selected = false;
-        
-        unit.ui.UpdateEquipmentButtons();
+            disarmOverlay.SetActive(false);
+            selected = false;
+            
+            unit.ui.UpdateEquipmentButtons();
+        }
     }
 
     public void DeselectInclusive() {

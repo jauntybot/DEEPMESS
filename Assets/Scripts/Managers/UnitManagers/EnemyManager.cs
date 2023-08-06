@@ -62,7 +62,7 @@ public class EnemyManager : UnitManager {
                 yield return ongoingTurn;
                 yield return new WaitForSecondsRealtime(0.125f);
             } else {
-                ongoingTurn = StartCoroutine(ScatterTurn(enemy));
+                ongoingTurn = StartCoroutine(enemy.ScatterTurn());
                 yield return ongoingTurn;
                 yield return new WaitForSecondsRealtime(0.125f);
             }
@@ -77,20 +77,6 @@ public class EnemyManager : UnitManager {
         }
     }
 
-    public IEnumerator ScatterTurn(EnemyUnit input) {
-        input.UpdateAction(input.equipment[0], input.moveMod);
-        Vector2 targetCoord = input.SelectOptimalCoord(EnemyUnit.Pathfinding.Random);
-        if (Mathf.Sign(targetCoord.x) == 1) {
-            SelectUnit(input);
-            currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
-            yield return new WaitForSecondsRealtime(0.5f);
-            Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, currentGrid.sqrs.Find(sqr => sqr.coord == targetCoord)));
-            currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
-            currentGrid.DisableGridHighlight();
-            yield return co;
-            DeselectUnit();
-        }
-    }
 
     public void EndTurn() {
         if (selectedUnit)

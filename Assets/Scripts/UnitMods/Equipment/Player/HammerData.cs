@@ -198,8 +198,8 @@ public class HammerData : EquipmentData
             hammer.transform.position = endPos;
 
             user.PlaySound(catchSFX);
-                 
             PassHammer((PlayerUnit)user, (PlayerUnit)passTo);
+                 
             hammer.SetActive(false);
         }
         if (targetCo != null)

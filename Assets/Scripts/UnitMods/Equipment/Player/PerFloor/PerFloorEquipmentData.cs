@@ -9,7 +9,7 @@ public class PerFloorEquipmentData : EquipmentData
     {
         base.EquipEquipment(user);
         PlayerUnit pu = (PlayerUnit)user;
-        pu.ui.UpdateEquipmentButtons();
+        //pu.ui.UpdateEquipmentButtons();
     }
 
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null)

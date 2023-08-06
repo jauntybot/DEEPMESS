@@ -10,6 +10,23 @@ public class EnemyUnit : Unit {
     public Pathfinding pathfinding;
     [SerializeField] Unit closestUnit;
 
+
+    public virtual IEnumerator ScatterTurn() {
+        UpdateAction(equipment[0], moveMod);
+        Vector2 targetCoord = SelectOptimalCoord(EnemyUnit.Pathfinding.Random);
+        if (Mathf.Sign(targetCoord.x) == 1) {
+            manager.SelectUnit(this);
+            manager.currentGrid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
+            yield return new WaitForSecondsRealtime(0.5f);
+            Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, manager.currentGrid.sqrs.Find(sqr => sqr.coord == targetCoord)));
+            manager.currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
+            manager.currentGrid.DisableGridHighlight();
+            yield return co;
+            manager.DeselectUnit();
+        }
+    }
+
+
     public virtual IEnumerator CalculateAction() {
 // First attack scan
         UpdateAction(equipment[1]);
