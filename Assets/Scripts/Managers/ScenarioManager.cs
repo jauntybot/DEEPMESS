@@ -114,7 +114,7 @@ public class ScenarioManager : MonoBehaviour
             }
         }
         prevTurn = currentTurn;
-        uiManager.LockHUDButtons(true);
+        uiManager.LockHUDButtons(true, true);
 // Scenario state machine (more optional)        
         switch(toScenario) {
             default:

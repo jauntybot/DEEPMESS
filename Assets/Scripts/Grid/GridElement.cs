@@ -13,6 +13,7 @@ public class GridElement : MonoBehaviour{
     
 
     [Header("Grid Element")]
+    [SerializeField] new public string name;
     public Vector2 coord;
     public bool selectable, targeted;
     [HideInInspector] public PolygonCollider2D hitbox;

@@ -111,20 +111,27 @@ public class UnitUI : MonoBehaviour
 
     public void UpdateEquipmentButtons() {
 
+        bool pF = false, h = false, b = false;
 // Remove all buttons
-        if (perFloor) {
+        for (int i = unit.equipment.Count - 1; i >= 0; i--) {
+            if (unit.equipment[i] is PerFloorEquipmentData && perFloor && unit.equipment[i] == perFloor.data) pF = true;
+            if (unit.equipment[i] is HammerData && hammer && unit.equipment[i] == hammer.data) h = true;
+            if (unit.equipment[i] is BulbEquipmentData && bulb && unit.equipment[i] == bulb.data) b = true;
+        }
+        if (pF) {
             Destroy(perFloor.gameObject);
+            Debug.Log("Destroy perfloor");
             perFloor = null;
         } 
-        if (hammer) {
+        if (h) {
             Destroy(hammer.gameObject);
             hammer = null;
         } 
-        if (bulb) {
+        if (b) {
             Destroy(bulb.gameObject);
             bulb = null;
         } 
-    
+        
 // Add buttons unit owns but does not have
         for (int i = unit.equipment.Count - 1; i >= 0; i--) {
             if (unit.equipment[i] is not MoveData) {

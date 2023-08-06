@@ -99,26 +99,17 @@ public class TutorialSequence : MonoBehaviour
 
         yield return new WaitForSecondsRealtime(1.25f);
         yield return StartCoroutine(NailPriming());
-        while (true) {
-            yield return null;
-            if (scenario.player.units[0].coord.x == scenario.currentEnemy.units[0].coord.x || scenario.player.units[0].coord.y == scenario.currentEnemy.units[0].coord.y)
-                break;
-        }
-        yield return new WaitForSecondsRealtime(0.5f);
-        yield return StartCoroutine(HittingAnEnemy());
-        while (true) {
-            yield return null;
-            if (scenario.player.units[0].energyCurrent == 0 || scenario.player.units[2].energyCurrent == 0) break;
-        }
-        yield return new WaitForSecondsRealtime(1.5f);
-        yield return StartCoroutine(OnTurnMoveAndAP());
+
+        Coroutine co = StartCoroutine(AttackingEnemies());
 
         cont = false;
         while (!cont) yield return null;
 
         yield return StartCoroutine(EnemyTurn());
+        StopCoroutine(co);
         yield return new WaitForSecondsRealtime(0.25f);
         yield return StartCoroutine(Equipment());
+        StartCoroutine(AttackingEnemies());
         
         yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
     }
@@ -212,6 +203,29 @@ public class TutorialSequence : MonoBehaviour
 
     }
 
+    public IEnumerator AttackingEnemies() {
+        bool aligned = false;
+        while (true) {
+            yield return null;
+            if (scenario.currentTurn == ScenarioManager.Turn.Player) {
+                Unit unit = scenario.player.units.Find(u => u.ui.hammer != null);
+                foreach (Unit enemy in scenario.currentEnemy.units) {
+                    if (unit.coord.x == enemy.coord.x || unit.coord.y == enemy.coord.y)
+                        aligned = true;
+                }
+            }
+            if (aligned) break;
+        }
+
+        yield return StartCoroutine(HittingAnEnemy());
+        while (true) {
+            yield return null;
+            if (scenario.player.units[0].energyCurrent == 0 || scenario.player.units[2].energyCurrent == 0) break;
+        }
+        yield return new WaitForSecondsRealtime(1.5f);
+        yield return StartCoroutine(OnTurnMoveAndAP());
+    }
+
     public IEnumerator NailPriming() {
         screenFade.gameObject.SetActive(true);
 
@@ -231,7 +245,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "Hitting Enemies";
-        body = "The Hammer can be bounced between Slags. Strike an enemy and select Squigglespike, the other Slag, to bounce it to." + '\n';
+        body = "The Hammer can be bounced between Slags. Strike an enemy and select Spike, the other Slag, to bounce it to." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ hittingEnemiesAnim });
 
         while (!tooltip.skip) {
@@ -489,6 +503,7 @@ public class TutorialSequence : MonoBehaviour
                 yield return new WaitForSecondsRealtime(0.25f);
                 floorManager.currentFloor.RemoveElement(scenario.player.units[0]);
                 floorManager.playerDropOverrides = new List<Vector2>();
+
                 yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement> { scenario.player.units[0], scenario.player.units[1] }));
                 floorManager.playerDropOverrides = new List<Vector2>{ tutorialPacket.floors[0].initSpawns.Find(s => s.asset.prefab.GetComponent<PlayerUnit>()).coord };
                 scenario.player.units.Add(playerUnits[1]);
@@ -507,7 +522,9 @@ public class TutorialSequence : MonoBehaviour
 
                 floorManager.currentFloor.RemoveElement(scenario.player.units[0]); floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
                 floorManager.playerDropOverrides = new List<Vector2>();
-                yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement> { scenario.player.units[0], scenario.player.units[1], scenario.player.units[3] }));
+                List<GridElement> toDrop = new List<GridElement> { scenario.player.units[0], scenario.player.units[1], scenario.player.units[3] };
+                if (scenario.currentEnemy.units.Count > 0) toDrop.Add(scenario.currentEnemy.units[0]);
+                yield return StartCoroutine(floorManager.DescendUnits(toDrop));
                 
                 bool validCoord = false;
                 Vector2 spawn = Vector2.zero;

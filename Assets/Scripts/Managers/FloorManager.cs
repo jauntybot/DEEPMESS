@@ -33,9 +33,9 @@ public class FloorManager : MonoBehaviour
     public float floorOffset, transitionDur, unitDropDur;
     public AnimationCurve dropCurve;
      public bool transitioning, peeking;
-    [SerializeField] public GameObject upButton, downButton;
     [SerializeField] ParallaxImageScroll parallax;
     public DescentPreviewManager previewManager;
+    [SerializeField] Animator cavityText;
 
 
     public List<Vector2> nailSpawnOverrides = new List<Vector2>(); // MOVE TO GRID CLASS
@@ -86,7 +86,7 @@ public class FloorManager : MonoBehaviour
         if (scenario.tutorial != null && floorSequence.activePacket.packetType == FloorPacket.PacketType.Tutorial) {
             if (floorDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.tutorial.bulbEncountered)
                 scenario.tutorial.StartCoroutine(scenario.tutorial.TileBulb());
-            if (floorDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.tutorial.basophicEncountered)
+            if (floorDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is EnemyDetonateUnit) != null && !scenario.tutorial.basophicEncountered)
                 scenario.tutorial.StartCoroutine(scenario.tutorial.Basophic());
         }
 
@@ -277,7 +277,6 @@ public class FloorManager : MonoBehaviour
             if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) scen = ScenarioManager.Scenario.Boss;
         if (tut) {
             yield return StartCoroutine(TutorialSequence.instance.TutorialDescend());
-            print("tut");
         }
         else {
 
@@ -301,7 +300,7 @@ public class FloorManager : MonoBehaviour
                 if (cascade) {
                     //yield return StartCoroutine(ChooseLandingPositions());
                     //yield return new WaitForSecondsRealtime(1.25f);
-                    downButton.SetActive(true); upButton.SetActive(false);
+                    //downButton.SetActive(true); upButton.SetActive(false);
                 }
     // Descend units from previous floor
                 
@@ -400,6 +399,7 @@ public class FloorManager : MonoBehaviour
         unit.DescentVFX(currentFloor.sqrs.Find(sqr => sqr.coord == unit.coord), subElement);
         unit.transform.position = to;
         unit.StoreInGrid(currentFloor);
+        unit.UpdateElement(unit.coord);
         fade.AlphaSelf = 1;
 
         unit.PlaySound(unit.landingSFX);
@@ -497,7 +497,10 @@ public class FloorManager : MonoBehaviour
             timer += Time.deltaTime;
         }
         
-        //StartCoroutine(DropUnits(units, currentFloor));
+        
+        cavityText.gameObject.SetActive(true);
+        cavityText.SetBool("Active", true);
+
         timer = 0;
         while(true) {
             yield return null;
@@ -507,6 +510,9 @@ public class FloorManager : MonoBehaviour
             timer += Time.deltaTime;
             if (Input.GetMouseButtonDown(0)) break;
         }
+
+        cavityText.SetBool("Active", false);
+
         timer = 0;
         while (timer <= unitDropDur) {
             parallax.ScrollParallax(-1);

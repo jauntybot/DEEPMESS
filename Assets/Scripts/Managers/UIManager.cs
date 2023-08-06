@@ -16,6 +16,7 @@ public class UIManager : MonoBehaviour
     [Header("Floor Buttons")]
     [SerializeField] public Button upButton;
     [SerializeField] public Button downButton, endTurnButton, undoButton;
+    public bool locked;
 
     [Header("Portraits")]
     [SerializeField] Transform portraitParent;
@@ -86,17 +87,20 @@ public class UIManager : MonoBehaviour
     }
 
     public void LockFloorButtons(bool state) {
-        upButton.GetComponent<Button>().enabled = !state;
-        downButton.GetComponent<Button>().enabled = !state;
+        upButton.GetComponent<Button>().interactable = !state;
+        downButton.GetComponent<Button>().interactable = !state;
     }
 
-    public void LockHUDButtons(bool state) {
+    public void LockHUDButtons(bool state, bool _locked = false) {
+        locked = _locked;
         LockFloorButtons(state);
-        endTurnButton.enabled = !state;
-        undoButton.enabled = !state;
+        endTurnButton.interactable = !state;
+        undoButton.interactable = !state;
     }
 
     public void ToggleUndoButton(bool state) {
+        if (state)
+            state = scenario.player.undoableMoves.Count > 0;
         undoButton.interactable = state;
         Color c = state ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1);
     }

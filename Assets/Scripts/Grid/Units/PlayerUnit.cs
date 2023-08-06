@@ -26,10 +26,6 @@ public class PlayerUnit : Unit {
 // Called when an action is applied to a unit or to clear it's actions
     public override void UpdateAction(EquipmentData equipment = null, int mod = 0) 
     {
-        if (equipment is not MoveData) {
-            if (ui.perFloor) ui.perFloor.DeselectEquipment(); if (ui.hammer) ui.hammer.DeselectEquipment(); if (ui.bulb) ui.bulb.DeselectEquipment();
-        }
-
         if (pManager.overrideEquipment == null) {
             if (equipment is PerFloorEquipmentData && !usedEquip)
                 base.UpdateAction(equipment, mod);
@@ -69,9 +65,9 @@ public class PlayerUnit : Unit {
             pManager.DeselectUnit();
             pManager.StartCoroutine(pManager.UnitIsActing());
         }
-        FloorManager.instance.upButton.GetComponent<Button>().enabled = false; FloorManager.instance.downButton.GetComponent<Button>().enabled = false;
+        UIManager.instance.upButton.GetComponent<Button>().interactable = false; UIManager.instance.downButton.GetComponent<Button>().interactable = false;
         yield return co;
-        FloorManager.instance.upButton.GetComponent<Button>().enabled = true; FloorManager.instance.downButton.GetComponent<Button>().enabled = true;
+        UIManager.instance.upButton.GetComponent<Button>().interactable = true; UIManager.instance.downButton.GetComponent<Button>().interactable = true;
         if (equip is MoveData && energyCurrent > 0) {
             grid.UpdateSelectedCursor(true, coord);
         }

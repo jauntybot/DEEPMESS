@@ -29,8 +29,9 @@ public class Tooltip : MonoBehaviour
             headerField.text = header;
         }
 
-        if (gif == null)
+        if (gif == null) {
             gifContainer.SetActive(false);
+        }
         else {
             gifContainer.SetActive(true);
             gifAnims[0].runtimeAnimatorController = gif[0];

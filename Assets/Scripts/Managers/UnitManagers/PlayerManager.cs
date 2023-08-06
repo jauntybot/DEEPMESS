@@ -297,11 +297,11 @@ public class PlayerManager : UnitManager {
                     
                     pc.ToggleCursorValid(true);
 
-                    if (hoveredUnit) {
-                        selectedUnit = hoveredUnit;
-                        DeselectUnit();
-                        hoveredUnit = null;
-                    }
+                    // if (hoveredUnit) {
+                    //     selectedUnit = hoveredUnit;
+                    //     DeselectUnit();
+                    //     hoveredUnit = null;
+                    // }
                     if (u is PlayerUnit) {
                         if (!u.selectable || u.moved) break;
                     }
@@ -313,9 +313,11 @@ public class PlayerManager : UnitManager {
                         u.ui.ToggleEquipmentButtons();
 
                     if ((u is PlayerUnit || u is EnemyUnit) && FloorManager.instance.currentFloor == currentGrid) {
-                        u.selectedEquipment = u.equipment[0];
-                        u.UpdateAction(u.selectedEquipment, u.moveMod);
-                        u.grid.DisplayValidCoords(u.validActionCoords, u is EnemyUnit ? 4 : 3, false, false);
+                        if (u.selectedEquipment != u.equipment[0]) {
+                            u.selectedEquipment = u.equipment[0];
+                            u.UpdateAction(u.selectedEquipment, u.moveMod);
+                            u.grid.DisplayValidCoords(u.validActionCoords, u is EnemyUnit ? 4 : 3, false, false);
+                        }
                     }
                 } 
             }
@@ -413,7 +415,7 @@ public class PlayerManager : UnitManager {
             yield return null;
         }
 
-        scenario.uiManager.LockHUDButtons(false);
+        scenario.uiManager.LockHUDButtons(scenario.uiManager.locked);
         if (selectedUnit) selectedUnit.ui.ToggleEquipmentButtons();
     }
 
