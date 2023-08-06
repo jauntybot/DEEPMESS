@@ -251,7 +251,7 @@ public class FloorManager : MonoBehaviour
     }
 
     public void Descend(bool cascade = false) {
-        bool tut = floorSequence.currentThreshold == FloorPacket.PacketType.Tutorial;
+        bool tut = floorSequence.activePacket.packetType == FloorPacket.PacketType.Tutorial;
         StartCoroutine(DescendFloors(cascade, tut));
         
     }
@@ -267,8 +267,10 @@ public class FloorManager : MonoBehaviour
 
         ScenarioManager.Scenario scen = ScenarioManager.Scenario.Null;
             if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) scen = ScenarioManager.Scenario.Boss;
-        if (tut)
+        if (tut) {
             yield return StartCoroutine(TutorialSequence.instance.TutorialDescend());
+            print("tut");
+        }
         else {
 
             yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, scen));
@@ -282,7 +284,6 @@ public class FloorManager : MonoBehaviour
             // else
 
     // Check if at the end of packet
-            Debug.Log("floors: " + floors.Count + ", currentFloor: " + currentFloor.index);
             if (floors.Count - 1 > currentFloor.index) {
     
                 yield return StartCoroutine(TransitionFloors(true, false));
@@ -353,7 +354,6 @@ public class FloorManager : MonoBehaviour
             if (units[i] is Unit u) {
                 if (u is not Nail) {
                     if (u is PlayerUnit && playerDropOverrides.Count > 0) {
-                        Debug.Log(playerDropOverrides[0]);
                         u.coord = playerDropOverrides[0];
                         playerDropOverrides.RemoveAt(0);
                     } 

@@ -62,7 +62,12 @@ public class AttackData : EquipmentData
         }
 
         Coroutine co = null; Coroutine co2 = null;
-        if (target is Nail) co = user.StartCoroutine(user.TakeDamage(1));
+        if (target is Nail n) {
+            if (n.manager.scenario.tutorial != null && !n.manager.scenario.tutorial.nailDamageEncountered && n.manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
+                n.manager.scenario.tutorial.StartCoroutine(n.manager.scenario.tutorial.NailDamage());
+            }
+            co = user.StartCoroutine(user.TakeDamage(1));
+        }
         co2 = target.StartCoroutine(target.TakeDamage(dmg));
         yield return co;
         if (co2 != null)

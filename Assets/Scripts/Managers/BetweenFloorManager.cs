@@ -22,12 +22,7 @@ public class BetweenFloorManager : MonoBehaviour
         StartCoroutine(UIManager.instance.LoadOutScreen());
         slotMachine.gameObject.SetActive(true);
         slotMachine.Initialize(slotMachine.equipmentTable);
-        if (TutorialSequence.instance) {
-            LaterTutorials tut = TutorialSequence.instance.gameObject.GetComponent<LaterTutorials>();
-            if (!tut.slotsEncountered)
-                yield return StartCoroutine(tut.SlotsTut());
-        }
-
+        
         while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Descent) {
             yield return null;
         }

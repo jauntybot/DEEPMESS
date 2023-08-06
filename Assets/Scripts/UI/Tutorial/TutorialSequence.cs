@@ -29,6 +29,8 @@ public class TutorialSequence : MonoBehaviour
     bool cont = false;
     List<Unit> playerUnits = new List<Unit>();
 
+    int descents;
+
     [Header("GIF Serialization")]
     [SerializeField] RuntimeAnimatorController hittingTheNailAnim;
     [SerializeField] RuntimeAnimatorController hittingEnemiesAnim, anvilAnim, bigThrowAnim, shieldAnim, reviveAnim;
@@ -39,18 +41,18 @@ public class TutorialSequence : MonoBehaviour
 
     [Header("Gameplay Optional Tooltips")]
     bool enemyBehavior = false;
-    public bool undoEncountered, collisionEncountered, bulbEncountered, deathReviveEncountered, slotsEncountered = false;
+    public bool undoEncountered, nailDamageEncountered, collisionEncountered, bulbEncountered, deathReviveEncountered, slotsEncountered = false;
 
     public void Initialize(ScenarioManager manager) {
         scenario = manager;
         floorManager = scenario.floorManager;
-        GetComponent<LaterTutorials>().StartListening(scenario.player);
 
         floorManager.floorSequence.currentThreshold = FloorPacket.PacketType.Tutorial;    
         floorManager.floorSequence.floorsTutorial = 3;
         floorManager.floorSequence.localPackets.Add(tutorialPacket);
         
         enemyBehavior = false; undoEncountered = false; bulbEncountered = false; deathReviveEncountered = false; slotsEncountered = false;
+        descents = 0;
 
     }
     
@@ -292,6 +294,47 @@ public class TutorialSequence : MonoBehaviour
         CheckAllDone();
     }
 
+    public IEnumerator ScatterTurn() {
+        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
+            yield return null;
+        }
+        yield return new WaitForSecondsRealtime(0.25f);
+        screenFade.gameObject.SetActive(true);
+
+        header = "Enemy Scatter";
+        body = "When you land on a floor, enemies scatter but won't attack." + '\n';
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+
+    }
+
+    public IEnumerator NailDamage() {
+        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
+            yield return null;
+        }
+        yield return new WaitForSecondsRealtime(0.25f);
+        screenFade.gameObject.SetActive(true);
+
+        header = "Nail Damage";
+        body = "I deal damage back to enemies that strike the Nail." + '\n';
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
     public IEnumerator PeekButton() {
         
         header = "Peek Button";
@@ -377,11 +420,11 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator TutorialDescend() {
         
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
-        yield return StartCoroutine(floorManager.TransitionFloors(true, false));
-        yield return new WaitForSecondsRealtime(0.25f);
 
-        switch(scenario.floorManager.floors.Count) {
-            case 2:
+        switch(descents) {
+            case 0:
+                yield return StartCoroutine(floorManager.TransitionFloors(true, false));
+                yield return new WaitForSecondsRealtime(0.25f);
                 floorManager.currentFloor.RemoveElement(scenario.player.units[0]);
                 floorManager.playerDropOverrides = new List<Vector2>();
                 yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement> { scenario.player.units[0], scenario.player.units[1] }));
@@ -393,8 +436,12 @@ public class TutorialSequence : MonoBehaviour
 
 
             break;
-            case 3:
+            case 1:
                 scenario.player.units = playerUnits;
+
+                yield return StartCoroutine(floorManager.TransitionFloors(true, false));
+                yield return new WaitForSecondsRealtime(0.25f);
+
 
                 floorManager.currentFloor.RemoveElement(scenario.player.units[0]); floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
                 floorManager.playerDropOverrides = new List<Vector2>();
@@ -422,8 +469,12 @@ public class TutorialSequence : MonoBehaviour
                 yield return new WaitForSecondsRealtime(0.15f);
                 floorManager.floorSequence.ThresholdCheck();
             break;
+            case 2:
+                StartCoroutine(ScatterTurn());
+                yield return floorManager.StartCoroutine(floorManager.TransitionPackets());
+            break;
         }
-
+        descents++;
         cont = true;
     }
     public IEnumerator EnemyTurn() {
