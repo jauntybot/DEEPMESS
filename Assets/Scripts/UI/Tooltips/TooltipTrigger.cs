@@ -6,6 +6,9 @@ using UnityEngine.EventSystems;
 public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
 
+    public enum Location { BottomLeft, TopRight };
+    public Location location;
+
     protected static LTDescr delay;
 
     public string header;
@@ -13,9 +16,14 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     [Multiline()]
     public string content;
 
+    public RuntimeAnimatorController anim;
+
     public virtual void OnPointerEnter(PointerEventData eventData)
     {
-        TooltipSystem.Show(this);
+        if (location == Location.BottomLeft)
+            TooltipSystem.ShowBL(this);
+        else
+            TooltipSystem.ShowTR(this);
     }
 
     protected virtual void OnDisable() {

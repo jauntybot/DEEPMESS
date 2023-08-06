@@ -6,7 +6,8 @@ public class TooltipSystem : MonoBehaviour
 {
 
     public static TooltipSystem instance;
-    public Tooltip tooltip;
+    public Tooltip tooltipBL;
+    public Tooltip tooltipTR;
     public static TooltipTrigger activeTrigger;
 
     public void Awake()
@@ -14,16 +15,26 @@ public class TooltipSystem : MonoBehaviour
         instance = this;
     }
 
-    public static void Show(TooltipTrigger trigger)
+    public static void ShowTR(TooltipTrigger trigger)
     {
+        RuntimeAnimatorController anim = trigger.anim;
         activeTrigger = trigger;
-        instance.tooltip.SetText(trigger.content, trigger.header);
-        instance.tooltip.transform.GetChild(0).gameObject.SetActive(true);
+        instance.tooltipTR.SetText(trigger.content, trigger.header, false, new List<RuntimeAnimatorController>{ anim });
+        instance.tooltipTR.transform.GetChild(0).gameObject.SetActive(true);
+    }
+
+    public static void ShowBL(TooltipTrigger trigger)
+    {
+        RuntimeAnimatorController anim = trigger.anim;
+        activeTrigger = trigger;
+        instance.tooltipBL.SetText(trigger.content, trigger.header, false, new List<RuntimeAnimatorController>{ anim });
+        instance.tooltipBL.transform.GetChild(0).gameObject.SetActive(true);
     }
 
     public static void Hide()
     {
-        instance.tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        instance.tooltipBL.transform.GetChild(0).gameObject.SetActive(false);
+        instance.tooltipTR.transform.GetChild(0).gameObject.SetActive(false);
         activeTrigger = null;
     }
 

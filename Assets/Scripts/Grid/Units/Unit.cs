@@ -158,7 +158,7 @@ public class Unit : GridElement {
     }
 
     public virtual IEnumerator CollideFromAbove(GridElement subGE) {
-        if (manager.scenario.tutorial != null && !manager.scenario.tutorial.collisionEncountered)
+        if (manager.scenario.tutorial != null && !manager.scenario.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
             manager.scenario.tutorial.StartCoroutine(manager.scenario.tutorial.DescentDamage());
         if (subGE is not GroundElement)
             yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
@@ -203,7 +203,8 @@ public class Unit : GridElement {
                     }
                 break;
                 case Status.Restricted:
-                    ui.ToggleEquipmentButtons();
+                    if (this is PlayerUnit)
+                        ui.ToggleEquipmentButtons();
                 break;
                 case Status.Disabled:
                     hpCurrent = 0;

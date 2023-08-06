@@ -33,7 +33,7 @@ public class TutorialSequence : MonoBehaviour
 
     [Header("GIF Serialization")]
     [SerializeField] RuntimeAnimatorController hittingTheNailAnim;
-    [SerializeField] RuntimeAnimatorController hittingEnemiesAnim, anvilAnim, bigThrowAnim, shieldAnim, reviveAnim;
+    [SerializeField] RuntimeAnimatorController hittingEnemiesAnim, anvilAnim, bigThrowAnim, shieldAnim, bulbAnim, basophicAnim, reviveAnim;
 
     [Header("Button Highlights")]
     [SerializeField] GameObject buttonHighlight;
@@ -41,7 +41,7 @@ public class TutorialSequence : MonoBehaviour
 
     [Header("Gameplay Optional Tooltips")]
     bool enemyBehavior = false;
-    public bool undoEncountered, nailDamageEncountered, collisionEncountered, bulbEncountered, deathReviveEncountered, slotsEncountered = false;
+    public bool undoEncountered, nailDamageEncountered, bloodEncountered, collisionEncountered, bulbEncountered, basophicEncountered, deathReviveEncountered, slotsEncountered = false;
 
     public void Initialize(ScenarioManager manager) {
         scenario = manager;
@@ -121,8 +121,6 @@ public class TutorialSequence : MonoBehaviour
         yield return StartCoroutine(Equipment());
         
         yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
-        //PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
-
     }
 
     public IEnumerator GenerateNextTutorialFloor(FloorDefinition def) {
@@ -315,7 +313,30 @@ public class TutorialSequence : MonoBehaviour
 
     }
 
+    public IEnumerator Basophic() {
+        basophicEncountered = true;
+        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
+            yield return null;
+        }
+        yield return new WaitForSecondsRealtime(0.25f);
+        screenFade.gameObject.SetActive(true);
+
+        header = "Basophic Enemy";
+        body = "This Basophic enemy can explode, dealing damage to all the tiles around it. Hover over enemy portraits to learn more about their abilities." + '\n';
+        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ basophicAnim });
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        CheckAllDone();
+    }
+
     public IEnumerator NailDamage() {
+        nailDamageEncountered = true;
         while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
             yield return null;
         }
@@ -333,6 +354,29 @@ public class TutorialSequence : MonoBehaviour
 
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        CheckAllDone();
+    }
+
+    public IEnumerator TileBulb() {
+        bulbEncountered = true;
+        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
+            yield return null;
+        }
+        yield return new WaitForSecondsRealtime(0.25f);
+        screenFade.gameObject.SetActive(true);
+
+        header = "Basophic Enemy";
+        body = "This Basophic enemy can explode, dealing damage to all the tiles around it. Hover over enemy portraits to learn more about their abilities." + '\n';
+        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ basophicAnim });
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        CheckAllDone();
     }
 
     public IEnumerator PeekButton() {
@@ -347,6 +391,24 @@ public class TutorialSequence : MonoBehaviour
         }
 
         brTooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    public IEnumerator BloodTiles() {
+        screenFade.gameObject.SetActive(true);
+        bloodEncountered = true;
+
+        header = "Blood Tiles";
+        body = "Blood tiles prevent Slags from using the Hammer or equipment while the Slag is standing on it." + '\n';
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        CheckAllDone();
     }
     
     public IEnumerator UndoTutorial() {
@@ -472,6 +534,7 @@ public class TutorialSequence : MonoBehaviour
             case 2:
                 StartCoroutine(ScatterTurn());
                 yield return floorManager.StartCoroutine(floorManager.TransitionPackets());
+                PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
             break;
         }
         descents++;
@@ -502,7 +565,10 @@ public class TutorialSequence : MonoBehaviour
 
     public void CheckAllDone() {
         if (enemyBehavior && 
+            nailDamageEncountered &&
             undoEncountered && 
+            bloodEncountered &&
+            basophicEncountered && 
             bulbEncountered &&
             deathReviveEncountered &&
             slotsEncountered)

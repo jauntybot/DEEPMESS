@@ -1435,8 +1435,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b01bde0979a9d496ba73760143bcd52a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  location: 0
   header: Enemies
   content: Displays how many enemies are on the current floor.
+  anim: {fileID: 0}
 --- !u!1 &3060657684560189353
 GameObject:
   m_ObjectHideFlags: 0
@@ -1773,9 +1775,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d38c2447f701f49ecafacd4b870b8e8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  location: 0
   header: 
   content: 
+  anim: {fileID: 0}
   initSelf: 0
+  anvilAnim: {fileID: 0}
+  bigGrabAnim: {fileID: 0}
+  shieldAnim: {fileID: 0}
 --- !u!65 &9057905165208489416
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1990,9 +1997,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d38c2447f701f49ecafacd4b870b8e8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  location: 0
   header: 
   content: 
+  anim: {fileID: 0}
   initSelf: 0
+  anvilAnim: {fileID: 0}
+  bigGrabAnim: {fileID: 0}
+  shieldAnim: {fileID: 0}
 --- !u!65 &2331414686313225994
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3589,8 +3601,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b01bde0979a9d496ba73760143bcd52a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  location: 0
   header: Floors
   content: Displays how many floors are left on this current run.
+  anim: {fileID: 0}
 --- !u!1 &8337578737058323533
 GameObject:
   m_ObjectHideFlags: 0
@@ -3741,9 +3755,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b01bde0979a9d496ba73760143bcd52a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  location: 0
   header: Nail
   content: The Nail takes one full turn to prime itself before it can be hit with
     the hammer. If the Nail dies you lose.
+  anim: {fileID: 0}
 --- !u!1 &8444344142908148297
 GameObject:
   m_ObjectHideFlags: 0
@@ -4308,9 +4324,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d38c2447f701f49ecafacd4b870b8e8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  location: 0
   header: 
   content: 
+  anim: {fileID: 0}
   initSelf: 0
+  anvilAnim: {fileID: 0}
+  bigGrabAnim: {fileID: 0}
+  shieldAnim: {fileID: 0}
 --- !u!65 &1999506268496606108
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6075,7 +6096,7 @@ RectTransform:
   m_Children:
   - {fileID: 1258282620}
   m_Father: {fileID: 8940216681490799331}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -6755,7 +6776,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8940216681490799331}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -6806,8 +6827,8 @@ RectTransform:
   - {fileID: 2230500056448976947}
   - {fileID: 8940216681907956866}
   - {fileID: 8940216680106533402}
-  - {fileID: 8940216680937090388}
   - {fileID: 8940216681485791700}
+  - {fileID: 8940216680937090388}
   - {fileID: 8940216680138886553}
   - {fileID: 8940216680739985876}
   m_Father: {fileID: 0}

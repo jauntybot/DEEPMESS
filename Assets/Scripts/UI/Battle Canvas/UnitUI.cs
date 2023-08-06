@@ -84,11 +84,12 @@ public class UnitUI : MonoBehaviour
     }
 
     public void ToggleEquipmentButtons() {
-        if (perFloor) perFloor.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= perFloor.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted));
+        PlayerManager pManager = (PlayerManager)unit.manager;
+        if (perFloor) perFloor.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= perFloor.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted) && !pManager.unitActing);
         if (unit.usedEquip)
             perFloor.gameObject.GetComponentInChildren<Button>().interactable = false;
-        if (hammer) hammer.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= hammer.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted));
-        if (bulb) bulb.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= bulb.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted));
+        if (hammer) hammer.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= hammer.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted) && !pManager.unitActing);
+        if (bulb) bulb.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= bulb.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted) && !pManager.unitActing);
 
         if (overview != null )
             overview.UpdateOverview(unit.hpCurrent);
@@ -149,7 +150,8 @@ public class UnitUI : MonoBehaviour
         }
         if (overview != null )
             overview.UpdateOverview(unit.hpCurrent);
-        ToggleEquipmentButtons();
+        if (unit is PlayerUnit)
+            ToggleEquipmentButtons();
     }
 
     private void UnitDestroyed(GridElement ge) {

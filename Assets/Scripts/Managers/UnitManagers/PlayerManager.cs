@@ -309,7 +309,8 @@ public class PlayerManager : UnitManager {
                     hovered = true;
                     ge.TargetElement(true);
                     UIManager.instance.UpdatePortrait(u, true);
-                    u.ui.ToggleEquipmentButtons();
+                    if (u is PlayerUnit)
+                        u.ui.ToggleEquipmentButtons();
 
                     if ((u is PlayerUnit || u is EnemyUnit) && FloorManager.instance.currentFloor == currentGrid) {
                         u.selectedEquipment = u.equipment[0];
@@ -413,6 +414,7 @@ public class PlayerManager : UnitManager {
         }
 
         scenario.uiManager.LockHUDButtons(false);
+        if (selectedUnit) selectedUnit.ui.ToggleEquipmentButtons();
     }
 
     public void UndoMove() {

@@ -56,6 +56,7 @@ public class PlayerUnit : Unit {
             }
             else if (equip is MoveData && energyCurrent > 0) {
                 pManager.StartCoroutine(pManager.UnitIsActing());
+                ui.ToggleEquipmentButtons();
             }
             else if (equip.firstTarget != null) {
                 GridElement anim = equip.contextualAnimGO ? equip.contextualAnimGO.GetComponent<GridElement>() : null;
@@ -139,6 +140,15 @@ public class PlayerUnit : Unit {
         ElementDisabled?.Invoke(this);
         SwitchAnim(AnimState.Disabled);
         ApplyCondition(Status.Disabled);
+    }
+
+    public override void ApplyCondition(Status s)
+    {
+        base.ApplyCondition(s);
+        ui.ToggleEquipmentButtons();
+        if (manager.scenario.tutorial != null && !manager.scenario.tutorial.bloodEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
+            manager.scenario.tutorial.StartCoroutine(manager.scenario.tutorial.BloodTiles());
+        
     }
 
     public virtual void Stabilize() {

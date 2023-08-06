@@ -61,10 +61,11 @@ public class FloorManager : MonoBehaviour
     }
     #endregion
 
-    void Start() {
+    public void Init() {
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
         if (UIManager.instance) uiManager = UIManager.instance;
         betweenFloor = GetComponent<BetweenFloorManager>();
+        floorSequence.Init();
     }
 
     public IEnumerator GenerateFloor(FloorDefinition definitionOverride = null) {
@@ -82,6 +83,13 @@ public class FloorManager : MonoBehaviour
 
         newFloor.lvlDef = floorDef;
     
+        if (scenario.tutorial != null && floorSequence.activePacket.packetType == FloorPacket.PacketType.Tutorial) {
+            if (floorDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.tutorial.bulbEncountered)
+                scenario.tutorial.StartCoroutine(scenario.tutorial.TileBulb());
+            if (floorDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.tutorial.basophicEncountered)
+                scenario.tutorial.StartCoroutine(scenario.tutorial.Basophic());
+        }
+
         Coroutine co = StartCoroutine(newFloor.GenerateGrid(index));
         yield return co;
         newFloor.gameObject.name = "Floor" + newFloor.index;
