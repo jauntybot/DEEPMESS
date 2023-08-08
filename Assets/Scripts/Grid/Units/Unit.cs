@@ -77,7 +77,7 @@ public class Unit : GridElement {
         }
     }
 
-    public bool ValidCommand(Vector2 target, EquipmentData equip) {
+    public virtual bool ValidCommand(Vector2 target, EquipmentData equip) {
         if (equip == null) return false;
         if (validActionCoords.Count == 0) return false;
         if (!validActionCoords.Contains(target)) return false;

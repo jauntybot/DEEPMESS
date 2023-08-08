@@ -116,7 +116,6 @@ public class UnitUI : MonoBehaviour
             if (unit.equipment.Find(equip => equip == equipButtons[i].data) == null) {
                 EquipmentButton button = equipButtons[i];
                 equipButtons.Remove(button);
-                Debug.Log(unit.name + "Destroyed: " + button.name);
                 Destroy(button.gameObject);
             }
         }
@@ -131,11 +130,9 @@ public class UnitUI : MonoBehaviour
                     if (unit.equipment[i] is PerFloorEquipmentData) {
                         prefab = perFloorButtonPrefab;
                         parent = equipmentPanel.transform;
-                        Debug.Log(unit.name + " Spawn PerFloor");
                     } else if (unit.equipment[i] is HammerData) {
                         prefab = hammerButtonPrefab;
                         parent = hammerPanel.transform;
-                        Debug.Log(unit.name + " Spawn hammer");
                     } else if (unit.equipment[i] is BulbEquipmentData) {
                         prefab = bulbButtonPrefab;
                         parent = equipmentPanel.transform;

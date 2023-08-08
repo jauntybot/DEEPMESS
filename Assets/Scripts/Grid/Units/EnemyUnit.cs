@@ -8,7 +8,7 @@ public class EnemyUnit : Unit {
 
     [Header("Enemy Unit")]
     public Pathfinding pathfinding;
-    [SerializeField] Unit closestUnit;
+    [SerializeField] protected Unit closestUnit;
 
 
     public virtual IEnumerator ScatterTurn() {
@@ -26,12 +26,10 @@ public class EnemyUnit : Unit {
         }
     }
 
-
     public virtual IEnumerator CalculateAction() {
 // First attack scan
         UpdateAction(equipment[1]);
-        foreach (Vector2 coord in validActionCoords) 
-        {
+        foreach (Vector2 coord in validActionCoords) {
             if (ValidCommand(coord, selectedEquipment)) {
                 manager.SelectUnit(this);
                 GridElement target = null;
@@ -44,6 +42,7 @@ public class EnemyUnit : Unit {
                 grid.DisableGridHighlight();
                 yield return co;
                 yield return new WaitForSecondsRealtime(0.125f);
+                usedEquip = true;
                 manager.DeselectUnit();
                 yield break;
             }
@@ -66,10 +65,9 @@ public class EnemyUnit : Unit {
 
 // Second attack scan
         UpdateAction(equipment[1]);
-        foreach (Vector2 coord in validActionCoords) 
-        {
-            if (ValidCommand(coord, selectedEquipment)) {       
-                manager.SelectUnit(this);   
+        foreach (Vector2 coord in validActionCoords) {
+            if (ValidCommand(coord, selectedEquipment)) {
+                manager.SelectUnit(this);
                 GridElement target = null;
                 foreach (GridElement ge in grid.CoordContents(coord))
                     target = ge;
@@ -78,75 +76,34 @@ public class EnemyUnit : Unit {
                 Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, target));
                 grid.UpdateSelectedCursor(false, Vector2.one * -32);
                 grid.DisableGridHighlight();
-                yield return co;            
+                yield return co;
                 yield return new WaitForSecondsRealtime(0.125f);
+                usedEquip = true;
                 manager.DeselectUnit();
             }
         }
         grid.DisableGridHighlight();
     }
 
-// PROBLEM FUNCTION
-    public virtual Vector2 SelectOptimalCoord(Pathfinding path) {
-        Vector2 coord = Vector2.zero;
-        
-        switch (path) {
-            case Pathfinding.ClosestCoord:
-                closestUnit = manager.scenario.player.units[0];
-                if (closestUnit) {
-                    foreach (Unit unit in manager.scenario.player.units) {
-                        if (!unit.conditions.Contains(Status.Disabled)) {
-                            if (Vector2.Distance(unit.coord, coord) < Vector2.Distance(closestUnit.coord, coord))
-                                closestUnit = unit;
-                        }
-                    }
-                    Vector2 closestCoord = Vector2.one * -32;
-                    foreach(Vector2 c in validActionCoords) {
-                        if (Vector2.Distance(c, closestUnit.coord) < Vector2.Distance(closestCoord, closestUnit.coord)) 
-                            closestCoord = c;
-                    }
-// If there is a valid closest coord
-                    if (Mathf.Sign(closestCoord.x) == 1) {
-                        return closestCoord;
-                    }
-                    return Vector2.one * -32;
-                }
-            break;
-            case Pathfinding.FurthestWithinAttackRange:
-                closestUnit = manager.scenario.player.units[0];
-                if (closestUnit) {
-                    foreach (Unit unit in manager.scenario.player.units) {
-                        if (!unit.conditions.Contains(Status.Disabled)) {
-                            if (Vector2.Distance(unit.coord, coord) < Vector2.Distance(closestUnit.coord, coord))
-                                closestUnit = unit;
-                        }
-                    }
-                    Vector2 furthestCoord = closestUnit.coord;
-                    foreach(Vector2 c in validActionCoords) {
-                        Vector2 dir = Vector2.zero;
-                        List<Vector2> validFurthestCoords = new List<Vector2>();
-// Check in four directions
-                        for (int i = 0; i < 4; i++) {
-                            switch (i) {case 0: dir = Vector2.down; break; case 1: dir = Vector2.left; break; case 2: dir = Vector2.up; break; case 3: dir = Vector2.right; break;}
-                            
-                            for (int r = 1; r <= selectedEquipment.range; r++) {
-                                Vector2 farCoord = closestUnit.coord + r * dir;
-                                if (validActionCoords.Contains(farCoord) &&
-                                Vector2.Distance(farCoord, closestUnit.coord) > Vector2.Distance(furthestCoord, closestUnit.coord)) 
-                                    furthestCoord = farCoord;
-                            }
 
-                        }
+// PROBLEM FUNCTION
+    public virtual Vector2 SelectOptimalCoord(Pathfinding pathfinding) {
+        switch (pathfinding) {
+            case Pathfinding.ClosestCoord:
+                closestUnit = null;
+                foreach (Unit unit in manager.scenario.player.units) {
+                    if (!unit.conditions.Contains(Status.Disabled)) {
+                        if (closestUnit == null || Vector2.Distance(unit.coord, coord) < Vector2.Distance(closestUnit.coord, coord))
+                            closestUnit = unit;
                     }
-// If there is a valid closest coord
-                    if (furthestCoord != closestUnit.coord) {
-                        return furthestCoord;
-                    } else {
-                        return SelectOptimalCoord(Pathfinding.ClosestCoord);
-                    }
-                } else {
-                    return SelectOptimalCoord(Pathfinding.ClosestCoord);
                 }
+                Vector2 closestCoord = coord;
+                foreach(Vector2 c in validActionCoords) {
+                    if (Vector2.Distance(c, closestUnit.coord) < Vector2.Distance(closestCoord, closestUnit.coord)) 
+                        closestCoord = c;
+                }
+                return closestCoord;
+                
             case Pathfinding.Random:
                 if (validActionCoords.Count > 0) {
                     int rndIndex = Random.Range(0, validActionCoords.Count - 1);
@@ -154,7 +111,6 @@ public class EnemyUnit : Unit {
                 } else
                     return Vector2.one * -32;
         }
-
         return coord;
     }
 

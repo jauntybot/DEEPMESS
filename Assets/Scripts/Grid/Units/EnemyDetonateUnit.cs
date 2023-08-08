@@ -11,7 +11,6 @@ public class EnemyDetonateUnit : EnemyUnit
 
     public void PrimeSelf() {
         primed = true;
-        Debug.Log("Primed");
         gfxAnim.SetBool("Primed", true);
     }
 
@@ -44,10 +43,20 @@ public class EnemyDetonateUnit : EnemyUnit
         Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, null));
         grid.UpdateSelectedCursor(false, Vector2.one * -32);
         grid.DisableGridHighlight();
+        StartCoroutine(TakeDamage(hpCurrent));
         yield return co;
         yield return new WaitForSecondsRealtime(0.125f);
         manager.DeselectUnit();
         yield return new WaitForSecondsRealtime(1);
+        Debug.Log("ExplosionCo Finish");
+    }
+
+    public override IEnumerator DestroyElement(DamageType dmgType)
+    {
+        if (primed)
+            yield return StartCoroutine(ExplodeCo());
+        else
+            yield return base.DestroyElement(dmgType);
     }
 
 }
