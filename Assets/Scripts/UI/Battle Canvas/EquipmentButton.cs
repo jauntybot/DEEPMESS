@@ -48,6 +48,7 @@ public class EquipmentButton : MonoBehaviour
     public void SelectEquipment() {
         EquipmentSelected?.Invoke(data, rangeMod);
         disarmOverlay.SetActive(true);
+        Debug.Log("Disarm on");
         
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(DeselectEquipment);
@@ -70,6 +71,7 @@ public class EquipmentButton : MonoBehaviour
             button.onClick.AddListener(SelectEquipment);
 
             disarmOverlay.SetActive(false);
+            Debug.Log("Disarm");
             selected = false;
             
             unit.ui.UpdateEquipmentButtons();

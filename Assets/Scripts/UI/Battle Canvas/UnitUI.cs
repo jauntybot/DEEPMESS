@@ -94,8 +94,10 @@ public class UnitUI : MonoBehaviour
     }
 
     public void DisarmButton() {
-        unit.selectedEquipment.UntargetEquipment(unit);
-        unit.selectedEquipment = null;
+        if (unit.selectedEquipment) {
+            unit.selectedEquipment.UntargetEquipment(unit);
+            unit.selectedEquipment = null;
+        }
         unit.grid.DisableGridHighlight();
         if (!unit.moved)
             unit.UpdateAction(unit.equipment[0]);
@@ -104,7 +106,7 @@ public class UnitUI : MonoBehaviour
             PlayerManager pManager = (PlayerManager)unit.manager;
             pManager.contextuals.displaying = false;
         }
-        unit.ui.UpdateEquipmentButtons();
+        //unit.ui.UpdateEquipmentButtons();
     }
 
     public void UpdateEquipmentButtons() {

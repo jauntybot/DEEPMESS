@@ -395,7 +395,22 @@ public class PlayerManager : UnitManager {
 
     public override void DeselectUnit()
     {       
-        if (selectedUnit is PlayerUnit pu) pu.ui.equipButtons[0].DeselectEquipment();
+        if (selectedUnit is PlayerUnit pu && selectedUnit.selectedEquipment) {
+            if (selectedUnit.selectedEquipment is PerFloorEquipmentData) {
+                EquipmentButton butt = selectedUnit.ui.equipButtons.Find(e => e.data is PerFloorEquipmentData);
+                if (butt)
+                    butt.DeselectEquipment();
+            } else if (selectedUnit.selectedEquipment is HammerData) {
+                EquipmentButton butt = selectedUnit.ui.equipButtons.Find(e => e.data is HammerData);
+                if (butt)
+                    butt.DeselectEquipment();
+            } else if (selectedUnit.selectedEquipment is BulbEquipmentData) {
+                EquipmentButton butt = selectedUnit.ui.equipButtons.Find(e => e.data is BulbEquipmentData);
+                if (butt)
+                    butt.DeselectEquipment();
+            }
+
+        }
         base.DeselectUnit();
         turnBlink.BlinkEndTurn();
         prevCursorTargetState = false;
