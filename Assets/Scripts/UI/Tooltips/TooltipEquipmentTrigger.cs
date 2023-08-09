@@ -9,7 +9,7 @@ public class TooltipEquipmentTrigger : TooltipTrigger
 {
 
     [SerializeField] bool initSelf;
-    [SerializeField] RuntimeAnimatorController anvilAnim, bigGrabAnim, shieldAnim, bulbAnim;
+    [SerializeField] RuntimeAnimatorController hammerAnim, anvilAnim, bigGrabAnim, shieldAnim, bulbAnim;
 
     void Start() {
         if (initSelf) Initialize(GetComponent<EquipmentButton>().data.name);
@@ -73,7 +73,8 @@ public class TooltipEquipmentTrigger : TooltipTrigger
     private void Hammer()
     {
         header = "Hammer";
-        content = "Use to attack enemies, pass to friendlies, or strike the nail";
+        content = "Throw in a straight line, then arc a ricochet to any Slag.";
+        anim = hammerAnim;
     }
 
     private void HealBulb()

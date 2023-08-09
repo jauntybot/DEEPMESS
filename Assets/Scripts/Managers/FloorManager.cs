@@ -61,11 +61,12 @@ public class FloorManager : MonoBehaviour
     }
     #endregion
 
-    public void Init() {
+    public IEnumerator Init() {
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
         if (UIManager.instance) uiManager = UIManager.instance;
         betweenFloor = GetComponent<BetweenFloorManager>();
         floorSequence.Init();
+        yield return null;
     }
 
     public IEnumerator GenerateFloor(FloorDefinition definitionOverride = null) {
@@ -82,13 +83,6 @@ public class FloorManager : MonoBehaviour
             floorDef = floorSequence.GetFloor();
 
         newFloor.lvlDef = floorDef;
-    
-        if (scenario.tutorial != null && floorSequence.activePacket.packetType == FloorPacket.PacketType.Tutorial) {
-            if (floorDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.tutorial.bulbEncountered)
-                scenario.tutorial.StartCoroutine(scenario.tutorial.TileBulb());
-            if (floorDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is EnemyDetonateUnit) != null && !scenario.tutorial.basophicEncountered)
-                scenario.tutorial.StartCoroutine(scenario.tutorial.Basophic());
-        }
 
         Coroutine co = StartCoroutine(newFloor.GenerateGrid(index));
         yield return co;
@@ -214,7 +208,7 @@ public class FloorManager : MonoBehaviour
         if (down && currentFloor.index-1 >= 0) floors[currentFloor.index-1].gameObject.SetActive(false);
         if (toFloor) currentFloor = toFloor;
         if (uiManager.gameObject.activeSelf)
-            uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index);
+            uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index + 1);
 
     }
     
@@ -279,32 +273,43 @@ public class FloorManager : MonoBehaviour
             yield return StartCoroutine(TutorialSequence.instance.TutorialDescend());
         }
         else {
-
             yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, scen));
 
-            scenario.player.nail.ToggleNailState(Nail.NailState.Primed);
-    // Pan to next floor        
             // if (cascade) {
             //     yield return StartCoroutine(previewManager.PreviewFloor(true, true));
             //     currentFloor.LockGrid(false);
             // }
             // else
 
-    // Check if at the end of packet
+// Check if at the end of packet
             if (floors.Count - 1 > currentFloor.index) {
     
                 yield return StartCoroutine(TransitionFloors(true, false));
+                scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
 
-    // Yield for cascade sequence
-                if (cascade) {
-                    //yield return StartCoroutine(ChooseLandingPositions());
-                    //yield return new WaitForSecondsRealtime(1.25f);
-                    //downButton.SetActive(true); upButton.SetActive(false);
-                }
-    // Descend units from previous floor
+// Yield for cascade sequence
+                // if (cascade) {
+                //     yield return StartCoroutine(ChooseLandingPositions());
+                //     yield return new WaitForSecondsRealtime(1.25f);
+                //     downButton.SetActive(true); upButton.SetActive(false);
+                // }
                 
+// Descend units from previous floor
                 yield return StartCoroutine(DescendUnits(floors[currentFloor.index -1].gridElements, enemy));
+
+// Check for boss spawn
+                if (floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS) 
+                    yield return StartCoroutine(SpawnBoss());
+
+// Check for tutorial tooltip triggers
+                if (scenario.tutorial != null && floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
+                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.tutorial.bulbEncountered)
+                        scenario.tutorial.StartCoroutine(scenario.tutorial.TileBulb());
+                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is EnemyDetonateUnit) != null && !scenario.tutorial.basophicEncountered)
+                        scenario.tutorial.StartCoroutine(scenario.tutorial.Basophic());
+                }
+
 
     // Generate next floor if still mid packet
                 if (!floorSequence.ThresholdCheck() || floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) {
@@ -406,15 +411,14 @@ public class FloorManager : MonoBehaviour
 
         if (subElement) {
             StartCoroutine(subElement.CollideFromBelow(unit));
-            if (subElement is not GroundElement)
-                yield return StartCoroutine(unit.CollideFromAbove(subElement));
+
+            yield return StartCoroutine(unit.CollideFromAbove(subElement));
         }
     }
 
 // Coroutine for descending the nail at a regulated random position
     public IEnumerator DropNail(Nail nail) {
-        if (nail.nailState == Nail.NailState.Buried)
-            nail.ToggleNailState(Nail.NailState.Primed);
+        nail.ToggleNailState(Nail.NailState.Falling);
 
         bool validCoord = false;
         Vector2 spawn = Vector2.zero;
@@ -471,6 +475,42 @@ public class FloorManager : MonoBehaviour
             StartCoroutine(subElement.CollideFromBelow(nail));
     }
 
+    public IEnumerator SpawnBoss() {
+        
+        bool validCoord = false;
+        Vector2 spawn = Vector2.zero;
+        while (!validCoord) {
+            validCoord = true;
+
+            spawn = new Vector2(Random.Range(1,6), Random.Range(1,6));
+
+            foreach (GridElement ge in currentFloor.gridElements) {
+                if (ge.coord == spawn) validCoord = false;
+            }
+
+            if (currentFloor.sqrs.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false; 
+        }
+    
+        Unit boss = scenario.currentEnemy.SpawnBossUnit(spawn, floorSequence.bossPrefab.GetComponent<Unit>());
+        Vector3 to = currentFloor.PosFromCoord(spawn);
+        Vector3 from = to + new Vector3(0, floorOffset*2, 0);
+
+        float timer = 0;
+        NestedFadeGroup.NestedFadeGroup fade = boss.GetComponent<NestedFadeGroup.NestedFadeGroup>();
+        while (timer <= unitDropDur) {
+            boss.transform.localPosition = Vector3.Lerp(from, to, dropCurve.Evaluate(timer/unitDropDur));
+            fade.AlphaSelf = Mathf.Lerp(0, 1, timer/(unitDropDur/3));
+            yield return null;
+            timer += Time.deltaTime;
+        }
+        boss.DescentVFX(currentFloor.sqrs.Find(sqr => sqr.coord == boss.coord));
+        boss.transform.position = to;
+        boss.StoreInGrid(currentFloor);
+        fade.AlphaSelf = 1;
+
+
+    }
+
 
     public IEnumerator TransitionPackets() {
         for (int i = scenario.player.units.Count - 1; i >= 0; i-- ) {
@@ -485,6 +525,7 @@ public class FloorManager : MonoBehaviour
         units[3].transform.parent = transitionParent;
         //units[4].
         yield return StartCoroutine(TransitionFloors(true, false));
+        scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
         float timer = 0;
         while (timer <= unitDropDur) {
             parallax.ScrollParallax(-1);
@@ -533,7 +574,7 @@ public class FloorManager : MonoBehaviour
             parallax.ScrollParallax(-1);
             timer += Time.deltaTime;
         }
-        //yield return StartCoroutine(TransitionFloors(false, true));
+        
         yield return StartCoroutine(GenerateFloor());
         yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
         yield return StartCoroutine(DescendUnits(new List<GridElement>{ units[0], units[1], units[2], units[3]} ));

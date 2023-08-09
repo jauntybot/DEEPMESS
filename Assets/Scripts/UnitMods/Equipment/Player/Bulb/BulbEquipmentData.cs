@@ -9,13 +9,6 @@ public class BulbEquipmentData : EquipmentData
     [SerializeField] protected GameObject bulbPrefab;
     [SerializeField] SFX bulbExplodeSFX, bulbThrowSFX;
 
-    public override void EquipEquipment(GridElement user)
-    {
-        base.EquipEquipment(user);
-        PlayerUnit pu = (PlayerUnit)user;
-        pu.ui.UpdateEquipmentButtons();
-    }
-
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
     {
         GameObject bulb = Instantiate(bulbPrefab, user.transform.position, Quaternion.identity, user.transform);

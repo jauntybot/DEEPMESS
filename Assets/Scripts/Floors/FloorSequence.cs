@@ -12,8 +12,9 @@ public class FloorSequence : ScriptableObject {
 
     [HideInInspector] public int floorsTutorial;
     public int floorsI, floorsII, floorsIII, floorsBoss;
+    public GameObject bossPrefab;
     public FloorPacket.PacketType currentThreshold;
-    int floorsGot = 0;
+    [SerializeField] int floorsGot = 0;
 
     public void Init() {
         localPackets = new List<FloorPacket>();
@@ -21,8 +22,7 @@ public class FloorSequence : ScriptableObject {
         activePacket.floors = new List<FloorDefinition>();
         
         floorsGot = 0;
-        currentThreshold = FloorPacket.PacketType.Tutorial;
-        if (floorsTutorial == 0) currentThreshold = FloorPacket.PacketType.I;
+        currentThreshold = FloorPacket.PacketType.I;
     }
 
     public void StartPacket(FloorPacket.PacketType type) {
@@ -57,13 +57,13 @@ public class FloorSequence : ScriptableObject {
                 if (floorsGot >= floorsI) currentThreshold = FloorPacket.PacketType.II;
             break;
             case FloorPacket.PacketType.II:
-                if (floorsGot >= floorsI) currentThreshold = FloorPacket.PacketType.III;
+                if (floorsGot >= floorsII) currentThreshold = FloorPacket.PacketType.III;
             break;
             case FloorPacket.PacketType.III:
-                if (floorsGot >= floorsI) currentThreshold = FloorPacket.PacketType.BOSS;
+                if (floorsGot >= floorsIII) currentThreshold = FloorPacket.PacketType.BOSS;
             break;
             case FloorPacket.PacketType.BOSS:
-                if (floorsGot >= floorsI) currentThreshold = FloorPacket.PacketType.BARRIER;
+                if (floorsGot >= floorsBoss) currentThreshold = FloorPacket.PacketType.BARRIER;
             break;
         }
 

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EnemyManager : UnitManager {
 
+
+    [SerializeField] List<Unit> unitsToAct = new List<Unit>();
     public delegate void OnEnemyCondition(GridElement ge);
     public event OnEnemyCondition WipedOutCallback;
     protected Coroutine ongoingTurn;
@@ -17,6 +19,13 @@ public class EnemyManager : UnitManager {
     {
         Unit u = base.SpawnUnit(coord, unit);
         u.ElementDestroyed += DescentTriggerCheck;
+        return u;
+    }
+
+    public virtual Unit SpawnBossUnit(Vector2 coord, Unit unit) {
+        Unit u = SpawnUnit(coord, unit);
+        
+        u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
         return u;
     }
 
@@ -40,9 +49,14 @@ public class EnemyManager : UnitManager {
         ResolveConditions();
 
         yield return new WaitForSecondsRealtime(1/Util.fps);
+
+        unitsToAct = new List<Unit>();
+        for (int i = units.Count - 1; i >= 0; i--)
+            unitsToAct.Add(units[i]);
+
 // Loop through each unit to take it's action
-        for (int i = units.Count - 1; i >= 0; i--) 
-        {
+        
+        while (unitsToAct.Count > 0) {
 // Check if the player loses before continuing turn
             bool lose = true;
             foreach (Unit u in scenario.player.units) {
@@ -56,13 +70,14 @@ public class EnemyManager : UnitManager {
                 break;
             }
 // Take either scatter action or normal action
-            EnemyUnit enemy = units[i] as EnemyUnit;
+            EnemyUnit enemy = unitsToAct[0] as EnemyUnit;
+            unitsToAct.Remove(enemy);
             if (!scatter) {
                 ongoingTurn = StartCoroutine(enemy.CalculateAction());
                 yield return ongoingTurn;
                 yield return new WaitForSecondsRealtime(0.125f);
             } else {
-                ongoingTurn = StartCoroutine(ScatterTurn(enemy));
+                ongoingTurn = StartCoroutine(enemy.ScatterTurn());
                 yield return ongoingTurn;
                 yield return new WaitForSecondsRealtime(0.125f);
             }
@@ -77,20 +92,6 @@ public class EnemyManager : UnitManager {
         }
     }
 
-    public IEnumerator ScatterTurn(EnemyUnit input) {
-        input.UpdateAction(input.equipment[0], input.moveMod);
-        Vector2 targetCoord = input.SelectOptimalCoord(EnemyUnit.Pathfinding.Random);
-        if (Mathf.Sign(targetCoord.x) == 1) {
-            SelectUnit(input);
-            currentGrid.DisplayValidCoords(input.validActionCoords, input.selectedEquipment.gridColor);
-            yield return new WaitForSecondsRealtime(0.5f);
-            Coroutine co = StartCoroutine(input.selectedEquipment.UseEquipment(input, currentGrid.sqrs.Find(sqr => sqr.coord == targetCoord)));
-            currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
-            currentGrid.DisableGridHighlight();
-            yield return co;
-            DeselectUnit();
-        }
-    }
 
     public void EndTurn() {
         if (selectedUnit)
@@ -128,6 +129,7 @@ public class EnemyManager : UnitManager {
     protected override void RemoveUnit(GridElement ge)
     {
         base.RemoveUnit(ge);
+        if (unitsToAct.Contains((Unit)ge)) unitsToAct.Remove((Unit)ge);
         UIManager.instance.metaDisplay.UpdateEnemiesRemaining(units.Count);
     }
 }

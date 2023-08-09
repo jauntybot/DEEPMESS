@@ -35,8 +35,8 @@ public class PlayerManager : UnitManager {
 
     [Header("GRID VIS")]
     [SerializeField] Unit hoveredUnit = null;
-    private GridElement prevCursorTarget = null;
-    private bool prevCursorTargetState = false;
+    [SerializeField] GridElement prevCursorTarget = null;
+    [SerializeField] bool prevCursorTargetState = false;
     PlayerController.CursorState targetCursorState;
 
     [Header("MISC.")]
@@ -107,8 +107,7 @@ public class PlayerManager : UnitManager {
         //u.UpdateElement(coord);
         //u.transform.position += new Vector3(0, floorManager.floorOffset, 0);
         
-        if (u is Nail)
-            u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
+        u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
             
                 
 // Initialize equipment from prefab
@@ -219,17 +218,13 @@ public class PlayerManager : UnitManager {
                 }
             }
         }
-        else if (input is GroundElement) {
-            GridInput(currentGrid.sqrs.Find(sqr => sqr.coord == input.coord));
-        }
 // Player clicks on square
         else if (input is Tile sqr) 
         {
 // Check if square is empty
             GridElement contents = null;
             foreach (GridElement ge in currentGrid.CoordContents(sqr.coord)) {
-                if (ge is not GroundElement)
-                   contents = ge;
+                contents = ge;
             }
 // Square not empty, recurse this function with reference to square contents
             if (contents)
@@ -291,27 +286,19 @@ public class PlayerManager : UnitManager {
         }
 // No unit selected
         else if (scenario.currentTurn == ScenarioManager.Turn.Player) {
-            bool hovered = false;
+            bool hovering = false;
             foreach (GridElement ge in currentGrid.CoordContents(pos)) {
                 if (ge is Unit u) {
-                    
+                    if (ge == prevCursorTarget || (ge is PlayerUnit pu && (!pu.selectable || pu.moved))) break;
+                    hovering = true;
                     pc.ToggleCursorValid(true);
+                    
+                    hovering = true;
+                    hoveredUnit = u;
+                    if (!prevCursorTarget) prevCursorTarget = u;
 
-                    // if (hoveredUnit) {
-                    //     selectedUnit = hoveredUnit;
-                    //     DeselectUnit();
-                    //     hoveredUnit = null;
-                    // }
-                    if (u is PlayerUnit) {
-                        if (!u.selectable || u.moved) break;
-                    }
-                    hoveredUnit = u;        
-                    hovered = true;
                     ge.TargetElement(true);
                     UIManager.instance.UpdatePortrait(u, true);
-                    if (u is PlayerUnit)
-                        u.ui.ToggleEquipmentButtons();
-
                     if ((u is PlayerUnit || u is EnemyUnit) && FloorManager.instance.currentFloor == currentGrid) {
                         if (u.selectedEquipment != u.equipment[0]) {
                             u.selectedEquipment = u.equipment[0];
@@ -319,9 +306,9 @@ public class PlayerManager : UnitManager {
                             u.grid.DisplayValidCoords(u.validActionCoords, u is EnemyUnit ? 4 : 3, false, false);
                         }
                     }
-                } 
+                }
             }
-            if (!hovered) {
+            if (!hovering) {
                 UIManager.instance.UpdatePortrait();
                 if (hoveredUnit) {
                     selectedUnit = hoveredUnit;
@@ -332,15 +319,14 @@ public class PlayerManager : UnitManager {
                 pc.ToggleCursorValid(false);
             }
         }
+
         bool update = false;
-// if cursor is on grid
-        if (prevCursorTarget) {
-// player has moved the cursor to another coord
+        if (prevCursorTarget ) {
             if (pos != prevCursorTarget.coord) {
                 prevCursorTarget.TargetElement(prevCursorTargetState);
                 update = false;
                 foreach (GridElement ge in currentGrid.CoordContents(pos)) {
-                    if (!ge.targeted && ge is not GroundElement) {
+                    if (!ge.targeted) {
                         prevCursorTargetState = ge.targeted;
                         ge.TargetElement(true);
                         prevCursorTarget = ge;
@@ -356,12 +342,12 @@ public class PlayerManager : UnitManager {
         } else {
             update = false;
             foreach(GridElement ge in currentGrid.CoordContents(pos)) {
-                if (!ge.targeted && ge is not GroundElement) {
+                if (!ge.targeted) {
                     prevCursorTargetState = ge.targeted;
                     ge.TargetElement(true);
                     prevCursorTarget = ge;
                 }
-            }
+
         }
     }
 
@@ -395,10 +381,22 @@ public class PlayerManager : UnitManager {
     }
 
     public override void DeselectUnit()
-    {
-        if (selectedUnit is PlayerUnit pu) {
-            if (pu.ui.perFloor) pu.ui.perFloor.DeselectEquipment(); if (pu.ui.hammer) pu.ui.hammer.DeselectEquipment(); if (pu.ui.bulb) pu.ui.bulb.DeselectEquipment();
-        
+    {       
+        if (selectedUnit is PlayerUnit pu && selectedUnit.selectedEquipment) {
+            if (selectedUnit.selectedEquipment is PerFloorEquipmentData) {
+                EquipmentButton butt = selectedUnit.ui.equipButtons.Find(e => e.data is PerFloorEquipmentData);
+                if (butt)
+                    butt.DeselectEquipment();
+            } else if (selectedUnit.selectedEquipment is HammerData) {
+                EquipmentButton butt = selectedUnit.ui.equipButtons.Find(e => e.data is HammerData);
+                if (butt)
+                    butt.DeselectEquipment();
+            } else if (selectedUnit.selectedEquipment is BulbEquipmentData) {
+                EquipmentButton butt = selectedUnit.ui.equipButtons.Find(e => e.data is BulbEquipmentData);
+                if (butt)
+                    butt.DeselectEquipment();
+            }
+
         }
         base.DeselectUnit();
         turnBlink.BlinkEndTurn();

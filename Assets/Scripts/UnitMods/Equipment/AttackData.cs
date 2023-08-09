@@ -25,7 +25,7 @@ public class AttackData : EquipmentData
                             if (u.conditions.Contains(Unit.Status.Disabled)) remove = true;
                         }
                         ge.elementCanvas.ToggleStatsDisplay(true);
-                        Debug.Log(ge.name);
+
                     }
                 }
             } 

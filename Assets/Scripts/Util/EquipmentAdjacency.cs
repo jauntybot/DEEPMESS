@@ -155,7 +155,7 @@ public class EquipmentAdjacency : MonoBehaviour
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered
-                            if (data.filters == null || !data.filters.Find(f => f.GetType() == ge.GetType()) || !data.filters.Find(f => ge.GetType().IsSubclassOf(f.GetType()))) {
+                            if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord,current);
                                 break;
@@ -179,7 +179,7 @@ public class EquipmentAdjacency : MonoBehaviour
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered
-                            if (data.filters == null || !data.filters.Find(f => f.GetType() == ge.GetType()) || !data.filters.Find(f => ge.GetType().IsSubclassOf(f.GetType()))) {
+                            if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord, current);
                                 break;
@@ -250,7 +250,7 @@ public class EquipmentAdjacency : MonoBehaviour
     }
 
     
-        public static List<Vector2> OfTypeOnBoardAdjacency(Vector2 from, List<GridElement> elements, Vector2 origin, Grid grid) {
+    public static List<Vector2> OfTypeOnBoardAdjacency(Vector2 from, List<GridElement> elements, Vector2 origin, Grid grid) {
         List<Vector2> _coords = new List<Vector2>();
         
         foreach (GridElement type in elements) {
@@ -258,7 +258,7 @@ public class EquipmentAdjacency : MonoBehaviour
                 foreach(Tile sqr in grid.sqrs) {
                     bool occupied = false;
                     foreach (GridElement ge in grid.CoordContents(sqr.coord)) {
-                        if (ge is not GroundElement) occupied = true;
+                        occupied = true;
                     }
                     if (!occupied && !_coords.Contains(sqr.coord)) _coords.Add(sqr.coord);
                 }

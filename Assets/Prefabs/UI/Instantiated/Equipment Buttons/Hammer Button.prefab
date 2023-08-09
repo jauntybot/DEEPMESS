@@ -647,6 +647,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 0}
+  equipType: 0
+  unit: {fileID: 0}
   button: {fileID: 735508261610608116}
   selected: 0
   disarmOverlay: {fileID: 622450547540956480}
@@ -803,7 +805,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7819691343915474912}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d38c2447f701f49ecafacd4b870b8e8f, type: 3}
   m_Name: 
@@ -813,9 +815,11 @@ MonoBehaviour:
   content: 
   anim: {fileID: 0}
   initSelf: 0
+  hammerAnim: {fileID: 9100000, guid: 83cb4e250a315a54881f42fa9e1ce3dd, type: 2}
   anvilAnim: {fileID: 0}
   bigGrabAnim: {fileID: 0}
   shieldAnim: {fileID: 0}
+  bulbAnim: {fileID: 0}
 --- !u!114 &7233669945158518682
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class NailDisplay : UnitOverview
 {
 
-    [SerializeField] Sprite buried, primed;
+    [SerializeField] Animator anim;
 
     public override UnitOverview Initialize(Unit u, Transform overviewLayoutParent) {
         unit = u;
@@ -36,7 +36,20 @@ public class NailDisplay : UnitOverview
     public override void UpdateOverview(int value)
     {
         Nail n = (Nail)unit;
-        mini.sprite = n.nailState == Nail.NailState.Primed ? primed : buried;
+        switch (n.nailState) {
+            default: break;
+            case Nail.NailState.Buried:
+                anim.SetBool("Falling", false);
+                anim.SetBool("Primed", false);
+            break;
+            case Nail.NailState.Primed:
+                anim.SetBool("Falling", false);
+                anim.SetBool("Primed", true);
+            break;
+            case Nail.NailState.Falling:
+                anim.SetBool("Falling", true);
+            break;
+        }
 
         for (int i = 0; i <= unit.hpMax - 1; i++) 
             hpPips.transform.GetChild(i).gameObject.SetActive(i < value);

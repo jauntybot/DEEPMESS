@@ -11,7 +11,6 @@ public class EnemyDetonateUnit : EnemyUnit
 
     public void PrimeSelf() {
         primed = true;
-        Debug.Log("Primed");
         gfxAnim.SetBool("Primed", true);
     }
 
@@ -20,23 +19,41 @@ public class EnemyDetonateUnit : EnemyUnit
         explosion.gameObject.SetActive(true);
     }
 
+    public override IEnumerator ScatterTurn()
+    {
+        if (!primed)
+            yield return base.ScatterTurn();
+        else
+            yield return StartCoroutine(ExplodeCo());
+    }
+
     public override IEnumerator CalculateAction()
     {
-        if (!primed) yield return base.CalculateAction();
-        else {
-            manager.SelectUnit(this);
-            UpdateAction(equipment[1]);
-            grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
-            yield return new WaitForSecondsRealtime(0.5f);
-            Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, null));
-            grid.UpdateSelectedCursor(false, Vector2.one * -32);
-            grid.DisableGridHighlight();
-            yield return co;
-            yield return new WaitForSecondsRealtime(0.125f);
-            manager.DeselectUnit();
-            yield break;
+        if (!primed)
+            yield return base.CalculateAction();
+        else 
+            yield return StartCoroutine(ExplodeCo());
+    }
 
-        }
+    IEnumerator ExplodeCo() {
+        manager.SelectUnit(this);
+        UpdateAction(equipment[1]);
+        grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
+        yield return new WaitForSecondsRealtime(0.5f);
+        StartCoroutine(selectedEquipment.UseEquipment(this, null));
+        grid.UpdateSelectedCursor(false, Vector2.one * -32);
+        grid.DisableGridHighlight();
+        Coroutine co = StartCoroutine(TakeDamage(hpCurrent));
+        manager.DeselectUnit();
+        yield return co;
+    }
+
+    public override IEnumerator DestroyElement(DamageType dmgType)
+    {
+        if (primed)
+            yield return StartCoroutine(ExplodeCo());
+        else
+            yield return base.DestroyElement(dmgType);
     }
 
 }

@@ -36,24 +36,31 @@ public class SelfDetonate : EquipmentData
             u.PrimeSelf();
             user.PlaySound(chargeSFX);
         } else {
-
             u.Explode();
+            u.primed = false;
             user.PlaySound(selfDetonateSFX);
 
 // Apply damage to units in AOE
             List<Vector2> aoe = EquipmentAdjacency.GetAdjacent(user.coord, range, this, targetTypes);
-            List<GridElement> affected = new List<GridElement>();
+            List<Coroutine> affectedCo = new List<Coroutine>();
             foreach (Vector2 coord in aoe) {
                 if (user.grid.CoordContents(coord).Count > 0) {
                     foreach (GridElement ge in user.grid.CoordContents(coord)) {
-                        if (ge is Unit tu) {
-                            tu.StartCoroutine(tu.TakeDamage(2));
+                        if (ge is Unit tu && ge != user) {
+                            affectedCo.Add(tu.StartCoroutine(tu.TakeDamage(2)));
                         }
                     }
                 }
             }
-            user.StartCoroutine(user.TakeDamage(user.hpCurrent));
-            yield return new WaitForSecondsRealtime(0.25f);
+            
+            for (int i = affectedCo.Count - 1; i >= 0; i--) {
+                if (affectedCo[i] != null) {
+                    yield return affectedCo[i];
+                    Debug.Log("yielding");
+                }
+                else
+                    affectedCo.RemoveAt(i);
+            }
         }
     }
 

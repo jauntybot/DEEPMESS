@@ -41,7 +41,9 @@ public class TutorialSequence : MonoBehaviour
 
     [Header("Gameplay Optional Tooltips")]
     bool enemyBehavior = false;
-    public bool undoEncountered, nailDamageEncountered, bloodEncountered, collisionEncountered, bulbEncountered, basophicEncountered, deathReviveEncountered, slotsEncountered = false;
+    public bool hittingEnemies, undoEncountered, nailDamageEncountered, bloodEncountered, collisionEncountered, bulbEncountered, basophicEncountered, deathReviveEncountered, slotsEncountered = false;
+    List<Coroutine> tooltipCoroutines = new List<Coroutine>();
+
 
     public void Initialize(ScenarioManager manager) {
         scenario = manager;
@@ -51,7 +53,7 @@ public class TutorialSequence : MonoBehaviour
         floorManager.floorSequence.floorsTutorial = 3;
         floorManager.floorSequence.localPackets.Add(tutorialPacket);
         
-        enemyBehavior = false; undoEncountered = false; bulbEncountered = false; deathReviveEncountered = false; slotsEncountered = false;
+        hittingEnemies = false; enemyBehavior = false; undoEncountered = false; bulbEncountered = false; deathReviveEncountered = false; slotsEncountered = false;
         descents = 0;
 
     }
@@ -109,7 +111,8 @@ public class TutorialSequence : MonoBehaviour
         StopCoroutine(co);
         yield return new WaitForSecondsRealtime(0.25f);
         yield return StartCoroutine(Equipment());
-        StartCoroutine(AttackingEnemies());
+        if (!hittingEnemies)
+            StartCoroutine(AttackingEnemies());
         
         yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
     }
@@ -204,11 +207,12 @@ public class TutorialSequence : MonoBehaviour
     }
 
     public IEnumerator AttackingEnemies() {
+        hittingEnemies = true;
         bool aligned = false;
         while (true) {
             yield return null;
             if (scenario.currentTurn == ScenarioManager.Turn.Player) {
-                Unit unit = scenario.player.units.Find(u => u.ui.hammer != null);
+                Unit unit = scenario.player.units.Find(u => u.equipment.Find(e => e is HammerData) != null);
                 foreach (Unit enemy in scenario.currentEnemy.units) {
                     if (unit.coord.x == enemy.coord.x || unit.coord.y == enemy.coord.y)
                         aligned = true;
@@ -328,6 +332,7 @@ public class TutorialSequence : MonoBehaviour
     }
 
     public IEnumerator Basophic() {
+        Debug.Log("Basophic");
         basophicEncountered = true;
         while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
             yield return null;
@@ -372,6 +377,7 @@ public class TutorialSequence : MonoBehaviour
     }
 
     public IEnumerator TileBulb() {
+        Debug.Log("Tile bulb");
         bulbEncountered = true;
         while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
             yield return null;
@@ -379,9 +385,9 @@ public class TutorialSequence : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.25f);
         screenFade.gameObject.SetActive(true);
 
-        header = "Basophic Enemy";
-        body = "This Basophic enemy can explode, dealing damage to all the tiles around it. Hover over enemy portraits to learn more about their abilities." + '\n';
-        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ basophicAnim });
+        header = "Bulbs";
+        body = "Bulbs are consumable items that your Slags can pick up. Each Slag can hold 1 bulb that can be used by that Slag or thrown as a free action." + '\n';
+        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ bulbAnim });
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -500,6 +506,7 @@ public class TutorialSequence : MonoBehaviour
         switch(descents) {
             case 0:
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
+                scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
                 floorManager.currentFloor.RemoveElement(scenario.player.units[0]);
                 floorManager.playerDropOverrides = new List<Vector2>();
@@ -515,16 +522,19 @@ public class TutorialSequence : MonoBehaviour
             break;
             case 1:
                 scenario.player.units = playerUnits;
+                EnemyManager prevEnemy = scenario.currentEnemy;
 
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
+                scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
 
 
                 floorManager.currentFloor.RemoveElement(scenario.player.units[0]); floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
                 floorManager.playerDropOverrides = new List<Vector2>();
                 List<GridElement> toDrop = new List<GridElement> { scenario.player.units[0], scenario.player.units[1], scenario.player.units[3] };
-                if (scenario.currentEnemy.units.Count > 0) toDrop.Add(scenario.currentEnemy.units[0]);
-                yield return StartCoroutine(floorManager.DescendUnits(toDrop));
+                if (prevEnemy.units.Count > 0) toDrop.Add(prevEnemy.units[0]);
+            
+                yield return StartCoroutine(floorManager.DescendUnits(toDrop, prevEnemy));
                 
                 bool validCoord = false;
                 Vector2 spawn = Vector2.zero;
@@ -568,7 +578,7 @@ public class TutorialSequence : MonoBehaviour
         if (scenario.prevTurn == ScenarioManager.Turn.Descent)
             yield return StartCoroutine(scenario.currentEnemy.TakeTurn(true));
         else {
-            if (!enemyBehavior) {
+            if (!enemyBehavior && scenario.currentEnemy.units.Count > 0) {
                 yield return StartCoroutine(EnemyBehavior());
                 enemyBehavior = true;
             }

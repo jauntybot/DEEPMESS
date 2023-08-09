@@ -21,9 +21,10 @@ public class LoadoutManager : MonoBehaviour
             UnitUI ui = Instantiate(loadoutPrefab, loadoutUIParent).GetComponent<UnitUI>();
             ui.Initialize(u);
             ui.ToggleUnitPanel(true);
-            if (ui.hammer) {
-                Destroy(ui.hammer.gameObject);
-                ui.hammer = null;
+            if (ui.unit.equipment.Find(e => e is HammerData)) {
+                EquipmentButton button = ui.equipButtons[1];
+                ui.equipButtons.Remove(button);
+                Destroy(button.gameObject);
             }
             ui.ToggleEquipmentPanel(true);
             unitUI.Add(ui);

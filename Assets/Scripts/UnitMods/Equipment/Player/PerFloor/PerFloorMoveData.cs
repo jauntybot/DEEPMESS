@@ -27,15 +27,14 @@ public class PerFloorMoveData : PerFloorEquipmentData
                         bool occupied = false;
                         bool remove = false;
                         foreach(GridElement ge in user.grid.CoordContents(validCoords[i])) {
-                            if (ge is not GroundElement) {
-                                occupied = true; remove = true;
-                                foreach(GridElement target in firstTargets)
-                                if (ge.GetType() == target.GetType()) {
-                                    remove = false;
-                                    if (ge is EnemyUnit)
-                                        ge.elementCanvas.ToggleStatsDisplay(true);
-                                }
+                            occupied = true; remove = true;
+                            foreach(GridElement target in firstTargets)
+                            if (ge.GetType() == target.GetType()) {
+                                remove = false;
+                                if (ge is EnemyUnit)
+                                    ge.elementCanvas.ToggleStatsDisplay(true);
                             }
+                         
                         }
                         if (remove || !occupied) {
                             if (validCoords.Count >= i)
@@ -164,19 +163,17 @@ public class PerFloorMoveData : PerFloorEquipmentData
             Vector2 frontier = u.coord;
             for (int i = 0; i <= moveRange; i++) {
                 foreach (GridElement ge in user.grid.CoordContents(frontier + dir)) {
-                    if (ge is not GroundElement) {
-                        if (ge is Unit u2) {
-                            if (targetPositions.ContainsKey(u2)) {
-                                if (targetPositions[u2] == frontier + dir) {
-                                    blocked = true;                         
-                                } 
-                            } else {
-                                blocked = true;
-                            }
-                        } 
-                        else {
+                    if (ge is Unit u2) {
+                        if (targetPositions.ContainsKey(u2)) {
+                            if (targetPositions[u2] == frontier + dir) {
+                                blocked = true;                         
+                            } 
+                        } else {
                             blocked = true;
                         }
+                    } 
+                    else {
+                        blocked = true;
                     }
                 }
                 foreach (KeyValuePair<Unit, Vector2> entry in targetPositions) {

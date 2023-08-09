@@ -72,12 +72,12 @@ public class Unit : GridElement {
             selectedEquipment = null;
         }
         if (grid.sqrs.Find(sqr => sqr.coord == coord) is TileBulb tb && this is PlayerUnit pu) {
-                if (!tb.harvested && pu.ui.bulb == null)
+                if (!tb.harvested && pu.equipment.Find(e => e is BulbEquipmentData) == null)
                     tb.HarvestBulb(pu);
         }
     }
 
-    public bool ValidCommand(Vector2 target, EquipmentData equip) {
+    public virtual bool ValidCommand(Vector2 target, EquipmentData equip) {
         if (equip == null) return false;
         if (validActionCoords.Count == 0) return false;
         if (!validActionCoords.Contains(target)) return false;
@@ -100,7 +100,7 @@ public class Unit : GridElement {
                 RemoveShell();
                 StartCoroutine(TakeDamage(hpMax, DamageType.Bile));
             } else if (targetSqr is TileBulb tb && this is PlayerUnit pu) {
-                if (!tb.harvested && pu.ui.bulb == null)
+                if (!tb.harvested && pu.equipment.Find(e => e is BulbEquipmentData) == null)
                     tb.HarvestBulb(pu);
             } else {
                 RemoveCondition(Status.Restricted);
@@ -160,8 +160,8 @@ public class Unit : GridElement {
     public virtual IEnumerator CollideFromAbove(GridElement subGE) {
         if (manager.scenario.tutorial != null && !manager.scenario.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
             manager.scenario.tutorial.StartCoroutine(manager.scenario.tutorial.DescentDamage());
-        if (subGE is not GroundElement)
-            yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
+        
+        yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
     }
 
     public virtual void ApplyCondition(Status s) {
@@ -194,14 +194,6 @@ public class Unit : GridElement {
             switch(s) {
                 default: return;
                 case Status.Normal: return;
-                case Status.Immobilized:
-                    moved = false;
-                    foreach(GridElement ge in grid.CoordContents(coord)) {
-                        if (ge is ImmobilizeGoo goo) {
-                            Destroy(goo.gameObject);
-                        }
-                    }
-                break;
                 case Status.Restricted:
                     if (this is PlayerUnit)
                         ui.ToggleEquipmentButtons();

@@ -204,14 +204,16 @@ public class GridContextuals : MonoBehaviour
             aoeCursors.Remove(del);
             Destroy(del);
         }
-        List<Vector2> aoeCoords = EquipmentAdjacency.GetAdjacent(manager.lastHoveredCoord, data.aoeRange, data, null, null, true);
-        for (int i = aoeCoords.Count - 1; i >= 0; i--) {
-            GameObject cursor = Instantiate(gridCursorPrefab);
-            cursor.transform.position = grid.PosFromCoord(aoeCoords[i]);
-            cursor.transform.parent = gridCursor.transform;
-            cursor.transform.localScale = Vector3.one;
-            cursor.SetActive(true);
-            aoeCursors.Add(cursor);
+        if (data.aoeRange > 0) {
+            List<Vector2> aoeCoords = EquipmentAdjacency.GetAdjacent(manager.lastHoveredCoord, data.aoeRange, data, null, grid, true);
+            for (int i = aoeCoords.Count - 1; i >= 0; i--) {
+                GameObject cursor = Instantiate(gridCursorPrefab);
+                cursor.transform.position = grid.PosFromCoord(aoeCoords[i]);
+                cursor.transform.parent = gridCursor.transform;
+                cursor.transform.localScale = Vector3.one;
+                cursor.SetActive(true);
+                aoeCursors.Add(cursor);
+            }
         }
 
     }  

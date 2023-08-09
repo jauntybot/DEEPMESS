@@ -7,30 +7,33 @@ public class Nail : Unit
 {
     public override event OnElementUpdate ElementUpdated;
 
-    FloorManager floorManager;
     public MoveData nailDrop;
 
-    public enum NailState { Primed, Buried }
+    public enum NailState { Falling, Primed, Buried }
     public NailState nailState;
 
     protected override void Start()
     {
         base.Start();
-        if (FloorManager.instance)
-            floorManager = FloorManager.instance;
-            selectedEquipment = equipment[0];
+        selectedEquipment = equipment[0];
         gfxAnim = gfx[0].GetComponent<Animator>();
-        ToggleNailState(NailState.Primed);
+        ToggleNailState(NailState.Falling);
     }
 
 
     public virtual void ToggleNailState(NailState toState) {
         switch (toState) {
             default: break;
+            case NailState.Falling:
+                gfxAnim.SetBool("Falling", true);
+                gfxAnim.SetBool("Primed", false);
+            break;
             case NailState.Primed:
+                gfxAnim.SetBool("Falling", false);
                 gfxAnim.SetBool("Primed", true);
             break;
             case NailState.Buried:
+                gfxAnim.SetBool("Falling", false);
                 gfxAnim.SetBool("Primed", false);
             break;
         }

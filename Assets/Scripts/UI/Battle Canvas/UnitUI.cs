@@ -16,8 +16,7 @@ public class UnitUI : MonoBehaviour
     public Image gfx;
 
     [Header("Equipment")]
-    public EquipmentButton perFloor;
-    public EquipmentButton hammer, bulb;
+    public List<EquipmentButton> equipButtons = new List<EquipmentButton>();
     [SerializeField] GameObject equipmentPanel, hammerPanel, perFloorButtonPrefab, hammerButtonPrefab, bulbButtonPrefab;
 
     [Header("Loadout")]
@@ -50,6 +49,14 @@ public class UnitUI : MonoBehaviour
         
         gfx.sprite = u.gfx[0].sprite;
 
+        if (initialLoadoutButton != null) {
+            initialLoadoutButton.SetActive(true); slotsLoadoutButton.SetActive(false);
+            
+            foreach (EquipmentButton button in equipButtons) {
+                button.gameObject.GetComponentInChildren<Button>().interactable = true;
+            }
+        }
+
         if (u is PlayerUnit) {
             if (overviewParent != null) {
                 UnitOverview view = Instantiate(overviewPrefab, overviewParent).GetComponent<UnitOverview>();
@@ -59,14 +66,6 @@ public class UnitUI : MonoBehaviour
            
         }
         ToggleUnitPanel(false);
-        if (initialLoadoutButton != null) {
-            initialLoadoutButton.SetActive(true); slotsLoadoutButton.SetActive(false);
-            
-            if (perFloor) perFloor.gameObject.GetComponentInChildren<Button>().interactable = true;
-            if (hammer) hammer.gameObject.GetComponentInChildren<Button>().interactable = true;
-            if (bulb) bulb.gameObject.GetComponentInChildren<Button>().interactable = true;
-        }
-
         u.ElementDestroyed += UnitDestroyed;
 
         return this;
@@ -85,19 +84,20 @@ public class UnitUI : MonoBehaviour
 
     public void ToggleEquipmentButtons() {
         PlayerManager pManager = (PlayerManager)unit.manager;
-        if (perFloor) perFloor.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= perFloor.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted) && !pManager.unitActing);
-        if (unit.usedEquip)
-            perFloor.gameObject.GetComponentInChildren<Button>().interactable = false;
-        if (hammer) hammer.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= hammer.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted) && !pManager.unitActing);
-        if (bulb) bulb.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= bulb.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted) && !pManager.unitActing);
-
+        foreach (EquipmentButton b in equipButtons) {
+            b.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= b.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted) && !pManager.unitActing);
+            if (b.data is PerFloorEquipmentData && unit.usedEquip)
+                b.gameObject.GetComponentInChildren<Button>().interactable = false;
+        }      
         if (overview != null )
             overview.UpdateOverview(unit.hpCurrent);
     }
 
     public void DisarmButton() {
-        unit.selectedEquipment.UntargetEquipment(unit);
-        unit.selectedEquipment = null;
+        if (unit.selectedEquipment) {
+            unit.selectedEquipment.UntargetEquipment(unit);
+            unit.selectedEquipment = null;
+        }
         unit.grid.DisableGridHighlight();
         if (!unit.moved)
             unit.UpdateAction(unit.equipment[0]);
@@ -106,63 +106,53 @@ public class UnitUI : MonoBehaviour
             PlayerManager pManager = (PlayerManager)unit.manager;
             pManager.contextuals.displaying = false;
         }
-        unit.ui.UpdateEquipmentButtons();
+        //unit.ui.UpdateEquipmentButtons();
     }
 
     public void UpdateEquipmentButtons() {
 
-        bool pF = false, h = false, b = false;
-// Remove all buttons
-        for (int i = unit.equipment.Count - 1; i >= 0; i--) {
-            if (unit.equipment[i] is PerFloorEquipmentData && perFloor && unit.equipment[i] == perFloor.data) pF = true;
-            if (unit.equipment[i] is HammerData && hammer && unit.equipment[i] == hammer.data) h = true;
-            if (unit.equipment[i] is BulbEquipmentData && bulb && unit.equipment[i] == bulb.data) b = true;
+// Destroy buttons no longer owned by unit
+        for (int i = equipButtons.Count - 1; i >= 0; i--) {
+            if (unit.equipment.Find(equip => equip == equipButtons[i].data) == null) {
+                EquipmentButton button = equipButtons[i];
+                equipButtons.Remove(button);
+                Destroy(button.gameObject);
+            }
         }
-        if (pF) {
-            Destroy(perFloor.gameObject);
-            Debug.Log("Destroy perfloor");
-            perFloor = null;
-        } 
-        if (h) {
-            Destroy(hammer.gameObject);
-            hammer = null;
-        } 
-        if (b) {
-            Destroy(bulb.gameObject);
-            bulb = null;
-        } 
-        
+  
+
 // Add buttons unit owns but does not have
         for (int i = unit.equipment.Count - 1; i >= 0; i--) {
             if (unit.equipment[i] is not MoveData) {
-                GameObject prefab = null;
-                Transform parent = null;
-                if (unit.equipment[i] is PerFloorEquipmentData) {
-                    prefab = perFloorButtonPrefab;
-                    parent = equipmentPanel.transform;
-                } else if (unit.equipment[i] is HammerData) {
-                    prefab = hammerButtonPrefab;
-                    parent = hammerPanel.transform;
-                } else if (unit.equipment[i] is BulbEquipmentData) {
-                    prefab = bulbButtonPrefab;
-                    parent = equipmentPanel.transform;
-                }
-                EquipmentButton newButt = Instantiate(prefab, parent).GetComponent<EquipmentButton>();
-                newButt.transform.localScale = Vector3.one;
-                newButt.Initialize(this, unit.equipment[i], unit);
-                if (newButt.data is PerFloorEquipmentData) perFloor = newButt;
-                if (newButt.data is HammerData) hammer = newButt;
-                if (newButt.data is BulbEquipmentData) bulb = newButt;
+                EquipmentButton b = equipButtons.Find(b => b.data == unit.equipment[i]);
+                if (b == null) {
+                    GameObject prefab = null;
+                    Transform parent = null;
+                    if (unit.equipment[i] is PerFloorEquipmentData) {
+                        prefab = perFloorButtonPrefab;
+                        parent = equipmentPanel.transform;
+                    } else if (unit.equipment[i] is HammerData) {
+                        prefab = hammerButtonPrefab;
+                        parent = hammerPanel.transform;
+                    } else if (unit.equipment[i] is BulbEquipmentData) {
+                        prefab = bulbButtonPrefab;
+                        parent = equipmentPanel.transform;
+                    }
+                    EquipmentButton newButt = Instantiate(prefab, parent).GetComponent<EquipmentButton>();
+                    newButt.transform.localScale = Vector3.one;
+                    newButt.Initialize(this, unit.equipment[i], unit);
+                    equipButtons.Add(newButt);
+                } else if (b.selected && b.data != unit.selectedEquipment)
+                    b.DeselectEquipment();
             }
         }
-        if (overview != null )
-            overview.UpdateOverview(unit.hpCurrent);
+
         if (unit is PlayerUnit)
             ToggleEquipmentButtons();
     }
 
     private void UnitDestroyed(GridElement ge) {
-        DestroyImmediate(this.gameObject);
+        DestroyImmediate(gameObject);
     }
 
     public void ToggleEquipmentOptionsOn() {
@@ -186,9 +176,7 @@ public class UnitUI : MonoBehaviour
 // Add new equipment to unit
         unit.equipment.Insert(1, equip);
         UpdateEquipmentButtons(); 
-        if (perFloor) perFloor.gameObject.GetComponentInChildren<Button>().interactable = true;
-        if (hammer) hammer.gameObject.GetComponentInChildren<Button>().interactable = true;
-        if (bulb) bulb.gameObject.GetComponentInChildren<Button>().interactable = true;
+        foreach (EquipmentButton button in equipButtons) button.gameObject.GetComponentInChildren<Button>().interactable = true;
 
         if (overview != null )  
             overview.UpdateOverview(unit.hpCurrent);
@@ -199,9 +187,7 @@ public class UnitUI : MonoBehaviour
         if (reward != null)
             UpdateLoadout(reward);
         ToggleEquipmentButtons();
-        perFloor.gameObject.GetComponentInChildren<Button>().interactable = true;
-        hammer.gameObject.GetComponentInChildren<Button>().interactable = true;
-        bulb.gameObject.GetComponentInChildren<Button>().interactable = true;
+        foreach (EquipmentButton button in equipButtons) button.gameObject.GetComponentInChildren<Button>().interactable = true;
     }
 
 }
