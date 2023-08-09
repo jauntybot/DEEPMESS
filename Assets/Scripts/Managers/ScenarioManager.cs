@@ -192,6 +192,8 @@ public class ScenarioManager : MonoBehaviour
                 currentTurn = Turn.Descent;
                 player.StartEndTurn(false);
 // Reset per floor equipment on PlayerUnits
+            foreach (Unit u in player.units)
+                u.usedEquip = false;
                 if (uiManager.gameObject.activeSelf)
                     yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Descent));
             break;
@@ -206,6 +208,7 @@ public class ScenarioManager : MonoBehaviour
                 foreach (Unit u in player.units) {
                     if (u is not Nail) {
                         u.energyCurrent = 0;
+                        u.usedEquip = true;
                         u.elementCanvas.UpdateStatsDisplay();
                         u.ui.UpdateEquipmentButtons();
                         u.StoreInGrid(player.currentGrid);
