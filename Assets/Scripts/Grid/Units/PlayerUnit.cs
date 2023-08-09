@@ -27,10 +27,8 @@ public class PlayerUnit : Unit {
     public override void UpdateAction(EquipmentData equipment = null, int mod = 0) 
     {
         if (pManager.overrideEquipment == null) {
-            if (equipment is PerFloorEquipmentData && !usedEquip)
-                base.UpdateAction(equipment, mod);
-            else if (equipment is not PerFloorEquipmentData)
-                base.UpdateAction(equipment, mod);
+
+            base.UpdateAction(equipment, mod);
             pManager.EquipmentSelected(equipment);
         }
         else {

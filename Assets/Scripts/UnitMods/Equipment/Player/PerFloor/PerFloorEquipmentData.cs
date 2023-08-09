@@ -11,7 +11,6 @@ public class PerFloorEquipmentData : EquipmentData
         yield return base.UseEquipment(user, target);
         PlayerUnit pu = (PlayerUnit)user;
 
-        pu.usedEquip = true;
         pu.ui.UpdateEquipmentButtons();
     }
 

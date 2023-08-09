@@ -107,7 +107,7 @@ public class PlayerController : MonoBehaviour {
                         }
                         if (Input.GetKeyDown(KeyCode.E)) {
                             if (manager.selectedUnit) {
-                                if (!manager.selectedUnit.usedEquip && manager.selectedUnit.energyCurrent > 0) {
+                                if (manager.selectedUnit.energyCurrent > 0) {
                                     manager.selectedUnit.selectedEquipment = manager.selectedUnit.equipment[1];
                                     manager.selectedUnit.UpdateAction(manager.selectedUnit.selectedEquipment);
                                     if (manager.selectedUnit.ui.equipSelectSFX)

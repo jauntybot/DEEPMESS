@@ -25,7 +25,6 @@ public class BossUnit : EnemyUnit
         if (grid.CoordContents(target)[0] == prevTarget) return false;
         if (energyCurrent < equip.energyCost && equip is not MoveData) return false;
         else if (moved && equip is MoveData) return false;
-        else if (usedEquip && (equip is PerFloorEquipmentData && equip is not HammerData)) return false;
 
         return true;
     }
@@ -48,7 +47,6 @@ public class BossUnit : EnemyUnit
                 grid.DisableGridHighlight();
                 yield return co;
                 yield return new WaitForSecondsRealtime(0.125f);
-                usedEquip = true;
                 manager.DeselectUnit();
                 yield break;
             }
@@ -85,7 +83,6 @@ public class BossUnit : EnemyUnit
                 grid.DisableGridHighlight();
                 yield return co;
                 yield return new WaitForSecondsRealtime(0.125f);
-                usedEquip = true;
                 manager.DeselectUnit();
             }
         }

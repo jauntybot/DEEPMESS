@@ -50,7 +50,6 @@ public class UnitOverview : MonoBehaviour
         actionPip.SetActive(unit.energyCurrent > 0);
 
         //if (unit.ui) equipment.sprite = unit.ui.equipButtons[0].data.icon;
-        equipmentDisable.SetActive(unit.usedEquip);
 
         for (int i = 0; i <= unit.hpMax - 1; i++) 
             hpPips.transform.GetChild(i).gameObject.SetActive(i < value);
