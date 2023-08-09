@@ -506,6 +506,7 @@ public class TutorialSequence : MonoBehaviour
         switch(descents) {
             case 0:
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
+                scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
                 floorManager.currentFloor.RemoveElement(scenario.player.units[0]);
                 floorManager.playerDropOverrides = new List<Vector2>();
@@ -524,6 +525,7 @@ public class TutorialSequence : MonoBehaviour
                 EnemyManager prevEnemy = scenario.currentEnemy;
 
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
+                scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
 
 

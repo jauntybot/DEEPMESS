@@ -156,7 +156,7 @@ public class UnitUI : MonoBehaviour
     }
 
     private void UnitDestroyed(GridElement ge) {
-        DestroyImmediate(this.gameObject);
+        DestroyImmediate(gameObject);
     }
 
     public void ToggleEquipmentOptionsOn() {

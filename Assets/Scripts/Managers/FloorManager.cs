@@ -274,7 +274,6 @@ public class FloorManager : MonoBehaviour
         }
         else {
             yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, scen));
-            scenario.player.nail.ToggleNailState(Nail.NailState.Primed);   
 
             // if (cascade) {
             //     yield return StartCoroutine(previewManager.PreviewFloor(true, true));
@@ -286,6 +285,7 @@ public class FloorManager : MonoBehaviour
             if (floors.Count - 1 > currentFloor.index) {
     
                 yield return StartCoroutine(TransitionFloors(true, false));
+                scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
 
 // Yield for cascade sequence
@@ -418,8 +418,7 @@ public class FloorManager : MonoBehaviour
 
 // Coroutine for descending the nail at a regulated random position
     public IEnumerator DropNail(Nail nail) {
-        if (nail.nailState == Nail.NailState.Buried)
-            nail.ToggleNailState(Nail.NailState.Primed);
+        nail.ToggleNailState(Nail.NailState.Falling);
 
         bool validCoord = false;
         Vector2 spawn = Vector2.zero;
@@ -526,6 +525,7 @@ public class FloorManager : MonoBehaviour
         units[3].transform.parent = transitionParent;
         //units[4].
         yield return StartCoroutine(TransitionFloors(true, false));
+        scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
         float timer = 0;
         while (timer <= unitDropDur) {
             parallax.ScrollParallax(-1);
