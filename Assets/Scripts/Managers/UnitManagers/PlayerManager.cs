@@ -35,8 +35,8 @@ public class PlayerManager : UnitManager {
 
     [Header("GRID VIS")]
     [SerializeField] Unit hoveredUnit = null;
-    private GridElement prevCursorTarget = null;
-    private bool prevCursorTargetState = false;
+    [SerializeField] GridElement prevCursorTarget = null;
+    [SerializeField] bool prevCursorTargetState = false;
     PlayerController.CursorState targetCursorState;
 
     [Header("MISC.")]
@@ -286,27 +286,19 @@ public class PlayerManager : UnitManager {
         }
 // No unit selected
         else if (scenario.currentTurn == ScenarioManager.Turn.Player) {
-            bool hovered = false;
+            bool hovering = false;
             foreach (GridElement ge in currentGrid.CoordContents(pos)) {
                 if (ge is Unit u) {
-                    
+                    if (ge == prevCursorTarget || (ge is PlayerUnit pu && (!pu.selectable || pu.moved))) break;
+                    hovering = true;
                     pc.ToggleCursorValid(true);
+                    
+                    hovering = true;
+                    hoveredUnit = u;
+                    if (!prevCursorTarget) prevCursorTarget = u;
 
-                    // if (hoveredUnit) {
-                    //     selectedUnit = hoveredUnit;
-                    //     DeselectUnit();
-                    //     hoveredUnit = null;
-                    // }
-                    if (u is PlayerUnit) {
-                        if (!u.selectable || u.moved) break;
-                    }
-                    hoveredUnit = u;        
-                    hovered = true;
                     ge.TargetElement(true);
                     UIManager.instance.UpdatePortrait(u, true);
-                    if (u is PlayerUnit)
-                        u.ui.ToggleEquipmentButtons();
-
                     if ((u is PlayerUnit || u is EnemyUnit) && FloorManager.instance.currentFloor == currentGrid) {
                         if (u.selectedEquipment != u.equipment[0]) {
                             u.selectedEquipment = u.equipment[0];
@@ -314,9 +306,9 @@ public class PlayerManager : UnitManager {
                             u.grid.DisplayValidCoords(u.validActionCoords, u is EnemyUnit ? 4 : 3, false, false);
                         }
                     }
-                } 
+                }
             }
-            if (!hovered) {
+            if (!hovering) {
                 UIManager.instance.UpdatePortrait();
                 if (hoveredUnit) {
                     selectedUnit = hoveredUnit;
@@ -327,10 +319,9 @@ public class PlayerManager : UnitManager {
                 pc.ToggleCursorValid(false);
             }
         }
+
         bool update = false;
-// if cursor is on grid
-        if (prevCursorTarget) {
-// player has moved the cursor to another coord
+        if (prevCursorTarget ) {
             if (pos != prevCursorTarget.coord) {
                 prevCursorTarget.TargetElement(prevCursorTargetState);
                 update = false;
@@ -356,7 +347,7 @@ public class PlayerManager : UnitManager {
                     ge.TargetElement(true);
                     prevCursorTarget = ge;
                 }
-            }
+
         }
     }
 
