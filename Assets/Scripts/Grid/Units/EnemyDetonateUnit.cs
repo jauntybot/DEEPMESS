@@ -40,15 +40,12 @@ public class EnemyDetonateUnit : EnemyUnit
         UpdateAction(equipment[1]);
         grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
         yield return new WaitForSecondsRealtime(0.5f);
-        Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, null));
+        StartCoroutine(selectedEquipment.UseEquipment(this, null));
         grid.UpdateSelectedCursor(false, Vector2.one * -32);
         grid.DisableGridHighlight();
-        StartCoroutine(TakeDamage(hpCurrent));
-        yield return co;
-        yield return new WaitForSecondsRealtime(0.125f);
+        Coroutine co = StartCoroutine(TakeDamage(hpCurrent));
         manager.DeselectUnit();
-        yield return new WaitForSecondsRealtime(1);
-        Debug.Log("ExplosionCo Finish");
+        yield return co;
     }
 
     public override IEnumerator DestroyElement(DamageType dmgType)

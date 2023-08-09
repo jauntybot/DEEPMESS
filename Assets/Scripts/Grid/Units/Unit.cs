@@ -160,8 +160,8 @@ public class Unit : GridElement {
     public virtual IEnumerator CollideFromAbove(GridElement subGE) {
         if (manager.scenario.tutorial != null && !manager.scenario.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
             manager.scenario.tutorial.StartCoroutine(manager.scenario.tutorial.DescentDamage());
-        if (subGE is not GroundElement)
-            yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
+        
+        yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
     }
 
     public virtual void ApplyCondition(Status s) {
@@ -194,14 +194,6 @@ public class Unit : GridElement {
             switch(s) {
                 default: return;
                 case Status.Normal: return;
-                case Status.Immobilized:
-                    moved = false;
-                    foreach(GridElement ge in grid.CoordContents(coord)) {
-                        if (ge is ImmobilizeGoo goo) {
-                            Destroy(goo.gameObject);
-                        }
-                    }
-                break;
                 case Status.Restricted:
                     if (this is PlayerUnit)
                         ui.ToggleEquipmentButtons();

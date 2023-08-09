@@ -258,7 +258,7 @@ public class EquipmentAdjacency : MonoBehaviour
                 foreach(Tile sqr in grid.sqrs) {
                     bool occupied = false;
                     foreach (GridElement ge in grid.CoordContents(sqr.coord)) {
-                        if (ge is not GroundElement) occupied = true;
+                        occupied = true;
                     }
                     if (!occupied && !_coords.Contains(sqr.coord)) _coords.Add(sqr.coord);
                 }

@@ -33,7 +33,7 @@ public class HammerData : EquipmentData
                 bool occupied = false;
                 bool remove = false;
                 foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(validCoords[i])) {
-                    if (ge is not GroundElement) occupied = true;
+                    occupied = true;
                     if (ge is PlayerUnit u) {
                         if (u.conditions.Contains(Unit.Status.Disabled)) 
                             remove = false;

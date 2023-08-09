@@ -218,17 +218,13 @@ public class PlayerManager : UnitManager {
                 }
             }
         }
-        else if (input is GroundElement) {
-            GridInput(currentGrid.sqrs.Find(sqr => sqr.coord == input.coord));
-        }
 // Player clicks on square
         else if (input is Tile sqr) 
         {
 // Check if square is empty
             GridElement contents = null;
             foreach (GridElement ge in currentGrid.CoordContents(sqr.coord)) {
-                if (ge is not GroundElement)
-                   contents = ge;
+                contents = ge;
             }
 // Square not empty, recurse this function with reference to square contents
             if (contents)
@@ -339,7 +335,7 @@ public class PlayerManager : UnitManager {
                 prevCursorTarget.TargetElement(prevCursorTargetState);
                 update = false;
                 foreach (GridElement ge in currentGrid.CoordContents(pos)) {
-                    if (!ge.targeted && ge is not GroundElement) {
+                    if (!ge.targeted) {
                         prevCursorTargetState = ge.targeted;
                         ge.TargetElement(true);
                         prevCursorTarget = ge;
@@ -355,7 +351,7 @@ public class PlayerManager : UnitManager {
         } else {
             update = false;
             foreach(GridElement ge in currentGrid.CoordContents(pos)) {
-                if (!ge.targeted && ge is not GroundElement) {
+                if (!ge.targeted) {
                     prevCursorTargetState = ge.targeted;
                     ge.TargetElement(true);
                     prevCursorTarget = ge;

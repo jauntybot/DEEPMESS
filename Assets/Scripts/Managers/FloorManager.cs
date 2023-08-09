@@ -411,8 +411,8 @@ public class FloorManager : MonoBehaviour
 
         if (subElement) {
             StartCoroutine(subElement.CollideFromBelow(unit));
-            if (subElement is not GroundElement)
-                yield return StartCoroutine(unit.CollideFromAbove(subElement));
+
+            yield return StartCoroutine(unit.CollideFromAbove(subElement));
         }
     }
 

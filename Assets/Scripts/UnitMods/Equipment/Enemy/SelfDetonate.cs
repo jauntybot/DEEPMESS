@@ -61,8 +61,6 @@ public class SelfDetonate : EquipmentData
                 else
                     affectedCo.RemoveAt(i);
             }
-            yield return new WaitForSecondsRealtime(0.25f);
-            Debug.Log("EquipCo Finish");
         }
     }
 

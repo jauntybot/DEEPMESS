@@ -69,8 +69,9 @@ public class EquipmentData : ScriptableObject {
         yield return null;
     }
 
-    public virtual void EquipEquipment(GridElement user) {
-
+    public virtual void EquipEquipment(Unit user) {
+        user.ui.UpdateEquipmentButtons();
+        
     }
 
     public virtual void UnequipEquipment(Unit user) {

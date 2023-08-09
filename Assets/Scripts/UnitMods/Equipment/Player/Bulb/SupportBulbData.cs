@@ -25,6 +25,8 @@ public class SupportBulbData : BulbEquipmentData
                 foreach(GridElement ge in user.grid.CoordContents(validCoords[i])) {
                     if (ge is not PlayerUnit && ge is not Nail)
                         validCoords.Remove(validCoords[i]);
+                    else if (ge is PlayerUnit pu && (pu.conditions.Contains(Unit.Status.Disabled) || (!pu.moved && pu.energyCurrent >= pu.energyMax)))
+                        validCoords.Remove(validCoords[i]);
                 }
             } else 
                 validCoords.Remove(validCoords[i]);

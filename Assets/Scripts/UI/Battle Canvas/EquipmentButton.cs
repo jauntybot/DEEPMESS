@@ -7,11 +7,11 @@ public class EquipmentButton : MonoBehaviour
 {
     UnitUI ui;
     public EquipmentData data;
-    bool hammer = false;
+    public enum EquipType { PerFloor, Hammer, Bulb };
+    [HideInInspector] public EquipType equipType;
     [HideInInspector] public PlayerUnit unit;
+    
     [SerializeField] Button button;
-
-    Image bg;
     public delegate void OnEquipmentUpdate(EquipmentData equipment, int rangeMod);
     private int rangeMod;
     public event OnEquipmentUpdate EquipmentSelected;
@@ -25,15 +25,17 @@ public class EquipmentButton : MonoBehaviour
     public void Initialize(UnitUI _ui, EquipmentData d, GridElement ge) {
         ui = _ui;
         data = d;
-        if (d is HammerData) hammer = true;
+        if (d is PerFloorEquipmentData) equipType = EquipType.PerFloor;
+        else if (d is HammerData) equipType = EquipType.Hammer;
+        else if (d is BulbEquipmentData) equipType = EquipType.Bulb;
         unit = (PlayerUnit)ge;
         EquipmentSelected += unit.UpdateAction;
-        bg = GetComponentInChildren<Image>();
+        Image bg = GetComponentInChildren<Image>();
         bg.sprite = data.icon;
         tooltip = GetComponentInChildren<TooltipEquipmentTrigger>();
         if (tooltip)
             tooltip.Initialize(d.name);
-        //badge.SetActive(d is PerFloorEquipmentData);
+            
         UpdateMod();
     }
 
@@ -55,7 +57,7 @@ public class EquipmentButton : MonoBehaviour
         selected = true;
 
 // SFX
-        if (hammer) {
+        if (equipType == EquipType.Hammer) {
             if (unit.ui.hammerSelectSFX)
                 UIManager.instance.PlaySound(unit.ui.hammerSelectSFX.Get());
 
@@ -63,7 +65,10 @@ public class EquipmentButton : MonoBehaviour
             if (unit.ui.equipSelectSFX)
                 UIManager.instance.PlaySound(unit.ui.equipSelectSFX.Get());
         }
+
+        unit.ui.UpdateEquipmentButtons();
     }
+
     public void DeselectEquipment() {
         if (button) {
             button.onClick.RemoveAllListeners();

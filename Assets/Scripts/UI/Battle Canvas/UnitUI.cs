@@ -124,7 +124,8 @@ public class UnitUI : MonoBehaviour
 // Add buttons unit owns but does not have
         for (int i = unit.equipment.Count - 1; i >= 0; i--) {
             if (unit.equipment[i] is not MoveData) {
-                if (equipButtons.Find(b => b.data == unit.equipment[i]) == null) {
+                EquipmentButton b = equipButtons.Find(b => b.data == unit.equipment[i]);
+                if (b == null) {
                     GameObject prefab = null;
                     Transform parent = null;
                     if (unit.equipment[i] is PerFloorEquipmentData) {
@@ -141,16 +142,11 @@ public class UnitUI : MonoBehaviour
                     newButt.transform.localScale = Vector3.one;
                     newButt.Initialize(this, unit.equipment[i], unit);
                     equipButtons.Add(newButt);
-                }
+                } else if (b.selected && b.data != unit.selectedEquipment)
+                    b.DeselectEquipment();
             }
         }
-        // if (unit.selectedEquipment == null || unit.selectedEquipment is MoveData) {
-        //     for (int i = equipButtons.Count - 1; i >= 0; i--) {
-        //         if (equipButtons[i].unit && equipButtons[i].unit.ui) equipButtons[i].DeselectEquipment();
-        //     }
-        // }
-        if (overview != null )
-            overview.UpdateOverview(unit.hpCurrent);
+
         if (unit is PlayerUnit)
             ToggleEquipmentButtons();
     }
