@@ -324,7 +324,6 @@ public class PlayerManager : UnitManager {
         if (prevCursorTarget ) {
             if (pos != prevCursorTarget.coord) {
                 prevCursorTarget.TargetElement(prevCursorTargetState);
-                update = false;
                 foreach (GridElement ge in currentGrid.CoordContents(pos)) {
                     if (!ge.targeted) {
                         prevCursorTargetState = ge.targeted;
@@ -340,7 +339,6 @@ public class PlayerManager : UnitManager {
             }
 // first grid mouseOver if cursor not on grid
         } else {
-            update = false;
             foreach(GridElement ge in currentGrid.CoordContents(pos)) {
                 if (!ge.targeted) {
                     prevCursorTargetState = ge.targeted;
@@ -348,6 +346,7 @@ public class PlayerManager : UnitManager {
                     prevCursorTarget = ge;
                 }
 
+            }
         }
     }
 

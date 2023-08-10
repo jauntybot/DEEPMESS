@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4401280452288340358}
   - component: {fileID: 6836641563185814501}
+  - component: {fileID: 227095062963198914}
   m_Layer: 6
   m_Name: GFX
   m_TagString: Untagged
@@ -84,6 +85,26 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &227095062963198914
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 832835914656473725}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: cfa7e6a43ddde6641b0ad1f022f34af3, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &8157743951873733082
 GameObject:
   m_ObjectHideFlags: 0
@@ -94,8 +115,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6005169598005211249}
   - component: {fileID: 4634978180570587290}
-  - component: {fileID: 6364867701818252649}
   - component: {fileID: 8512783841321255250}
+  - component: {fileID: 2006771010903091762}
   m_Layer: 6
   m_Name: Wall - Bone
   m_TagString: Untagged
@@ -132,6 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
+  name: 
   coord: {x: 0, y: 0}
   selectable: 0
   targeted: 0
@@ -139,7 +161,6 @@ MonoBehaviour:
   elementCanvas: {fileID: 0}
   gfx:
   - {fileID: 6836641563185814501}
-  name: 
   hpMax: 0
   hpCurrent: 0
   defense: 0
@@ -152,49 +173,7 @@ MonoBehaviour:
   dmgdSFX: {fileID: 0}
   healedSFX: {fileID: 0}
   destroyedSFX: {fileID: 11400000, guid: 83d232a0885a5aa4e8491c32c8acc7e0, type: 2}
---- !u!60 &6364867701818252649
-PolygonCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8157743951873733082}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.51, y: 1.51}
-    newSize: {x: 1.51, y: 1.51}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 0.60499996, y: 0.015}
-      - {x: 0.555, y: 0.235}
-      - {x: 0.49499997, y: 0.39499998}
-      - {x: 0.105, y: 0.39499998}
-      - {x: 0.095, y: 0.385}
-      - {x: -0.015, y: 0.24499999}
-      - {x: -0.035, y: 0.055}
-      - {x: -0.145, y: 0.285}
-      - {x: -0.39499998, y: 0.315}
-      - {x: -0.505, y: 0.225}
-      - {x: -0.585, y: 0.105}
-      - {x: -0.585, y: -0.255}
-      - {x: -0.435, y: -0.33499998}
-      - {x: -0.375, y: -0.345}
-      - {x: 0.39499998, y: -0.345}
-      - {x: 0.515, y: -0.315}
-      - {x: 0.615, y: -0.185}
-      - {x: 0.615, y: -0.044999998}
+  anim: {fileID: 227095062963198914}
 --- !u!82 &8512783841321255250
 AudioSource:
   m_ObjectHideFlags: 0
@@ -291,3 +270,36 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!60 &2006771010903091762
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8157743951873733082}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.029456384, y: 0.6700885}
+      - {x: -0.49742824, y: 0.16762635}
+      - {x: -0.5322038, y: -0.2606904}
+      - {x: -0.35802537, y: -0.532127}
+      - {x: 0.11513044, y: -0.4289575}
+      - {x: 0.28585958, y: -0.23797533}
+      - {x: 0.6643719, y: -0.15508527}
+      - {x: 0.23232085, y: 0.5917984}

@@ -25,7 +25,7 @@ public class Grid : MonoBehaviour {
     public List<Tile> sqrs = new List<Tile>();
     public List<GridElement> gridElements = new List<GridElement>();
 
-    [HideInInspector] public bool overrideHighlight;
+    public bool overrideHighlight;
 
 
     void Awake() {

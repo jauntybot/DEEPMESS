@@ -60,7 +60,6 @@ public class GridElement : MonoBehaviour{
             grid.gridElements.Add(this);
             ElementDestroyed += grid.RemoveElement;
             transform.localScale = Vector3.one * FloorManager.sqrSize;
-            //UpdateElement(coord);
         }
     }
 

@@ -35,7 +35,6 @@ public class EnemyUnit : Unit {
                 GridElement target = null;
                 foreach (GridElement ge in grid.CoordContents(coord))
                     target = ge;
-                grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
                 yield return new WaitForSecondsRealtime(0.5f);
                 Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, target));
                 grid.UpdateSelectedCursor(false, Vector2.one * -32);
@@ -71,7 +70,6 @@ public class EnemyUnit : Unit {
                 GridElement target = null;
                 foreach (GridElement ge in grid.CoordContents(coord))
                     target = ge;
-                grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
                 yield return new WaitForSecondsRealtime(0.5f);
                 Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, target));
                 grid.UpdateSelectedCursor(false, Vector2.one * -32);

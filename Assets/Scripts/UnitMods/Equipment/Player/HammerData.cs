@@ -40,17 +40,22 @@ public class HammerData : EquipmentData
                     } else {
                         foreach(GridElement target in targetTypes) {
                             if (ge.GetType() == target.GetType()) {
+                                Tile tile = user.grid.sqrs.Find(sqr => sqr.coord == ge.coord);
                                 if (ge is Nail n) {
                                     if (n.nailState == Nail.NailState.Primed)
                                         remove = false;
                                     else {
-                                        user.grid.sqrs.Find(sqr => sqr.coord == n.coord).ToggleValidCoord(false);
+                                        tile.ToggleValidCoord(false);
                                         remove = true;
                                     }
                                 } else {
                                     remove = false;
                                     if (ge is EnemyUnit)
                                         ge.elementCanvas.ToggleStatsDisplay(true);
+                                    if (ge is PlayerUnit player && tile.tileType == Tile.TileType.Bile) {
+                                        tile.ToggleValidCoord(false);
+                                        remove = true;
+                                    }
                                 }
                             }
                         }

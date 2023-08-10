@@ -141,7 +141,8 @@ public class ScenarioManager : MonoBehaviour
                 if (currentEnemy.units.Count > 0) {
                     currentTurn = Turn.Enemy;
                     player.StartEndTurn(false);
-              
+                    yield return new WaitForSecondsRealtime(0.625f);
+
                     if (prevTurn == Turn.Descent)
                         StartCoroutine(currentEnemy.TakeTurn(true));
                     else {
