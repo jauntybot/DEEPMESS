@@ -12,6 +12,8 @@ public class Nail : Unit
     public enum NailState { Falling, Primed, Buried }
     public NailState nailState;
 
+    [SerializeField] GameObject primedVFX;
+
     protected override void Start()
     {
         base.Start();
@@ -31,6 +33,7 @@ public class Nail : Unit
             case NailState.Primed:
                 gfxAnim.SetBool("Falling", false);
                 gfxAnim.SetBool("Primed", true);
+                primedVFX.SetActive(true);
             break;
             case NailState.Buried:
                 gfxAnim.SetBool("Falling", false);

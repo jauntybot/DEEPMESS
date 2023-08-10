@@ -10,22 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ce87d6308b0d5f42912c20aa097e3dc, type: 3}
-  m_Name: Move4Diamond
+  m_Name: AntibodyMove4Diamond
   m_EditorClassIdentifier: 
   name: MOVE 4 SQRS
-  icon: {fileID: 21300000, guid: 714f589680e6b10478abbca99a184d85, type: 3}
+  icon: {fileID: 0}
   contextualAnimGO: {fileID: 0}
-  contextDisplay: 3
+  contextDisplay: 0
   multiContext: 0
-  gridColor: 0
+  gridColor: 1
   vfx: {fileID: 0}
   multiselect: 0
-  adjacency: 0
   firstTarget: {fileID: 0}
-  energyCost: 1
+  adjacency: 0
   range: 4
+  aoeAdjacency: 0
+  aoeRange: 0
+  energyCost: 0
   animDur: 0.2
-  filterValid: 0
   filters:
   - {fileID: 4634978180570587290, guid: c7249e601f4730c4999df2560c657aac, type: 3}
   - {fileID: 125915573521978910, guid: d76049925455d44278c9e3b58ed31c3d, type: 3}
@@ -33,7 +34,8 @@ MonoBehaviour:
   - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
   - {fileID: 2897877390811545440, guid: d00e722c41845a742aba65c37f6e0450, type: 3}
   - {fileID: -2553350826419457478, guid: 41d15b15104197a4a986c3b9a82a1315, type: 3}
+  _filters: []
   targetTypes: []
   selectSFX: {fileID: 0}
-  useSFX: {fileID: 11400000, guid: 081407fac9a13c541b8eb097c3ab56fc, type: 2}
+  useSFX: {fileID: 11400000, guid: 6131a111c563b3642b00a27f6b04eb17, type: 2}
   animType: 1

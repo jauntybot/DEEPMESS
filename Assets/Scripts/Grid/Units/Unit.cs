@@ -48,6 +48,9 @@ public class Unit : GridElement {
             gfxAnim.keepAnimatorStateOnDisable = true;
         }
         if (conditionDisplay) conditionDisplay.Init(this);
+
+        if (ui.overview)
+            ui.overview.UpdateOverview(hpCurrent);
     }
 
     public virtual void UpdateAction(EquipmentData equipment = null, int mod = 0) {

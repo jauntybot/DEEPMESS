@@ -11,6 +11,8 @@ public class SelfDetonate : EquipmentData
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this, targetTypes);
+        user.grid.DisplayValidCoords(validCoords, gridColor);
+        
         bool valid = false;
         for (int i = validCoords.Count - 1; i >= 0; i--) {
             if (user.grid.CoordContents(validCoords[i]).Count > 0) {
