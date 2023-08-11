@@ -503,38 +503,38 @@ public class TutorialSequence : MonoBehaviour
         
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
 
+        List<GridElement> toDescend = new();
         switch(descents) {
             case 0:
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
-                floorManager.currentFloor.RemoveElement(scenario.player.units[0]);
                 floorManager.playerDropOverrides = new List<Vector2>();
-
-                yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement> { scenario.player.units[0], scenario.player.units[1] }));
+                for (int i = scenario.player.units.Count - 1; i >= 0; i--) 
+                    toDescend.Add(scenario.player.units[i]);
+                yield return StartCoroutine(floorManager.DescendUnits(toDescend));
                 floorManager.playerDropOverrides = new List<Vector2>{ tutorialPacket.floors[0].initSpawns.Find(s => s.asset.prefab.GetComponent<PlayerUnit>()).coord };
-                scenario.player.units.Add(playerUnits[1]);
-                floorManager.currentFloor.RemoveElement(scenario.player.units[2]);
-                yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[2] }));
+                scenario.player.units.Insert(1, playerUnits[1]);
+                floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
+                yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[1] }));
                 yield return new WaitForSecondsRealtime(0.15f);
 
 
             break;
             case 1:
-                scenario.player.units = playerUnits;
                 EnemyManager prevEnemy = scenario.currentEnemy;
 
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
 
-
-                floorManager.currentFloor.RemoveElement(scenario.player.units[0]); floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
                 floorManager.playerDropOverrides = new List<Vector2>();
-                List<GridElement> toDrop = new List<GridElement> { scenario.player.units[0], scenario.player.units[1], scenario.player.units[3] };
-                if (prevEnemy.units.Count > 0) toDrop.Add(prevEnemy.units[0]);
+                for (int i = scenario.player.units.Count - 1; i >= 0; i--) {
+                    toDescend.Add(scenario.player.units[i]);
+                }
+                if (prevEnemy.units.Count > 0) toDescend.Add(prevEnemy.units[0]);
             
-                yield return StartCoroutine(floorManager.DescendUnits(toDrop, prevEnemy));
+                yield return StartCoroutine(floorManager.DescendUnits(toDescend, prevEnemy));
                 
                 bool validCoord = false;
                 Vector2 spawn = Vector2.zero;
@@ -553,6 +553,7 @@ public class TutorialSequence : MonoBehaviour
                 
                 floorManager.playerDropOverrides = new List<Vector2>{ spawn };
                 
+                scenario.player.units.Insert(2, playerUnits[2]);
                 floorManager.currentFloor.RemoveElement(scenario.player.units[2]);
                 yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[2] }));
                 yield return new WaitForSecondsRealtime(0.15f);

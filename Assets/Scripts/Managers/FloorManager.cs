@@ -513,10 +513,20 @@ public class FloorManager : MonoBehaviour
 
 
     public IEnumerator TransitionPackets() {
+        yield return StartCoroutine(TransitionFloors(true, false));
+        
+        List<Coroutine> cos = new();
         for (int i = scenario.player.units.Count - 1; i >= 0; i-- ) {
             Unit u = scenario.player.units[i];
             if (u is not PlayerUnit && u is not Nail)
-                StartCoroutine(u.DestroyElement());
+                cos.Add(StartCoroutine(u.DestroyElement()));
+        }
+        
+        for (int i = cos.Count - 1; i >= 0; i--) {
+            if (cos[i] != null) 
+                yield return cos[i];
+            else
+                cos.RemoveAt(i);
         }
         
         List<Unit> units = new List<Unit> { scenario.player.units[0], scenario.player.units[1], scenario.player.units[2], scenario.player.units[3] };
@@ -524,7 +534,6 @@ public class FloorManager : MonoBehaviour
         units[0].manager.transform.parent = transitionParent;
         units[3].transform.parent = transitionParent;
         //units[4].
-        yield return StartCoroutine(TransitionFloors(true, false));
         scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
         float timer = 0;
         while (timer <= unitDropDur) {
