@@ -823,6 +823,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Battle Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 8940216681490799359, guid: 578d591cdf9694298b8819611910b639, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 578d591cdf9694298b8819611910b639, type: 3}
 --- !u!114 &1164701229 stripped
@@ -960,7 +964,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floorPrefab: {fileID: 6704683991807647169, guid: 9e7d44ff36d68a84c95a170d48d95eaf, type: 3}
   floorParent: {fileID: 1736529076}
-  floorSequence: {fileID: 11400000, guid: 735b58861e25cc94ca785cbd0bb8c35a, type: 2}
+  floorSequence: {fileID: 11400000, guid: 1effe8e624ea24e11ab2b02c912103fc, type: 2}
   gridHightlightOverride: 0
   currentFloor: {fileID: 0}
   floors: []
@@ -1247,6 +1251,18 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: d0b47f0618f75e7459fdba973bd776a2, type: 2}
+    - target: {fileID: 2017525368032493552, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_BlockingObjects
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525368145069732, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017525368145069732, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2017525368656125314, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
       propertyPath: m_SizeDelta.x
       value: 530
@@ -1393,7 +1409,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2017525369693994963, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7063512617130372649, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1506,6 +1522,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1676316381 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2017525368145069732, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+  m_PrefabInstance: {fileID: 1524570421}
+  m_PrefabAsset: {fileID: 0}
+--- !u!225 &1676316386
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1676316381}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 1
 --- !u!1 &1736529075
 GameObject:
   m_ObjectHideFlags: 0
@@ -1557,6 +1590,10 @@ PrefabInstance:
     - target: {fileID: 7314339083464876434, guid: eaa4615d2870141a0b00724bab019e8b, type: 3}
       propertyPath: m_Name
       value: Tooltip Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 7314339083464876434, guid: eaa4615d2870141a0b00724bab019e8b, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7314339083464876438, guid: eaa4615d2870141a0b00724bab019e8b, type: 3}
       propertyPath: m_Pivot.x
@@ -1771,6 +1808,10 @@ PrefabInstance:
     - target: {fileID: 456712696168355037, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
       propertyPath: m_Name
       value: Persistent Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 456712696168355037, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 456712696260200869, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
       propertyPath: body

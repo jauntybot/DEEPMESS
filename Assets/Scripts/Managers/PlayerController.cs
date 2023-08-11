@@ -15,9 +15,12 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] Vector2 pointerAnchor;
     [SerializeField] Texture2D defaultCursor, clickableCursor, moveCursor, nullMoveCursor, targetCursor, nullTargetCursor;
     [SerializeField] bool clickable;
+    int layerMask = 5;
 
     void Start() 
     {
+        layerMask = ~layerMask;
+
         manager = GetComponent<PlayerManager>();
 
         //StartCoroutine(HotkeyInput());
@@ -57,7 +60,7 @@ public class PlayerController : MonoBehaviour {
                 yield return new WaitForSecondsRealtime(1/Util.fps);
                 RaycastHit2D hit = ClickInput();
 // On mouseover
-                if (hit != default(RaycastHit2D)) {
+                if (hit != default(RaycastHit2D) && !MouseOverUI()) {
                     if (hit.transform.GetComponent<GridElement>()) {
 // On click
                         manager.GridMouseOver(hit.transform.GetComponent<GridElement>().coord, true);
@@ -148,8 +151,23 @@ public class PlayerController : MonoBehaviour {
 //MOBILE CONTROL FLAG
     public RaycastHit2D ClickInput() {
         Vector2 pos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-        RaycastHit2D hitInfo = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(pos), Vector2.zero);
+        RaycastHit2D hitInfo = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(pos), Vector2.zero, Mathf.Infinity);
         return hitInfo;        
+    }
+
+    bool MouseOverUI() {
+        PointerEventData ped = new(EventSystem.current);
+        ped.position = Input.mousePosition;
+
+        List<RaycastResult> rays = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(ped, rays);
+
+        for (int i = rays.Count - 1; i >= 0; i--) {
+            if (rays[i].gameObject.layer != 5)
+                rays.Remove(rays[i]);
+        }   
+
+        return rays.Count > 0;
     }
 
 }
