@@ -61,7 +61,7 @@ public class BossUnit : EnemyUnit
                     manager.SelectUnit(this);
                     grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
                     yield return new WaitForSecondsRealtime(0.5f);
-                    Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, grid.sqrs.Find(sqr => sqr.coord == targetCoord)));
+                    Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, grid.tiles.Find(sqr => sqr.coord == targetCoord)));
                     grid.UpdateSelectedCursor(false, Vector2.one * -32);
                     grid.DisableGridHighlight();
                     yield return co;

@@ -9,6 +9,7 @@ public class Unit : GridElement {
     [Header("Unit")]
     protected Animator gfxAnim;
     [SerializeField] DescentVFX descentVFX;
+    public GameObject airTraillVFX;
     public UnitManager manager;
     public bool selected;
     public EquipmentData selectedEquipment;
@@ -74,7 +75,7 @@ public class Unit : GridElement {
             selectedEquipment.UntargetEquipment(this);
             selectedEquipment = null;
         }
-        if (grid.sqrs.Find(sqr => sqr.coord == coord) is TileBulb tb && this is PlayerUnit pu) {
+        if (grid.tiles.Find(sqr => sqr.coord == coord) is TileBulb tb && this is PlayerUnit pu) {
                 if (!tb.harvested && pu.equipment.Find(e => e is BulbEquipmentData) == null)
                     tb.HarvestBulb(pu);
         }
@@ -94,7 +95,7 @@ public class Unit : GridElement {
     public override void UpdateElement(Vector2 c) {
         base.UpdateElement(c);
         if (manager.scenario.currentTurn != ScenarioManager.Turn.Cascade) {
-            Tile targetSqr = grid.sqrs.Find(sqr => sqr.coord == c);
+            Tile targetSqr = grid.tiles.Find(sqr => sqr.coord == c);
             if (targetSqr.tileType == Tile.TileType.Blood) {
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
                 ApplyCondition(Status.Restricted);

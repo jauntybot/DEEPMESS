@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2590438898875856828}
   - component: {fileID: 4548692920616438334}
+  - component: {fileID: 4650023597380405582}
+  - component: {fileID: 5701913565724510608}
   m_Layer: 6
   m_Name: GFX
   m_TagString: Untagged
@@ -84,6 +86,40 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &4650023597380405582
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86320390212167392}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ed9de0b0bea7fac4d92b847c7f7bcfb0, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+--- !u!114 &5701913565724510608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86320390212167392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ee90040f786e6a47acff528e5821a3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alpha: 1
+  exclude: 0
 --- !u!1 &3637012503699692802
 GameObject:
   m_ObjectHideFlags: 0
@@ -445,6 +481,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
+  name: 
   coord: {x: 0, y: 0}
   selectable: 0
   targeted: 0
@@ -520,13 +557,11 @@ MonoBehaviour:
   hpContainer: {fileID: 0}
   hpPips: {fileID: 0}
   emptyHPPips: {fileID: 0}
-  hpInt: {fileID: 0}
-  apPips: {fileID: 0}
+  statusPips: {fileID: 0}
   hpPipPrefab: {fileID: 0}
   apPipPrefab: {fileID: 0}
   dmgPipPrefab: {fileID: 0}
   emptyPipPrefab: {fileID: 0}
-  hpText: {fileID: 0}
   dmgPanel: {fileID: 0}
   dmgAnim: {fileID: 0}
   overview: {fileID: 0}

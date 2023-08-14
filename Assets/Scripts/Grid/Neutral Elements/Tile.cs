@@ -17,7 +17,7 @@ public class Tile : GridElement {
     [SerializeField] GameObject highlight;
     [SerializeField] List<Sprite> rndSprite;
 
-    [SerializeField] protected Animator anim;
+    public Animator anim;
 
 // Initialize refs
     protected virtual void Awake() {

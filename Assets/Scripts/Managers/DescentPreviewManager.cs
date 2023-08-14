@@ -22,28 +22,26 @@ public class DescentPreviewManager : MonoBehaviour
             floorManager = FloorManager.instance;
     }
 
-    public IEnumerator PreviewFloor(bool down, bool draw) {
+    public IEnumerator PreviewFloor(bool down) {
         floorManager.transitioning = true;
         if (scenario.currentTurn == ScenarioManager.Turn.Player)
             UIManager.instance.endTurnButton.enabled = !down;
         if (down) {
-            if (draw) {
-                downButton.SetActive(false); upButton.SetActive(true);
-                TogglePreivews(true);
-                foreach(DescentPreview dp in descentPreviews) {
-                    if (dp.unit.grid == floorManager.currentFloor)
-                        dp.UpdatePreview(dp.unit);
-                }
+            downButton.SetActive(false); upButton.SetActive(true);
+            TogglePreivews(true);
+            foreach(DescentPreview dp in descentPreviews) {
+                if (dp.unit.grid == floorManager.currentFloor)
+                    dp.UpdatePreview(dp.unit);
             }
-            
+
             yield return StartCoroutine(floorManager.TransitionFloors(down, true));
             floorManager.transitioning = false;
         }
         else {
-            if (draw) {
-                downButton.SetActive(true); upButton.SetActive(false);
-                TogglePreivews(false);
-            }
+            Debug.Log("up button");
+            downButton.SetActive(true); upButton.SetActive(false);
+            TogglePreivews(false);
+            
             yield return StartCoroutine(floorManager.TransitionFloors(down, true));
             
             floorManager.transitioning = false;
@@ -72,7 +70,7 @@ public class DescentPreviewManager : MonoBehaviour
         } else {
             scenario.player.DeselectUnit();
             if (!floorManager.transitioning && floorManager.floors.Count - 1 >= floorManager.currentFloor.index + dir) {
-                StartCoroutine(PreviewFloor(down, true));
+                StartCoroutine(PreviewFloor(down));
                 if (UIManager.instance.gameObject.activeSelf)
                     UIManager.instance.PlaySound(down ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
             }
@@ -88,10 +86,11 @@ public class DescentPreviewManager : MonoBehaviour
 
     }
 
-    public void UpdateFloors(Grid newFloor) {
+    public void UpdateFloors(Grid newFloor, Grid alignFloor) {
         currentFloor = newFloor;
-        alignmentFloor = floorManager.floors[newFloor.index-1];
-        transform.parent = newFloor.transform;
-        transform.localPosition = Vector3.zero;
+        alignmentFloor = alignFloor;
+        transform.parent = alignFloor.transform;
+        transform.localPosition = Vector3.zero + new Vector3(0, 3);
+        transform.localScale = Vector3.one;
     }
 }

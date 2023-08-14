@@ -56,6 +56,8 @@ public class TutorialSequence : MonoBehaviour
         hittingEnemies = false; enemyBehavior = false; undoEncountered = false; bulbEncountered = false; deathReviveEncountered = false; slotsEncountered = false;
         descents = 0;
 
+        floorManager.GenerateFloor(floorManager.floorSequence.GetFloor(true), true);
+        floorManager.GenerateFloor(floorManager.floorSequence.GetFloor(true));
     }
     
     public IEnumerator Tutorial() {
@@ -65,6 +67,7 @@ public class TutorialSequence : MonoBehaviour
                 pu.ElementDisabled += StartDeathTut;
             }
         }
+        scenario.player.units[1].ui.overview.gameObject.SetActive(false); scenario.player.units[2].ui.overview.gameObject.SetActive(false);
         scenario.player.units.RemoveAt(1); scenario.player.units.RemoveAt(1);
 
 
@@ -72,13 +75,11 @@ public class TutorialSequence : MonoBehaviour
         //foreach (Unit unit in scenario.player.units) unit.gameObject.SetActive(false);
         yield return new WaitForSecondsRealtime(0.15f);
         scenario.player.nail.ToggleNailState(Nail.NailState.Primed);
-        yield return StartCoroutine(GenerateNextTutorialFloor(floorManager.floorSequence.GetFloor(true)));
 
         yield return StartCoroutine(SplashMessage());
         
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
         floorManager.currentFloor.RemoveElement(scenario.player.units[0]);
-        floorManager.playerDropOverrides = new List<Vector2>{ tutorialPacket.firstFloors[0].initSpawns.Find(s => s.asset.prefab.GetComponent<PlayerUnit>()).coord };
         yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement> { scenario.player.units[0] }));
         yield return new WaitForSecondsRealtime(0.15f);
 
@@ -95,7 +96,7 @@ public class TutorialSequence : MonoBehaviour
         yield return StartCoroutine(HittingTheNail());
         cont = false;
         while (!cont) yield return null;
-        yield return StartCoroutine(GenerateNextTutorialFloor(floorManager.floorSequence.GetFloor(true)));
+        floorManager.GenerateFloor(floorManager.floorSequence.GetFloor(true));
         scenario.currentTurn = ScenarioManager.Turn.Descent;
         yield return StartCoroutine(EnemyTurn());
 
@@ -117,21 +118,9 @@ public class TutorialSequence : MonoBehaviour
         yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
     }
 
-    public IEnumerator GenerateNextTutorialFloor(FloorDefinition def) {
-        yield return StartCoroutine(floorManager.TransitionFloors(true, false));
-
-        yield return StartCoroutine(floorManager.GenerateFloor(def));
-      
-        floorManager.previewManager.UpdateFloors(floorManager.floors[floorManager.currentFloor.index]);
-
-        yield return new WaitForSeconds(0.5f);
-    
-        yield return StartCoroutine(floorManager.previewManager.PreviewFloor(false, false));
-    }
-
     public IEnumerator BlinkTile(Vector2 coord, bool move = true) {
         blinking = true;
-        Tile sqr = FloorManager.instance.currentFloor.sqrs.Find(sqr => sqr.coord == coord);
+        Tile sqr = FloorManager.instance.currentFloor.tiles.Find(sqr => sqr.coord == coord);
         float timer = 0;
         int i = 0;
         sqr.ToggleValidCoord(true, move ? FloorManager.instance.equipmentColor : FloorManager.instance.playerColor);
@@ -195,14 +184,28 @@ public class TutorialSequence : MonoBehaviour
         header = "Hitting the Nail";
         body = "The Hammer is our main tool. Throw it in a straight line to strike a target, then select a Slag for the Hammer to bounce back to. Strike the Nail with the Hammer and catch it with the Slag." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ hittingTheNailAnim });
-
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             
         }
 
+        
         screenFade.SetTrigger("FadeOut");
+        Vector3 prevPos = tooltip.transform.position;
+        float timer = 0;
+        while (timer < 0.25f) {
+            tooltip.transform.position = Vector3.Lerp(prevPos, prevPos + new Vector3(320, 0), timer/0.25f);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        tooltip.transform.position = prevPos + new Vector3(320, 0);
+        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.equipButtons[1].gameObject.transform);
+        highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
+        highlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
+        while (floorManager.currentFloor.index == 0) yield return new WaitForSecondsRealtime(1/Util.fps);
+        tooltip.transform.position = prevPos;
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        Destroy(highlight);
 
     }
 
@@ -220,11 +223,14 @@ public class TutorialSequence : MonoBehaviour
             }
             if (aligned) break;
         }
-
+        yield return new WaitForSecondsRealtime(0.25f);
         yield return StartCoroutine(HittingAnEnemy());
         while (true) {
             yield return null;
-            if (scenario.player.units[0].energyCurrent == 0 || scenario.player.units[2].energyCurrent == 0) break;
+            if (scenario.player.units[0].energyCurrent == 0 || scenario.player.units[1].energyCurrent == 0) {
+                Debug.Log("AP trigger");
+                break;
+            }
         }
         yield return new WaitForSecondsRealtime(1.5f);
         yield return StartCoroutine(OnTurnMoveAndAP());
@@ -509,12 +515,11 @@ public class TutorialSequence : MonoBehaviour
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
-                floorManager.playerDropOverrides = new List<Vector2>();
                 for (int i = scenario.player.units.Count - 1; i >= 0; i--) 
                     toDescend.Add(scenario.player.units[i]);
                 yield return StartCoroutine(floorManager.DescendUnits(toDescend));
-                floorManager.playerDropOverrides = new List<Vector2>{ tutorialPacket.floors[0].initSpawns.Find(s => s.asset.prefab.GetComponent<PlayerUnit>()).coord };
                 scenario.player.units.Insert(1, playerUnits[1]);
+                scenario.player.units[1].ui.overview.gameObject.SetActive(true);
                 floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
                 yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[1] }));
                 yield return new WaitForSecondsRealtime(0.15f);
@@ -528,7 +533,6 @@ public class TutorialSequence : MonoBehaviour
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
 
-                floorManager.playerDropOverrides = new List<Vector2>();
                 for (int i = scenario.player.units.Count - 1; i >= 0; i--) {
                     toDescend.Add(scenario.player.units[i]);
                 }
@@ -548,12 +552,13 @@ public class TutorialSequence : MonoBehaviour
                     foreach(GridElement ge in floorManager.currentFloor.gridElements) 
                         if (ge.coord == spawn) validCoord = false;                    
 
-                    if (floorManager.currentFloor.sqrs.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Blood) validCoord = false;
+                    if (floorManager.currentFloor.tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Blood) validCoord = false;
                 }
                 
-                floorManager.playerDropOverrides = new List<Vector2>{ spawn };
+                floorManager.currentFloor.slagSpawns = new List<Vector2>{ spawn };
                 
                 scenario.player.units.Insert(2, playerUnits[2]);
+                scenario.player.units[2].ui.overview.gameObject.SetActive(true);
                 floorManager.currentFloor.RemoveElement(scenario.player.units[2]);
                 yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[2] }));
                 yield return new WaitForSecondsRealtime(0.15f);

@@ -53,16 +53,17 @@ public class ScenarioManager : MonoBehaviour
                 tutorial = TutorialSequence.instance;
                 tutorial.Initialize(this);
                 floorManager.previewManager.tut = true;
+            } else {
+                floorManager.GenerateFloor(null, true); 
+                floorManager.GenerateFloor();
             }
-            
-            yield return StartCoroutine(floorManager.GenerateFloor()); 
 
             currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
             player.transform.parent = floorManager.currentFloor.transform;
         }
         resetSceneString = SceneManager.GetActiveScene().name;
     
-        yield return StartCoroutine(player.Initialize());
+        yield return StartCoroutine(player.Initialize(floorManager.currentFloor));
 
         StartCoroutine(FirstTurn());
     }
@@ -93,7 +94,6 @@ public class ScenarioManager : MonoBehaviour
         
         yield return StartCoroutine(SwitchTurns(Turn.Descent, Scenario.Combat));
         yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3]} ));
-        yield return StartCoroutine(floorManager.GenerateNextFloor());
         StartCoroutine(SwitchTurns(Turn.Enemy));
     }
 

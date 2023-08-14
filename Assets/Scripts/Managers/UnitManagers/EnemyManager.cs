@@ -10,9 +10,9 @@ public class EnemyManager : UnitManager {
     public event OnEnemyCondition WipedOutCallback;
     protected Coroutine ongoingTurn;
 
-    public override IEnumerator Initialize()
+    public override IEnumerator Initialize(Grid _currentGrid)
     {
-        yield return base.Initialize();
+        yield return base.Initialize(_currentGrid);
     }
 
     public override Unit SpawnUnit(Vector2 coord, Unit unit)

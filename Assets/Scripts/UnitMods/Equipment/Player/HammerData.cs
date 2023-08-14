@@ -40,7 +40,7 @@ public class HammerData : EquipmentData
                     } else {
                         foreach(GridElement target in targetTypes) {
                             if (ge.GetType() == target.GetType()) {
-                                Tile tile = user.grid.sqrs.Find(sqr => sqr.coord == ge.coord);
+                                Tile tile = user.grid.tiles.Find(sqr => sqr.coord == ge.coord);
                                 if (ge is Nail n) {
                                     if (n.nailState == Nail.NailState.Primed)
                                         remove = false;
@@ -75,7 +75,7 @@ public class HammerData : EquipmentData
             Unit unit = (Unit)user;
 
             List<Vector2> allCoords = new List<Vector2>();
-            foreach (Tile sqr in user.grid.sqrs)
+            foreach (Tile sqr in user.grid.tiles)
                 allCoords.Add(sqr.coord);
             unit.inRangeCoords = allCoords;
 
@@ -175,7 +175,10 @@ public class HammerData : EquipmentData
                 if (n.nailState == Nail.NailState.Primed)
                     n.ToggleNailState(Nail.NailState.Buried);
                 Instantiate(vfx, user.grid.PosFromCoord(target.coord) + new Vector3(0, 1, 0), Quaternion.identity);
-            } else if (target is PlayerUnit pu) {
+                PlayerManager manager = (PlayerManager)user.manager;
+                manager.TriggerDescent();
+            } 
+            else if (target is PlayerUnit pu) {
                 
                 user.PlaySound(catchSFX);
                 if (pu.conditions.Contains(Unit.Status.Disabled))
@@ -210,9 +213,7 @@ public class HammerData : EquipmentData
         if (targetCo != null)
             yield return targetCo;
         if (target is Nail) {
-            PlayerManager manager = (PlayerManager)user.manager;
-            yield return new WaitForSecondsRealtime(0.25f);
-            manager.TriggerDescent();
+            //yield return new WaitForSecondsRealtime(0.25f);
         }
 
     }

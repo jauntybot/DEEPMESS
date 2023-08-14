@@ -9,23 +9,29 @@ using UnityEngine.U2D;
 public class Grid : MonoBehaviour {
     
     FloorManager floorManager;
+    [Header("References")]
     [SerializeField] PlayerManager player;
-    public int index = 0;
+    public UnitManager enemy;
     public GameObject gridContainer, neutralGEContainer;
     [SerializeField] GameObject chessNotation;
-    private bool notation = false;
-    public UnitManager enemy;
     [SerializeField] GameObject enemyPrefab;
-
-    [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.15f, 0.35f);
     [SerializeField] GameObject tilePrefab, selectedCursor;
-    [SerializeField] static float fadeInDur = 0.25f;
-    public FloorDefinition lvlDef;
+    public bool overrideHighlight;
+    
 
-    public List<Tile> sqrs = new List<Tile>();
+    [Header("Grid Data")]
+    public int index = 0;
+    public FloorDefinition lvlDef;
+    [HideInInspector] public List<Vector2> slagSpawns, nailSpawns;
+    private bool notation = false;
+    [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.15f, 0.35f);
+    [SerializeField] static float fadeInDur = 0.25f, shockwaveDur = 1.25f, collapseDur = 0.25f;
+    [SerializeField] AnimationCurve shockwaveCurve;
+
+    public List<Tile> tiles = new List<Tile>();
     public List<GridElement> gridElements = new List<GridElement>();
 
-    public bool overrideHighlight;
+
 
 
     void Awake() {
@@ -34,7 +40,7 @@ public class Grid : MonoBehaviour {
     }
 
 // loop through grid x,y, generate Tile grid elements, update them and add to list
-    public IEnumerator GenerateGrid(int i) {
+    public void GenerateGrid(int i) {
         List<Vector2> altTiles = new List<Vector2>();
 
         foreach (FloorDefinition.Spawn spawn in lvlDef.initSpawns) {
@@ -57,7 +63,7 @@ public class Grid : MonoBehaviour {
                 tile.StoreInGrid(this);
                 tile.UpdateElement(new Vector2(x,y));
 
-                sqrs.Add(tile);
+                tiles.Add(tile);
                 tile.transform.parent = gridContainer.transform;
             }
         }
@@ -68,28 +74,18 @@ public class Grid : MonoBehaviour {
 
         SpawnLevelDefinition();
        
-        NestedFadeGroup.NestedFadeGroup fade = GetComponent<NestedFadeGroup.NestedFadeGroup>();
 
-        float timer = 0;
-        while (timer <= fadeInDur) {
-            fade.AlphaSelf = Mathf.Lerp(0, 1, timer/fadeInDur);
-
-            timer += Time.deltaTime;
-            yield return null;
-        }
         LockGrid(true);
-        fade.AlphaSelf = 1;
     }
 
 // Function that instantiates and houses FloorAssets that are defined by the currently loaded Floor Definition
     void SpawnLevelDefinition() {
-        List<Vector2> nailSpawns = new List<Vector2>();
-        List<Vector2> slagSpawns = new List<Vector2>();
 // Create new EnemyManager if this floor is not overriden by Tutorial
         enemy = Instantiate(enemyPrefab, transform).GetComponent<EnemyManager>(); 
         enemy.transform.SetSiblingIndex(2);
-        enemy.StartCoroutine(enemy.Initialize());
+        enemy.StartCoroutine(enemy.Initialize(this));
         
+        slagSpawns = new(); nailSpawns = new();
         foreach (FloorDefinition.Spawn spawn in lvlDef.initSpawns) {
             GridElement ge = spawn.asset.prefab.GetComponent<GridElement>();
 // Spawn a Unit
@@ -112,10 +108,64 @@ public class Grid : MonoBehaviour {
                 neutralGE.UpdateElement(spawn.coord);
             }
         }
-        if (slagSpawns.Count > 0)
+    }
 
-        floorManager.nailSpawnOverrides = nailSpawns;
-        floorManager.playerDropOverrides = slagSpawns;
+    public IEnumerator ShockwaveCollapse() {
+        Vector2 origin = player.nail.coord;
+
+        float timer = 0;
+        StartCoroutine(CollapseTile(origin));
+        for (int r = 1; r <= 15; r++) {
+            List<Vector2> activeCoords = new();
+            for (int i = r; i >= 0; i--) {
+                activeCoords.Add(new Vector2(origin.x + r - i, origin.y + i)); 
+                activeCoords.Add(new Vector2(origin.x - i, origin.y + r - i)); 
+                activeCoords.Add(new Vector2(origin.x - r + i, origin.y - i));
+                activeCoords.Add(new Vector2(origin.x + i, origin.y - r + i));
+            }
+            activeCoords = EquipmentAdjacency.RemoveOffGridCoords(activeCoords);
+            if (activeCoords.Count == 0) break;
+
+            foreach (Vector2 coord in activeCoords) 
+                StartCoroutine(CollapseTile(coord));
+
+            
+            while (timer < (shockwaveDur/15) * r) {
+                yield return null;
+                timer += Time.deltaTime;
+            }
+        }
+        yield return new WaitForSecondsRealtime(0.25f);
+        yield return null;
+
+
+
+    }
+
+    public IEnumerator CollapseTile(Vector2 coord) {
+        Dictionary<GridElement, Vector2> affected = new();
+        Tile tile = tiles.Find(t => t.coord == coord);
+        affected.Add(tile, tile.transform.position);
+        if (tile.anim) tile.anim.SetTrigger("Collapse");
+        foreach (GridElement ge in CoordContents(coord)) {
+            affected.Add(ge, ge.transform.position);
+            if (ge is Wall w) w.StartCoroutine(w.DestroyElement());
+        }
+
+        float timer = 0;
+        while (timer <= collapseDur * 2) {
+            yield return null;
+            foreach (KeyValuePair<GridElement, Vector2> entry in affected) {
+                if (entry.Key is Unit u) {
+                    u.transform.position =  new Vector3(entry.Value.x, entry.Value.y + shockwaveCurve.Evaluate(timer/collapseDur));
+                    u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1 - shockwaveCurve.Evaluate(Mathf.Clamp((timer - collapseDur*2/3), 0, collapseDur/3) / (collapseDur/3));
+                }
+                else
+                entry.Key.transform.position = new Vector3(entry.Value.x, entry.Value.y + Mathf.Sin(shockwaveCurve.Evaluate(timer/collapseDur)*3)/2);
+            }
+            timer += Time.deltaTime;
+        }
+
     }
 
     public void ToggleChessNotation(bool state) {
@@ -150,8 +200,8 @@ public class Grid : MonoBehaviour {
 
         if (coords != null) {
             foreach (Vector2 coord in coords) {
-                if (sqrs.Find(tile => tile.coord == coord))
-                    sqrs.Find(tile => tile.coord == coord).ToggleValidCoord(true, c, fill);
+                if (tiles.Find(tile => tile.coord == coord))
+                    tiles.Find(tile => tile.coord == coord).ToggleValidCoord(true, c, fill);
             }
         }
 
@@ -160,12 +210,12 @@ public class Grid : MonoBehaviour {
 
 // Disable Tile highlights
     public void DisableGridHighlight() {
-        foreach(Tile tile in sqrs)
+        foreach(Tile tile in tiles)
             tile.ToggleValidCoord(false);
     }
 
     public void LockGrid(bool state) {
-        foreach (Tile tile in sqrs)
+        foreach (Tile tile in tiles)
             tile.ToggleHitBox(!state);
     }
 

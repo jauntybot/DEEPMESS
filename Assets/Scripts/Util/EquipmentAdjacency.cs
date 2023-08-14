@@ -36,7 +36,7 @@ public class EquipmentAdjacency : MonoBehaviour
         return _coords;
     }
 
-    protected static List<Vector2> DiamondAdjacency(Vector2 from, int range, EquipmentData data, List<GridElement> targetLast, bool ofType = false) 
+    public static List<Vector2> DiamondAdjacency(Vector2 from, int range, EquipmentData data, List<GridElement> targetLast, bool ofType = false) 
     {
         List<Vector2> _coords = new List<Vector2>();
         List<Vector2> frontier = new List<Vector2>();
@@ -70,7 +70,7 @@ public class EquipmentAdjacency : MonoBehaviour
 // Check if Tile is valid
                         foreach (GridElement ge in data.filters) {
                             if (ge is Tile sqr) {
-                                Tile target = FloorManager.instance.currentFloor.sqrs.Find(sqr => sqr.coord == coord);
+                                Tile target = FloorManager.instance.currentFloor.tiles.Find(sqr => sqr.coord == coord);
                                 if (target != null) {
                                     if (target.tileType == sqr.tileType) {
                                         valid = false;
@@ -111,7 +111,7 @@ public class EquipmentAdjacency : MonoBehaviour
 // Check if Tile is valid
                         foreach (GridElement ge in data.filters) {
                             if (ge is Tile sqr) {
-                                Tile target = FloorManager.instance.currentFloor.sqrs.Find(sqr => sqr.coord == coord);
+                                Tile target = FloorManager.instance.currentFloor.tiles.Find(sqr => sqr.coord == coord);
                                 if (target != null) {
                                     if (target.tileType == sqr.tileType) {
                                         valid = false;
@@ -255,7 +255,7 @@ public class EquipmentAdjacency : MonoBehaviour
         
         foreach (GridElement type in elements) {
             if (type is Tile) {
-                foreach(Tile sqr in grid.sqrs) {
+                foreach(Tile sqr in grid.tiles) {
                     bool occupied = false;
                     foreach (GridElement ge in grid.CoordContents(sqr.coord)) {
                         occupied = true;
@@ -290,7 +290,7 @@ public class EquipmentAdjacency : MonoBehaviour
         return _coords;
     }
 
-    protected static List<Vector2> RemoveOffGridCoords(List<Vector2> list) {
+    public static List<Vector2> RemoveOffGridCoords(List<Vector2> list) {
         // check if coords are off the board
         for (int i = list.Count - 1; i >= 0; i--) 
         {

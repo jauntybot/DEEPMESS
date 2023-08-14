@@ -54,7 +54,7 @@ public class Nail : Unit
                 ge.OnSharedSpace(this);
         }
         if (manager.scenario.currentTurn != ScenarioManager.Turn.Cascade) {
-            Tile targetSqr = grid.sqrs.Find(sqr => sqr.coord == c);
+            Tile targetSqr = grid.tiles.Find(sqr => sqr.coord == c);
             if (targetSqr.tileType == Tile.TileType.Blood) {
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
             } else if (targetSqr.tileType == Tile.TileType.Bile) {

@@ -58,7 +58,7 @@ public class GridContextuals : MonoBehaviour
             }
         }
         if (!occupied) {
-            Tile tile = grid.sqrs.Find(t => t.coord == coord);
+            Tile tile = grid.tiles.Find(t => t.coord == coord);
             if (tile != null)
                 neutralTooltip.HoverOver(tile);
         } 

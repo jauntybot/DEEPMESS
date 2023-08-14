@@ -20,12 +20,12 @@ public class UnitManager : MonoBehaviour {
 
 
 // Called from scenario manager when game starts
-    public virtual IEnumerator Initialize() 
+    public virtual IEnumerator Initialize(Grid _currentGrid) 
     {
 // Grab global refs
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
         if (FloorManager.instance) floorManager = FloorManager.instance;
-        currentGrid = floorManager.currentFloor;
+        currentGrid = _currentGrid;
 
         yield return null;
     }

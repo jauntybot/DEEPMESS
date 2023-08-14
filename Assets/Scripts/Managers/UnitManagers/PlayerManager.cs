@@ -54,9 +54,9 @@ public class PlayerManager : UnitManager {
     }
     #endregion
 
-    public override IEnumerator Initialize()
+    public override IEnumerator Initialize(Grid _currentGrid)
     {
-        yield return base.Initialize();
+        yield return base.Initialize(_currentGrid);
         if (FloorManager.instance) floorManager = FloorManager.instance;
 
         contextuals.Initialize(this);

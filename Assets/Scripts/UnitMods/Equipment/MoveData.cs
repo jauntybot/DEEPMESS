@@ -16,7 +16,7 @@ public class MoveData : EquipmentData
         Unit u = (Unit)user;
         u.inRangeCoords = validCoords;
         for (int i = validCoords.Count - 1; i >= 0; i--) {
-            if (user.grid.sqrs.Find(sqr => sqr.coord == validCoords[i]).tileType == Tile.TileType.Bile)
+            if (user.grid.tiles.Find(sqr => sqr.coord == validCoords[i]).tileType == Tile.TileType.Bile)
                 validCoords.RemoveAt(i);
         }
         user.grid.DisplayValidCoords(validCoords, gridColor);
@@ -47,7 +47,7 @@ public class MoveData : EquipmentData
             }
             manager.undoableMoves.Add(unit, unit.coord);
             manager.undoOrder.Add(unit);
-            Tile tile = unit.grid.sqrs.Find(s => s.coord == moveTo);
+            Tile tile = unit.grid.tiles.Find(s => s.coord == moveTo);
             if (tile is TileBulb tb && !unit.equipment.Find(e => e is BulbEquipmentData)) {
                 manager.harvestedByMove.Add(unit, tb);
             }
