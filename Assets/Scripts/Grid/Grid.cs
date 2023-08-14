@@ -25,7 +25,7 @@ public class Grid : MonoBehaviour {
     [HideInInspector] public List<Vector2> slagSpawns, nailSpawns;
     private bool notation = false;
     [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.15f, 0.35f);
-    [SerializeField] static float fadeInDur = 0.25f, shockwaveDur = 1.25f, collapseDur = 0.25f;
+    [SerializeField] float shockwaveDur = 1.25f, collapseDur = 0.25f;
     [SerializeField] AnimationCurve shockwaveCurve;
 
     public List<Tile> tiles = new List<Tile>();
