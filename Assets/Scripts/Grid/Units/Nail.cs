@@ -14,6 +14,9 @@ public class Nail : Unit
 
     [SerializeField] GameObject primedVFX;
 
+    public override event OnElementUpdate ElementDestroyed;
+    public virtual event OnElementUpdate ElementDisabled;
+
     protected override void Start()
     {
         base.Start();
@@ -63,5 +66,15 @@ public class Nail : Unit
                 RemoveCondition(Status.Restricted);
             }
         }
+    }
+
+    public override IEnumerator DestroyElement(DamageType dmgType = DamageType.Unspecified) {
+        
+        PlaySound(destroyedSFX);
+        ToggleNailState(NailState.Buried);
+        yield return null;
+        ElementDisabled?.Invoke(this);
+        ApplyCondition(Status.Disabled);
+        //gfxAnim.SetBool("Destoyed", true);
     }
 }

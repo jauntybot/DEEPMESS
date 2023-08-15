@@ -65,7 +65,7 @@ public class EnemyManager : UnitManager {
                     break;
                 }
             }
-            if (lose || scenario.player.units.Find(u => u is Nail) == null) {
+            if (lose || scenario.player.nail.conditions.Contains(Unit.Status.Disabled)) {
                 EndTurnEarly();
                 break;
             }

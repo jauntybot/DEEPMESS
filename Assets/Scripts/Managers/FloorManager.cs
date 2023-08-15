@@ -551,32 +551,91 @@ public class FloorManager : MonoBehaviour
 
         cavityText.SetBool("Active", false);
 
-        timer = 0;
-        while (timer <= unitDropDur) {
-            parallax.ScrollParallax(-1);
-            for (int i = 0; i <= units.Count - 1; i++) {
-                NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
-                units[i].transform.position = Vector3.Lerp(to[i], to[i] + new Vector2(0, floorOffset*2), dropCurve.Evaluate(timer/unitDropDur));
-                fade.AlphaSelf = Mathf.Lerp(1, 0, (timer - (unitDropDur*2/3))/(unitDropDur/3));
-                yield return null;
+        if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BOSS) {
+            timer = 0;
+            while (timer <= unitDropDur) {
+                parallax.ScrollParallax(-1);
+                for (int i = 0; i <= units.Count - 1; i++) {
+                    NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
+                    units[i].transform.position = Vector3.Lerp(to[i] - new Vector2(0, floorOffset), to[i] + new Vector2(0, floorOffset*2), dropCurve.Evaluate(timer/unitDropDur));
+                    fade.AlphaSelf = Mathf.Lerp(1, 0, (timer - (unitDropDur*2/3))/(unitDropDur/3));
+                    yield return null;
+                    timer += Time.deltaTime;
+                }
+            }
+            
+            units[0].manager.transform.parent = floors[currentFloor.index - 1].transform;
+            units[3].transform.parent = currentFloor.transform;
+
+            timer = 0;
+            while (timer <= 0.5f) {
+                parallax.ScrollParallax(-1);
                 timer += Time.deltaTime;
             }
+            
+            GenerateFloor(null, true);
+            GenerateFloor();
+            yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
+            yield return StartCoroutine(DescendUnits(new List<GridElement>{ units[0], units[1], units[2], units[3]} ));
+            yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
+        } else {
+            yield return StartCoroutine(scenario.Win());
+            while (scenario.scenario == ScenarioManager.Scenario.EndState) {
+                if (parallax)
+                    parallax.ScrollParallax(1);
+                yield return null;
+            }
         }
-        
-        units[0].manager.transform.parent = floors[currentFloor.index - 1].transform;
-        units[3].transform.parent = currentFloor.transform;
+    }
 
-        timer = 0;
-        while (timer <= 0.5f) {
-            parallax.ScrollParallax(-1);
+    public IEnumerator EndSequenceAnimation() {
+
+        // Local params for animation
+        Vector3 from = floorParent.transform.position;
+        Vector3 to = new Vector3(from.x, from.y - floorOffset * 5, from.z);
+        Vector3 fromScale = currentFloor.transform.localScale;
+        Vector3 toScale = Vector3.one * 0.75f;
+
+        scenario.player.nail.transform.parent = transitionParent;
+        scenario.player.nail.ToggleNailState(Nail.NailState.Falling);
+
+        float timer = 0;
+        while (timer < transitionDur) {
+            floorParent.transform.position = Vector3.Lerp(from, from - new Vector3(0, floorOffset), timer/transitionDur);
+            currentFloor.transform.localScale = Vector3.Lerp(fromScale, toScale, timer/transitionDur);
+
+            parallax.ScrollParallax(1);
+            yield return null;
             timer += Time.deltaTime;
         }
-        
-        GenerateFloor(null, true);
-        GenerateFloor();
-        yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
-        yield return StartCoroutine(DescendUnits(new List<GridElement>{ units[0], units[1], units[2], units[3]} ));
-        yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
+        currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
+        while (timer < transitionDur * 5) {
+            floorParent.transform.position = Vector3.Lerp(from, to, timer/(transitionDur*5));
+            currentFloor.transform.localScale = Vector3.Lerp(fromScale, toScale, timer/(transitionDur*5));
 
+            parallax.ScrollParallax(1);
+            yield return null;
+            timer += Time.deltaTime;
+        }
+        while (scenario.scenario == ScenarioManager.Scenario.EndState) {
+            if (parallax)
+                parallax.ScrollParallax(1);
+            yield return null;
+        }
+
+        from = scenario.player.nail.transform.position;
+        to = from + new Vector3(0, floorOffset * 5);
+
+        timer = 0;
+        scenario.runDataTracker.panel.SetActive(false);
+        while (timer < transitionDur * 10) {
+            scenario.player.nail.transform.position = Vector3.Lerp(from, to, timer/(transitionDur*10));
+            if (parallax)
+                parallax.ScrollParallax(1);
+
+            yield return null;
+            timer += Time.deltaTime;
+        }
     }
+
 }

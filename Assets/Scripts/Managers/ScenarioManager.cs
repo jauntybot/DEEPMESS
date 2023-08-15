@@ -29,10 +29,10 @@ public class ScenarioManager : MonoBehaviour
     public PlayerManager player;
 
     [SerializeField] public MessagePanel messagePanel;
-
+    public RunDataTracker runDataTracker;
 
 // State machines
-    public enum Scenario { Null, Combat, Boss, Provision, Barrier };
+    public enum Scenario { Null, Combat, Boss, Provision, Barrier, EndState };
     public Scenario scenario;
     public enum Turn { Null, Player, Enemy, Descent, Cascade, Loadout, Slots }
     public Turn currentTurn, prevTurn;
@@ -62,6 +62,7 @@ public class ScenarioManager : MonoBehaviour
             player.transform.parent = floorManager.currentFloor.transform;
         }
         resetSceneString = SceneManager.GetActiveScene().name;
+        runDataTracker.Init(this);
     
         yield return StartCoroutine(player.Initialize(floorManager.currentFloor));
 
@@ -131,6 +132,9 @@ public class ScenarioManager : MonoBehaviour
             case Scenario.Barrier:
             
             break;
+            case Scenario.EndState:
+                scenario = toScenario;
+            break;
         }
 // Turn state machine
         switch(toTurn) 
@@ -165,7 +169,7 @@ public class ScenarioManager : MonoBehaviour
                         break;
                     }
                 }
-                if (!lose && player.units.Find(u => u is Nail) != null) {
+                if (!lose && !player.nail.conditions.Contains(Unit.Status.Disabled)) {
                     uiManager.LockFloorButtons(false);
                     if (uiManager.gameObject.activeSelf)
                         yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Slag));
@@ -236,18 +240,21 @@ public class ScenarioManager : MonoBehaviour
     public IEnumerator Win() 
     {
         if (uiManager.gameObject.activeSelf)
-            yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER WINS", 1));
+            yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Win));
         yield return new WaitForSecondsRealtime(1.5f);
-        SceneManager.LoadScene(resetSceneString);
+        runDataTracker.UpdateAndDisplay();
     }
 
     public IEnumerator Lose() 
     {
+        scenario = Scenario.EndState;
         if (currentTurn == Turn.Enemy)
             currentEnemy.EndTurnEarly();
         if (uiManager.gameObject.activeSelf)
-            yield return StartCoroutine(messagePanel.DisplayMessage("PLAYER LOSES", 2));
+            yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Lose));
         yield return new WaitForSecondsRealtime(1.5f);
-        SceneManager.LoadScene(resetSceneString);
+        StartCoroutine(floorManager.EndSequenceAnimation());
+        yield return new WaitForSecondsRealtime(1.5f);
+        runDataTracker.UpdateAndDisplay();
     }
 }

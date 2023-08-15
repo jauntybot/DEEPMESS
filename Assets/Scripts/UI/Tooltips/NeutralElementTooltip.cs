@@ -41,20 +41,20 @@ public class NeutralElementTooltip : Tooltip
     public void HoverOver(GridElement ge) {
 
         if (ge is Wall) {
-            SetText("Blocks movement, damages if landed on.", "Wall");
+            SetText("Blocks movement, damages if landed on.", "WALL");
         } else if (ge is Tile t) {
             if (ge is TileBulb) {
-                SetText("Contains a bulb.", "Bulb", false, new List<RuntimeAnimatorController>{ bulbAnim });
+                SetText("Contains a bulb.", "BULB", false, new List<RuntimeAnimatorController>{ bulbAnim });
             } else {
                 switch(t.tileType) {
                     case Tile.TileType.Bone:
-                        SetText("No special effect.", "Bone");
+                        SetText("No special effect.", "BONE");
                     break;
                     case Tile.TileType.Bile:
-                        SetText("Destroys anything that lands in it.", "Bile", false, new List<RuntimeAnimatorController>{ bileAnim });
+                        SetText("Destroys anything that lands in it.", "BILE", false, new List<RuntimeAnimatorController>{ bileAnim });
                     break;
                     case Tile.TileType.Blood:
-                        SetText("Prevents Slags from acting.", "Blood", false, new List<RuntimeAnimatorController>{ bloodAnim });
+                        SetText("Prevents Slags from acting.", "BLOOD", false, new List<RuntimeAnimatorController>{ bloodAnim });
                     break;
                 }
             }

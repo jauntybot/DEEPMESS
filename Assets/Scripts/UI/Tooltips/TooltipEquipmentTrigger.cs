@@ -33,7 +33,7 @@ public class TooltipEquipmentTrigger : TooltipTrigger
 
     private void Anvil()
     {
-        header = "Anvil";
+        header = "ANVIL";
         content = "Drop an anvil and move away. Anvil attracts enemies.";
         anim = anvilAnim;
     }
@@ -46,53 +46,53 @@ public class TooltipEquipmentTrigger : TooltipTrigger
 
     private void BigWind()
     {
-        header = "Big Wind";
+        header = "BIG WIND";
         content = "Push all enemies 1 tile in chosen cardinal direction.";
     }
 
     private void Shield()
     {
-        header = "Shield";
+        header = "SHIELD";
         content = "Erect a shield around any unit, protecting it from damage.";
         anim = shieldAnim;
     }
 
     private void Swap()
     {
-        header = "Swap";
+        header = "SWAP";
         content = "Switch positions with any other unit.";
     }
 
     private void BigGrab()
     {
-        header = "Big Grab";
+        header = "BIG GRAB";
         content = "Grab and throw an enemy.";
         anim = bigGrabAnim;
     }
 
     private void Hammer()
     {
-        header = "Hammer";
+        header = "HAMMER";
         content = "Throw in a straight line, then arc a ricochet to any Slag.";
         anim = hammerAnim;
     }
 
     private void HealBulb()
     {
-        header = "Heal Bulb";
+        header = "HEAL BULB";
         content = "Restores 2HP. Can be thrown.";
         anim = bulbAnim;
     }
 
     private void WeakenBulb()
     {
-        header = "Weaken Bulb";
+        header = "WEAKEN BULB";
         content = "Throw for area of effect explosion. Causes anything in radius to take double damage for that turn.";
         anim = bulbAnim;
     }
     private void SurgeBulb()
     {
-        header = "Surge Bulb";
+        header = "SURGE BULB";
         content = "Refreshes action and move. Can be thrown.";
         anim = bulbAnim;
     }

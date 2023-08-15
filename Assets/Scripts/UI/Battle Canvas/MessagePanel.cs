@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class MessagePanel : MonoBehaviour
 {
  
-    public enum Message { Slag, Antibody, Descent, Cascade, Position } ;
+    public enum Message { Slag, Antibody, Descent, Cascade, Position, Win, Lose } ;
 
     public Animator anim;
     [Header("Old Anim")]
@@ -42,6 +42,12 @@ public class MessagePanel : MonoBehaviour
             break;
             case Message.Position:
                 trigger = "Position";
+            break;
+            case Message.Win:
+                trigger = "Win";
+            break;
+            case Message.Lose:
+                trigger = "Lose";
             break;
         }
         anim.SetTrigger(trigger);
