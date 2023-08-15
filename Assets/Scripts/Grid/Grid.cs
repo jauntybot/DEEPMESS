@@ -25,7 +25,7 @@ public class Grid : MonoBehaviour {
     [HideInInspector] public List<Vector2> slagSpawns, nailSpawns;
     private bool notation = false;
     [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.15f, 0.35f);
-    [SerializeField] float shockwaveDur = 1.25f, collapseDur = 0.25f;
+    [SerializeField] float shockwaveDur = .25f, collapseDur = 0.25f;
     [SerializeField] AnimationCurve shockwaveCurve;
 
     public List<Tile> tiles = new List<Tile>();
@@ -113,9 +113,41 @@ public class Grid : MonoBehaviour {
     public IEnumerator ShockwaveCollapse() {
         Vector2 origin = player.nail.coord;
 
-        float timer = 0;
         StartCoroutine(CollapseTile(origin));
-        for (int r = 1; r <= 15; r++) {
+        
+// Box adjacency
+        // for (int r = 1; r <= 9; r++) {
+        //     List<Vector2> activeCoords = new();
+        //     for (int i = r; i >= 0; i--) {
+        //         activeCoords.Add(new Vector2(origin.x + r - i, origin.y + r));
+        //         activeCoords.Add(new Vector2(origin.x + r - i, origin.y - r));
+        //         activeCoords.Add(new Vector2(origin.x - r + i, origin.y + r));
+        //         activeCoords.Add(new Vector2(origin.x - r + i, origin.y - r));
+        //         activeCoords.Add(new Vector2(origin.x + r, origin.y + r - i - 1));
+        //         activeCoords.Add(new Vector2(origin.x + r, origin.y - r + i + 1));
+        //         activeCoords.Add(new Vector2(origin.x - r, origin.y + r - i - 1));
+        //         activeCoords.Add(new Vector2(origin.x - r, origin.y - r + i + 1));
+
+        //     }
+        
+        int range;
+        if (origin.x >= 4) {
+            if (origin.y >= 4) {
+                range = (int)origin.x + (int)origin.y;
+            } else {
+                range = (int)origin.x + 7 - (int)origin.y;
+            }
+        } else {
+            if (origin.y >= 4) {
+                range = 7 - (int)origin.x + (int)origin.y;
+            } else {
+                range = 7 - (int)origin.x + 7 - (int)origin.y;
+            }
+        }
+
+        float timer = 0;
+// Diamond adjacency
+        for (int r = 1; r <= range; r++) {
             List<Vector2> activeCoords = new();
             for (int i = r; i >= 0; i--) {
                 activeCoords.Add(new Vector2(origin.x + r - i, origin.y + i)); 
@@ -125,21 +157,31 @@ public class Grid : MonoBehaviour {
             }
             activeCoords = EquipmentAdjacency.RemoveOffGridCoords(activeCoords);
             if (activeCoords.Count == 0) break;
-
-            foreach (Vector2 coord in activeCoords) 
-                StartCoroutine(CollapseTile(coord));
-
+                          
+            StartCoroutine(CollapseTiles(activeCoords, shockwaveDur * (1.25f - shockwaveCurve.Evaluate((float)r/range))));
+            Debug.Log(shockwaveDur * (1.25f - shockwaveCurve.Evaluate((float)r/range)));
             
-            while (timer < (shockwaveDur/15) * r) {
+            while (timer < shockwaveDur * (1.25f - shockwaveCurve.Evaluate((float)r/range)) * r) {
                 yield return null;
                 timer += Time.deltaTime;
             }
+            
         }
-        yield return new WaitForSecondsRealtime(0.25f);
-        yield return null;
+        yield return new WaitForSecondsRealtime(1.75f);
 
 
 
+    }
+
+    public IEnumerator CollapseTiles(List<Vector2> activeCoords, float time) {
+        Vector2[] array = activeCoords.ToArray();
+        ShuffleBag<Vector2> shuffle = new(array);
+
+        int count = shuffle.Count;
+        for (int i = count - 1; i >= 0; i--) {
+            StartCoroutine(CollapseTile(shuffle.Next()));
+            yield return new WaitForSecondsRealtime(time/count);   
+        }
     }
 
     public IEnumerator CollapseTile(Vector2 coord) {
@@ -149,20 +191,22 @@ public class Grid : MonoBehaviour {
         if (tile.anim) tile.anim.SetTrigger("Collapse");
         foreach (GridElement ge in CoordContents(coord)) {
             affected.Add(ge, ge.transform.position);
-            if (ge is Wall w) w.StartCoroutine(w.DestroyElement());
+            //if (ge is Wall w) w.StartCoroutine(w.DestroyElement());
         }
 
         float timer = 0;
         while (timer <= collapseDur * 2) {
-            yield return null;
             foreach (KeyValuePair<GridElement, Vector2> entry in affected) {
                 if (entry.Key is Unit u) {
                     u.transform.position =  new Vector3(entry.Value.x, entry.Value.y + shockwaveCurve.Evaluate(timer/collapseDur));
-                    u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1 - shockwaveCurve.Evaluate(Mathf.Clamp((timer - collapseDur*2/3), 0, collapseDur/3) / (collapseDur/3));
+                    u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1 - shockwaveCurve.Evaluate(timer/collapseDur);
                 }
-                else
-                entry.Key.transform.position = new Vector3(entry.Value.x, entry.Value.y + Mathf.Sin(shockwaveCurve.Evaluate(timer/collapseDur)*3)/2);
+                else {
+                    entry.Key.transform.position = new Vector3(entry.Value.x, entry.Value.y - shockwaveCurve.Evaluate(timer/collapseDur)*3);
+                    entry.Key.gfx[0].GetComponent<NestedFadeGroup.NestedFadeGroupSpriteRenderer>().AlphaSelf = Mathf.Clamp(2 - shockwaveCurve.Evaluate(timer/collapseDur) * 2, 0, 1);
+                }
             }
+            yield return new WaitForSecondsRealtime(Util.fps/2/Util.fps);
             timer += Time.deltaTime;
         }
 
