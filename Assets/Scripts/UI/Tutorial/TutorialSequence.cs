@@ -99,6 +99,7 @@ public class TutorialSequence : MonoBehaviour
 
         while (!cont) yield return null;
 // Descent 1
+        yield return StartCoroutine(DiggingDown());
         yield return StartCoroutine(EnemyTurn());
 
         yield return new WaitForSecondsRealtime(1.25f);
@@ -144,8 +145,8 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator SplashMessage() {
         screenFade.gameObject.SetActive(true);
 
-        header = "WELCOME to DEEPMESS";
-        body = "I am Bubbletack, an ancillary of the Slimemind that clings above. We've been making good progress through the thick skull of the Grand Designer, unraveling the secrets of the head as we go." + '\n';
+        header = "";
+        body = "We are here. We are digging. We need to dig as deep as we can." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -154,7 +155,7 @@ public class TutorialSequence : MonoBehaviour
         }
         
         header = "";
-        body = "We'll split off some more egregore for you to control, three mortal Slags to wield the tools of this depraved excavation. It's time to dig deep and make a mess.";
+        body = "We will send you a Slag unit to control during our excavation.";
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -167,12 +168,12 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator ExplainMovement() {
         screenFade.gameObject.SetActive(true);
 
-        body = "This is one of our Slags, Flathead. It can move around the floor and use the Hammer to strike me and the Nail, sending everything down to the next floor. Click on the Slag to move it in line with the Nail." + '\n';
+        body = "Slags can move around the floor and use the Hammer to strike the Nail, digging down to the next floor. Select the Slag and move it to line up with the Nail." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-            
+            yield return new WaitForSecondsRealtime(1 / Util.fps);
+
         }
 
         screenFade.SetTrigger("FadeOut");
@@ -183,8 +184,8 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator HittingTheNail() {
         screenFade.gameObject.SetActive(true);
 
-        header = "Hitting the Nail";
-        body = "The Hammer is our main tool. Throw it in a straight line to strike a target, then select a Slag for the Hammer to bounce back to. Strike the Nail with the Hammer and catch it with the Slag." + '\n';
+        header = "HITTING THE NAIL";
+        body = "The Hammer is our main tool. Throw it in a straight line to strike a target, then select a Slag for the Hammer to bounce back to. Strike the Nail." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ hittingTheNailAnim });
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -198,6 +199,7 @@ public class TutorialSequence : MonoBehaviour
 
         while (timer < 0.25f) {
             tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(prevPos, prevPos + new Vector3(680, 0), timer/0.25f);
+            Debug.Log(prevPos + " " + tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition);
             timer += Time.deltaTime;
             yield return null;
         }
@@ -213,6 +215,35 @@ public class TutorialSequence : MonoBehaviour
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
         Destroy(highlight);
 
+    }
+
+    public IEnumerator DiggingDown() {
+        screenFade.gameObject.SetActive(true);
+        
+        header = "DIGGING DOWN";
+        body = "Striking the Nail with the Hammer destroys the floor. All units crash below. We progress." + '\n';
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+        }
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        
+    }
+
+    public IEnumerator TutorialEnd() {
+        screenFade.gameObject.SetActive(true);
+
+        header = "";
+        body = "We need to get through to the 15th floor. It is time. Dig deep. Make mess.";
+        tooltip.SetText(body, header, clickToSkip:true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1 / Util.fps);
+        }
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 
     public IEnumerator AttackingEnemies() {
@@ -237,8 +268,8 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator NailPriming() {
         screenFade.gameObject.SetActive(true);
 
-        header = "Nail Priming";
-        body = "Since I'm wrapped around the Nail, I need some time to get ready for another descent. When the Nail is not primed, it can't be hit by the Hammer." + '\n';
+        header = "NAIL PRIMING";
+        body = "We need time to get the Nail ready for another descent. When the Nail is not primed, it cannot be hit by the Hammer." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -252,8 +283,8 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator HittingAnEnemy() {
         screenFade.gameObject.SetActive(true);
 
-        header = "Hitting Enemies";
-        body = "The Hammer can be bounced between Slags. Strike an enemy and select Spike, the other Slag, to bounce it to." + '\n';
+        header = "HITTING ENEMIES";
+        body = "The Hammer can be bounced between Slags. Strike the enemy and select the other Slag to bounce it to. Then strike the enemy with that Slag." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ hittingEnemiesAnim });
 
         while (!tooltip.skip) {
@@ -296,8 +327,8 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator OnTurnMoveAndAP() {
         screenFade.gameObject.SetActive(true);
 
-        header = "Player Turn: Move and Action";
-        body = "On your turn, each Slag can move and take an action. Descending down to the next floor ends your turn." + '\n';
+        header = "PLAYER TURN";
+        body = "Slags can move and take an action on each turn. Descending down to the next floor starts a new turn." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -312,8 +343,8 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator Equipment() {
         screenFade.gameObject.SetActive(true);
 
-        header = "Equipment";
-        body = "Slags' equipment can be used once per floor. Each Slag has a unique ability that can give you a big advantage on the current floor or the one below." + '\n';
+        header = "EQUIPMENT";
+        body = "Each Slag has equipment that can be used one time per floor. The equipment can give you a big advantage against the enemies." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ anvilAnim, bigThrowAnim, shieldAnim });
 
         while (!tooltip.skip) {
@@ -328,8 +359,8 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator EnemyBehavior() {
         screenFade.gameObject.SetActive(true);
 
-        header = "Enemy Behavior";
-        body = "Enemies can move and attack on their turn. These Monophics can move 2 tiles and strike anything next to them." + '\n';
+        header = "ENEMY TURN";
+        body = "Enemy units can move and attack on their turn. These enemies can move 2 tiles and strike anything next to them." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -349,8 +380,8 @@ public class TutorialSequence : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.25f);
         screenFade.gameObject.SetActive(true);
 
-        header = "Enemy Scatter";
-        body = "When you land on a floor, enemies scatter but won't attack." + '\n';
+        header = "ENEMY SCATTER";
+        body = "When we land on a floor, enemies scatter but do not attack." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -374,8 +405,8 @@ public class TutorialSequence : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.25f);
         screenFade.gameObject.SetActive(true);
 
-        header = "Basophic Enemy";
-        body = "This Basophic enemy can explode, dealing damage to all the tiles around it. Hover over enemy portraits to learn more about their abilities." + '\n';
+        header = "NEW DANGERS";
+        body = "This enemy can explode, dealing damage to all the tiles around it. Hover over enemy portraits to learn more about their abilities." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ basophicAnim });
 
         while (!tooltip.skip) {
@@ -396,8 +427,8 @@ public class TutorialSequence : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.25f);
         screenFade.gameObject.SetActive(true);
 
-        header = "Nail Damage";
-        body = "I deal damage back to enemies that strike the Nail." + '\n';
+        header = "NAIL DAMAGE";
+        body = "We deal damage back to enemies that strike the Nail." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -419,8 +450,8 @@ public class TutorialSequence : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.25f);
         screenFade.gameObject.SetActive(true);
 
-        header = "Bulbs";
-        body = "Bulbs are consumable items that your Slags can pick up. Each Slag can hold 1 bulb that can be used by that Slag or thrown as a free action." + '\n';
+        header = "BULBS";
+        body = "Bulbs are consumable items that your Slags can pick up. Each Slag can hold 1 bulb that can be used or thrown as a free action" + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ bulbAnim });
 
         while (!tooltip.skip) {
@@ -436,8 +467,8 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator PeekButton() {
         
         Destroy(destroyHighlight);
-        header = "Peek Button";
-        body = "The peek button lets you preview the next floor. You can see where enemies and other hazards are located." + '\n';
+        header = "PEEK BUTTON";
+        body = "The Peek button lets you preview the next floor. You can see where enemies and other hazards are located." + '\n';
         brTooltip.SetText(body, header, true);
 
         while (!brTooltip.skip) {
@@ -452,7 +483,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
         bloodEncountered = true;
 
-        header = "Blood Tiles";
+        header = "BLOOD TILES";
         body = "Blood tiles prevent Slags from using the Hammer or equipment while the Slag is standing on it." + '\n';
         tooltip.SetText(body, header, true);
 
@@ -468,8 +499,8 @@ public class TutorialSequence : MonoBehaviour
     
     public IEnumerator UndoTutorial() {
         
-        header = "Undo Button";
-        body = "You can undo any Slags' movement. Once any Slag performs an action, however, you can't undo any previous moves. Plan accordingly." + '\n';
+        header = "UNDO BUTTON";
+        body = "You can undo any Slags' movement. Once any Slag performs an action, you cannot undo any previous moves." + '\n';
         brTooltip.SetText(body, header, true);
 
         while (!brTooltip.skip) {
@@ -493,8 +524,8 @@ public class TutorialSequence : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.25f);
         screenFade.gameObject.SetActive(true);
 
-        header = "Descent Damage";
-        body = "Slags and enemies crush anything they land on, but take damage as a result." + '\n';
+        header = "DESCENT DAMAGE";
+        body = "Slags and enemies crush anything they land on. They take damage as a result." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -522,8 +553,8 @@ public class TutorialSequence : MonoBehaviour
 
         screenFade.gameObject.SetActive(true);
 
-        header = "Unit Revive";
-        body = "Slags that have been downed can brought back into the fight. Strike the downed Slag with the Hammer to transfer 1HP from me to the Slag. It will come back with its move and action refreshed." + '\n';
+        header = "SLAG REVIVE";
+        body = "Slags that have been downed can be revived. Strike the downed Slag with the Hammer to transfuse 1HP from the Nail. The Slag will come back with its move and action refreshed." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ reviveAnim });
 
         while (!tooltip.skip) 
@@ -599,8 +630,11 @@ public class TutorialSequence : MonoBehaviour
                 floorManager.floorSequence.ThresholdCheck();
             break;
             case 2:
-                yield return floorManager.StartCoroutine(floorManager.TransitionPackets());
                 StartCoroutine(ScatterTurn());
+                Coroutine co = floorManager.StartCoroutine(floorManager.TransitionPackets());
+                yield return new WaitForSecondsRealtime(2f);
+                yield return StartCoroutine(TutorialEnd());
+                yield return co;
                 PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
             break;
         }
