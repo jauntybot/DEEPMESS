@@ -198,7 +198,6 @@ public class TutorialSequence : MonoBehaviour
 
         while (timer < 0.25f) {
             tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(prevPos, prevPos + new Vector3(680, 0), timer/0.25f);
-            Debug.Log(prevPos + " " + tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition);
             timer += Time.deltaTime;
             yield return null;
         }
@@ -600,8 +599,8 @@ public class TutorialSequence : MonoBehaviour
                 floorManager.floorSequence.ThresholdCheck();
             break;
             case 2:
-                StartCoroutine(ScatterTurn());
                 yield return floorManager.StartCoroutine(floorManager.TransitionPackets());
+                StartCoroutine(ScatterTurn());
                 PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
             break;
         }

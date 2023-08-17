@@ -142,13 +142,14 @@ public class EquipmentAdjacency : MonoBehaviour
         Vector2 current = from;
         int traveled = Mathf.RoundToInt(Mathf.Abs(to.x - from.x) + Mathf.Abs(to.y - from.y));
 
-        while (!Vector2.Equals(current, to)) {
+        while (!Vector2.Equals(current, to) && frontier.Count > 0) {
             for (int f = frontier.Count - 1; f >= 0; f--) {
                 current = frontier[f];
                 frontier.Remove(frontier[f]);
 // X Axis adjacency
                 for (int x = -1; x < 2; x+=2) {
                     Vector2 coord = new Vector2(current.x + x, current.y);
+                    if (coord.x < 0 || coord.x > 7) continue;
                     if (!_toFrom.ContainsKey(coord)) {
 // If there is something already occupying this coord  
                         bool occupied = false;
@@ -173,6 +174,7 @@ public class EquipmentAdjacency : MonoBehaviour
 // Y Axis adjacency
                 for (int y = -1; y < 2; y+=2) {    
                     Vector2 coord = new Vector2(current.x, current.y + y);
+                    if (coord.y < 0 || coord.y > 7) continue;
                     if (!_toFrom.ContainsKey(coord)) {
 // If there is something already occupying this coord                        
                         bool occupied = false;

@@ -13,6 +13,7 @@ public class Nail : Unit
     public NailState nailState;
 
     [SerializeField] GameObject primedVFX;
+    [SerializeField] SFX primedSFX;
 
     public override event OnElementUpdate ElementDestroyed;
     public virtual event OnElementUpdate ElementDisabled;
@@ -37,6 +38,7 @@ public class Nail : Unit
                 gfxAnim.SetBool("Falling", false);
                 gfxAnim.SetBool("Primed", true);
                 primedVFX.SetActive(true);
+                PlaySound(primedSFX);
             break;
             case NailState.Buried:
                 gfxAnim.SetBool("Falling", false);

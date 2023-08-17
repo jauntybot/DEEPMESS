@@ -7,7 +7,6 @@ using UnityEngine.Rendering;
 // This class generates and sequences Floor prefabs (Grid class), as well as manages the descending of units
 
 [RequireComponent(typeof(BetweenFloorManager))]
-[ExecuteInEditMode]
 public class FloorManager : MonoBehaviour
 {
 
@@ -93,7 +92,7 @@ public class FloorManager : MonoBehaviour
         
         if (!first) {
             newFloor.transform.localScale = Vector3.one * 0.75f;
-            newFloor.GetComponent<SortingGroup>().sortingOrder = -1;
+            newFloor.GetComponent<SortingGroup>().sortingOrder = -2;
             previewManager.UpdateFloors(floors[newFloor.index - 1], newFloor);            
         }
     }
@@ -239,14 +238,15 @@ public class FloorManager : MonoBehaviour
 
     }
 
-    public void Descend(bool cascade = false) {
+    public void Descend(bool cascade = false, bool nail = true) {
         bool tut = floorSequence.activePacket.packetType == FloorPacket.PacketType.Tutorial;
-        StartCoroutine(DescendFloors(cascade, tut));
+        StartCoroutine(DescendFloors(cascade, nail, tut));
         
     }
 
-    public IEnumerator DescendFloors(bool cascade = false, bool tut = false) {
-        yield return StartCoroutine(currentFloor.ShockwaveCollapse());
+    public IEnumerator DescendFloors(bool cascade = false, bool nail = true, bool tut = false) {
+        if (nail)
+            yield return StartCoroutine(currentFloor.ShockwaveCollapse());
 
 // Lock up current floor
         if (uiManager.gameObject.activeSelf)

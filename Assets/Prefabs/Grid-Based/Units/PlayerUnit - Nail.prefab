@@ -220,6 +220,7 @@ MonoBehaviour:
   nailDrop: {fileID: 11400000, guid: af1dca810e8d7d6488875275fc4d3ac3, type: 2}
   nailState: 0
   primedVFX: {fileID: 8317719591084085047}
+  primedSFX: {fileID: 11400000, guid: 9ad344aed7c705940a4ccc7bd2bfd914, type: 2}
 --- !u!114 &7285201812217589880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -689,6 +690,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: airTrail
       objectReference: {fileID: 0}
+    - target: {fileID: 5663310990499575270, guid: 2057bf40eb957c34c89a2a41550308d2, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2057bf40eb957c34c89a2a41550308d2, type: 3}
 --- !u!1 &84497104197775277 stripped
@@ -696,6 +701,20 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1960560699034946204, guid: 2057bf40eb957c34c89a2a41550308d2, type: 3}
   m_PrefabInstance: {fileID: 1880673108366468401}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2090127380611150289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 84497104197775277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ee90040f786e6a47acff528e5821a3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alpha: 1
+  exclude: 0
 --- !u!4 &1157230525912493863 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 726822482405788182, guid: 2057bf40eb957c34c89a2a41550308d2, type: 3}

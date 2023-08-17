@@ -38,7 +38,7 @@ public class EnemyManager : UnitManager {
         if (scenario.currentEnemy == this && scenario.currentTurn != ScenarioManager.Turn.Descent) {
             if (units.Count <= 0) {
                 EndTurnEarly();
-                floorManager.Descend();
+                floorManager.Descend(false, false);
             }
         }
     }

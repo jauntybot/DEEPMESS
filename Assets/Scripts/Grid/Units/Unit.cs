@@ -200,7 +200,7 @@ public class Unit : GridElement {
                 case Status.Normal: return;
                 case Status.Restricted:
                     if (this is PlayerUnit)
-                        ui.ToggleEquipmentButtons();
+                        ui.UpdateEquipmentButtons();
                 break;
                 case Status.Disabled:
                     hpCurrent = 0;

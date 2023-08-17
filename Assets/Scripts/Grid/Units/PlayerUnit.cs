@@ -15,7 +15,7 @@ public class PlayerUnit : Unit {
     public override event OnElementUpdate ElementDestroyed;
     public virtual event OnElementUpdate ElementDisabled;
 
-    [HideInInspector] public int hammerUses, equipUses, bulbPickups;
+    public int hammerUses, equipUses, bulbPickups;
 
 
     public override void UpdateElement(Vector2 coord) {
@@ -43,26 +43,30 @@ public class PlayerUnit : Unit {
 
     public override IEnumerator ExecuteAction(GridElement target = null) {
         
-        Coroutine co = StartCoroutine(base.ExecuteAction(target));
         EquipmentData equip = selectedEquipment;
-        if (equip is HammerData) hammerUses++; 
+        Coroutine co = StartCoroutine(base.ExecuteAction(target));
 
-// Selection logic 
+// Input parsing - what kind of equipment is being used 
         if (equip) {
+// single target equipment, not movement
             if (!equip.multiselect && equip is not MoveData) {
                 pManager.DeselectUnit();
                 pManager.StartCoroutine(pManager.UnitIsActing());
                 if (equip is PerFloorEquipmentData) equipUses++;
             }
+// movement equipment
             else if (equip is MoveData && energyCurrent > 0) {
                 pManager.StartCoroutine(pManager.UnitIsActing());
                 ui.ToggleEquipmentButtons();
             }
+// multi-target equipment - first target selected
             else if (equip.firstTarget != null) {
                 GridElement anim = equip.contextualAnimGO ? equip.contextualAnimGO.GetComponent<GridElement>() : null;
                 pManager.contextuals.UpdateContext(equip, equip.gridColor, equip.multiContext, anim, target);
-                if (equip is PerFloorEquipmentData) equipUses++;
+// multi-target equipment - execute full action
             } else {
+                if (equip is PerFloorEquipmentData) equipUses++;
+                if (equip is HammerData) hammerUses++; 
                 pManager.DeselectUnit();
                 pManager.StartCoroutine(pManager.UnitIsActing());
             }

@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.U2D;
 
 // Script that generates and maintains the grid
 // Stores all Grid Elements that are created
 
-[ExecuteInEditMode]
+[RequireComponent(typeof(AudioSource))]
 public class Grid : MonoBehaviour {
     
     FloorManager floorManager;
@@ -32,12 +33,14 @@ public class Grid : MonoBehaviour {
     public List<Tile> tiles = new List<Tile>();
     public List<GridElement> gridElements = new List<GridElement>();
 
-
+    [SerializeField] SFX collapseSFX;
+    AudioSource audioSource;
 
 
     void Awake() {
         if (FloorManager.instance) floorManager = FloorManager.instance;
         if (PlayerManager.instance) player = PlayerManager.instance;
+        audioSource = GetComponent<AudioSource>();
     }
 
 // loop through grid x,y, generate Tile grid elements, update them and add to list
@@ -112,7 +115,7 @@ public class Grid : MonoBehaviour {
     }
 
     public IEnumerator ShockwaveCollapse() {
-        Vector2 origin = new Vector2(3,4);
+        Vector2 origin = player.nail.coord;
 
         StartCoroutine(CollapseTile(origin));
         
@@ -149,7 +152,7 @@ public class Grid : MonoBehaviour {
 
         //     }
 // Diamond adjacency
-
+        PlaySound(collapseSFX);
         for (int r = 1; r <= range; r++) {
             List<Vector2> activeCoords = new();
             for (int i = r; i >= 0; i--) {
@@ -170,7 +173,6 @@ public class Grid : MonoBehaviour {
                 timer += Time.deltaTime;
             }
         }    
-        StartCoroutine(CollapseScale());
         for (int i = collapseCo.Count - 1; i >= 0; i--) {
             if (collapseCo[i] != null) 
                 yield return collapseCo[i];
@@ -227,11 +229,11 @@ public class Grid : MonoBehaviour {
         while (timer <= collapseDur/2) {
             foreach (KeyValuePair<GridElement, Vector2> entry in affected) {
                 if (entry.Key is Unit u) {
-                    u.transform.position = new Vector3(entry.Value.x, Mathf.Clamp(entry.Value.y + Mathf.Sin(shockwaveCurve.Evaluate(timer/(collapseDur/2))*3.14f)/2, entry.Value.y, entry.Value.y + 0.5f));
-                    u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1 - shockwaveCurve.Evaluate(timer/collapseDur);
+                    u.transform.position = new Vector3(entry.Value.x, Mathf.Clamp(entry.Value.y + Mathf.Sin(shockwaveCurve.Evaluate(timer/(collapseDur/2))*3.14f), entry.Value.y, entry.Value.y + 0.5f));
+                    //u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1 - shockwaveCurve.Evaluate(timer/(collapseDur/2));
                 }
                 else {
-                    entry.Key.transform.position = new Vector3(entry.Value.x, Mathf.Clamp(entry.Value.y + Mathf.Sin(shockwaveCurve.Evaluate(timer/(collapseDur/2))*3.14f)/2, entry.Value.y, entry.Value.y + 0.5f));
+                    entry.Key.transform.position = new Vector3(entry.Value.x, Mathf.Clamp(entry.Value.y + Mathf.Sin(shockwaveCurve.Evaluate(timer/(collapseDur/2))*3.14f), entry.Value.y, entry.Value.y + 0.5f));
                 }
             }
             yield return null;
@@ -249,14 +251,17 @@ public class Grid : MonoBehaviour {
         timer = 0;
         while (timer <= collapseDur) {
             foreach (KeyValuePair<GridElement, Vector2> entry in affected) {
-
+                if (timer >= collapseDur*0.875f && entry.Key is not Unit) {
+                    entry.Key.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.one * 0.75f, Mathf.Clamp(4 - shockwaveCurve.Evaluate((timer - collapseDur*0.875f)/(collapseDur*0.875f)) * 4, 0, 1));
+                }
                 entry.Key.transform.position = new Vector3(entry.Value.x, entry.Value.y - shockwaveCurve.Evaluate(timer/collapseDur)*3);
-                entry.Key.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = Mathf.Clamp(2 - shockwaveCurve.Evaluate(timer/collapseDur) * 2, 0, 1);
+                entry.Key.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = Mathf.Clamp(1 - shockwaveCurve.Evaluate((timer - collapseDur/2)/(collapseDur/2)), 0, 1);
             }
             yield return null;
             timer += Time.deltaTime;
-
         }
+        foreach (KeyValuePair<GridElement, Vector2> entry in affected)
+            entry.Key.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
 
     }
 
@@ -325,5 +330,14 @@ public class Grid : MonoBehaviour {
 
     public int SortOrderFromCoord(Vector2 coord) {
         return 8 + (int)coord.x - (int)coord.y;
+    }
+
+    public virtual void PlaySound(SFX sfx = null) {
+        if (sfx) {
+            if (sfx.outputMixerGroup) 
+                audioSource.outputAudioMixerGroup = sfx.outputMixerGroup;   
+
+            audioSource.PlayOneShot(sfx.Get());
+        }
     }
 }
