@@ -19,6 +19,7 @@ public class PersistentMenu : MonoBehaviour
     [SerializeField] GameObject battleCanvas, menuButton;
     [SerializeField] TMPro.TMP_Text tooltipText;
     [SerializeField] GameObject menuButtons;
+    public Animator fadeToBlack;
 
     const string MIXER_MUSIC = "musicVolume";
     const string MIXER_SFX = "sfxVolume";
@@ -64,6 +65,13 @@ public class PersistentMenu : MonoBehaviour
 
         if (TooltipSystem.instance)
             toolTips = TooltipSystem.instance;
+        
+        FadeToBlack(false);
+    }
+
+    public void FadeToBlack(bool state) {
+        fadeToBlack.gameObject.SetActive(true);
+        fadeToBlack.SetBool("Fade", state);
     }
 
     void MainMenuPause() {

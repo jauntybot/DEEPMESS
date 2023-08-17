@@ -88,27 +88,45 @@ public class EnemyUnit : Unit {
     public virtual Vector2 SelectOptimalCoord(Pathfinding pathfinding) {
         switch (pathfinding) {
             case Pathfinding.ClosestCoord:
-                int shortestPathCount = 64;
-                Dictionary<Vector2, Vector2> shortestPath = new();
+                closestUnit = null;
+                // int shortestPathCount = 64;
+                // Dictionary<Vector2, Vector2> shortestPath = new();
 
+                // foreach (Unit unit in manager.scenario.player.units) {
+                //     if (!unit.conditions.Contains(Status.Disabled)) {
+                //         List<Vector2> targetCoords = EquipmentAdjacency.GetAdjacent(unit.coord, equipment[1].range, equipment[0]);
+                //         Debug.Log(targetCoords.Count);
+                //         string coords = "";
+                //         foreach (Vector2 c in targetCoords) {
+                //             coords += c + ", " ;
+                //             Dictionary<Vector2, Vector2> fromTo = new Dictionary<Vector2, Vector2>(); 
+                //             fromTo = EquipmentAdjacency.SteppedCoordAdjacency(coord, c, equipment[0]);
+                //             if (fromTo.Count < shortestPathCount) {
+                //                 shortestPath = fromTo;
+                //                 shortestPathCount = fromTo.Count; 
+                //             }
+                //         }
+                //         Debug.Log(targetCoords.Count + " " + coords);
+                //     }
+                // }
+                // Vector2 targetCoord = coord;
+                // for (int i = 0; i < equipment[0].range; i++) {
+                //     targetCoord = shortestPath[targetCoord];
+                // }
+                // return targetCoord;
                 foreach (Unit unit in manager.scenario.player.units) {
                     if (!unit.conditions.Contains(Status.Disabled)) {
-                        List<Vector2> targetCoords = EquipmentAdjacency.GetAdjacent(unit.coord, equipment[1].range, equipment[0]);
-                        Debug.Log(targetCoords.Count);
-                        string coords = "";
-                        foreach (Vector2 c in targetCoords) {
-                            coords += c + ", " ;
-                            // Dictionary<Vector2, Vector2> fromTo = new Dictionary<Vector2, Vector2>(); 
-                            // fromTo = EquipmentAdjacency.SteppedCoordAdjacency(coord, c, equipment[0]);
-                            // if (fromTo.Count < shortestPathCount) {
-                            //     shortestPath = fromTo;
-                            //     shortestPathCount = fromTo.Count; 
-                            // }
-                        }
-                        Debug.Log(targetCoords.Count + " " + coords);
+                        if (closestUnit == null || Vector2.Distance(unit.coord, coord) < Vector2.Distance(closestUnit.coord, coord))
+                            closestUnit = unit;
                     }
                 }
-                return coord;
+
+                Vector2 closestCoord = coord;
+                foreach(Vector2 c in validActionCoords) {
+                    if (Vector2.Distance(c, closestUnit.coord) < Vector2.Distance(closestCoord, closestUnit.coord)) 
+                        closestCoord = c;
+                }
+                return closestCoord;
                 
             case Pathfinding.Random:
                 if (validActionCoords.Count > 0) {
