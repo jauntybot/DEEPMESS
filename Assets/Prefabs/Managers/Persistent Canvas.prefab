@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 456712696168355027}
   - component: {fileID: 456712696168355036}
   - component: {fileID: 456712696168355024}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Persistent Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -142,7 +142,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &456712697849908492
 RectTransform:
   m_ObjectHideFlags: 0
@@ -387,415 +387,68 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 456712696168355025}
     m_Modifications:
-    - target: {fileID: 16869783, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 16869783, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 16869783, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 16869783, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 16869783, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 16869783, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -280
-      objectReference: {fileID: 0}
-    - target: {fileID: 16869785, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: body
-      value: "Your SLAG overview is in the left column and NAIL overview is in the
-        top right.\r\n\r\nSelecting a SLAG on the board or with it\u2019s icon displays
-        it\u2019s portrait along with its EQUIPMENT. In the bottom right, preview
-        the next floor with the PEEK BUTTON, end your current turn, or undo your
-        SLAGS\u2019 movement."
-      objectReference: {fileID: 0}
-    - target: {fileID: 74946020, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 74946020, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 74946020, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 74946020, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 74946020, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 74946020, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -220
-      objectReference: {fileID: 0}
-    - target: {fileID: 74946022, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: body
-      value: When you land on a new floor, the ANTIBODIES will scatter immediately,
-        moving to a random space on the floor but not attacking. After this the player
-        take their turn. The player chooses when to end their turn, at which point
-        the ANTIBODIES take their turn.
-      objectReference: {fileID: 0}
-    - target: {fileID: 311912124, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 311912124, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 311912124, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 311912124, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 311912124, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 311912124, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -100
-      objectReference: {fileID: 0}
-    - target: {fileID: 311912126, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: body
-      value: "To progress, you must descend your SLAGS from their current floor to
-        the one below. Descending causes all units (slag and antibody) on a floor
-        to fall onto the tile below them. If that tile is occupied, the descending
-        unit takes 1 damage and whatever is below is eliminated.\r\n\r\nThere are
-        two ways to trigger descent: \r\n1) Striking the NAIL with the HAMMER.\r\n2)
-        Eliminating all ANTIBODIES on the current floor."
-      objectReference: {fileID: 0}
-    - target: {fileID: 431117184, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 431117184, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 431117184, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 431117184, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 431117184, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 431117184, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -160
-      objectReference: {fileID: 0}
-    - target: {fileID: 431117186, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: body
-      value: ANTIBODIES will attack your SLAGS and the NAIL. On the antibodies' turn,
-        each unit will first move, and then attack if they are in range. ANTIBODIES
-        have 2 HP. They have a movement range of 2 tiles and can attack an adjacent
-        unit for 1 damage.
-      objectReference: {fileID: 0}
-    - target: {fileID: 573275196, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 573275196, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 573275196, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 573275196, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 573275196, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 573275196, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -580
-      objectReference: {fileID: 0}
-    - target: {fileID: 573275198, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: body
-      value: 'Every floor is an 8x8 grid of tiles containing environmental hazards
-        and ANTIBODIES. The player is able to view both the current floor and the
-        upcoming floor with the PEEK BUTTON.
-
-        Every 5 floors there is a SLOT
-        MACHINE where you can swap out EQUIPMENT or heal your SLAGS and NAIL.'
-      objectReference: {fileID: 0}
-    - target: {fileID: 748632395, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 748632395, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 748632395, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 748632395, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 748632395, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 748632395, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -640
-      objectReference: {fileID: 0}
-    - target: {fileID: 748632397, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: body
-      value: "There are various hazards on the floors of DEEPMESS.\r\nWalls: units
-        can\u2019t move through these tiles and take 1 damage if they land on top
-        of a wall.\r\nBlood tile: SLAGS can\u2019t use EQUIPMENT or the HAMMER while
-        standing in blood.\r\nBile tile: Any unit that ends up in a bile tile is
-        reduced to 0 HP."
-      objectReference: {fileID: 0}
-    - target: {fileID: 974527222, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_IsActive
+    - target: {fileID: 793282939032372094, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1555023464, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+    - target: {fileID: 793282939032372094, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1555023464, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555023464, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555023464, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+    - target: {fileID: 1479091825895252330, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 60
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1555023464, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555023464, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -340
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555023466, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: body
-      value: 'There are three SLAGS under the player''s control: Flat, Spike and
-        Pony. If all three SLAGS are downed, the run is lost. SLAGS have a movement
-        range of 4 tiles, 5 HP, and 1 AP to use on either EQUIPMENT or the HAMMER.
-
-
-
-        If
-        a SLAG is downed, they can be brought back by striking them with the HAMMER
-        or reviving at a SLOT MACHINE. If struck by the hammer, the SLAG takes 1
-        HP from the NAIL, reentering the fight with 1 HP and 1 AP.'
-      objectReference: {fileID: 0}
-    - target: {fileID: 1994390970, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+    - target: {fileID: 1491865407136271026, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1994390970, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+    - target: {fileID: 1491865407136271026, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1994390970, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+    - target: {fileID: 1491865407136271026, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 300
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1994390970, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+    - target: {fileID: 1491865407136271026, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 60
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1994390970, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+    - target: {fileID: 1491865407136271026, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 150
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1994390970, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+    - target: {fileID: 1491865407136271026, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -520
-      objectReference: {fileID: 0}
-    - target: {fileID: 1994390972, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: body
-      value: "There\u2019s a variety of equipment that your SLAGS can use in DEEPMESS.
-        Each SLAG can hold one piece of equipment that can be used once per floor.
-        The SLAGS\u2019 1 AP is shared with the HAMMER, so if a SLAG uses its equipment,
-        it won\u2019t be able to use the HAMMER until the next turn."
-      objectReference: {fileID: 0}
-    - target: {fileID: 2092830450, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2092830450, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2092830450, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 2092830450, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 2092830450, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 2092830450, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -460
-      objectReference: {fileID: 0}
-    - target: {fileID: 2092830452, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: body
-      value: 'The HAMMER is the main tool of the SLAGS.
-
-        It can be used to:
-
-        Attack
-        an ANTIBODY for 1 damage
-
-        Strike the primed NAIL to trigger a DESCENT
-
-
-
-        After
-        selecting a target, a SLAG must be selected as a second target for the HAMMER
-        to be passed to.'
-      objectReference: {fileID: 0}
-    - target: {fileID: 2092957767, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2092957767, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2092957767, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 2092957767, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 2092957767, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 2092957767, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -700
-      objectReference: {fileID: 0}
-    - target: {fileID: 2092957769, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: body
-      value: "Every 5 floors you will encounter a SLOT MACHINE. The slots provide
-        your SLAGS and NAIL a small heal and the option to replace one of your SLAG\u2019s
-        EQUIPMENT with a new piece from the slots."
-      objectReference: {fileID: 0}
-    - target: {fileID: 2118256216, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2118256216, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2118256216, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 2118256216, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 2118256216, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 2118256216, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -400
-      objectReference: {fileID: 0}
-    - target: {fileID: 2118256218, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: body
-      value: 'The NAIL is the main way to trigger a descent. It has 10 HP and if
-        it is defeated the run is lost.
-
-
-
-        On descent, the NAIL falls after
-        all other units, landing on a random non-SLAG occupied tile and crushing
-        anything it lands on. After landing, the nail is buried and takes a complete
-        ANTIBODY turn to prime itself. Once primed, it can be struck by the HAMMER
-        to trigger a descent.'
-      objectReference: {fileID: 0}
-    - target: {fileID: 2126214768, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2126214768, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2126214768, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 2126214768, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 2126214768, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 2126214768, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -40
-      objectReference: {fileID: 0}
-    - target: {fileID: 2126214772, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: body
-      value: "DEEPMESS is a game about tactics, chaos, and descent. \r\nAs the player,
-        you must utilize three SLAGS and the NAIL in order to navigate the limited
-        space and hostile ANTIBODIES on your current floor, while simultaneously
-        ensuring a safe descent to the floor below."
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1708936040870130588, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
       propertyPath: m_Name
       value: Pause Menu
       objectReference: {fileID: 0}
-    - target: {fileID: 2186386770301159410, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_IsActive
+    - target: {fileID: 2658636681187320830, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2658636681187320830, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2658636681187320830, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2658636681187320830, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2658636681187320830, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2658636681187320830, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3528510612981243027, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
@@ -882,12 +535,84 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3840409077562812796, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840409077562812796, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840409077562812796, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3924770469107283991, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3969229698120177625, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3969229698120177625, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3969229698120177625, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4045576557336067421, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 456712696168355024}
-    - target: {fileID: 5524231246127351371, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_IsActive
+    - target: {fileID: 5026217080645250314, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5026217080645250314, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5026217080645250314, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5026217080645250314, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5026217080645250314, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5026217080645250314, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5071405434969958802, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5071405434969958802, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5071405434969958802, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5071405434969958802, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5071405434969958802, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5071405434969958802, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5876167383604930022, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
@@ -910,22 +635,170 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 456712697897799148}
+    - target: {fileID: 6247472001498460112, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6247472001498460112, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6638046353358422079, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
       propertyPath: music
       value: 
       objectReference: {fileID: 456712697897799148}
+    - target: {fileID: 6638046354605826065, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6638046354605826065, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6638046354605826065, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6638046354605826065, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6638046354605826065, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6638046354605826065, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6638046354783361610, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6638046354783361610, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6638046354783361610, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6638046354783361610, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6638046354783361610, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6638046354783361610, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7015295412929004347, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7015295412929004347, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7015295412929004347, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7015295412929004347, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7015295412929004347, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7015295412929004347, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7838619291820258568, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 456712696168355024}
-    - target: {fileID: 7838619291820258574, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
-      propertyPath: m_IsActive
+    - target: {fileID: 7838619292745194898, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838619292745194898, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838619292745194898, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838619292745194898, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838619292745194898, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838619292745194898, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7838619292745194899, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 456712696168355024}
+    - target: {fileID: 7838619292899158909, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838619292899158909, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838619292899158909, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838619292899158909, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838619292899158909, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838619292899158909, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123280121090521259, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123280121090521259, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123280121090521259, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123280121090521259, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123280121090521259, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123280121090521259, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8c663299557f729439b8035be33a5ff1, type: 3}
 --- !u!1 &456712696824611025 stripped

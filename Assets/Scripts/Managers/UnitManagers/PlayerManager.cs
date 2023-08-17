@@ -21,11 +21,13 @@ public class PlayerManager : UnitManager {
      public EquipmentData overrideEquipment = null;
     [SerializeField] public GridContextuals contextuals;
     [HideInInspector] public Vector2 lastHoveredCoord;
+    [HideInInspector] public int defeatedEnemies;
 
     [Header("PREFABS")]
     [SerializeField] public GameObject nailPrefab;
     [SerializeField] public GameObject hammerPrefab;
     [SerializeField] GameObject gridCursor;
+    [SerializeField] GameObject slimeArmAnim;
 
     [Header("UNDO")]
     public bool unitActing = false;
@@ -434,6 +436,8 @@ public class PlayerManager : UnitManager {
                 harvested.UndoHarvest();
                 lastMoved.equipment.Find(e => e is BulbEquipmentData).UnequipEquipment(lastMoved);
                 harvestedByMove.Remove(lastMoved);
+                PlayerUnit pu = (PlayerUnit)lastMoved;
+                pu.bulbPickups--;
             }
             MoveData move = (MoveData)cascadeMovement;
             StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved], true));
@@ -493,5 +497,19 @@ public class PlayerManager : UnitManager {
                 u.targeted = prevTargetStates[u];
             }
         }
+    }
+
+    public IEnumerator RetrieveNailAnimation() {
+        GameObject arm = Instantiate(slimeArmAnim, floorManager.transitionParent);
+        nail.transform.parent = floorManager.transitionParent;
+        Animator anim = arm.GetComponentInChildren<Animator>();
+
+        arm.transform.position = currentGrid.PosFromCoord(nail.coord);
+        SpriteRenderer sr = anim.GetComponent<SpriteRenderer>();
+        sr.sortingOrder = nail.gfx[0].sortingOrder;
+
+        yield return new WaitForSecondsRealtime(1.5f);
+
+        nail.ToggleNailState(Nail.NailState.Falling);
     }
 }

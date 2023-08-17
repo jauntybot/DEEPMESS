@@ -170,7 +170,7 @@ public class HammerData : EquipmentData
             }
 // Trigger descent if nail
             else if (target is Nail n) {
-                
+                CameraController.instance.StartCoroutine(CameraController.instance.ScreenShake(1f, 0.75f));
                 target.PlaySound(nailSFX);
                 if (n.nailState == Nail.NailState.Primed)
                     n.ToggleNailState(Nail.NailState.Buried);

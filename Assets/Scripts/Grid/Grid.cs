@@ -6,6 +6,7 @@ using UnityEngine.U2D;
 // Script that generates and maintains the grid
 // Stores all Grid Elements that are created
 
+[ExecuteInEditMode]
 public class Grid : MonoBehaviour {
     
     FloorManager floorManager;
@@ -111,24 +112,10 @@ public class Grid : MonoBehaviour {
     }
 
     public IEnumerator ShockwaveCollapse() {
-        Vector2 origin = player.nail.coord;
+        Vector2 origin = new Vector2(3,4);
 
         StartCoroutine(CollapseTile(origin));
         
-// Box adjacency
-        // for (int r = 1; r <= 9; r++) {
-        //     List<Vector2> activeCoords = new();
-        //     for (int i = r; i >= 0; i--) {
-        //         activeCoords.Add(new Vector2(origin.x + r - i, origin.y + r));
-        //         activeCoords.Add(new Vector2(origin.x + r - i, origin.y - r));
-        //         activeCoords.Add(new Vector2(origin.x - r + i, origin.y + r));
-        //         activeCoords.Add(new Vector2(origin.x - r + i, origin.y - r));
-        //         activeCoords.Add(new Vector2(origin.x + r, origin.y + r - i - 1));
-        //         activeCoords.Add(new Vector2(origin.x + r, origin.y - r + i + 1));
-        //         activeCoords.Add(new Vector2(origin.x - r, origin.y + r - i - 1));
-        //         activeCoords.Add(new Vector2(origin.x - r, origin.y - r + i + 1));
-
-        //     }
         
         int range;
         if (origin.x >= 4) {
@@ -146,7 +133,23 @@ public class Grid : MonoBehaviour {
         }
 
         float timer = 0;
+        List<Coroutine> collapseCo = new();
+// Box adjacency
+        // for (int r = 1; r <= 9; r++) {
+        //     List<Vector2> activeCoords = new();
+        //     for (int i = r; i >= 0; i--) {
+        //         activeCoords.Add(new Vector2(origin.x + r - i, origin.y + r));
+        //         activeCoords.Add(new Vector2(origin.x + r - i, origin.y - r));
+        //         activeCoords.Add(new Vector2(origin.x - r + i, origin.y + r));
+        //         activeCoords.Add(new Vector2(origin.x - r + i, origin.y - r));
+        //         activeCoords.Add(new Vector2(origin.x + r, origin.y + r - i - 1));
+        //         activeCoords.Add(new Vector2(origin.x + r, origin.y - r + i + 1));
+        //         activeCoords.Add(new Vector2(origin.x - r, origin.y + r - i - 1));
+        //         activeCoords.Add(new Vector2(origin.x - r, origin.y - r + i + 1));
+
+        //     }
 // Diamond adjacency
+
         for (int r = 1; r <= range; r++) {
             List<Vector2> activeCoords = new();
             for (int i = r; i >= 0; i--) {
@@ -157,30 +160,56 @@ public class Grid : MonoBehaviour {
             }
             activeCoords = EquipmentAdjacency.RemoveOffGridCoords(activeCoords);
             if (activeCoords.Count == 0) break;
-                          
-            StartCoroutine(CollapseTiles(activeCoords, shockwaveDur * (1.25f - shockwaveCurve.Evaluate((float)r/range))));
-            Debug.Log(shockwaveDur * (1.25f - shockwaveCurve.Evaluate((float)r/range)));
-            
-            while (timer < shockwaveDur * (1.25f - shockwaveCurve.Evaluate((float)r/range)) * r) {
+
+            float dur = shockwaveDur*((float)(range - (r-1))/(float)range);              
+            collapseCo.Add(StartCoroutine(CollapseTiles(activeCoords, dur)));
+
+            timer = 0;
+            while (timer < dur) {
                 yield return null;
                 timer += Time.deltaTime;
             }
-            
+        }    
+        StartCoroutine(CollapseScale());
+        for (int i = collapseCo.Count - 1; i >= 0; i--) {
+            if (collapseCo[i] != null) 
+                yield return collapseCo[i];
+            else
+                collapseCo.RemoveAt(i);
         }
-        yield return new WaitForSecondsRealtime(1.75f);
+    }
 
-
+    IEnumerator CollapseScale() {
+        float timer = 0;
+        while (timer <= shockwaveDur*8f) {
+            transform.localScale = Vector3.Lerp(Vector3.one, Vector3.one * 0.75f, shockwaveCurve.Evaluate(timer/(shockwaveDur/8)));
+            
+            timer += Time.deltaTime;
+            yield return null;
+        }
 
     }
 
-    public IEnumerator CollapseTiles(List<Vector2> activeCoords, float time) {
+// Shuffle list, offset collapse delay
+    public IEnumerator CollapseTiles(List<Vector2> activeCoords, float window) {
         Vector2[] array = activeCoords.ToArray();
         ShuffleBag<Vector2> shuffle = new(array);
 
+        List<Coroutine> collapseCo = new();
         int count = shuffle.Count;
         for (int i = count - 1; i >= 0; i--) {
-            StartCoroutine(CollapseTile(shuffle.Next()));
-            yield return new WaitForSecondsRealtime(time/count);   
+            collapseCo.Add(StartCoroutine(CollapseTile(shuffle.Next())));
+            float timer = 0;
+            while (timer < window/count) {
+                yield return null;
+                timer += Time.deltaTime;
+            }
+        }
+        for (int x = collapseCo.Count - 1; x >= 0; x--) {
+            if (collapseCo[x] != null) 
+                yield return collapseCo[x];
+            else
+                collapseCo.RemoveAt(x);
         }
     }
 
@@ -195,19 +224,38 @@ public class Grid : MonoBehaviour {
         }
 
         float timer = 0;
-        while (timer <= collapseDur * 2) {
+        while (timer <= collapseDur/2) {
             foreach (KeyValuePair<GridElement, Vector2> entry in affected) {
                 if (entry.Key is Unit u) {
-                    u.transform.position =  new Vector3(entry.Value.x, entry.Value.y + shockwaveCurve.Evaluate(timer/collapseDur));
+                    u.transform.position = new Vector3(entry.Value.x, Mathf.Clamp(entry.Value.y + Mathf.Sin(shockwaveCurve.Evaluate(timer/(collapseDur/2))*3.14f)/2, entry.Value.y, entry.Value.y + 0.5f));
                     u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1 - shockwaveCurve.Evaluate(timer/collapseDur);
                 }
                 else {
-                    entry.Key.transform.position = new Vector3(entry.Value.x, entry.Value.y - shockwaveCurve.Evaluate(timer/collapseDur)*3);
-                    entry.Key.gfx[0].GetComponent<NestedFadeGroup.NestedFadeGroupSpriteRenderer>().AlphaSelf = Mathf.Clamp(2 - shockwaveCurve.Evaluate(timer/collapseDur) * 2, 0, 1);
+                    entry.Key.transform.position = new Vector3(entry.Value.x, Mathf.Clamp(entry.Value.y + Mathf.Sin(shockwaveCurve.Evaluate(timer/(collapseDur/2))*3.14f)/2, entry.Value.y, entry.Value.y + 0.5f));
                 }
             }
-            yield return new WaitForSecondsRealtime(Util.fps/2/Util.fps);
+            yield return null;
             timer += Time.deltaTime;
+        }
+        foreach (KeyValuePair<GridElement, Vector2> snap in affected) 
+            snap.Key.transform.position = snap.Value;
+
+        timer = 0;
+        while (timer <= collapseDur/4) {
+            yield return null;
+            timer += Time.deltaTime;
+        }
+
+        timer = 0;
+        while (timer <= collapseDur) {
+            foreach (KeyValuePair<GridElement, Vector2> entry in affected) {
+
+                entry.Key.transform.position = new Vector3(entry.Value.x, entry.Value.y - shockwaveCurve.Evaluate(timer/collapseDur)*3);
+                entry.Key.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = Mathf.Clamp(2 - shockwaveCurve.Evaluate(timer/collapseDur) * 2, 0, 1);
+            }
+            yield return null;
+            timer += Time.deltaTime;
+
         }
 
     }

@@ -53,7 +53,6 @@ public class AttackData : EquipmentData
             user.transform.position = Vector3.Lerp(user.transform.position, target.transform.position, timer/animDur);
             timer += Time.deltaTime;
         }
-
         timer = 0;
         while (timer < animDur/2) {
             yield return null;
@@ -66,6 +65,7 @@ public class AttackData : EquipmentData
             if (n.manager.scenario.tutorial != null && !n.manager.scenario.tutorial.nailDamageEncountered && n.manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
                 n.manager.scenario.tutorial.StartCoroutine(n.manager.scenario.tutorial.NailDamage());
             }
+            CameraController.instance.StartCoroutine(CameraController.instance.ScreenShake(0.125f, 0.5f));
             co = user.StartCoroutine(user.TakeDamage(1));
         }
         co2 = target.StartCoroutine(target.TakeDamage(dmg));

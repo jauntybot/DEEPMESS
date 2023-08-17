@@ -242,7 +242,7 @@ public class ScenarioManager : MonoBehaviour
         if (uiManager.gameObject.activeSelf)
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Win));
         yield return new WaitForSecondsRealtime(1.5f);
-        runDataTracker.UpdateAndDisplay();
+        runDataTracker.UpdateAndDisplay(false, floorManager.currentFloor.index + 1, player.defeatedEnemies);
     }
 
     public IEnumerator Lose() 
@@ -250,11 +250,14 @@ public class ScenarioManager : MonoBehaviour
         scenario = Scenario.EndState;
         if (currentTurn == Turn.Enemy)
             currentEnemy.EndTurnEarly();
+        else if (currentTurn == Turn.Player)
+            player.StartEndTurn(false);
         if (uiManager.gameObject.activeSelf)
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Lose));
-        yield return new WaitForSecondsRealtime(1.5f);
+        uiManager.ToggleBattleCanvas(false);
+        yield return StartCoroutine(player.RetrieveNailAnimation());
         StartCoroutine(floorManager.EndSequenceAnimation());
         yield return new WaitForSecondsRealtime(1.5f);
-        runDataTracker.UpdateAndDisplay();
+        runDataTracker.UpdateAndDisplay(false, floorManager.currentFloor.index + 1, player.defeatedEnemies);
     }
 }

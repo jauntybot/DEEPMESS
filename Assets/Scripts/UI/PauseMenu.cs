@@ -26,7 +26,8 @@ public class PauseMenu : MonoBehaviour
     public void RestartButton()
     {
         Time.timeScale = 1;
-        SceneManager.LoadScene(restartString);
+        ScenarioManager.instance.StartCoroutine(ScenarioManager.instance.Lose());
+        gameObject.SetActive(false);   
     }
 
     public void MainMenu() {

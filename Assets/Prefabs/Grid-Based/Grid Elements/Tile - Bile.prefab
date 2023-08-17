@@ -444,6 +444,7 @@ GameObject:
   - component: {fileID: 8517864744566959261}
   - component: {fileID: 6347572499611998251}
   - component: {fileID: 4725770806878504000}
+  - component: {fileID: 638864962731569282}
   m_Layer: 6
   m_Name: Tile - Bile
   m_TagString: Untagged
@@ -481,6 +482,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
+  name: 
   coord: {x: 0, y: 0}
   selectable: 0
   targeted: 0
@@ -554,13 +556,11 @@ MonoBehaviour:
   hpContainer: {fileID: 0}
   hpPips: {fileID: 0}
   emptyHPPips: {fileID: 0}
-  hpInt: {fileID: 0}
-  apPips: {fileID: 0}
+  statusPips: {fileID: 0}
   hpPipPrefab: {fileID: 0}
   apPipPrefab: {fileID: 0}
   dmgPipPrefab: {fileID: 0}
   emptyPipPrefab: {fileID: 0}
-  hpText: {fileID: 0}
   dmgPanel: {fileID: 0}
   dmgAnim: {fileID: 0}
   overview: {fileID: 0}
@@ -660,3 +660,17 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &638864962731569282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8989576065795441841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b850d124d92f3945b0abedf8ebd0b8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alpha: 1
+  exclude: 0

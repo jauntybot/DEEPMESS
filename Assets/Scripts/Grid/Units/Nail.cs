@@ -71,7 +71,7 @@ public class Nail : Unit
     public override IEnumerator DestroyElement(DamageType dmgType = DamageType.Unspecified) {
         
         PlaySound(destroyedSFX);
-        ToggleNailState(NailState.Buried);
+        
         yield return null;
         ElementDisabled?.Invoke(this);
         ApplyCondition(Status.Disabled);

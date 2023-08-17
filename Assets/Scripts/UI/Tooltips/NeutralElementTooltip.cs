@@ -31,7 +31,7 @@ public class NeutralElementTooltip : Tooltip
             tilePreviewAnim.runtimeAnimatorController = gif[0];
         else {
             tilePreviewAnim.runtimeAnimatorController = null;
-            if (header == "Wall") tilePreview.sprite = wallSprite;
+            if (header == "WALL") tilePreview.sprite = wallSprite;
             else tilePreview.sprite = boneSprite;
         }
 

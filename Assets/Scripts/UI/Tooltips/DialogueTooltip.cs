@@ -15,6 +15,10 @@ public class DialogueTooltip : Tooltip
 
     void Start() {
         audioSource = GetComponent<AudioSource>();
+        RectTransform anchor = transform.GetChild(0).GetComponent<RectTransform>();
+        anchor.anchorMin = new Vector2(0.5f, 0.5f);
+        anchor.anchorMax = new Vector2(0.5f, 0.5f);
+        anchor.anchoredPosition = Vector2.zero;
     }
 
     public override void SetText(string content, string header = "", bool clickToSkip = false,  List<RuntimeAnimatorController> gif = null) {
@@ -49,5 +53,7 @@ public class DialogueTooltip : Tooltip
             audioSource.PlayOneShot(sfx.Get());
         }
     }
+
+    protected override void Update() {}
 
 }

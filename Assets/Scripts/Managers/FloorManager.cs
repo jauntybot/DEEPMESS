@@ -7,6 +7,7 @@ using UnityEngine.Rendering;
 // This class generates and sequences Floor prefabs (Grid class), as well as manages the descending of units
 
 [RequireComponent(typeof(BetweenFloorManager))]
+[ExecuteInEditMode]
 public class FloorManager : MonoBehaviour
 {
 
@@ -380,12 +381,23 @@ public class FloorManager : MonoBehaviour
         float timer = 0;
         NestedFadeGroup.NestedFadeGroup fade = unit.GetComponent<NestedFadeGroup.NestedFadeGroup>();
         unit.airTraillVFX.SetActive(true);
+        // float slowLeft = 0;
         while (timer <= unitDropDur) {
             unit.transform.position = Vector3.Lerp(from, to, dropCurve.Evaluate(timer/unitDropDur));
             fade.AlphaSelf = Mathf.Lerp(0, 1, timer/(unitDropDur/3));
+            
             yield return null;
             timer += Time.deltaTime;
+
+            // if (subElement) {
+            //     if (Time.timeScale != 0.025f && timer > unitDropDur*(9f/10f)) {
+            //         Time.timeScale = 0.025f;
+            //         Debug.Log("Slow at " + timer + "/ " + unitDropDur*(9f/10f));
+            //         slowLeft = timer;
+            //     }
+            // }
         }
+        // Time.timeScale = 1;
         unit.DescentVFX(currentFloor.tiles.Find(sqr => sqr.coord == unit.coord), subElement);
         unit.transform.position = to;
         unit.StoreInGrid(currentFloor);
@@ -596,9 +608,6 @@ public class FloorManager : MonoBehaviour
         Vector3 fromScale = currentFloor.transform.localScale;
         Vector3 toScale = Vector3.one * 0.75f;
 
-        scenario.player.nail.transform.parent = transitionParent;
-        scenario.player.nail.ToggleNailState(Nail.NailState.Falling);
-
         float timer = 0;
         while (timer < transitionDur) {
             floorParent.transform.position = Vector3.Lerp(from, from - new Vector3(0, floorOffset), timer/transitionDur);
@@ -623,15 +632,13 @@ public class FloorManager : MonoBehaviour
             yield return null;
         }
 
-        from = scenario.player.nail.transform.position;
+        from = transitionParent.transform.position;
         to = from + new Vector3(0, floorOffset * 5);
 
         timer = 0;
         scenario.runDataTracker.panel.SetActive(false);
         while (timer < transitionDur * 10) {
-            scenario.player.nail.transform.position = Vector3.Lerp(from, to, timer/(transitionDur*10));
-            if (parallax)
-                parallax.ScrollParallax(1);
+            transitionParent.transform.position = Vector3.Lerp(from, to, timer/(transitionDur*10));
 
             yield return null;
             timer += Time.deltaTime;

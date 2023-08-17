@@ -16,6 +16,7 @@ public class TileBulb : Tile
         if (!harvested) {
             anim.SetBool("Harvest", true);
             pu.ui.UpdateLoadout(bulb);
+            pu.bulbPickups++;
             harvested = true;
             PlaySound(harvestSFX);
         }

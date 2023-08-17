@@ -38,6 +38,7 @@ public class TutorialSequence : MonoBehaviour
     [Header("Button Highlights")]
     [SerializeField] GameObject buttonHighlight;
     [SerializeField] Transform peekButton, undoButton;
+    GameObject destroyHighlight;
 
     [Header("Gameplay Optional Tooltips")]
     bool enemyBehavior = false;
@@ -75,7 +76,7 @@ public class TutorialSequence : MonoBehaviour
         //foreach (Unit unit in scenario.player.units) unit.gameObject.SetActive(false);
         yield return new WaitForSecondsRealtime(0.15f);
         scenario.player.nail.ToggleNailState(Nail.NailState.Primed);
-
+        yield return new WaitForSecondsRealtime(0.75f);
         yield return StartCoroutine(SplashMessage());
         
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
@@ -95,9 +96,9 @@ public class TutorialSequence : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.5f);
         yield return StartCoroutine(HittingTheNail());
         cont = false;
+
         while (!cont) yield return null;
-        floorManager.GenerateFloor(floorManager.floorSequence.GetFloor(true));
-        scenario.currentTurn = ScenarioManager.Turn.Descent;
+// Descent 1
         yield return StartCoroutine(EnemyTurn());
 
         yield return new WaitForSecondsRealtime(1.25f);
@@ -107,6 +108,7 @@ public class TutorialSequence : MonoBehaviour
 
         cont = false;
         while (!cont) yield return null;
+// Descent 3
 
         yield return StartCoroutine(EnemyTurn());
         StopCoroutine(co);
@@ -191,19 +193,24 @@ public class TutorialSequence : MonoBehaviour
 
         
         screenFade.SetTrigger("FadeOut");
-        Vector3 prevPos = tooltip.transform.position;
+        Vector3 prevPos = tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition;
         float timer = 0;
+
         while (timer < 0.25f) {
-            tooltip.transform.position = Vector3.Lerp(prevPos, prevPos + new Vector3(320, 0), timer/0.25f);
+            tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(prevPos, prevPos + new Vector3(680, 0), timer/0.25f);
+            Debug.Log(prevPos + " " + tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition);
             timer += Time.deltaTime;
             yield return null;
         }
-        tooltip.transform.position = prevPos + new Vector3(320, 0);
+        tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = prevPos + new Vector3(680, 0);
+              
+       
         GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.equipButtons[1].gameObject.transform);
         highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
         highlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
-        while (floorManager.currentFloor.index == 0) yield return new WaitForSecondsRealtime(1/Util.fps);
-        tooltip.transform.position = prevPos;
+        PlayerUnit pu = (PlayerUnit)scenario.player.units[0];
+        while (pu.hammerUses == 0) yield return new WaitForSecondsRealtime(1/Util.fps);
+        tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = prevPos;
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
         Destroy(highlight);
 
@@ -225,15 +232,7 @@ public class TutorialSequence : MonoBehaviour
         }
         yield return new WaitForSecondsRealtime(0.25f);
         yield return StartCoroutine(HittingAnEnemy());
-        while (true) {
-            yield return null;
-            if (scenario.player.units[0].energyCurrent == 0 || scenario.player.units[1].energyCurrent == 0) {
-                Debug.Log("AP trigger");
-                break;
-            }
-        }
-        yield return new WaitForSecondsRealtime(1.5f);
-        yield return StartCoroutine(OnTurnMoveAndAP());
+        
     }
 
     public IEnumerator NailPriming() {
@@ -261,8 +260,36 @@ public class TutorialSequence : MonoBehaviour
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
-
         screenFade.SetTrigger("FadeOut");
+        Vector3 prevPos = tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition;
+        float timer = 0;
+
+        while (timer < 0.25f) {
+            tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(prevPos, prevPos + new Vector3(680, 0), timer/0.25f);
+            Debug.Log(prevPos + " " + tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = prevPos + new Vector3(680, 0);
+        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.equipButtons[1].gameObject.transform);
+        highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
+        highlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
+
+        while (true) {
+            yield return null;
+            if (scenario.player.units[0].energyCurrent == 0 || scenario.player.units[1].energyCurrent == 0) {
+                Debug.Log("AP trigger");
+                break;
+            }
+        }
+
+        Destroy(highlight);
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = prevPos;
+        yield return new WaitForSecondsRealtime(1.5f);
+        yield return StartCoroutine(OnTurnMoveAndAP());
+
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
 
     }
@@ -334,7 +361,9 @@ public class TutorialSequence : MonoBehaviour
 
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
-
+        destroyHighlight = Instantiate(buttonHighlight, peekButton);
+        destroyHighlight.transform.SetSiblingIndex(0); destroyHighlight.transform.localPosition = Vector3.zero; destroyHighlight.GetComponent<Animator>().SetBool("Active", true);
+        destroyHighlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
     }
 
     public IEnumerator Basophic() {
@@ -407,6 +436,7 @@ public class TutorialSequence : MonoBehaviour
 
     public IEnumerator PeekButton() {
         
+        Destroy(destroyHighlight);
         header = "Peek Button";
         body = "The peek button lets you preview the next floor. You can see where enemies and other hazards are located." + '\n';
         brTooltip.SetText(body, header, true);
@@ -507,26 +537,31 @@ public class TutorialSequence : MonoBehaviour
 
     public IEnumerator TutorialDescend() {
         
-        yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
 
         List<GridElement> toDescend = new();
         switch(descents) {
             case 0:
+                yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
+                floorManager.GenerateFloor(floorManager.floorSequence.GetFloor(true));
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
+                
                 for (int i = scenario.player.units.Count - 1; i >= 0; i--) 
                     toDescend.Add(scenario.player.units[i]);
+
+                floorManager.currentFloor.slagSpawns = new();
                 yield return StartCoroutine(floorManager.DescendUnits(toDescend));
                 scenario.player.units.Insert(1, playerUnits[1]);
                 scenario.player.units[1].ui.overview.gameObject.SetActive(true);
                 floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
+                floorManager.currentFloor.slagSpawns.Add(floorManager.currentFloor.lvlDef.initSpawns.Find(s => s.asset.prefab.GetComponent<PlayerUnit>()).coord);
                 yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[1] }));
-                yield return new WaitForSecondsRealtime(0.15f);
-
-
+                scenario.currentTurn = ScenarioManager.Turn.Descent;
+                
             break;
             case 1:
+                yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
                 EnemyManager prevEnemy = scenario.currentEnemy;
 
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
@@ -573,17 +608,18 @@ public class TutorialSequence : MonoBehaviour
         descents++;
         cont = true;
     }
+
     public IEnumerator EnemyTurn() {
         scenario.prevTurn = scenario.currentTurn;
         scenario.currentTurn = ScenarioManager.Turn.Enemy;
         scenario.player.StartEndTurn(false);
-        if (scenario.uiManager.gameObject.activeSelf)
-            yield return StartCoroutine(scenario.messagePanel.PlayMessage(MessagePanel.Message.Antibody));
 
         
         if (scenario.prevTurn == ScenarioManager.Turn.Descent)
             yield return StartCoroutine(scenario.currentEnemy.TakeTurn(true));
         else {
+            if (scenario.uiManager.gameObject.activeSelf)
+                yield return StartCoroutine(scenario.messagePanel.PlayMessage(MessagePanel.Message.Antibody));
             if (!enemyBehavior && scenario.currentEnemy.units.Count > 0) {
                 yield return StartCoroutine(EnemyBehavior());
                 enemyBehavior = true;

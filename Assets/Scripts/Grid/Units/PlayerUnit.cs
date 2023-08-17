@@ -15,6 +15,8 @@ public class PlayerUnit : Unit {
     public override event OnElementUpdate ElementDestroyed;
     public virtual event OnElementUpdate ElementDisabled;
 
+    [HideInInspector] public int hammerUses, equipUses, bulbPickups;
+
 
     public override void UpdateElement(Vector2 coord) {
         base.UpdateElement(coord);
@@ -43,12 +45,14 @@ public class PlayerUnit : Unit {
         
         Coroutine co = StartCoroutine(base.ExecuteAction(target));
         EquipmentData equip = selectedEquipment;
+        if (equip is HammerData) hammerUses++; 
 
 // Selection logic 
         if (equip) {
             if (!equip.multiselect && equip is not MoveData) {
                 pManager.DeselectUnit();
                 pManager.StartCoroutine(pManager.UnitIsActing());
+                if (equip is PerFloorEquipmentData) equipUses++;
             }
             else if (equip is MoveData && energyCurrent > 0) {
                 pManager.StartCoroutine(pManager.UnitIsActing());
@@ -57,6 +61,7 @@ public class PlayerUnit : Unit {
             else if (equip.firstTarget != null) {
                 GridElement anim = equip.contextualAnimGO ? equip.contextualAnimGO.GetComponent<GridElement>() : null;
                 pManager.contextuals.UpdateContext(equip, equip.gridColor, equip.multiContext, anim, target);
+                if (equip is PerFloorEquipmentData) equipUses++;
             } else {
                 pManager.DeselectUnit();
                 pManager.StartCoroutine(pManager.UnitIsActing());
@@ -154,4 +159,5 @@ public class PlayerUnit : Unit {
         PlayerManager m = (PlayerManager)pManager;
         StartCoroutine(m.nail.TakeDamage(1));
     }
+
 }

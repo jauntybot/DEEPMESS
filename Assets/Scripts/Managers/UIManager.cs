@@ -10,6 +10,8 @@ public class UIManager : MonoBehaviour
     
     ScenarioManager scenario;
 
+    [SerializeField] Animator canvasAnim;
+
     [Header("Top UIs")]
     public MetaDisplay metaDisplay;
 
@@ -115,6 +117,9 @@ public class UIManager : MonoBehaviour
         audioSource.PlayOneShot(positive ? genSelectSFX.Get() : genDeselectSFX.Get());
     }
 
+    public void ToggleBattleCanvas(bool state) {
+        canvasAnim.SetBool("Active", state);
+    }
 
 
 }

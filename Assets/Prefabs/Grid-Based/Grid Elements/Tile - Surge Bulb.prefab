@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2590438898875856828}
   - component: {fileID: 4548692920616438334}
   - component: {fileID: 7914176203635557636}
+  - component: {fileID: 7424019860549997841}
   m_Layer: 6
   m_Name: GFX
   m_TagString: Untagged
@@ -105,6 +106,20 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+--- !u!114 &7424019860549997841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86320390212167392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ee90040f786e6a47acff528e5821a3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alpha: 1
+  exclude: 0
 --- !u!1 &3637012503699692802
 GameObject:
   m_ObjectHideFlags: 0
@@ -429,6 +444,7 @@ GameObject:
   - component: {fileID: 8517864744566959261}
   - component: {fileID: 6347572499611998251}
   - component: {fileID: 4725770806878504000}
+  - component: {fileID: 3268399654301843931}
   m_Layer: 6
   m_Name: Tile - Surge Bulb
   m_TagString: Untagged
@@ -466,6 +482,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
+  name: 
   coord: {x: 0, y: 0}
   selectable: 0
   targeted: 0
@@ -647,3 +664,17 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &3268399654301843931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8989576065795441841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b850d124d92f3945b0abedf8ebd0b8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alpha: 1
+  exclude: 0

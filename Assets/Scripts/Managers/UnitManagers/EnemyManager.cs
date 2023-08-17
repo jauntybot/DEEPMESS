@@ -19,7 +19,12 @@ public class EnemyManager : UnitManager {
     {
         Unit u = base.SpawnUnit(coord, unit);
         u.ElementDestroyed += DescentTriggerCheck;
+        u.ElementDestroyed += CountDefeatedEnemy; 
         return u;
+    }
+
+    void CountDefeatedEnemy(GridElement ge) {
+        scenario.player.defeatedEnemies++;
     }
 
     public virtual Unit SpawnBossUnit(Vector2 coord, Unit unit) {

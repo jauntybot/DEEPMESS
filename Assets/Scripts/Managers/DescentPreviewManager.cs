@@ -38,7 +38,6 @@ public class DescentPreviewManager : MonoBehaviour
             floorManager.transitioning = false;
         }
         else {
-            Debug.Log("up button");
             downButton.SetActive(true); upButton.SetActive(false);
             TogglePreivews(false);
             
