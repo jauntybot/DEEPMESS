@@ -74,9 +74,9 @@ public class TutorialSequence : MonoBehaviour
 
         yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ scenario.player.units[1] }));
         //foreach (Unit unit in scenario.player.units) unit.gameObject.SetActive(false);
-        yield return new WaitForSecondsRealtime(0.15f);
+        yield return new WaitForSecondsRealtime(0.5f);
         scenario.player.nail.ToggleNailState(Nail.NailState.Primed);
-        yield return new WaitForSecondsRealtime(0.75f);
+        yield return new WaitForSecondsRealtime(1.25f);
         yield return StartCoroutine(SplashMessage());
         
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
@@ -146,7 +146,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "";
-        body = "We are here. We are digging. We need to dig as deep as we can." + '\n';
+        body = "We are inside the top layers of God's head. Our purpose is buried deep here. We need you to dig." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -168,7 +168,7 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator ExplainMovement() {
         screenFade.gameObject.SetActive(true);
 
-        body = "Slags can move around the floor and use the Hammer to strike the Nail, digging down to the next floor. Select the Slag and move it to line up with the Nail." + '\n';
+        body = "Slags can move around the floor. Select the Slag and move it. Line it up with the Nail." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -236,7 +236,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "";
-        body = "We need to get through to the 15th floor. It is time. Dig deep. Make mess.";
+        body = "We need to excavate to the 15th floor. You are ready. Dig deep. Make mess.";
         tooltip.SetText(body, header, clickToSkip:true);
 
         while (!tooltip.skip) {
@@ -630,10 +630,10 @@ public class TutorialSequence : MonoBehaviour
                 floorManager.floorSequence.ThresholdCheck();
             break;
             case 2:
-                StartCoroutine(ScatterTurn());
                 Coroutine co = floorManager.StartCoroutine(floorManager.TransitionPackets());
                 yield return new WaitForSecondsRealtime(2f);
                 yield return StartCoroutine(TutorialEnd());
+                StartCoroutine(ScatterTurn());
                 yield return co;
                 PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
             break;

@@ -533,7 +533,6 @@ public class FloorManager : MonoBehaviour
         List<Vector2> to = new List<Vector2> { currentFloor.PosFromCoord(new Vector2(3, 3)), currentFloor.PosFromCoord(new Vector2(4, 3)), currentFloor.PosFromCoord(new Vector2(3, 2)), currentFloor.PosFromCoord(new Vector2(5, 4)) };
         units[0].manager.transform.parent = transitionParent;
         units[3].transform.parent = transitionParent;
-        //units[4].
         scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
         float timer = 0;
         while (timer <= unitDropDur) {
@@ -600,7 +599,7 @@ public class FloorManager : MonoBehaviour
         }
     }
 
-    public IEnumerator EndSequenceAnimation() {
+    public IEnumerator EndSequenceAnimation(GameObject arm) {
 
         // Local params for animation
         Vector3 from = floorParent.transform.position;
@@ -626,6 +625,21 @@ public class FloorManager : MonoBehaviour
             yield return null;
             timer += Time.deltaTime;
         }
+        timer = 0;
+        Vector3 prevPos = scenario.player.nail.transform.position;
+        while (timer < transitionDur * 10) {
+            scenario.player.nail.transform.localPosition = Vector3.Lerp(prevPos, Vector3.zero, timer/(transitionDur*10));
+            arm.transform.localPosition = Vector3.Lerp(prevPos, Vector3.zero, timer/(transitionDur*10));
+            
+            transitionParent.transform.position = Vector3.Lerp(Vector3.zero, new Vector3(6, 0, 0), timer/(transitionDur*10));
+            parallax.ScrollParallax(1);
+
+            yield return null;
+            timer += Time.deltaTime;
+        }
+        scenario.player.nail.transform.localPosition = Vector3.zero;
+        arm.transform.localPosition = Vector3.zero;
+        
         while (scenario.scenario == ScenarioManager.Scenario.EndState) {
             if (parallax)
                 parallax.ScrollParallax(1);

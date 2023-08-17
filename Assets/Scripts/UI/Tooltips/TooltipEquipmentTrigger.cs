@@ -34,7 +34,7 @@ public class TooltipEquipmentTrigger : TooltipTrigger
     private void Anvil()
     {
         header = "ANVIL";
-        content = "Drop an anvil and move away. Anvil attracts enemies.";
+        content = "Drop an anvil and move away. Anvil attracts enemies and descends with units.";
         anim = anvilAnim;
     }
 

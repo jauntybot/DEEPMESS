@@ -156,7 +156,7 @@ public class ScenarioManager : MonoBehaviour
                     }
                 }
                 else if (currentEnemy.units.Count <= 0) {
-                   floorManager.Descend(prevTurn == Turn.Descent);
+                   floorManager.Descend(prevTurn == Turn.Descent, false);
                    Debug.Log("Empty floor descent");
                 }
             break;
@@ -256,8 +256,7 @@ public class ScenarioManager : MonoBehaviour
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Lose));
         uiManager.ToggleBattleCanvas(false);
         yield return StartCoroutine(player.RetrieveNailAnimation());
-        StartCoroutine(floorManager.EndSequenceAnimation());
-        yield return new WaitForSecondsRealtime(1.5f);
+
         runDataTracker.UpdateAndDisplay(false, floorManager.currentFloor.index + 1, player.defeatedEnemies);
     }
 }

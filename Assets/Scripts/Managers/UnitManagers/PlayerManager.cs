@@ -511,5 +511,6 @@ public class PlayerManager : UnitManager {
         yield return new WaitForSecondsRealtime(1.5f);
 
         nail.ToggleNailState(Nail.NailState.Falling);
+        StartCoroutine(floorManager.EndSequenceAnimation(arm));
     }
 }

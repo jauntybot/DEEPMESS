@@ -90,27 +90,25 @@ public class EnemyUnit : Unit {
             case Pathfinding.ClosestCoord:
                 int shortestPathCount = 64;
                 Dictionary<Vector2, Vector2> shortestPath = new();
-                
+
                 foreach (Unit unit in manager.scenario.player.units) {
                     if (!unit.conditions.Contains(Status.Disabled)) {
-                        List<Vector2> tempCoords = new() { new Vector2(unit.coord.x - 1, unit.coord.y), new Vector2(unit.coord.x + 1, unit.coord.y), new Vector2(unit.coord.x, unit.coord.y - 1), new Vector2(unit.coord.x, unit.coord.y + 1) };
-                        tempCoords = EquipmentAdjacency.RemoveOffGridCoords(tempCoords);
-                        foreach (Vector2 c in tempCoords) {
-                            Debug.Log(c);
-                            Dictionary<Vector2, Vector2> fromTo = new Dictionary<Vector2, Vector2>(); 
-                            fromTo = EquipmentAdjacency.SteppedCoordAdjacency(coord, c, equipment[0]);
-                            if (fromTo.Count < shortestPathCount) {
-                                shortestPath = fromTo;
-                                shortestPathCount = fromTo.Count; 
-                            }
+                        List<Vector2> targetCoords = EquipmentAdjacency.GetAdjacent(unit.coord, equipment[1].range, equipment[0]);
+                        Debug.Log(targetCoords.Count);
+                        string coords = "";
+                        foreach (Vector2 c in targetCoords) {
+                            coords += c + ", " ;
+                            // Dictionary<Vector2, Vector2> fromTo = new Dictionary<Vector2, Vector2>(); 
+                            // fromTo = EquipmentAdjacency.SteppedCoordAdjacency(coord, c, equipment[0]);
+                            // if (fromTo.Count < shortestPathCount) {
+                            //     shortestPath = fromTo;
+                            //     shortestPathCount = fromTo.Count; 
+                            // }
                         }
+                        Debug.Log(targetCoords.Count + " " + coords);
                     }
                 }
-                Vector2 targetCoord = coord;
-                for (int i = 0; i <= equipment[0].range; i++)
-                    targetCoord = shortestPath[coord];
-                
-                return targetCoord;
+                return coord;
                 
             case Pathfinding.Random:
                 if (validActionCoords.Count > 0) {
