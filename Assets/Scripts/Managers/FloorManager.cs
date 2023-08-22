@@ -21,6 +21,7 @@ public class FloorManager : MonoBehaviour
     public Grid currentFloor;
     int currentGridIndex;
     public List<Grid> floors;
+    [HideInInspector] public bool bossSpawn = false;
 
     [SerializeField] int _gridSize;
     public static int gridSize;
@@ -33,7 +34,7 @@ public class FloorManager : MonoBehaviour
     public Transform transitionParent;
     public float floorOffset, transitionDur, unitDropDur;
     public AnimationCurve dropCurve;
-     public bool transitioning, peeking;
+    public bool transitioning, peeking;
     [SerializeField] ParallaxImageScroll parallax;
     public DescentPreviewManager previewManager;
     [SerializeField] Animator cavityText;
@@ -194,7 +195,7 @@ public class FloorManager : MonoBehaviour
         if (down && currentFloor.index-1 >= 0) floors[currentFloor.index-1].gameObject.SetActive(false);
         if (toFloor) currentFloor = toFloor;
         if (uiManager.gameObject.activeSelf)
-            uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index + 1);
+            uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index + 1 - (TutorialSequence.instance != null ? -3 : 0));
 
     }
     
@@ -238,15 +239,13 @@ public class FloorManager : MonoBehaviour
 
     }
 
-    public void Descend(bool cascade = false, bool nail = true) {
+    public void Descend(bool cascade = false, bool nail = true, Vector2 pos = default) {
         bool tut = floorSequence.activePacket.packetType == FloorPacket.PacketType.Tutorial;
-        StartCoroutine(DescendFloors(cascade, nail, tut));
+        StartCoroutine(DescendFloors(cascade, tut, nail, pos));
         
     }
 
-    public IEnumerator DescendFloors(bool cascade = false, bool nail = true, bool tut = false) {
-        if (nail)
-            yield return StartCoroutine(currentFloor.ShockwaveCollapse());
+    public IEnumerator DescendFloors(bool cascade = false, bool tut = false, bool nail = true, Vector2 pos = default) {
 
 // Lock up current floor
         if (uiManager.gameObject.activeSelf)
@@ -256,8 +255,11 @@ public class FloorManager : MonoBehaviour
         currentFloor.DisableGridHighlight();
         currentFloor.LockGrid(true);
 
+        if (nail)
+            yield return StartCoroutine(currentFloor.ShockwaveCollapse(pos));
+
         ScenarioManager.Scenario scen = ScenarioManager.Scenario.Null;
-            if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) scen = ScenarioManager.Scenario.Boss;
+        if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) scen = ScenarioManager.Scenario.Boss;
         if (tut) {
             yield return StartCoroutine(TutorialSequence.instance.TutorialDescend());
         }
@@ -294,7 +296,7 @@ public class FloorManager : MonoBehaviour
                 yield return StartCoroutine(DescendUnits(floors[currentFloor.index -1].gridElements, enemy));
 
 // Check for boss spawn
-                if (floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS) 
+                if (floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && !bossSpawn) 
                     yield return StartCoroutine(SpawnBoss());
 
 // Check for tutorial tooltip triggers
@@ -474,7 +476,7 @@ public class FloorManager : MonoBehaviour
     }
 
     public IEnumerator SpawnBoss() {
-        
+        bossSpawn = true;
         bool validCoord = false;
         Vector2 spawn = Vector2.zero;
         while (!validCoord) {

@@ -115,7 +115,7 @@ public class ScenarioManager : MonoBehaviour
             }
         }
         prevTurn = currentTurn;
-        uiManager.LockHUDButtons(true, true);
+        uiManager.LockHUDButtons(true);
 // Scenario state machine (more optional)        
         switch(toScenario) {
             default:
@@ -242,7 +242,7 @@ public class ScenarioManager : MonoBehaviour
         if (uiManager.gameObject.activeSelf)
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Win));
         yield return new WaitForSecondsRealtime(1.5f);
-        runDataTracker.UpdateAndDisplay(false, floorManager.currentFloor.index + 1, player.defeatedEnemies);
+        runDataTracker.UpdateAndDisplay(true, floorManager.currentFloor.index + 1, player.defeatedEnemies);
     }
 
     public IEnumerator Lose() 

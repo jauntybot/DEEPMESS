@@ -87,6 +87,7 @@ public class EnemyManager : UnitManager {
                 yield return new WaitForSecondsRealtime(0.125f);
             }
         }
+        yield return ongoingTurn;
         EndTurn();
     }
 
@@ -112,7 +113,10 @@ public class EnemyManager : UnitManager {
     public virtual void SeedUnits(Grid newGrid) {
         EnemyManager eManager = (EnemyManager) newGrid.enemy;
         for (int i = units.Count - 1; i >= 0; i--) {
-            newGrid.enemy.units.Add(units[i]);
+            if (units[i] is BossUnit)
+                newGrid.enemy.units.Insert(0, units[i]);
+            else
+                newGrid.enemy.units.Add(units[i]);
 
 // Update subscriptions
             newGrid.enemy.SubscribeElement(units[i]);

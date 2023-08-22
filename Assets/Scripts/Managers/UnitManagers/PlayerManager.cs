@@ -162,7 +162,7 @@ public class PlayerManager : UnitManager {
         } else {
             DeselectUnit();
             contextuals.UpdateGridCursor(false);
-            if (scenario.prevTurn != ScenarioManager.Turn.Descent && scenario.currentTurn != ScenarioManager.Turn.Descent && scenario.scenario != ScenarioManager.Scenario.Boss) {
+            if (scenario.prevTurn != ScenarioManager.Turn.Descent && !floorManager.currentFloor.gridElements.Find(ge => ge is BossUnit)) {
                 if (nail.nailState == Nail.NailState.Buried)
                     nail.ToggleNailState(Nail.NailState.Primed);
             }
@@ -256,8 +256,8 @@ public class PlayerManager : UnitManager {
 
 
     public void GridMouseOver(Vector2 pos, bool state) {
-        if (pos == new Vector2(-32,-32)) pos = lastHoveredCoord;
-        else lastHoveredCoord = pos;
+        // if (pos == new Vector2(-32,-32)) pos = lastHoveredCoord;
+        // else lastHoveredCoord = pos;
 
         contextuals.UpdateGridCursor(state, pos, selectedUnit && selectedUnit.selectedEquipment);
         if (Mathf.Sign(pos.x) >= 0) pc.UpdateCursor(targetCursorState);
@@ -291,22 +291,22 @@ public class PlayerManager : UnitManager {
             bool hovering = false;
             foreach (GridElement ge in currentGrid.CoordContents(pos)) {
                 if (ge is Unit u) {
-                    if (ge == prevCursorTarget || (ge is PlayerUnit pu && (!pu.selectable || pu.moved))) break;
                     hovering = true;
+                    //if (u == prevCursorTarget) break;
                     pc.ToggleCursorValid(true);
                     
-                    hovering = true;
                     hoveredUnit = u;
                     if (!prevCursorTarget) prevCursorTarget = u;
 
                     ge.TargetElement(true);
                     UIManager.instance.UpdatePortrait(u, true);
                     if ((u is PlayerUnit || u is EnemyUnit) && FloorManager.instance.currentFloor == currentGrid) {
-                        if (u.selectedEquipment != u.equipment[0]) {
+                        if (u is PlayerUnit pu && (!pu.selectable || pu.moved)) break;
+                        if (u.selectedEquipment != u.equipment[0])
                             u.selectedEquipment = u.equipment[0];
-                            u.UpdateAction(u.selectedEquipment, u.moveMod);
-                            u.grid.DisplayValidCoords(u.validActionCoords, u is EnemyUnit ? 4 : 3, false, false);
-                        }
+                        u.grid.DisableGridHighlight();
+                        u.UpdateAction(u.selectedEquipment, u.moveMod);
+                        u.grid.DisplayValidCoords(u.validActionCoords, u is EnemyUnit ? 4 : 3, false, false);
                     }
                 }
             }
@@ -414,7 +414,7 @@ public class PlayerManager : UnitManager {
             yield return null;
         }
 
-        scenario.uiManager.LockHUDButtons(scenario.uiManager.locked);
+        scenario.uiManager.LockHUDButtons(false);
         if (selectedUnit) selectedUnit.ui.ToggleEquipmentButtons();
     }
 
@@ -456,7 +456,7 @@ public class PlayerManager : UnitManager {
     }
 
     public void TriggerDescent() {
-        floorManager.Descend(false, true);
+        floorManager.Descend(false, true, nail.coord);
     }
 
     public virtual void DescendGrids(Grid newGrid) {

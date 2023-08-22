@@ -21,7 +21,7 @@ public class CollapseTesting : MonoBehaviour
             regenerate = false;
         }
         if (collapse) { 
-            StartCoroutine(activeGrid.ShockwaveCollapse());
+            StartCoroutine(activeGrid.ShockwaveCollapse(new Vector2(3,4)));
 
             collapse = false;
         }

@@ -36,7 +36,7 @@ public class HammerData : EquipmentData
                     occupied = true;
                     if (ge is PlayerUnit u) {
                         if (u.conditions.Contains(Unit.Status.Disabled)) 
-                            remove = false;
+                            remove = true;
                     } else {
                         foreach(GridElement target in targetTypes) {
                             if (ge.GetType() == target.GetType()) {
@@ -52,10 +52,6 @@ public class HammerData : EquipmentData
                                     remove = false;
                                     if (ge is EnemyUnit)
                                         ge.elementCanvas.ToggleStatsDisplay(true);
-                                    if (ge is PlayerUnit player && tile.tileType == Tile.TileType.Bile) {
-                                        tile.ToggleValidCoord(false);
-                                        remove = true;
-                                    }
                                 }
                             }
                         }
@@ -170,7 +166,6 @@ public class HammerData : EquipmentData
             }
 // Trigger descent if nail
             else if (target is Nail n) {
-                CameraController.instance.StartCoroutine(CameraController.instance.ScreenShake(0.75f, 0.75f));
                 target.PlaySound(nailSFX);
                 if (n.nailState == Nail.NailState.Primed)
                     n.ToggleNailState(Nail.NailState.Buried);

@@ -7,11 +7,11 @@ using UnityEngine;
 public class FloorSequence : ScriptableObject {
 
     public List<FloorPacket> packets;
-    [HideInInspector] public List<FloorPacket> localPackets;
+    public List<FloorPacket> localPackets;
     public FloorPacket activePacket;
 
     [HideInInspector] public int floorsTutorial;
-    public int floorsI, floorsII, floorsIII, floorsBoss;
+    public int floorsI, floorsII, floorsIII;
     public GameObject bossPrefab;
     public FloorPacket.PacketType currentThreshold;
     [SerializeField] int floorsGot = 0;
@@ -43,11 +43,12 @@ public class FloorSequence : ScriptableObject {
             activePacket.floors.Add(options[index].floors[i]);
         }
 
-        localPackets.Remove(options[index]);
+        if (options[index].packetType != FloorPacket.PacketType.BOSS)
+            localPackets.Remove(options[index]);
     }
 
 // Returns true if threshold is passed
-    public bool ThresholdCheck() {
+    public bool ThresholdCheck() {  
         FloorPacket.PacketType prevThreshold = currentThreshold;
         switch(prevThreshold) {
             case FloorPacket.PacketType.Tutorial:
@@ -63,7 +64,7 @@ public class FloorSequence : ScriptableObject {
                 if (floorsGot >= floorsIII) currentThreshold = FloorPacket.PacketType.BOSS;
             break;
             case FloorPacket.PacketType.BOSS:
-                if (floorsGot >= floorsBoss) currentThreshold = FloorPacket.PacketType.BARRIER;
+                if (FloorManager.instance.bossSpawn && !FloorManager.instance.currentFloor.gridElements.Find(u => u is BossUnit)) currentThreshold = FloorPacket.PacketType.BARRIER;
             break;
         }
 
@@ -75,22 +76,23 @@ public class FloorSequence : ScriptableObject {
     }
 
     public FloorDefinition GetFloor(bool ordered = false) {
+        FloorPacket.PacketType prevType = currentThreshold;
         ThresholdCheck();
 
         if (activePacket.packetType != currentThreshold || activePacket.floors.Count == 0) {
             StartPacket(currentThreshold);
-            if (activePacket.packetType != FloorPacket.PacketType.BOSS) {
+            if (prevType == FloorPacket.PacketType.BOSS && currentThreshold == FloorPacket.PacketType.BOSS) {
                 int index = ordered ? 0 : Random.Range(0, activePacket.firstFloors.Count-1);
-                FloorDefinition firstFloor = activePacket.firstFloors[index];
-                activePacket.firstFloors.Remove(firstFloor);
-                floorsGot += 1;
-                return firstFloor;
+                    FloorDefinition floor = activePacket.floors[index];
+                    activePacket.floors.Remove(floor);
+                    floorsGot += 1;
+                    return floor;
             } else {
-                int index = ordered ? 0 : Random.Range(0, activePacket.floors.Count-1);
-                FloorDefinition firstFloor = activePacket.floors[index];
-                activePacket.floors.Remove(firstFloor);
-                floorsGot += 1;
-                return firstFloor;
+                    int index = ordered ? 0 : Random.Range(0, activePacket.firstFloors.Count-1);
+                    FloorDefinition firstFloor = activePacket.firstFloors[index];
+                    activePacket.firstFloors.Remove(firstFloor);
+                    floorsGot += 1;
+                    return firstFloor;
             }
         } else {
             int index = ordered ? 0 : Random.Range(0, activePacket.floors.Count-1);

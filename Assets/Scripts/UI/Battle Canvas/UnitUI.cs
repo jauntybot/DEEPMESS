@@ -85,7 +85,7 @@ public class UnitUI : MonoBehaviour
     public void ToggleEquipmentButtons() {
         PlayerManager pManager = (PlayerManager)unit.manager;
         foreach (EquipmentButton b in equipButtons) {
-            b.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= b.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted) && !pManager.unitActing);
+            b.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= b.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted) && !unit.conditions.Contains(Unit.Status.Disabled) && !pManager.unitActing);
             if (b.data is PerFloorEquipmentData && unit.usedEquip)
                 b.gameObject.GetComponentInChildren<Button>().interactable = false;
         }      

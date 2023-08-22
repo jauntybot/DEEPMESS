@@ -114,11 +114,10 @@ public class Grid : MonoBehaviour {
         }
     }
 
-    public IEnumerator ShockwaveCollapse() {
-        Vector2 origin = player.nail.coord;
-
+    public IEnumerator ShockwaveCollapse(Vector2 origin) {
         StartCoroutine(CollapseTile(origin));
         
+        CameraController.instance.StartCoroutine(CameraController.instance.ScreenShake(0.75f, 0.75f));
         
         int range;
         if (origin.x >= 4) {

@@ -85,7 +85,6 @@ public class PlayerUnit : Unit {
                 ge.TargetElement(false);
         }
 
-        UIManager.instance.ToggleUndoButton(pManager.undoOrder.Count > 0);
         pManager.unitActing = false;
     }
 

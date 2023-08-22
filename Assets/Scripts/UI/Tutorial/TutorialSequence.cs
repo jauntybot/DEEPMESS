@@ -674,7 +674,7 @@ public class TutorialSequence : MonoBehaviour
             bulbEncountered &&
             deathReviveEncountered &&
             slotsEncountered)
-            Destroy(gameObject);
+            Debug.Log("Tutorial finished");
     }
 
 

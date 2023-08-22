@@ -27,6 +27,7 @@ public class EnemyUnit : Unit {
     }
 
     public virtual IEnumerator CalculateAction() {
+        Debug.Log("Start Action");
 // First attack scan
         UpdateAction(equipment[1]);
         foreach (Vector2 coord in validActionCoords) {
@@ -49,17 +50,17 @@ public class EnemyUnit : Unit {
 // Move scan
         if (!moved) {
             UpdateAction(equipment[0], moveMod);
+            Debug.Log("Move scan optimal coord");
             Vector2 targetCoord = SelectOptimalCoord(pathfinding);
-            if (Mathf.Sign(targetCoord.x) == 1) {
-                manager.SelectUnit(this);
-                grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
-                yield return new WaitForSecondsRealtime(0.5f);
-                Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, grid.tiles.Find(sqr => sqr.coord == targetCoord)));
-                grid.UpdateSelectedCursor(false, Vector2.one * -32);
-                grid.DisableGridHighlight();
-                yield return co;
-                manager.DeselectUnit();
-            }
+            //while (!Input.GetMouseButtonDown(0)) yield return null;
+            manager.SelectUnit(this);
+            yield return new WaitForSecondsRealtime(0.5f);
+            Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, grid.tiles.Find(sqr => sqr.coord == targetCoord)));
+            grid.UpdateSelectedCursor(false, Vector2.one * -32);
+            grid.DisableGridHighlight();
+            yield return co;
+            Debug.Log("Unit action done");
+            manager.DeselectUnit();
         }
 
 // Second attack scan
@@ -88,32 +89,43 @@ public class EnemyUnit : Unit {
     public virtual Vector2 SelectOptimalCoord(Pathfinding pathfinding) {
         switch (pathfinding) {
             case Pathfinding.ClosestCoord:
-                closestUnit = null;
                 // int shortestPathCount = 64;
-                // Dictionary<Vector2, Vector2> shortestPath = new();
-
-                // foreach (Unit unit in manager.scenario.player.units) {
-                //     if (!unit.conditions.Contains(Status.Disabled)) {
-                //         List<Vector2> targetCoords = EquipmentAdjacency.GetAdjacent(unit.coord, equipment[1].range, equipment[0]);
-                //         Debug.Log(targetCoords.Count);
-                //         string coords = "";
-                //         foreach (Vector2 c in targetCoords) {
-                //             coords += c + ", " ;
-                //             Dictionary<Vector2, Vector2> fromTo = new Dictionary<Vector2, Vector2>(); 
-                //             fromTo = EquipmentAdjacency.SteppedCoordAdjacency(coord, c, equipment[0]);
-                //             if (fromTo.Count < shortestPathCount) {
-                //                 shortestPath = fromTo;
-                //                 shortestPathCount = fromTo.Count; 
+                // Dictionary<Vector2, Vector2> shortestPath = new Dictionary<Vector2, Vector2>();
+                // Vector2 targetCoord = coord;
+                // Debug.Log("First while loop");
+                // while (!shortestPath.ContainsKey(coord)) {
+                //     foreach (Unit unit in manager.scenario.player.units) {
+                //         if (!unit.conditions.Contains(Status.Disabled)) {
+                //             List<Vector2> targetCoords = EquipmentAdjacency.GetAdjacent(unit.coord, equipment[1].range, equipment[0]);
+                //             foreach (Vector2 c in targetCoords) {
+                //                 Dictionary<Vector2, Vector2> fromTo = new Dictionary<Vector2, Vector2>(); 
+                //                 fromTo = EquipmentAdjacency.ClosestSteppedCoordAdjacency(coord, c, equipment[0]);
+                //                 if (fromTo != null && fromTo.Count < shortestPathCount) {
+                //                     shortestPath = fromTo;
+                //                     shortestPathCount = fromTo.Count;
+                //                     targetCoord = c;
+                //                 }
                 //             }
                 //         }
-                //         Debug.Log(targetCoords.Count + " " + coords);
                 //     }
                 // }
-                // Vector2 targetCoord = coord;
-                // for (int i = 0; i < equipment[0].range; i++) {
-                //     targetCoord = shortestPath[targetCoord];
+
+                // if (targetCoord != coord) {
+                //     grid.tiles.Find(t => t.coord == targetCoord).ToggleValidCoord(true, Color.blue, true);
+                //     string coords = "MoveTo Coord: " + targetCoord + ", ";
+                //     targetCoord = coord;
+                //     for (int i = 1; i <= equipment[0].range; i++) {
+                //         targetCoord = shortestPath[targetCoord];
+                //         coords += i + ": " + targetCoord + ", ";
+                //     }
+                //     Debug.Log(coords);
+                //     grid.tiles.Find(t => t.coord == targetCoord).ToggleValidCoord(true, Color.white, true);
                 // }
+                
                 // return targetCoord;
+
+// Old logic
+                closestUnit = null;
                 foreach (Unit unit in manager.scenario.player.units) {
                     if (!unit.conditions.Contains(Status.Disabled)) {
                         if (closestUnit == null || Vector2.Distance(unit.coord, coord) < Vector2.Distance(closestUnit.coord, coord))
@@ -132,8 +144,7 @@ public class EnemyUnit : Unit {
                 if (validActionCoords.Count > 0) {
                     int rndIndex = Random.Range(0, validActionCoords.Count - 1);
                     return validActionCoords[rndIndex];
-                } else
-                    return Vector2.one * -32;
+                } else return coord;
         }
         return coord;
     }

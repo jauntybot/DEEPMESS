@@ -13,7 +13,7 @@ public class AttackData : EquipmentData
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this, targetTypes);
         user.grid.DisplayValidCoords(validCoords, gridColor);
-        if (user is PlayerUnit pu) pu.ui.ToggleEquipmentPanel(false);
+
         for (int i = validCoords.Count - 1; i >= 0; i--) {
             bool remove = false;
             foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(validCoords[i])) {
@@ -46,7 +46,7 @@ public class AttackData : EquipmentData
     public IEnumerator AttackElement(GridElement user, GridElement target) 
     {
         float timer = 0;
-        Vector2 attackLerp = (target.coord - user.coord)/2;
+        
         user.elementCanvas.UpdateStatsDisplay();
         while (timer < animDur/2) {
             yield return null;

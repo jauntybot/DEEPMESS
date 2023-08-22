@@ -25,7 +25,7 @@ public class DescentPreviewManager : MonoBehaviour
     public IEnumerator PreviewFloor(bool down) {
         floorManager.transitioning = true;
         if (scenario.currentTurn == ScenarioManager.Turn.Player)
-            UIManager.instance.endTurnButton.enabled = !down;
+            UIManager.instance.endTurnButton.interactable = !down;
         if (down) {
             downButton.SetActive(false); upButton.SetActive(true);
             TogglePreivews(true);
@@ -40,7 +40,7 @@ public class DescentPreviewManager : MonoBehaviour
         else {
             downButton.SetActive(true); upButton.SetActive(false);
             TogglePreivews(false);
-            
+     
             yield return StartCoroutine(floorManager.TransitionFloors(down, true));
             
             floorManager.transitioning = false;
@@ -56,8 +56,10 @@ public class DescentPreviewManager : MonoBehaviour
 
     public void TogglePreivews(bool state) {
         foreach(DescentPreview dp in descentPreviews) {
-            if (dp.unit.grid == floorManager.currentFloor || state == false)
+            if (dp.unit.grid == floorManager.currentFloor || state == false) {
                 dp.anim.gameObject.SetActive(state);
+                dp.HighlightTile(state);
+            }
         }
     }
 

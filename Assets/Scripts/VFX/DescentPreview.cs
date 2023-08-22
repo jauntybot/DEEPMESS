@@ -49,6 +49,19 @@ public class DescentPreview : MonoBehaviour
             anim.gameObject.GetComponent<SpriteRenderer>().sortingOrder = mgmt.alignmentFloor.SortOrderFromCoord(ge.coord) - 1;
             portraitSR.sortingOrder = mgmt.alignmentFloor.SortOrderFromCoord(ge.coord);
             bgSR.sortingOrder = mgmt.alignmentFloor.SortOrderFromCoord(ge.coord) - 1;
+
         }
+    }
+
+    public void HighlightTile(bool state) {
+        if (state) {
+            int index = 0;
+            if (unit is PlayerUnit) index = 0;
+            else if (unit is EnemyUnit) index = 1;
+            else index = 2;
+            Color c = FloorManager.instance.GetFloorColor(index);
+            mgmt.alignmentFloor.tiles.Find(t => t.coord == unit.coord).ToggleValidCoord(true, c, true);
+        } else 
+            FloorManager.instance.currentFloor.DisableGridHighlight();       
     }
 }

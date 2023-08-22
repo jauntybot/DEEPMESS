@@ -31,7 +31,6 @@ public class EquipmentData : ScriptableObject {
 
     [Header("FILTERS")]
     public List<GridElement> filters;
-    public List<Component> _filters; 
     public List<GridElement> targetTypes;
 
     [Header("AUDIO")]
