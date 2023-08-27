@@ -137,8 +137,4 @@ public class PersistentMenu : MonoBehaviour
         }
     }
 
-    public void ExitApplication() {
-        Application.Quit();
-    }
-
 }

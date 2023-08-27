@@ -195,7 +195,7 @@ public class FloorManager : MonoBehaviour
         if (down && currentFloor.index-1 >= 0) floors[currentFloor.index-1].gameObject.SetActive(false);
         if (toFloor) currentFloor = toFloor;
         if (uiManager.gameObject.activeSelf)
-            uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index + 1 - (TutorialSequence.instance != null ? -3 : 0));
+            uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index + 1 - (TutorialSequence.instance != null ? 3 : 0));
 
     }
     
