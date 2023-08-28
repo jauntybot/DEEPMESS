@@ -33,28 +33,29 @@ public class TutorialSequence : MonoBehaviour
 
     [Header("GIF Serialization")]
     [SerializeField] RuntimeAnimatorController hittingTheNailAnim;
-    [SerializeField] RuntimeAnimatorController hittingEnemiesAnim, anvilAnim, bigThrowAnim, shieldAnim, bulbAnim, basophicAnim, reviveAnim;
+    [SerializeField] RuntimeAnimatorController hittingEnemiesAnim, shieldAnim;
 
     [Header("Button Highlights")]
     [SerializeField] GameObject buttonHighlight;
-    [SerializeField] Transform peekButton, undoButton;
+    [SerializeField] Transform peekButton;
     GameObject destroyHighlight;
 
     [Header("Gameplay Optional Tooltips")]
     bool enemyBehavior = false;
-    public bool hittingEnemies, undoEncountered, nailDamageEncountered, bloodEncountered, collisionEncountered, bulbEncountered, basophicEncountered, deathReviveEncountered, slotsEncountered = false;
-    List<Coroutine> tooltipCoroutines = new List<Coroutine>();
+    public bool hittingEnemies = false, undoEncountered = false, nailDamageEncountered = false, bloodEncountered = false, collisionEncountered = false, slotsEncountered = false;
 
 
     public void Initialize(ScenarioManager manager) {
         scenario = manager;
         floorManager = scenario.floorManager;
 
+        for (int i = 0; i <= scenario.player.units.Count - 1; i++)
+            playerUnits.Add(scenario.player.units[i]);
+
         floorManager.floorSequence.currentThreshold = FloorPacket.PacketType.Tutorial;    
         floorManager.floorSequence.floorsTutorial = 3;
         floorManager.floorSequence.localPackets.Add(tutorialPacket);
         
-        hittingEnemies = false; enemyBehavior = false; undoEncountered = false; bulbEncountered = false; deathReviveEncountered = false; slotsEncountered = false;
         descents = 0;
 
         floorManager.GenerateFloor(floorManager.floorSequence.GetFloor(true), true);
@@ -62,12 +63,6 @@ public class TutorialSequence : MonoBehaviour
     }
     
     public IEnumerator Tutorial() {
-        for (int i = 0; i <= scenario.player.units.Count - 1; i++) {
-            playerUnits.Add(scenario.player.units[i]);
-            if (scenario.player.units[i] is PlayerUnit pu) {
-                pu.ElementDisabled += StartDeathTut;
-            }
-        }
         scenario.player.units[1].ui.overview.gameObject.SetActive(false); scenario.player.units[2].ui.overview.gameObject.SetActive(false);
         scenario.player.units.RemoveAt(1); scenario.player.units.RemoveAt(1);
 
@@ -406,30 +401,7 @@ public class TutorialSequence : MonoBehaviour
         destroyHighlight = Instantiate(buttonHighlight, peekButton);
         destroyHighlight.transform.SetSiblingIndex(0); destroyHighlight.transform.localPosition = Vector3.zero; destroyHighlight.GetComponent<Animator>().SetBool("Active", true);
         destroyHighlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
-    }
-
-    public IEnumerator Basophic() {
-        Debug.Log("Basophic");
-        basophicEncountered = true;
-        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
-            yield return null;
-        }
-        yield return new WaitForSecondsRealtime(0.25f);
-        screenFade.gameObject.SetActive(true);
-
-        header = "NEW DANGERS";
-        body = "This enemy can explode, dealing damage to all the tiles around it. Hover over enemy portraits to learn more about their abilities." + '\n';
-        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ basophicAnim });
-
-        while (!tooltip.skip) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-            
-        }
-
-        screenFade.SetTrigger("FadeOut");
-        tooltip.transform.GetChild(0).gameObject.SetActive(false);
-        CheckAllDone();
-    }
+    }  
 
     public IEnumerator NailDamage() {
         nailDamageEncountered = true;
@@ -442,29 +414,6 @@ public class TutorialSequence : MonoBehaviour
         header = "NAIL DAMAGE";
         body = "We deal damage back to enemies that strike the Nail." + '\n';
         tooltip.SetText(body, header, true);
-
-        while (!tooltip.skip) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-            
-        }
-
-        screenFade.SetTrigger("FadeOut");
-        tooltip.transform.GetChild(0).gameObject.SetActive(false);
-        CheckAllDone();
-    }
-
-    public IEnumerator TileBulb() {
-        Debug.Log("Tile bulb");
-        bulbEncountered = true;
-        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
-            yield return null;
-        }
-        yield return new WaitForSecondsRealtime(0.25f);
-        screenFade.gameObject.SetActive(true);
-
-        header = "BULBS";
-        body = "Bulbs are consumable items that your Slags can pick up. Each Slag can hold 1 bulb that can be used or thrown as a free action" + '\n';
-        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ bulbAnim });
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -550,36 +499,7 @@ public class TutorialSequence : MonoBehaviour
         CheckAllDone();
     }
 
-    void StartDeathTut(GridElement blank) {
-        if (!deathReviveEncountered)
-            StartCoroutine(DeathRevivTut());
-    }
-
-     public IEnumerator DeathRevivTut() {
-        deathReviveEncountered = true;
-
-        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
-            yield return null;
-        }
-        yield return new WaitForSecondsRealtime(0.25f);
-
-        screenFade.gameObject.SetActive(true);
-
-        header = "SLAG REVIVE";
-        body = "Slags that have been downed can be revived. Strike the downed Slag with the Hammer to transfuse 1HP from the Nail. The Slag will come back with its move and action refreshed." + '\n';
-        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ reviveAnim });
-
-        while (!tooltip.skip) 
-            yield return new WaitForSecondsRealtime(1/Util.fps);   
-
-        screenFade.SetTrigger("FadeOut");
-        tooltip.transform.GetChild(0).gameObject.SetActive(false);
-        CheckAllDone();
-    }
-
     public IEnumerator TutorialDescend() {
-        
-
         List<GridElement> toDescend = new();
         switch(descents) {
             case 0:
@@ -682,9 +602,6 @@ public class TutorialSequence : MonoBehaviour
             nailDamageEncountered &&
             undoEncountered && 
             bloodEncountered &&
-            basophicEncountered && 
-            bulbEncountered &&
-            deathReviveEncountered &&
             slotsEncountered)
             Debug.Log("Tutorial finished");
     }

@@ -277,8 +277,7 @@ public class FloorManager : MonoBehaviour
             if (floors.Count - 1 > currentFloor.index) {
 // Generate next floor if still mid packet
                 if (!floorSequence.ThresholdCheck() || floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) {
-                    GenerateFloor(); 
-                    
+                    GenerateFloor();       
                 }
 
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
@@ -302,11 +301,19 @@ public class FloorManager : MonoBehaviour
                     yield return StartCoroutine(SpawnBoss());
 
 // Check for tutorial tooltip triggers
-                if (scenario.tutorial != null && floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
-                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.tutorial.bulbEncountered)
-                        scenario.tutorial.StartCoroutine(scenario.tutorial.TileBulb());
-                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is EnemyDetonateUnit) != null && !scenario.tutorial.basophicEncountered)
-                        scenario.tutorial.StartCoroutine(scenario.tutorial.Basophic());
+                if (floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
+                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.gpOptional.bulbEncountered)
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.TileBulb());
+                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is EnemyDetonateUnit) != null && !scenario.gpOptional.basophicEncountered)
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Basophic());
+                    if (floorSequence.currentThreshold == FloorPacket.PacketType.III && floorSequence.floorsGot >= floorSequence.floorsIII && !scenario.gpOptional.prebossEncountered) {
+                        Debug.Log("Preboss");
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Preboss());
+                    }
+                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is BossUnit) != null && !scenario.gpOptional.bossEncountered) {
+                        Debug.Log("Boss");
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Boss());        
+                    }
                 }
 
 
@@ -533,6 +540,7 @@ public class FloorManager : MonoBehaviour
                 cos.RemoveAt(i);
         }
         
+// Lerp units into screen
         List<Unit> units = new List<Unit> { scenario.player.units[0], scenario.player.units[1], scenario.player.units[2], scenario.player.units[3] };
         List<Vector2> to = new List<Vector2> { currentFloor.PosFromCoord(new Vector2(3, 3)), currentFloor.PosFromCoord(new Vector2(4, 3)), currentFloor.PosFromCoord(new Vector2(3, 2)), currentFloor.PosFromCoord(new Vector2(5, 4)) };
         units[0].manager.transform.parent = transitionParent;
@@ -550,6 +558,7 @@ public class FloorManager : MonoBehaviour
             timer += Time.deltaTime;
         }
         
+// Endlessly falling
         cavityWait = true;
 // Give equipment
         if (floorSequence.activePacket.packetType == FloorPacket.PacketType.I) {
@@ -571,6 +580,7 @@ public class FloorManager : MonoBehaviour
             timer += Time.deltaTime;
         }
 
+        transitionParent.transform.position = Vector3.zero;
         cavityText.SetBool("Active", false);
 
         if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BOSS) {
@@ -640,6 +650,7 @@ public class FloorManager : MonoBehaviour
             yield return null;
             timer += Time.deltaTime;
         }
+        
         timer = 0;
         Vector3 prevPos = scenario.player.nail.transform.position;
         while (timer < transitionDur * 10) {
