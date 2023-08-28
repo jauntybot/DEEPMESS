@@ -29,15 +29,17 @@ public class FloorManager : MonoBehaviour
     public static float sqrSize;
 
 
-    [Header("Floor Transitioning")]
     [HideInInspector] public BetweenFloorManager betweenFloor;
+    [Header("Floor Transitioning")]
     public Transform transitionParent;
     public float floorOffset, transitionDur, unitDropDur;
     public AnimationCurve dropCurve;
     public bool transitioning, peeking;
+    bool cavityWait = false;
     [SerializeField] ParallaxImageScroll parallax;
     public DescentPreviewManager previewManager;
     [SerializeField] Animator cavityText;
+    [SerializeField] List<EquipmentData> cavityEquip;
    
     [Header("Grid Viz")]
     public Color playerColor;
@@ -271,7 +273,7 @@ public class FloorManager : MonoBehaviour
             // }
             // else
 
-// Check if at the end of packet
+// Check if at the end of packet / if there was a sub floor generated, if not packet is done
             if (floors.Count - 1 > currentFloor.index) {
 // Generate next floor if still mid packet
                 if (!floorSequence.ThresholdCheck() || floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) {
@@ -548,18 +550,25 @@ public class FloorManager : MonoBehaviour
             timer += Time.deltaTime;
         }
         
-        
+        cavityWait = true;
+// Give equipment
+        if (floorSequence.activePacket.packetType == FloorPacket.PacketType.I) {
+            scenario.player.units[0].ui.UpdateLoadout(cavityEquip[0]);
+
+        } else if (floorSequence.activePacket.packetType == FloorPacket.PacketType.II) {
+            scenario.player.units[1].ui.UpdateLoadout(cavityEquip[1]);
+        }
+
         cavityText.gameObject.SetActive(true);
         cavityText.SetBool("Active", true);
 
         timer = 0;
-        while(true) {
+        while(cavityWait) {
             yield return null;
             parallax.ScrollParallax(-1);
             transitionParent.transform.position = new Vector3(0, Mathf.Sin(timer), 0);
 
             timer += Time.deltaTime;
-            if (Input.GetMouseButtonDown(0)) break;
         }
 
         cavityText.SetBool("Active", false);
@@ -599,6 +608,10 @@ public class FloorManager : MonoBehaviour
                 yield return null;
             }
         }
+    }
+
+    public void ExitCavity() {
+        cavityWait = false;
     }
 
     public IEnumerator EndSequenceAnimation(GameObject arm) {

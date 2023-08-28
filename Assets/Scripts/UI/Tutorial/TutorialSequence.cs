@@ -199,14 +199,13 @@ public class TutorialSequence : MonoBehaviour
 
         while (timer < 0.25f) {
             tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(prevPos, prevPos + new Vector3(680, 0), timer/0.25f);
-            Debug.Log(prevPos + " " + tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition);
             timer += Time.deltaTime;
             yield return null;
         }
         tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = prevPos + new Vector3(680, 0);
               
        
-        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.equipButtons[1].gameObject.transform);
+        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.equipButtons[0].gameObject.transform);
         highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
         highlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
         PlayerUnit pu = (PlayerUnit)scenario.player.units[0];
@@ -302,7 +301,7 @@ public class TutorialSequence : MonoBehaviour
         }
 
         tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = prevPos + new Vector3(680, 0);
-        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.equipButtons[1].gameObject.transform);
+        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.equipButtons[0].gameObject.transform);
         highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
         highlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
 
@@ -344,8 +343,8 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "EQUIPMENT";
-        body = "Each Slag has equipment that can be used one time per floor. The equipment can give you a big advantage against the enemies." + '\n';
-        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ anvilAnim, bigThrowAnim, shieldAnim });
+        body = "You will recieve equipment after each cavity. Equipment can be used once per floor. Use Pony's Shield equipment." + '\n';
+        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ shieldAnim });
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -353,6 +352,19 @@ public class TutorialSequence : MonoBehaviour
 
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
+
+        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.equipButtons[0].gameObject.transform);
+        highlight.transform.parent.transform.parent.transform.parent.transform.parent.gameObject.SetActive(true);
+        highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
+        highlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
+        highlight.transform.parent.transform.parent.transform.parent.transform.parent.gameObject.SetActive(false);
+        StartCoroutine(OnShieldUse(highlight));
+    }
+
+    public IEnumerator OnShieldUse(GameObject highlight) {
+        Debug.Log(floorManager.currentFloor);
+        while (!scenario.player.units[2].usedEquip && floorManager.currentFloor.index == 2) yield return null;
+        Destroy(highlight);
 
     }
 
@@ -631,11 +643,11 @@ public class TutorialSequence : MonoBehaviour
             break;
             case 2:
                 Coroutine co = floorManager.StartCoroutine(floorManager.TransitionPackets());
+                PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
                 yield return new WaitForSecondsRealtime(2f);
                 yield return StartCoroutine(TutorialEnd());
                 StartCoroutine(ScatterTurn());
                 yield return co;
-                PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
             break;
         }
         descents++;

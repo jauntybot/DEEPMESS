@@ -175,6 +175,9 @@ public class UnitUI : MonoBehaviour
         } 
 // Add new equipment to unit
         unit.equipment.Insert(1, equip);
+        PlayerUnit pu = (PlayerUnit)unit;
+        overview.equipment.enabled = true;
+        overview.equipment.sprite = equip.icon;
         UpdateEquipmentButtons(); 
         foreach (EquipmentButton button in equipButtons) button.gameObject.GetComponentInChildren<Button>().interactable = true;
 

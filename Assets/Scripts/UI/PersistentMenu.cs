@@ -45,6 +45,7 @@ public class PersistentMenu : MonoBehaviour
     }
 
     void UpdateRefs(Scene scene = default, LoadSceneMode mode = default) {
+        Debug.Log("scene loaded");
         battleCanvas = null;
         if (UIManager.instance) 
             battleCanvas = UIManager.instance.gameObject;
@@ -58,10 +59,10 @@ public class PersistentMenu : MonoBehaviour
 
         if (TutorialSequence.instance)
             musicController.SwitchMusicState(MusicController.MusicState.Tutorial, false);
-        else if (UIManager.instance) 
+        else if (ScenarioManager.instance) 
             musicController.SwitchMusicState(MusicController.MusicState.Game, false);
         else
-            musicController.SwitchMusicState(MusicController.MusicState.MainMenu, true);
+            musicController.SwitchMusicState(MusicController.MusicState.MainMenu, false);
 
         if (TooltipSystem.instance)
             toolTips = TooltipSystem.instance;

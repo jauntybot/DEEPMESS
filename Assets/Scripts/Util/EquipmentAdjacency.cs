@@ -49,6 +49,7 @@ public class EquipmentAdjacency : MonoBehaviour
 // X Axis adjacency
                 for (int x = -1; x < 2; x+=2) {
                     Vector2 coord = new Vector2(current.x + x, current.y);
+                    if (coord.x < 0 || coord.x > 7 || coord.y < 0 || coord.y >7) continue;
                     if (!_coords.Contains(coord)) {
                         bool valid = true;
                         if (data is HammerData || data is AttackData) valid = false;
@@ -90,6 +91,7 @@ public class EquipmentAdjacency : MonoBehaviour
 // Y Axis adjacency
                 for (int y = -1; y < 2; y+=2) {    
                     Vector2 coord = new Vector2(current.x, current.y + y);
+                    if (coord.x < 0 || coord.x > 7 || coord.y < 0 || coord.y >7) continue;
                     if (!_coords.Contains(coord)) {
                         bool valid = true;
                         if (data is HammerData || data is AttackData) valid = false;

@@ -24,7 +24,10 @@ public class UnitOverview : MonoBehaviour
 
         overviewPanel.transform.SetParent(overviewLayoutParent);
         mini.sprite = u.gfx[0].sprite;
-        equipment.sprite = unit.equipment[1].icon;
+        if (unit.equipment.Count > 1) {
+            equipment.enabled = true;
+            equipment.sprite = unit.equipment[1].icon;
+        }
 
         InstantiateMaxPips();
         UpdateOverview(u.hpCurrent);

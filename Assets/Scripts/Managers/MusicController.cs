@@ -9,8 +9,9 @@ public class MusicController : MonoBehaviour
     
     public enum MusicState { MainMenu, Tutorial, Game };
     public MusicState currentState;
+    public bool playing;
     [SerializeField] List<Track> musicTracks;
-    List<Track> stateTracks = new List<Track>();
+    [SerializeField] List<Track> stateTracks = new List<Track>();
     [SerializeField] SFX recordScratch;
     [SerializeField] AnimationCurve fadeOut;
     int stateTrackIndex;
@@ -20,10 +21,9 @@ public class MusicController : MonoBehaviour
     // [SerializeField] private TMP_Text trackTextUI;
     
     AudioSource musicAudioSource;
-    Coroutine playing = null;
+    Coroutine playingCo = null;
 
-    void Awake()
-    {
+    void Awake() {
         musicAudioSource = GetComponent<AudioSource>();
     }
 
@@ -48,8 +48,10 @@ public class MusicController : MonoBehaviour
         foreach(Track t in musicTracks) {
             if (t.state == targetState) {
                 _stateTracks.Add(t);
+                Debug.Log(targetState + " " + t.name + " " + t.state);
             }
         }
+        stateTracks = new();
         stateTracks = _stateTracks;
 
         UpdateTrack(0);
@@ -57,34 +59,30 @@ public class MusicController : MonoBehaviour
 
     void UpdateTrack(int index = 0)
     {
+        musicAudioSource.Stop();
+        playing = false;
         musicAudioSource.clip = stateTracks[index].trackAudioClip;
         //trackTextUI.text = audioTracks[index].name;
         
         PlayAudio();
     }
 
-    public void PlayAudio()
-    {
-        StopAllCoroutines();
+    public void PlayAudio() {
+        Debug.Log("Playing: " + musicAudioSource.clip.name);
         musicAudioSource.Play();
-        playing = StartCoroutine(EndOfTrack());
+        playingCo = StartCoroutine(EndOfTrack());
     }
 
     IEnumerator EndOfTrack() {
-        while (musicAudioSource.time < musicAudioSource.clip.length) {
+        playing = true;
+        while (musicAudioSource.time < musicAudioSource.clip.length && playing) {
             yield return null;
         }
         SkipForward();
     }
-    
-    public void PauseAudio()
-    {
-        
-        musicAudioSource.Pause();
-    }
-    
-    public IEnumerator StopAudio(bool fade)
-    {      
+
+    public IEnumerator StopAudio(bool fade) {      
+        playing = false;
         float prevVol = musicAudioSource.volume;
         if (fade) {
             float timer = 0;
@@ -111,16 +109,12 @@ public class MusicController : MonoBehaviour
     //     UpdateTrack(trackIndex);
     // }
 
-    public void SkipForward()
-    {
-        StopAllCoroutines();
-        if (stateTrackIndex < stateTracks.Count - 1)
-        {
-            stateTrackIndex++;
-        }
-        else {
+    public void SkipForward() {    
+        if (stateTrackIndex < stateTracks.Count - 1)     
+            stateTrackIndex++;      
+        else 
             stateTrackIndex = 0;
-        }
+        
         UpdateTrack(stateTrackIndex);
     }
 

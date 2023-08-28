@@ -30,6 +30,9 @@ public class EnemyManager : UnitManager {
     public virtual Unit SpawnBossUnit(Vector2 coord, Unit unit) {
         Unit u = SpawnUnit(coord, unit);
         
+        units.Remove(u);
+        units.Insert(0, u);
+
         u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
         return u;
     }
