@@ -29,6 +29,8 @@ public class TutorialSequence : MonoBehaviour
     bool cont = false;
     List<Unit> playerUnits = new List<Unit>();
 
+    [SerializeField] Color keyColor;
+
     int descents;
 
     [Header("GIF Serialization")]
@@ -49,8 +51,6 @@ public class TutorialSequence : MonoBehaviour
         scenario = manager;
         floorManager = scenario.floorManager;
 
-        for (int i = 0; i <= scenario.player.units.Count - 1; i++)
-            playerUnits.Add(scenario.player.units[i]);
 
         floorManager.floorSequence.currentThreshold = FloorPacket.PacketType.Tutorial;    
         floorManager.floorSequence.floorsTutorial = 3;
@@ -63,7 +63,9 @@ public class TutorialSequence : MonoBehaviour
     }
     
     public IEnumerator Tutorial() {
-        scenario.player.units[1].ui.overview.gameObject.SetActive(false); scenario.player.units[2].ui.overview.gameObject.SetActive(false);
+        for (int i = 0; i <= scenario.player.units.Count - 1; i++)
+            playerUnits.Add(scenario.player.units[i]);
+        //scenario.player.units[1].ui.overview.gameObject.SetActive(false); scenario.player.units[2].ui.overview.gameObject.SetActive(false);
         scenario.player.units.RemoveAt(1); scenario.player.units.RemoveAt(1);
 
 
@@ -141,7 +143,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "";
-        body = "We are inside the top layers of God's head. Our purpose is buried deep here. We need you to dig." + '\n';
+        body = "We are inside the top layers of <b>" + ColorToRichText("GOD'S", keyColor) + "</b> head. Our <b>" + ColorToRichText("PURPOSE", keyColor) + "</b> is buried deep here. We need you to <b>" + ColorToRichText("DIG", keyColor) + "</b>." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -150,7 +152,7 @@ public class TutorialSequence : MonoBehaviour
         }
         
         header = "";
-        body = "We will send you a Slag unit to control during our excavation.";
+        body = "We will send you a <b>" + ColorToRichText("SLAG", keyColor) + "</b> unit to control during our excavation.";
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -163,7 +165,7 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator ExplainMovement() {
         screenFade.gameObject.SetActive(true);
 
-        body = "Slags can move around the floor. Select the Slag and move it. Line it up with the Nail." + '\n';
+        body = "<b>" + ColorToRichText("SLAGS", keyColor) + "</b> can move around the floor. Select the Slag and move it. <b>" + ColorToRichText("LINE IT UP WITH THE NAIL.", keyColor) + "</b>" + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -180,7 +182,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "HITTING THE NAIL";
-        body = "The Hammer is our main tool. Throw it in a straight line to strike a target, then select a Slag for the Hammer to bounce back to. Strike the Nail." + '\n';
+        body = "The <b>" + ColorToRichText("HAMMER", keyColor) + "</b> is our main tool. Select it in the bottom left corner of your screen and throw it in a <b>" + ColorToRichText("STRAIGHT LINE", keyColor) + "</b> to strike a target. Then select a <b>" + ColorToRichText("SLAG", keyColor) + "</b> for the Hammer to bounce back to. <b>" + ColorToRichText("STRIKE THE NAIL", keyColor) + "</b>" + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ hittingTheNailAnim });
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -215,7 +217,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
         
         header = "DIGGING DOWN";
-        body = "Striking the Nail with the Hammer destroys the floor. All units crash below. We progress." + '\n';
+        body = "Striking the <b>" + ColorToRichText("NAIL", keyColor) + "</b> with the <b>" + ColorToRichText("HAMMER", keyColor) + "</b> destroys the floor. <b>" + ColorToRichText("ALL UNITS CRASH BELOW", keyColor) + "</b>. We progress." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -226,16 +228,17 @@ public class TutorialSequence : MonoBehaviour
         
     }
 
-    public IEnumerator TutorialEnd() {
+    public IEnumerator NailPriming() {
         screenFade.gameObject.SetActive(true);
 
-        header = "";
-        body = "We need to excavate to the 15th floor. You are ready. Dig deep. Make mess.";
-        tooltip.SetText(body, header, clickToSkip:true);
+        header = "NAIL PRIMING";
+        body = "We need time to get the <b>" + ColorToRichText("NAIL", keyColor) + "</b> ready for another descent. When the Nail is not primed, <b>" + ColorToRichText("IT CANNOT BE HIT BY THE HAMMER", keyColor) + "</b>" + '\n';
+        tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
-            yield return new WaitForSecondsRealtime(1 / Util.fps);
+            yield return new WaitForSecondsRealtime(1/Util.fps);
         }
+
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
@@ -259,26 +262,12 @@ public class TutorialSequence : MonoBehaviour
         
     }
 
-    public IEnumerator NailPriming() {
-        screenFade.gameObject.SetActive(true);
-
-        header = "NAIL PRIMING";
-        body = "We need time to get the Nail ready for another descent. When the Nail is not primed, it cannot be hit by the Hammer." + '\n';
-        tooltip.SetText(body, header, true);
-
-        while (!tooltip.skip) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-        }
-
-        screenFade.SetTrigger("FadeOut");
-        tooltip.transform.GetChild(0).gameObject.SetActive(false);
-    }
 
     public IEnumerator HittingAnEnemy() {
         screenFade.gameObject.SetActive(true);
 
         header = "HITTING ENEMIES";
-        body = "The Hammer can be bounced between Slags. Strike the enemy and select the other Slag to bounce it to. Then strike the enemy with that Slag." + '\n';
+        body = "The <b>" + ColorToRichText("HAMMER", keyColor) + "</b> can be <b>" + ColorToRichText("BOUNCED BETWEEN SLAGS", keyColor) + "</b>. Strike the enemy and select the <b>" + ColorToRichText("OTHER SLAG", keyColor) + "</b> to bounce it to. If no enemies remain on the floor, a descent is forced." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ hittingEnemiesAnim });
 
         while (!tooltip.skip) {
@@ -322,7 +311,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "PLAYER TURN";
-        body = "Slags can move and take an action on each turn. Descending down to the next floor starts a new turn." + '\n';
+        body = "<b>" + ColorToRichText("SLAGS", keyColor) + "</b> can move and take an action on each turn. <b>" + ColorToRichText("DESCENDING", keyColor) + "</b> to the next floor <b>" + ColorToRichText("STARTS A NEW TURN", keyColor) + "</b>." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -338,7 +327,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "EQUIPMENT";
-        body = "You will recieve equipment after each cavity. Equipment can be used once per floor. Use Pony's Shield equipment." + '\n';
+        body = "Your first equipment is the <b>" + ColorToRichText("SHIELD", keyColor) + "</b>. Erect a Shield around any <b>" + ColorToRichText("SLAG", keyColor) + "</b> or the <b>" + ColorToRichText("NAIL", keyColor) + "</b>, protecting it from damage. Equipment can be used <b>" + ColorToRichText("ONCE PER FLOOR", keyColor) + "</b>." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ shieldAnim });
 
         while (!tooltip.skip) {
@@ -362,12 +351,11 @@ public class TutorialSequence : MonoBehaviour
         Destroy(highlight);
 
     }
-
     public IEnumerator EnemyBehavior() {
         screenFade.gameObject.SetActive(true);
 
         header = "ENEMY TURN";
-        body = "Enemy units can move and attack on their turn. These enemies can move 2 tiles and strike anything next to them." + '\n';
+        body = "<b>" + ColorToRichText("ENEMY UNITS", keyColor) + "</b> can move and attack on their turn. These enemies can <b>" + ColorToRichText("MOVE 2 TILES", keyColor) + "</b> and <b>" + ColorToRichText("STRIKE ANYTHING ADJACENT", keyColor) + "</b>." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -380,6 +368,22 @@ public class TutorialSequence : MonoBehaviour
         CheckAllDone();
     }
 
+    public IEnumerator TutorialEnd() {
+        screenFade.gameObject.SetActive(true);
+
+        header = "";
+        body = "You will unlock more equipment as you breach cavities on our descent. We need to get through to the <b>" + ColorToRichText("15th FLOOR", keyColor) + "</b>. It is time. <b>" + ColorToRichText("DIG DEEP. MAKE MESS.", keyColor) + "</b>";
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1 / Util.fps);
+        }
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+
+// Gameplay optional - tutorial specific - tooltips
     public IEnumerator ScatterTurn() {
         while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
             yield return null;
@@ -388,7 +392,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "ENEMY SCATTER";
-        body = "When we land on a floor, enemies scatter but do not attack." + '\n';
+        body = "When we land on a floor, <b>" + ColorToRichText("ENEMIES SCATTER", keyColor) + "</b> but do not attack." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -412,7 +416,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "NAIL DAMAGE";
-        body = "We deal damage back to enemies that strike the Nail." + '\n';
+        body = "We deal damage back to enemies that <b>" + ColorToRichText("ATTACK THE NAIL", keyColor) + "</b>." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -428,8 +432,8 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator PeekButton() {
         
         Destroy(destroyHighlight);
-        header = "PEEK BUTTON";
-        body = "The Peek button lets you preview the next floor. You can see where enemies and other hazards are located." + '\n';
+        header = "PEEK AHEAD";
+        body = "The <b>" + ColorToRichText("PEEK BUTTON", keyColor) + "</b> [space] lets you preview the next floor. You can see where enemies and other hazards are located." + '\n';
         brTooltip.SetText(body, header, true);
 
         while (!brTooltip.skip) {
@@ -445,7 +449,7 @@ public class TutorialSequence : MonoBehaviour
         bloodEncountered = true;
 
         header = "BLOOD TILES";
-        body = "Blood tiles prevent Slags from using the Hammer or equipment while the Slag is standing on it." + '\n';
+        body = "Blood tiles <b>" + ColorToRichText("PREVENT SLAGS", keyColor) + "</b> from using the <b>" + ColorToRichText("HAMMER", keyColor) + "</b> or <b>" + ColorToRichText("EQUIPMENT", keyColor) + "</b> while standing in it. View tile information in the top right when hovering over a tile" + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -461,7 +465,7 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator UndoTutorial() {
         
         header = "UNDO BUTTON";
-        body = "You can undo any Slags' movement. Once any Slag performs an action, you cannot undo any previous moves." + '\n';
+        body = "You can <b>" + ColorToRichText("UNDO", keyColor) + "</b> [z] any <b>" + ColorToRichText("SLAG'S MOVEMENT", keyColor) + "</b>. Once any Slag performs an action, you cannot undo any <b>" + ColorToRichText("PREVIOUS MOVES", keyColor) + "</b>." + '\n';
         brTooltip.SetText(body, header, true);
 
         while (!brTooltip.skip) {
@@ -486,7 +490,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "DESCENT DAMAGE";
-        body = "Slags and enemies crush anything they land on. They take damage as a result." + '\n';
+        body = "<b>" + ColorToRichText("SLAGS", keyColor) + "</b> and <b>" + ColorToRichText("ENEMIES CRUSH", keyColor) + "</b> anything they land on. They take damage as a result." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -515,7 +519,7 @@ public class TutorialSequence : MonoBehaviour
                 floorManager.currentFloor.slagSpawns = new();
                 yield return StartCoroutine(floorManager.DescendUnits(toDescend));
                 scenario.player.units.Insert(1, playerUnits[1]);
-                scenario.player.units[1].ui.overview.gameObject.SetActive(true);
+                //scenario.player.units[1].ui.overview.gameObject.SetActive(true);
                 floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
                 floorManager.currentFloor.slagSpawns.Add(floorManager.currentFloor.lvlDef.initSpawns.Find(s => s.asset.prefab.GetComponent<PlayerUnit>()).coord);
                 yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[1] }));
@@ -555,7 +559,7 @@ public class TutorialSequence : MonoBehaviour
                 floorManager.currentFloor.slagSpawns = new List<Vector2>{ spawn };
                 
                 scenario.player.units.Insert(2, playerUnits[2]);
-                scenario.player.units[2].ui.overview.gameObject.SetActive(true);
+                //scenario.player.units[2].ui.overview.gameObject.SetActive(true);
                 floorManager.currentFloor.RemoveElement(scenario.player.units[2]);
                 yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[2] }));
                 yield return new WaitForSecondsRealtime(0.15f);
@@ -606,5 +610,8 @@ public class TutorialSequence : MonoBehaviour
             Debug.Log("Tutorial finished");
     }
 
+    public static string ColorToRichText(string str, Color color, string font = "") {
+        return "<color=#" + ColorUtility.ToHtmlStringRGB(color) + ">" + str + "</color>";
+    }
 
 }

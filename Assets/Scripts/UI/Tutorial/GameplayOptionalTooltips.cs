@@ -9,7 +9,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
     public static GameplayOptionalTooltips instance;
     ScenarioManager scenario;
     [HideInInspector] public string header, body;
-
+    [SerializeField] Color keyColor;
     public DialogueTooltip tooltip;
     public Animator screenFade;
     [SerializeField] RuntimeAnimatorController anvilAnim, bigThrowAnim, basophicAnim, reviveAnim, bulbAnim;
@@ -42,7 +42,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "BULBS";
-        body = "Bulbs are consumable items that your Slags can pick up. Each Slag can hold 1 bulb that can be used or thrown as a free action" + '\n';
+        body = "<b>" + ColorToRichText("BULBS", keyColor) + "</b> are consumable items that <b>" + ColorToRichText("SLAGS", keyColor) + "</b> can pick up. Each Slag can hold 1 bulb that can be <b>" + ColorToRichText("THROWN", keyColor) + "</b> as a <b>" + ColorToRichText("FREE ACTION", keyColor) + "</b>." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ bulbAnim });
 
         while (!tooltip.skip) {
@@ -70,16 +70,14 @@ public class GameplayOptionalTooltips : MonoBehaviour
      public IEnumerator DeathRevivTut() {
         deathReviveEncountered = true;
 
-        Debug.Log("Death revive");
         while (scenario.currentTurn != ScenarioManager.Turn.Player) {
             yield return null;
         }
         yield return new WaitForSecondsRealtime(0.25f);
-        Debug.Log("start");
         screenFade.gameObject.SetActive(true);
 
         header = "SLAG REVIVE";
-        body = "Slags that have been downed can be revived. Strike the downed Slag with the Hammer to transfuse 1HP from the Nail. The Slag will come back with its move and action refreshed." + '\n';
+        body = "<b>" + ColorToRichText("SLAGS", keyColor) + "</b> that have been downed can be <b>" + ColorToRichText("REVIVED", keyColor) + "</b>. Strike the downed Slag with the <b>" + ColorToRichText("HAMMER", keyColor) + "</b> to <b>" + ColorToRichText("TRANSFUSE 1HP FROM THE NAIL", keyColor) + "</b>." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ reviveAnim });
 
         while (!tooltip.skip) 
@@ -99,7 +97,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "NEW DANGERS";
-        body = "This enemy can explode, dealing damage to all the tiles around it. Hover over enemy portraits to learn more about their abilities." + '\n';
+        body = "This enemy can <b>" + ColorToRichText("EXPLODE", keyColor) + "</b>, dealing damage to <b>" + ColorToRichText("ALL SURROUNDING TILES", keyColor) + "</b>." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ basophicAnim });
 
         while (!tooltip.skip) {
@@ -114,15 +112,17 @@ public class GameplayOptionalTooltips : MonoBehaviour
 
     public IEnumerator Preboss() {
         prebossEncountered = true;
+        Debug.Log("Wait for player turn preboss");
         while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
             yield return null;
         }
+        Debug.Log("Player turn preboss");
         yield return new WaitForSecondsRealtime(0.25f);
         screenFade.gameObject.SetActive(true);
 
         header = "DANGER AHEAD";
-        body = "Uh-oh, sounds like something big is coming..." + '\n';
-        tooltip.SetText(body, header);
+        body = "Uh-oh, sounds like something <b>" + ColorToRichText("BIG", keyColor) + "</b> is coming..." + '\n';
+        tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -141,8 +141,8 @@ public class GameplayOptionalTooltips : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "BIG THREAT";
-        body = "This is the strongest enemy we have faced yet! It can move further than other enemies. When it attacks, it slams down on the floor, causing everything to crash through to the floor below. You will not be able to strike the Nail until we deal with this enemy." + '\n';
-        tooltip.SetText(body, header);
+        body = "This is the <b>" + ColorToRichText("STRONGEST ENEMY", keyColor) + "</b> we have faced yet! It can move further than other enemies. When it attacks, it damages <b>" + ColorToRichText("ALL SURROUNDING TILES", keyColor) + "</b>, causing everything to crash through to the floor below. You will <b>" + ColorToRichText("NOT", keyColor) + "</b> be able to <b>" + ColorToRichText("STRIKE THE NAIL", keyColor) + "</b> until we deal with this enemy." + '\n';
+        tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -152,5 +152,9 @@ public class GameplayOptionalTooltips : MonoBehaviour
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 
+
+    public static string ColorToRichText(string str, Color color) {
+        return "<color=#" + ColorUtility.ToHtmlStringRGB(color) + ">" + str + "</color>";
+    }
 
 }

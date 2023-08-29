@@ -21,12 +21,14 @@ public class DialogueTooltip : Tooltip
         anchor.anchoredPosition = Vector2.zero;
     }
 
-    public override void SetText(string content, string header = "", bool clickToSkip = false,  List<RuntimeAnimatorController> gif = null) {
+    public override void SetText(string content, string header = "", bool skip = false,  List<RuntimeAnimatorController> gif = null) {
         base.SetText(content, header, clickToSkip, gif);
         
         PlaySound(nailSpeak);
-        if (clickToSkip)     
+        if (skip)     
             StartCoroutine(WaitForClick());
+
+        
     }
 
     public IEnumerator WaitForClick() {

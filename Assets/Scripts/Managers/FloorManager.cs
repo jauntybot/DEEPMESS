@@ -30,6 +30,7 @@ public class FloorManager : MonoBehaviour
 
 
     [HideInInspector] public BetweenFloorManager betweenFloor;
+    
     [Header("Floor Transitioning")]
     public Transform transitionParent;
     public float floorOffset, transitionDur, unitDropDur;
@@ -285,6 +286,17 @@ public class FloorManager : MonoBehaviour
                 
                 yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, scen));
                 yield return new WaitForSecondsRealtime(0.25f);
+// Check for tutorial tooltip triggers
+                if (floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
+                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.gpOptional.bulbEncountered)
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.TileBulb());
+                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is EnemyDetonateUnit) != null && !scenario.gpOptional.basophicEncountered)
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Basophic());
+                    if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS && !scenario.gpOptional.prebossEncountered) {
+                        Debug.Log("Preboss");
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Preboss());
+                    }
+                }
 
 // Yield for cascade sequence
                 // if (cascade) {
@@ -297,23 +309,9 @@ public class FloorManager : MonoBehaviour
                 yield return StartCoroutine(DescendUnits(floors[currentFloor.index -1].gridElements, enemy));
 
 // Check for boss spawn
-                if (floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && !bossSpawn) 
+                if (floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && floorSequence.floorsGot >= 2 && !bossSpawn) {
+                    yield return new WaitForSecondsRealtime(0.25f);
                     yield return StartCoroutine(SpawnBoss());
-
-// Check for tutorial tooltip triggers
-                if (floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
-                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.gpOptional.bulbEncountered)
-                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.TileBulb());
-                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is EnemyDetonateUnit) != null && !scenario.gpOptional.basophicEncountered)
-                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Basophic());
-                    if (floorSequence.currentThreshold == FloorPacket.PacketType.III && floorSequence.floorsGot >= floorSequence.floorsIII && !scenario.gpOptional.prebossEncountered) {
-                        Debug.Log("Preboss");
-                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Preboss());
-                    }
-                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is BossUnit) != null && !scenario.gpOptional.bossEncountered) {
-                        Debug.Log("Boss");
-                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Boss());        
-                    }
                 }
 
 
@@ -518,7 +516,7 @@ public class FloorManager : MonoBehaviour
         boss.StoreInGrid(currentFloor);
         fade.AlphaSelf = 1;
 
-
+        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Boss());        
     }
 
 

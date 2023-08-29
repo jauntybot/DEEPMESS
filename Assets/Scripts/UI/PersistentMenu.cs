@@ -45,7 +45,6 @@ public class PersistentMenu : MonoBehaviour
     }
 
     void UpdateRefs(Scene scene = default, LoadSceneMode mode = default) {
-        Debug.Log("scene loaded");
         battleCanvas = null;
         if (UIManager.instance) 
             battleCanvas = UIManager.instance.gameObject;

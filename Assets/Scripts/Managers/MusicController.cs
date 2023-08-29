@@ -48,7 +48,6 @@ public class MusicController : MonoBehaviour
         foreach(Track t in musicTracks) {
             if (t.state == targetState) {
                 _stateTracks.Add(t);
-                Debug.Log(targetState + " " + t.name + " " + t.state);
             }
         }
         stateTracks = new();

@@ -18,10 +18,7 @@ public class Tooltip : MonoBehaviour
 
     [SerializeField] RectTransform rectTransform;
 
-    public virtual void SetText(string content = "", string header = "", bool clickToSkip = false, List<RuntimeAnimatorController> gif = null)
-    {
-        transform.GetChild(0).gameObject.SetActive(true);
-        
+    public virtual void SetText(string content = "", string header = "", bool clickToSkip = false, List<RuntimeAnimatorController> gif = null) {
         if (string.IsNullOrEmpty(header)) 
             headerField.gameObject.SetActive(false);
         else {
@@ -29,9 +26,8 @@ public class Tooltip : MonoBehaviour
             headerField.text = header;
         }
 
-        if (gif == null) {
+        if (gif == null) 
             gifContainer.SetActive(false);
-        }
         else {
             gifContainer.SetActive(true);
             gifAnims[0].runtimeAnimatorController = gif[0];
@@ -46,6 +42,9 @@ public class Tooltip : MonoBehaviour
         }
 
         contentField.text = content;
+        
+        transform.GetChild(0).gameObject.SetActive(true);
+        Canvas.ForceUpdateCanvases();
 
         //limit text width
         //int headerLength = headerField.text.Length;
@@ -53,11 +52,9 @@ public class Tooltip : MonoBehaviour
 
         //layoutElement.enabled = (headerLength > textWrapLimit || contentLength > textWrapLimit) ? true : false;
 
-
     }
 
-    protected virtual void Update()
-    {
+    protected virtual void Update() {
         switch (align) {
             case Alignment.CenterScreen:
                 RectTransform anchor = transform.GetChild(0).GetComponent<RectTransform>();

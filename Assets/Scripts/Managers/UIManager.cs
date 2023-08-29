@@ -88,8 +88,8 @@ public class UIManager : MonoBehaviour
     }
 
     public void LockFloorButtons(bool state) {
-        upButton.GetComponent<Button>().interactable = !state;
-        downButton.GetComponent<Button>().interactable = !state;
+        upButton.GetComponent<Button>().interactable = state ? false : scenario.floorManager.floors.Count - 1 > scenario.floorManager.currentFloor.index;
+        downButton.GetComponent<Button>().interactable = state ? false : scenario.floorManager.floors.Count - 1 > scenario.floorManager.currentFloor.index;
     }
 
     public void LockHUDButtons(bool state) {
