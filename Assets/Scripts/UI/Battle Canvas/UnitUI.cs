@@ -126,8 +126,7 @@ public class UnitUI : MonoBehaviour
             if (unit.equipment[i] is not MoveData) {
                 EquipmentButton b = equipButtons.Find(b => b.data == unit.equipment[i]);
                 if (b == null) {
-                    GameObject prefab = null;
-                    Transform parent = null;
+                    GameObject prefab = null; Transform parent = null; int index = 0;
                     if (unit.equipment[i] is PerFloorEquipmentData) {
                         prefab = perFloorButtonPrefab;
                         parent = equipmentPanel.transform;
@@ -137,11 +136,13 @@ public class UnitUI : MonoBehaviour
                     } else if (unit.equipment[i] is BulbEquipmentData) {
                         prefab = bulbButtonPrefab;
                         parent = equipmentPanel.transform;
+                        index = 1;
                     }
                     EquipmentButton newButt = Instantiate(prefab, parent).GetComponent<EquipmentButton>();
                     newButt.transform.localScale = Vector3.one;
                     newButt.Initialize(this, unit.equipment[i], unit);
                     equipButtons.Add(newButt);
+                    newButt.transform.SetSiblingIndex(index);
                 } else if (b.selected && b.data != unit.selectedEquipment)
                     b.DeselectEquipment();
             }
@@ -175,6 +176,11 @@ public class UnitUI : MonoBehaviour
         } 
 // Add new equipment to unit
         unit.equipment.Insert(1, equip);
+        PlayerUnit pu = (PlayerUnit)unit;
+        if (equip is PerFloorEquipmentData) {
+            overview.equipment.enabled = true;
+            overview.equipment.sprite = equip.icon;
+        }
         UpdateEquipmentButtons(); 
         foreach (EquipmentButton button in equipButtons) button.gameObject.GetComponentInChildren<Button>().interactable = true;
 

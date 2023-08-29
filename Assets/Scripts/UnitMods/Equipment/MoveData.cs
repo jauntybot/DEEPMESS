@@ -32,7 +32,7 @@ public class MoveData : EquipmentData
 
         user.grid.UpdateSelectedCursor(false, Vector2.one * -32);
 
-        if (user is PlayerUnit pu) AddToUndoDict((Unit)user, user.coord);
+        if (user is PlayerUnit pu) AddToUndoDict((Unit)user, target.coord);
         yield return user.StartCoroutine(MoveToCoord((Unit)user, target.coord));
     }
 
@@ -75,10 +75,11 @@ public class MoveData : EquipmentData
         }
         manager.undoableMoves.Add(unit, unit.coord);
         manager.undoOrder.Add(unit);
+
         Tile tile = unit.grid.tiles.Find(s => s.coord == moveTo);
-        if (tile is TileBulb tb && !unit.equipment.Find(e => e is BulbEquipmentData)) {
+        if (tile is TileBulb tb && !unit.equipment.Find(e => e is BulbEquipmentData)) 
             manager.harvestedByMove.Add(unit, tb);
-        }
+        
         UIManager.instance.ToggleUndoButton(true);
     }
 }

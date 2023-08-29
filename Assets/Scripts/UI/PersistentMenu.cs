@@ -58,10 +58,10 @@ public class PersistentMenu : MonoBehaviour
 
         if (TutorialSequence.instance)
             musicController.SwitchMusicState(MusicController.MusicState.Tutorial, false);
-        else if (UIManager.instance) 
+        else if (ScenarioManager.instance) 
             musicController.SwitchMusicState(MusicController.MusicState.Game, false);
         else
-            musicController.SwitchMusicState(MusicController.MusicState.MainMenu, true);
+            musicController.SwitchMusicState(MusicController.MusicState.MainMenu, false);
 
         if (TooltipSystem.instance)
             toolTips = TooltipSystem.instance;
@@ -135,10 +135,6 @@ public class PersistentMenu : MonoBehaviour
                 StartCoroutine(u.TakeDamage(u.hpCurrent-u.hpMax));
             }
         }
-    }
-
-    public void ExitApplication() {
-        Application.Quit();
     }
 
 }

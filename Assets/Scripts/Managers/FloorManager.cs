@@ -29,15 +29,18 @@ public class FloorManager : MonoBehaviour
     public static float sqrSize;
 
 
-    [Header("Floor Transitioning")]
     [HideInInspector] public BetweenFloorManager betweenFloor;
+    
+    [Header("Floor Transitioning")]
     public Transform transitionParent;
     public float floorOffset, transitionDur, unitDropDur;
     public AnimationCurve dropCurve;
     public bool transitioning, peeking;
+    bool cavityWait = false;
     [SerializeField] ParallaxImageScroll parallax;
     public DescentPreviewManager previewManager;
     [SerializeField] Animator cavityText;
+    [SerializeField] List<EquipmentData> cavityEquip;
    
     [Header("Grid Viz")]
     public Color playerColor;
@@ -195,7 +198,7 @@ public class FloorManager : MonoBehaviour
         if (down && currentFloor.index-1 >= 0) floors[currentFloor.index-1].gameObject.SetActive(false);
         if (toFloor) currentFloor = toFloor;
         if (uiManager.gameObject.activeSelf)
-            uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index + 1 - (TutorialSequence.instance != null ? -3 : 0));
+            uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index + 1 - (TutorialSequence.instance != null ? 3 : 0));
 
     }
     
@@ -271,12 +274,11 @@ public class FloorManager : MonoBehaviour
             // }
             // else
 
-// Check if at the end of packet
+// Check if at the end of packet / if there was a sub floor generated, if not packet is done
             if (floors.Count - 1 > currentFloor.index) {
 // Generate next floor if still mid packet
                 if (!floorSequence.ThresholdCheck() || floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) {
-                    GenerateFloor(); 
-                    
+                    GenerateFloor();       
                 }
 
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
@@ -284,6 +286,17 @@ public class FloorManager : MonoBehaviour
                 
                 yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, scen));
                 yield return new WaitForSecondsRealtime(0.25f);
+// Check for tutorial tooltip triggers
+                if (floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
+                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.gpOptional.bulbEncountered)
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.TileBulb());
+                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is EnemyDetonateUnit) != null && !scenario.gpOptional.basophicEncountered)
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Basophic());
+                    if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS && !scenario.gpOptional.prebossEncountered) {
+                        Debug.Log("Preboss");
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Preboss());
+                    }
+                }
 
 // Yield for cascade sequence
                 // if (cascade) {
@@ -296,15 +309,9 @@ public class FloorManager : MonoBehaviour
                 yield return StartCoroutine(DescendUnits(floors[currentFloor.index -1].gridElements, enemy));
 
 // Check for boss spawn
-                if (floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && !bossSpawn) 
+                if (floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && floorSequence.floorsGot >= 2 && !bossSpawn) {
+                    yield return new WaitForSecondsRealtime(0.25f);
                     yield return StartCoroutine(SpawnBoss());
-
-// Check for tutorial tooltip triggers
-                if (scenario.tutorial != null && floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
-                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.tutorial.bulbEncountered)
-                        scenario.tutorial.StartCoroutine(scenario.tutorial.TileBulb());
-                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is EnemyDetonateUnit) != null && !scenario.tutorial.basophicEncountered)
-                        scenario.tutorial.StartCoroutine(scenario.tutorial.Basophic());
                 }
 
 
@@ -509,7 +516,7 @@ public class FloorManager : MonoBehaviour
         boss.StoreInGrid(currentFloor);
         fade.AlphaSelf = 1;
 
-
+        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Boss());        
     }
 
 
@@ -531,6 +538,7 @@ public class FloorManager : MonoBehaviour
                 cos.RemoveAt(i);
         }
         
+// Lerp units into screen
         List<Unit> units = new List<Unit> { scenario.player.units[0], scenario.player.units[1], scenario.player.units[2], scenario.player.units[3] };
         List<Vector2> to = new List<Vector2> { currentFloor.PosFromCoord(new Vector2(3, 3)), currentFloor.PosFromCoord(new Vector2(4, 3)), currentFloor.PosFromCoord(new Vector2(3, 2)), currentFloor.PosFromCoord(new Vector2(5, 4)) };
         units[0].manager.transform.parent = transitionParent;
@@ -548,20 +556,29 @@ public class FloorManager : MonoBehaviour
             timer += Time.deltaTime;
         }
         
-        
+// Endlessly falling
+        cavityWait = true;
+// Give equipment
+        if (floorSequence.activePacket.packetType == FloorPacket.PacketType.I) {
+            scenario.player.units[0].ui.UpdateLoadout(cavityEquip[0]);
+
+        } else if (floorSequence.activePacket.packetType == FloorPacket.PacketType.II) {
+            scenario.player.units[1].ui.UpdateLoadout(cavityEquip[1]);
+        }
+
         cavityText.gameObject.SetActive(true);
         cavityText.SetBool("Active", true);
 
         timer = 0;
-        while(true) {
+        while(cavityWait) {
             yield return null;
             parallax.ScrollParallax(-1);
             transitionParent.transform.position = new Vector3(0, Mathf.Sin(timer), 0);
 
             timer += Time.deltaTime;
-            if (Input.GetMouseButtonDown(0)) break;
         }
 
+        transitionParent.transform.position = Vector3.zero;
         cavityText.SetBool("Active", false);
 
         if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BOSS) {
@@ -601,6 +618,10 @@ public class FloorManager : MonoBehaviour
         }
     }
 
+    public void ExitCavity() {
+        cavityWait = false;
+    }
+
     public IEnumerator EndSequenceAnimation(GameObject arm) {
 
         // Local params for animation
@@ -627,6 +648,7 @@ public class FloorManager : MonoBehaviour
             yield return null;
             timer += Time.deltaTime;
         }
+        
         timer = 0;
         Vector3 prevPos = scenario.player.nail.transform.position;
         while (timer < transitionDur * 10) {

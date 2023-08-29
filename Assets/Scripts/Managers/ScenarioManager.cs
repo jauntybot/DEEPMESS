@@ -23,6 +23,7 @@ public class ScenarioManager : MonoBehaviour
 // Instanced refs
     [HideInInspector] public UIManager uiManager;
     [HideInInspector] public TutorialSequence tutorial;
+    [HideInInspector] public GameplayOptionalTooltips gpOptional;
     [HideInInspector] public FloorManager floorManager;
     [SerializeField] string resetSceneString;
     public EnemyManager currentEnemy;
@@ -45,8 +46,7 @@ public class ScenarioManager : MonoBehaviour
         if (UIManager.instance)
             uiManager = UIManager.instance;
 
-        if (FloorManager.instance) 
-        {
+        if (FloorManager.instance) {
             floorManager = FloorManager.instance;
             yield return StartCoroutine(floorManager.Init());
             if (TutorialSequence.instance) {
@@ -65,6 +65,11 @@ public class ScenarioManager : MonoBehaviour
         runDataTracker.Init(this);
     
         yield return StartCoroutine(player.Initialize(floorManager.currentFloor));
+
+        if (GameplayOptionalTooltips.instance) {
+            gpOptional = GameplayOptionalTooltips.instance;
+            gpOptional.Initialize();
+        }
 
         StartCoroutine(FirstTurn());
     }

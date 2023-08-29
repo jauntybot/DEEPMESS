@@ -419,17 +419,16 @@ public class PlayerManager : UnitManager {
     }
 
     public void UndoMove() {
-        if (scenario.tutorial != null && !scenario.tutorial.undoEncountered && floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
-            scenario.tutorial.StartCoroutine(scenario.tutorial.UndoTutorial());
-            return;
-        }
-
-        if (selectedUnit)
-            DeselectUnit();
-        foreach (Unit u in units) 
-            u.UpdateAction();
-
         if (undoableMoves.Count > 0 && undoOrder.Count > 0) {
+            if (scenario.tutorial != null && !scenario.tutorial.undoEncountered && floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
+                scenario.tutorial.StartCoroutine(scenario.tutorial.UndoTutorial());
+                return;
+            }
+
+            if (selectedUnit)
+                DeselectUnit();
+            foreach (Unit u in units) 
+                u.UpdateAction();
             Unit lastMoved = undoOrder[undoOrder.Count - 1];
             if (harvestedByMove.ContainsKey(lastMoved)) {
                 TileBulb harvested = (TileBulb)harvestedByMove[lastMoved];
@@ -448,7 +447,7 @@ public class PlayerManager : UnitManager {
             undoableMoves.Remove(lastMoved);
             UIManager.instance.ToggleUndoButton(undoOrder.Count > 0);
 
-        } else if ((undoableMoves.Count > 0 && undoOrder.Count == 0) ||(undoableMoves.Count == 0 && undoOrder.Count > 0)) {
+        } else {
             undoOrder = new List<Unit>();
             undoableMoves = new Dictionary<Unit, Vector2>();
             harvestedByMove = new Dictionary<Unit, GridElement>();

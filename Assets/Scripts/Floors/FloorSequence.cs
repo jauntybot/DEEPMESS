@@ -14,7 +14,7 @@ public class FloorSequence : ScriptableObject {
     public int floorsI, floorsII, floorsIII;
     public GameObject bossPrefab;
     public FloorPacket.PacketType currentThreshold;
-    [SerializeField] int floorsGot = 0;
+    public int floorsGot = 0;
 
     public void Init() {
         localPackets = new List<FloorPacket>();

@@ -34,13 +34,13 @@ public class HammerData : EquipmentData
                 bool remove = false;
                 foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(validCoords[i])) {
                     occupied = true;
+                    Tile tile = user.grid.tiles.Find(sqr => sqr.coord == ge.coord);
                     if (ge is PlayerUnit u) {
-                        if (u.conditions.Contains(Unit.Status.Disabled)) 
+                        if (u.conditions.Contains(Unit.Status.Disabled) && tile.tileType == Tile.TileType.Bile) 
                             remove = true;
                     } else {
                         foreach(GridElement target in targetTypes) {
                             if (ge.GetType() == target.GetType()) {
-                                Tile tile = user.grid.tiles.Find(sqr => sqr.coord == ge.coord);
                                 if (ge is Nail n) {
                                     if (n.nailState == Nail.NailState.Primed)
                                         remove = false;
