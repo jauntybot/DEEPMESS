@@ -88,27 +88,27 @@ public class FloorSequence : ScriptableObject {
         return false;
     }
 
-    public FloorDefinition GetFloor(bool ordered = false) {
+    public FloorDefinition GetFloor() {
         FloorPacket.PacketType prevType = currentThreshold;
         ThresholdCheck();
 
         if (activePacket.packetType != currentThreshold || activePacket.floors.Count == 0) {
             StartPacket(currentThreshold);
             if (prevType == FloorPacket.PacketType.BOSS && currentThreshold == FloorPacket.PacketType.BOSS) {
-                int index = ordered ? 0 : Random.Range(0, activePacket.firstFloors.Count-1);
+                int index = activePacket.inOrder ? 0 : Random.Range(0, activePacket.firstFloors.Count-1);
                     FloorDefinition floor = activePacket.floors[index];
                     activePacket.floors.Remove(floor);
                     floorsGot += 1;
                     return floor;
             } else {
-                    int index = ordered ? 0 : Random.Range(0, activePacket.firstFloors.Count-1);
+                    int index = activePacket.inOrder ? 0 : Random.Range(0, activePacket.firstFloors.Count-1);
                     FloorDefinition firstFloor = activePacket.firstFloors[index];
                     activePacket.firstFloors.Remove(firstFloor);
                     floorsGot += 1;
                     return firstFloor;
             }
         } else {
-            int index = ordered ? 0 : Random.Range(0, activePacket.floors.Count-1);
+            int index = activePacket.inOrder ? 0 : Random.Range(0, activePacket.floors.Count-1);
             FloorDefinition floor = activePacket.floors[index];
             activePacket.floors.Remove(floor);
             floorsGot += 1;
