@@ -40,7 +40,7 @@ public class FloorManager : MonoBehaviour
     [SerializeField] ParallaxImageScroll parallax;
     public DescentPreviewManager previewManager;
     [SerializeField] Animator cavityText;
-    [SerializeField] List<EquipmentData> cavityEquip;
+    public List<EquipmentData> cavityEquip;
    
     [Header("Grid Viz")]
     public Color playerColor;
@@ -61,11 +61,13 @@ public class FloorManager : MonoBehaviour
     }
     #endregion
 
-    public IEnumerator Init() {
+    public IEnumerator Init(int startIndex) {
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
         if (UIManager.instance) uiManager = UIManager.instance;
         betweenFloor = GetComponent<BetweenFloorManager>();
-        floorSequence.Init();
+
+        floorSequence.Init(startIndex);
+        
         yield return null;
     }
 
@@ -559,12 +561,11 @@ public class FloorManager : MonoBehaviour
 // Endlessly falling
         cavityWait = true;
 // Give equipment
-        if (floorSequence.activePacket.packetType == FloorPacket.PacketType.I) {
+        if (floorSequence.activePacket.packetType == FloorPacket.PacketType.I) 
             scenario.player.units[0].ui.UpdateLoadout(cavityEquip[0]);
-
-        } else if (floorSequence.activePacket.packetType == FloorPacket.PacketType.II) {
+        else if (floorSequence.activePacket.packetType == FloorPacket.PacketType.II) 
             scenario.player.units[1].ui.UpdateLoadout(cavityEquip[1]);
-        }
+        
 
         cavityText.gameObject.SetActive(true);
         cavityText.SetBool("Active", true);

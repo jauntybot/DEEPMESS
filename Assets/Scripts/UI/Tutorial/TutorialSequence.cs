@@ -58,8 +58,8 @@ public class TutorialSequence : MonoBehaviour
         
         descents = 0;
 
-        floorManager.GenerateFloor(floorManager.floorSequence.GetFloor(true), true);
-        floorManager.GenerateFloor(floorManager.floorSequence.GetFloor(true));
+        floorManager.GenerateFloor(floorManager.floorSequence.GetFloor(), true);
+        floorManager.GenerateFloor(floorManager.floorSequence.GetFloor());
     }
     
     public IEnumerator Tutorial() {
@@ -508,7 +508,7 @@ public class TutorialSequence : MonoBehaviour
         switch(descents) {
             case 0:
                 yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
-                floorManager.GenerateFloor(floorManager.floorSequence.GetFloor(true));
+                floorManager.GenerateFloor(floorManager.floorSequence.GetFloor());
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);

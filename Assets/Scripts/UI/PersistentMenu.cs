@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class PersistentMenu : MonoBehaviour
 {
-
+    ScenarioManager scenario;
     public MusicController musicController;
     public PauseMenu pauseMenu;
     TooltipSystem toolTips;
@@ -20,6 +20,7 @@ public class PersistentMenu : MonoBehaviour
     [SerializeField] TMPro.TMP_Text tooltipText;
     [SerializeField] GameObject menuButtons;
     public Animator fadeToBlack;
+    public int startCavity;
 
     const string MIXER_MUSIC = "musicVolume";
     const string MIXER_SFX = "sfxVolume";
@@ -46,6 +47,15 @@ public class PersistentMenu : MonoBehaviour
 
     void UpdateRefs(Scene scene = default, LoadSceneMode mode = default) {
         battleCanvas = null;
+
+        if (ScenarioManager.instance) {
+            scenario = ScenarioManager.instance;
+            if (startCavity != -1)
+                scenario.StartCoroutine(scenario.Init(startCavity));
+            else
+                scenario.StartCoroutine(scenario.Init());
+            Debug.Log(startCavity);
+        }
         if (UIManager.instance) 
             battleCanvas = UIManager.instance.gameObject;
 
