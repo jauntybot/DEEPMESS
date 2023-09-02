@@ -22,10 +22,11 @@ public class ScenarioManager : MonoBehaviour
 
 // Instanced refs
     [HideInInspector] public UIManager uiManager;
-    [HideInInspector] public TutorialSequence tutorial;
     [HideInInspector] public GameplayOptionalTooltips gpOptional;
     [HideInInspector] public FloorManager floorManager;
     [SerializeField] string resetSceneString;
+    public TutorialSequence tutorial;
+    public int startCavity;
     public EnemyManager currentEnemy;
     public PlayerManager player;
 
@@ -41,19 +42,25 @@ public class ScenarioManager : MonoBehaviour
 
 
 #region Initialization
-    public IEnumerator Start() 
-    {
+    public IEnumerator Init(int startIndex = -1) {
+        if (startIndex != -1) {
+            startCavity = startIndex;
+            Debug.Log("start cavity override");
+        }
+        Debug.Log(startCavity);
+
         if (UIManager.instance)
             uiManager = UIManager.instance;
 
         if (FloorManager.instance) {
             floorManager = FloorManager.instance;
-            yield return StartCoroutine(floorManager.Init());
-            if (TutorialSequence.instance) {
-                tutorial = TutorialSequence.instance;
+            yield return StartCoroutine(floorManager.Init(startCavity));
+            if (startCavity == 0) {
+                tutorial.gameObject.SetActive(true);
                 tutorial.Initialize(this);
                 floorManager.previewManager.tut = true;
             } else {
+                tutorial.gameObject.SetActive(false);
                 floorManager.GenerateFloor(null, true); 
                 floorManager.GenerateFloor();
             }
@@ -65,6 +72,10 @@ public class ScenarioManager : MonoBehaviour
         runDataTracker.Init(this);
     
         yield return StartCoroutine(player.Initialize(floorManager.currentFloor));
+        if (startCavity >= 2) 
+            player.units[0].ui.UpdateLoadout(floorManager.cavityEquip[0]);      
+        if (startCavity >= 3) 
+            player.units[1].ui.UpdateLoadout(floorManager.cavityEquip[1]);
 
         if (GameplayOptionalTooltips.instance) {
             gpOptional = GameplayOptionalTooltips.instance;
@@ -79,7 +90,7 @@ public class ScenarioManager : MonoBehaviour
             u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
             u.hitbox.enabled = false;
         }
-        if (tutorial) {
+        if (startCavity == 0) {
                 foreach (GridElement ge in player.units)
                     floorManager.currentFloor.RemoveElement(ge);
                     

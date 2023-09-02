@@ -16,13 +16,26 @@ public class FloorSequence : ScriptableObject {
     public FloorPacket.PacketType currentThreshold;
     public int floorsGot = 0;
 
-    public void Init() {
+    public void Init(int index) {
         localPackets = new List<FloorPacket>();
         foreach (FloorPacket packet in packets) localPackets.Add(packet);
         activePacket.floors = new List<FloorDefinition>();
         
         floorsGot = 0;
-        currentThreshold = FloorPacket.PacketType.I;
+        switch (index) {
+            case 0:
+                currentThreshold = FloorPacket.PacketType.Tutorial;
+            break;
+            case 1:
+                currentThreshold = FloorPacket.PacketType.I;
+            break;
+            case 2:
+                currentThreshold = FloorPacket.PacketType.II;
+            break;
+            case 3:
+                currentThreshold = FloorPacket.PacketType.III;
+            break;
+        }
     }
 
     public void StartPacket(FloorPacket.PacketType type) {
