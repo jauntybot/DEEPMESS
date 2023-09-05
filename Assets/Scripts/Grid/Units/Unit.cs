@@ -162,7 +162,7 @@ public class Unit : GridElement {
     }
 
     public virtual IEnumerator CollideFromAbove(GridElement subGE) {
-        if (manager.scenario.tutorial != null && !manager.scenario.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
+        if (manager.scenario.tutorial.isActiveAndEnabled && !manager.scenario.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
             manager.scenario.tutorial.StartCoroutine(manager.scenario.tutorial.DescentDamage());
         
         yield return StartCoroutine(TakeDamage(1, DamageType.Melee));

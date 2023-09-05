@@ -150,7 +150,7 @@ public class PlayerUnit : Unit {
     {
         base.ApplyCondition(s);
         ui.ToggleEquipmentButtons();
-        if (manager.scenario.tutorial != null && !manager.scenario.tutorial.bloodEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
+        if (manager.scenario.tutorial.isActiveAndEnabled && !manager.scenario.tutorial.bloodEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
             manager.scenario.tutorial.StartCoroutine(manager.scenario.tutorial.BloodTiles());
         
     }

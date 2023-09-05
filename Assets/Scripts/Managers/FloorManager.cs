@@ -561,11 +561,14 @@ public class FloorManager : MonoBehaviour
 // Endlessly falling
         cavityWait = true;
 // Give equipment
-        if (floorSequence.activePacket.packetType == FloorPacket.PacketType.I) 
+        if (floorSequence.activePacket.packetType == FloorPacket.PacketType.I) {
+            scenario.gpOptional.StartCoroutine(scenario.gpOptional.EquipTmentooltips(1));
             scenario.player.units[0].ui.UpdateLoadout(cavityEquip[0]);
-        else if (floorSequence.activePacket.packetType == FloorPacket.PacketType.II) 
+        }
+        else if (floorSequence.activePacket.packetType == FloorPacket.PacketType.II) {
+            scenario.gpOptional.StartCoroutine(scenario.gpOptional.EquipTmentooltips(2));
             scenario.player.units[1].ui.UpdateLoadout(cavityEquip[1]);
-        
+        }
 
         cavityText.gameObject.SetActive(true);
         cavityText.SetBool("Active", true);
