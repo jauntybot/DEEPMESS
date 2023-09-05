@@ -32,6 +32,38 @@ public class GameplayOptionalTooltips : MonoBehaviour
         }
     }
 
+    public IEnumerator EquipTmentooltips(int index) {
+        switch(index) {
+            case 1:
+                screenFade.gameObject.SetActive(true);
+
+                header = "";
+                body = "You unlocked the Anvil. Drop an <b>" + ColorToRichText("ANVIL", keyColor) + "</b> and move away. The Anvil <b>" + ColorToRichText("ATTRACTS ENEMIES", keyColor) + "</b> and descends with units, <b>" + ColorToRichText("CRUSHING ANYTHING IT LANDS ON.", keyColor) + "</b>" + '\n';
+                tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ anvilAnim });
+
+                while (!tooltip.skip) {
+                    yield return new WaitForSecondsRealtime(1 / Util.fps);
+                }
+                screenFade.SetTrigger("FadeOut");
+                tooltip.transform.GetChild(0).gameObject.SetActive(false);
+            break;
+            case 2:
+                screenFade.gameObject.SetActive(true);
+
+                header = "";
+                body = "You unlocked the <b>" + ColorToRichText("BIG GRAB", keyColor) + "</b>. <b>" + ColorToRichText("GRAB", keyColor) + "</b> and <b>" + ColorToRichText("THROW", keyColor) + "</b> enemies with this equipment." + '\n';
+                tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ bigThrowAnim });
+
+                while (!tooltip.skip) {
+                    yield return new WaitForSecondsRealtime(1 / Util.fps);
+                }
+                screenFade.SetTrigger("FadeOut");
+                tooltip.transform.GetChild(0).gameObject.SetActive(false);
+            break;
+        }
+
+    }
+
     public IEnumerator TileBulb() {
         Debug.Log("Tile bulb");
         bulbEncountered = true;
