@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Rendering;
+using UnityEngine.PlayerLoop;
 
 // This class generates and sequences Floor prefabs (Grid class), as well as manages the descending of units
 
@@ -35,7 +36,7 @@ public class FloorManager : MonoBehaviour
     public Transform transitionParent;
     public float floorOffset, transitionDur, unitDropDur;
     public AnimationCurve dropCurve;
-    public bool transitioning, peeking;
+    public bool transitioning, peeking, descending;
     bool cavityWait = false;
     [SerializeField] ParallaxImageScroll parallax;
     public DescentPreviewManager previewManager;
@@ -198,10 +199,7 @@ public class FloorManager : MonoBehaviour
         }
 // Update floor manager current floor... preview next floor untis stats?
         if (down && currentFloor.index-1 >= 0) floors[currentFloor.index-1].gameObject.SetActive(false);
-        if (toFloor) currentFloor = toFloor;
-        if (uiManager.gameObject.activeSelf)
-            uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index + 1 - (TutorialSequence.instance != null ? 3 : 0));
-
+        if (toFloor) currentFloor = toFloor;           
     }
     
 
@@ -251,8 +249,8 @@ public class FloorManager : MonoBehaviour
     }
 
     public IEnumerator DescendFloors(bool cascade = false, bool tut = false, bool nail = true, Vector2 pos = default) {
-
 // Lock up current floor
+        descending = true;
         if (uiManager.gameObject.activeSelf)
             uiManager.LockFloorButtons(true);
         EnemyManager enemy = (EnemyManager)currentFloor.enemy;
@@ -267,8 +265,7 @@ public class FloorManager : MonoBehaviour
         if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) scen = ScenarioManager.Scenario.Boss;
         if (tut) {
             yield return StartCoroutine(TutorialSequence.instance.TutorialDescend());
-        }
-        else {
+        } else {
 
             // if (cascade) {
             //     yield return StartCoroutine(previewManager.PreviewFloor(true, true));
@@ -312,7 +309,7 @@ public class FloorManager : MonoBehaviour
 
 // Check for boss spawn
                 if (floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && floorSequence.floorsGot >= 2 && !bossSpawn) {
-                    yield return new WaitForSecondsRealtime(0.25f);
+                    yield return new WaitForSecondsRealtime(0.75f);
                     yield return StartCoroutine(SpawnBoss());
                 }
 
@@ -324,9 +321,19 @@ public class FloorManager : MonoBehaviour
                 yield return StartCoroutine(TransitionPackets());
             }
         }
+        descending = false;
+    }
+
+    void UpdateFloorCounter() {
+        int cavityOffset = -3;
+        if (scenario.startCavity >= 1) cavityOffset += 3;
+        if (scenario.startCavity >= 2) cavityOffset += 3;
+        if (scenario.startCavity >= 3) cavityOffset += 4;
+        uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index + 1 + cavityOffset);
     }
 
     public IEnumerator DescendUnits(List<GridElement> units, EnemyManager enemy = null) {
+        UpdateFloorCounter();
         Coroutine drop = StartCoroutine(DropUnits(units, currentFloor));
 
         scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
@@ -516,8 +523,10 @@ public class FloorManager : MonoBehaviour
         boss.DescentVFX(currentFloor.tiles.Find(sqr => sqr.coord == boss.coord));
         boss.transform.position = to;
         boss.StoreInGrid(currentFloor);
+        boss.UpdateElement(boss.coord);
         fade.AlphaSelf = 1;
 
+        boss.PlaySound(boss.landingSFX);
         scenario.gpOptional.StartCoroutine(scenario.gpOptional.Boss());        
     }
 

@@ -173,8 +173,7 @@ public class HammerData : EquipmentData
                 PlayerManager manager = (PlayerManager)user.manager;
                 manager.TriggerDescent();
             } 
-            else if (target is PlayerUnit pu) {
-                
+            else if (target is PlayerUnit pu) { 
                 user.PlaySound(catchSFX);
                 if (pu.conditions.Contains(Unit.Status.Disabled))
                     pu.Stabilize();
@@ -207,9 +206,7 @@ public class HammerData : EquipmentData
         }
         if (targetCo != null)
             yield return targetCo;
-        if (target is Nail) {
-            //yield return new WaitForSecondsRealtime(0.25f);
-        }
+
 
     }
 

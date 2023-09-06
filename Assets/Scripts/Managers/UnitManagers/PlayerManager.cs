@@ -26,7 +26,6 @@ public class PlayerManager : UnitManager {
     [Header("PREFABS")]
     [SerializeField] public GameObject nailPrefab;
     [SerializeField] public GameObject hammerPrefab;
-    [SerializeField] GameObject gridCursor;
     [SerializeField] GameObject slimeArmAnim;
 
     [Header("UNDO")]
@@ -36,6 +35,7 @@ public class PlayerManager : UnitManager {
     public List<Unit> undoOrder;
 
     [Header("GRID VIS")]
+    [SerializeField] GameObject gridCursor;
     [SerializeField] Unit hoveredUnit = null;
     [SerializeField] GridElement prevCursorTarget = null;
     [SerializeField] bool prevCursorTargetState = false;
@@ -410,6 +410,7 @@ public class PlayerManager : UnitManager {
         unitActing = true;
         scenario.uiManager.LockHUDButtons(true);
         targetCursorState = PlayerController.CursorState.Default;
+        GridMouseOver(new Vector2(-32, -32), false);
         while (unitActing) {
             yield return null;
         }
