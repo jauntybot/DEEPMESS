@@ -255,8 +255,10 @@ public class ScenarioManager : MonoBehaviour
 
     public IEnumerator Win() 
     {
-        if (uiManager.gameObject.activeSelf)
+        if (uiManager.gameObject.activeSelf) {
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Win));
+            uiManager.ToggleBattleCanvas(false);
+        }
         yield return new WaitForSecondsRealtime(1.5f);
         runDataTracker.UpdateAndDisplay(true, floorManager.currentFloor.index + 1, player.defeatedEnemies);
     }
@@ -268,9 +270,10 @@ public class ScenarioManager : MonoBehaviour
             currentEnemy.EndTurnEarly();
         else if (currentTurn == Turn.Player)
             player.StartEndTurn(false);
-        if (uiManager.gameObject.activeSelf)
+        if (uiManager.gameObject.activeSelf) {
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Lose));
-        uiManager.ToggleBattleCanvas(false);
+            uiManager.ToggleBattleCanvas(false);
+        }
         yield return StartCoroutine(player.RetrieveNailAnimation());
 
         runDataTracker.UpdateAndDisplay(false, floorManager.currentFloor.index + 1, player.defeatedEnemies);

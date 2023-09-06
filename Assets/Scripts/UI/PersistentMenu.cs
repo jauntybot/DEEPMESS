@@ -49,30 +49,32 @@ public class PersistentMenu : MonoBehaviour
         battleCanvas = null;
 
         if (ScenarioManager.instance) {
+// Initialize scenario manager starts game
             scenario = ScenarioManager.instance;
-            if (startCavity != -1)
+            if (startCavity != -1) {
                 scenario.StartCoroutine(scenario.Init(startCavity));
+            }
             else
                 scenario.StartCoroutine(scenario.Init());
-            Debug.Log(startCavity);
+            if (UIManager.instance) 
+                battleCanvas = UIManager.instance.gameObject;
+            menuButtons.SetActive(true);
         }
-        if (UIManager.instance) 
-            battleCanvas = UIManager.instance.gameObject;
-
-        if (MainMenuManager.instance) {
+// Initialize the MainMenuManager
+        else if (MainMenuManager.instance) {
             menuButtons.SetActive(false);
             MainMenuManager.instance.optionsButton.onClick.AddListener(MainMenuPause);
         }
-        else
-            menuButtons.SetActive(true);
 
-        if (TutorialSequence.instance)
-            musicController.SwitchMusicState(MusicController.MusicState.Tutorial, false);
-        else if (ScenarioManager.instance) 
-            musicController.SwitchMusicState(MusicController.MusicState.Game, false);
-        else
-            musicController.SwitchMusicState(MusicController.MusicState.MainMenu, false);
-
+// First ever scene load, initialize MusicController
+        if (musicController.currentState == MusicController.MusicState.Null) {
+            if (SceneManager.GetActiveScene().buildIndex == 0)
+                musicController.SwitchMusicState(MusicController.MusicState.MainMenu, false);
+            else if (scenario.startCavity == 0)
+                musicController.SwitchMusicState(MusicController.MusicState.Tutorial, false);
+            else
+                musicController.SwitchMusicState(MusicController.MusicState.Game, false);
+        }
         if (TooltipSystem.instance)
             toolTips = TooltipSystem.instance;
         
@@ -80,7 +82,6 @@ public class PersistentMenu : MonoBehaviour
     }
 
     public void FadeToBlack(bool state) {
-        fadeToBlack.gameObject.SetActive(true);
         fadeToBlack.SetBool("Fade", state);
     }
 

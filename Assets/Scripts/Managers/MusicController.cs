@@ -7,7 +7,7 @@ using TMPro;
 public class MusicController : MonoBehaviour
 {
     
-    public enum MusicState { MainMenu, Tutorial, Game };
+    public enum MusicState { MainMenu, Tutorial, Game, Null };
     public MusicState currentState;
     public bool playing;
     [SerializeField] List<Track> musicTracks;
@@ -33,16 +33,18 @@ public class MusicController : MonoBehaviour
 
     public IEnumerator UpdateTracklist(MusicState targetState, bool fade) {
         
+        currentState = targetState;
         yield return StartCoroutine(StopAudio(fade));
-        
+
+// Add delay for record scratch - Tutorial 
         float delay = 0;
         if (targetState == MusicState.Tutorial) {
+            playing = false;
             delay = recordScratch.Get().length;
             musicAudioSource.PlayOneShot(recordScratch.Get());
         }
         yield return new WaitForSecondsRealtime(delay);
 
-        currentState = targetState;
 
         List<Track> _stateTracks = new List<Track>();
         foreach(Track t in musicTracks) {
@@ -56,15 +58,6 @@ public class MusicController : MonoBehaviour
         UpdateTrack(0);
     }
 
-    void UpdateTrack(int index = 0)
-    {
-        musicAudioSource.Stop();
-        playing = false;
-        musicAudioSource.clip = stateTracks[index].trackAudioClip;
-        //trackTextUI.text = audioTracks[index].name;
-        
-        PlayAudio();
-    }
 
     public void PlayAudio() {
         musicAudioSource.Play();
@@ -76,24 +69,47 @@ public class MusicController : MonoBehaviour
         while (musicAudioSource.time < musicAudioSource.clip.length && playing) {
             yield return null;
         }
-        SkipForward();
+        if (playing)
+            SkipForward();
     }
 
     public IEnumerator StopAudio(bool fade) {      
         playing = false;
         float prevVol = musicAudioSource.volume;
         if (fade) {
+            Debug.Log("Fade start");
             float timer = 0;
             while (timer < 1.5f) {
                 musicAudioSource.volume = prevVol - fadeOut.Evaluate(timer / 1.5f);
                 yield return new WaitForSecondsRealtime(1/Util.fps);
                 timer += Time.deltaTime;
             }
+            Debug.Log("Fade done");
         }
         musicAudioSource.volume = prevVol;
         musicAudioSource.Stop();
     }
     
+
+    public void SkipForward() {    
+        if (stateTrackIndex < stateTracks.Count - 1)     
+            stateTrackIndex++;      
+        else 
+            stateTrackIndex = 0;
+        
+        UpdateTrack(stateTrackIndex);
+    }
+
+    void UpdateTrack(int index = 0) {
+        musicAudioSource.Stop();
+        playing = false;
+        musicAudioSource.clip = stateTracks[index].trackAudioClip;
+        Debug.Log("Playing: " + stateTracks[index]);
+        //trackTextUI.text = audioTracks[index].name;
+        
+        PlayAudio();
+    }
+
     // public void SkipBack()
     // {
     //     StopAllCoroutines();
@@ -106,15 +122,6 @@ public class MusicController : MonoBehaviour
     
     //     UpdateTrack(trackIndex);
     // }
-
-    public void SkipForward() {    
-        if (stateTrackIndex < stateTracks.Count - 1)     
-            stateTrackIndex++;      
-        else 
-            stateTrackIndex = 0;
-        
-        UpdateTrack(stateTrackIndex);
-    }
 
     // public void AudioVolume(float musicVolume)
     // {

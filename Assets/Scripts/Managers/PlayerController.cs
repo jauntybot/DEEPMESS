@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviour {
 // Coroutine that runs while the player is allowed to select elements on the grid
     public IEnumerator GridInput() {
         while (manager.scenario.currentTurn == ScenarioManager.Turn.Player || manager.scenario.currentTurn == ScenarioManager.Turn.Cascade) {
-            if (!FloorManager.instance.peeking && !manager.unitActing) {
+            if (!FloorManager.instance.peeking && !FloorManager.instance.descending && !manager.unitActing) {
                 clickable = true;
                 yield return new WaitForSecondsRealtime(1/Util.fps);
                 RaycastHit2D hit = ClickInput();
@@ -137,7 +137,7 @@ public class PlayerController : MonoBehaviour {
                 if (Input.GetKeyDown(KeyCode.Z)) 
                     manager.UndoMove();
                 
-                if (Input.GetKeyDown(KeyCode.T)) 
+                if (Input.GetKeyDown(KeyCode.E)) 
                     ScenarioManager.instance.EndTurn();
             }
         

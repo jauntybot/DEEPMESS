@@ -60,22 +60,23 @@ public class RunDataTracker : MonoBehaviour
 
     public void RestartRun() {
         scenario.scenario = ScenarioManager.Scenario.Null;
-        StartCoroutine(FadeToScene(SceneManager.GetActiveScene().name));
+        StartCoroutine(FadeToScene(1));
     }
 
     public void MainMenu() {
         scenario.scenario = ScenarioManager.Scenario.Null;
-        StartCoroutine(FadeToScene(null, 0));
+        StartCoroutine(FadeToScene(0));
     }
 
 
-    public IEnumerator FadeToScene(string targetScene = null, int index = default) {
-        yield return new WaitForSecondsRealtime(1.5f);
-        if (targetScene != null)
-            SceneManager.LoadScene(targetScene, LoadSceneMode.Single);
-        else
-            SceneManager.LoadScene(index, LoadSceneMode.Single);
-
+    public IEnumerator FadeToScene(int index) {
+        yield return new WaitForSecondsRealtime(0.25f);
+        PersistentMenu.instance.FadeToBlack(true);
+        if (index == 0) {
+            PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.MainMenu, true);
+        }
+        yield return new WaitForSecondsRealtime(1f);
+        SceneManager.LoadScene(index, LoadSceneMode.Single);
     }
 
 }

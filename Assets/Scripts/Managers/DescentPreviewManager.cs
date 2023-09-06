@@ -16,13 +16,13 @@ public class DescentPreviewManager : MonoBehaviour
     void Start() {
         if (ScenarioManager.instance) {
             scenario = ScenarioManager.instance;
-            tut = scenario.tutorial != null;
         }
         if (FloorManager.instance)
             floorManager = FloorManager.instance;
     }
 
     public IEnumerator PreviewFloor(bool down) {
+        scenario.player.GridMouseOver(new Vector2(-32, -32), false);
         floorManager.transitioning = true;
         if (scenario.currentTurn == ScenarioManager.Turn.Player)
             UIManager.instance.endTurnButton.interactable = !down;

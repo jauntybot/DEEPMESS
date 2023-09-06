@@ -18,6 +18,9 @@ public class Burrow : EquipmentData
                 foreach (GridElement ge in user.grid.CoordContents(validCoords[i])) {
                     if (filters.Find(g => g.GetType() == ge.GetType()) != null) {
                         valid = true;
+                        if (ge is Unit u) {
+                            if (u.conditions.Contains(Unit.Status.Disabled)) valid = false;
+                        }
                     }
                 }
             }
