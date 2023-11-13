@@ -158,7 +158,7 @@ public class EnemyUnit : Unit {
         yield return base.TakeDamage(dmg, dmgType, source);
     }
 
-    public override IEnumerator DestroyElement(DamageType dmgType)
+    public override IEnumerator DestroySequence(DamageType dmgType)
     {
         switch(dmgType) {
             case DamageType.Unspecified:
@@ -175,6 +175,6 @@ public class EnemyUnit : Unit {
             break;
         }
 
-        return base.DestroyElement(dmgType);
+        return base.DestroySequence(dmgType);
     }
 }

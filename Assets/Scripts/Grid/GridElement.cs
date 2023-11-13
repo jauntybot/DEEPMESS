@@ -115,14 +115,18 @@ public class GridElement : MonoBehaviour{
             RemoveShell();
         }
         if (hpCurrent <= 0) {
-            StartCoroutine(DestroyElement(dmgType));
+            StartCoroutine(DestroySequence(dmgType));
         }
         yield return new WaitForSecondsRealtime(.4f);
         TargetElement(false);
     }
 
-    public virtual IEnumerator DestroyElement(DamageType dmgType = DamageType.Unspecified) 
-    {
+    public virtual void DestroyElement(DamageType dmgType = DamageType.Unspecified) {
+        StopAllCoroutines();
+        StartCoroutine(DestroySequence(dmgType));
+    }
+
+    public virtual IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified) {
         ElementDestroyed?.Invoke(this);
                
         PlaySound(destroyedSFX);
@@ -147,7 +151,7 @@ public class GridElement : MonoBehaviour{
 
     public virtual IEnumerator CollideFromBelow(GridElement above) {
         RemoveShell();
-        yield return StartCoroutine(DestroyElement(DamageType.Gravity));
+        yield return StartCoroutine(DestroySequence(DamageType.Gravity));
     }
 
     public virtual void OnSharedSpace(GridElement sharedWith) {

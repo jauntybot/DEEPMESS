@@ -7,11 +7,11 @@ public class BossUnit : EnemyUnit
 
     [SerializeField] Unit prevTarget = null;
 
-    public override IEnumerator DestroyElement(DamageType dmgType)
+    public override IEnumerator DestroySequence(DamageType dmgType)
     {
         manager.scenario.player.nail.ToggleNailState(Nail.NailState.Primed);
 
-        yield return base.DestroyElement(dmgType);
+        yield return base.DestroySequence(dmgType);
     }
 
     public override bool ValidCommand(Vector2 target, EquipmentData equip) {

@@ -119,7 +119,7 @@ public class PlayerUnit : Unit {
     }
 
 // Override destroy so that player units are disabled instead
-    public override IEnumerator DestroyElement(DamageType dmgType) {
+    public override IEnumerator DestroySequence(DamageType dmgType) {
         
         
         PlaySound(destroyedSFX);
@@ -144,6 +144,10 @@ public class PlayerUnit : Unit {
         ElementDisabled?.Invoke(this);
         SwitchAnim(AnimState.Disabled);
         ApplyCondition(Status.Disabled);
+    }
+
+    public override IEnumerator CollideFromBelow(GridElement above) {
+        yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
     }
 
     public override void ApplyCondition(Status s)

@@ -65,16 +65,10 @@ public class PlayerManager : UnitManager {
         lastHoveredCoord = new Vector2(0,0);
         gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
 
-        List<Vector2> spawnCoords =new List<Vector2>{
-            new Vector2(-3,-4),
-            new Vector2(-4,-4),
-            new Vector2(-3,-3)
-        };
-
         List<Unit> initU = new List<Unit>() {
-            SpawnUnit(spawnCoords[0], loadout.unitPrefabs[0]),
-            SpawnUnit(spawnCoords[1], loadout.unitPrefabs[1]),
-            SpawnUnit(spawnCoords[2], loadout.unitPrefabs[2])
+            SpawnUnit(Vector2.zero, loadout.unitPrefabs[0]),
+            SpawnUnit(Vector2.zero, loadout.unitPrefabs[1]),
+            SpawnUnit(Vector2.zero, loadout.unitPrefabs[2])
         };
 
         yield return StartCoroutine(loadout.Initialize(initU));

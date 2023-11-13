@@ -123,7 +123,7 @@ public class Unit : GridElement {
         TargetElement(targeted);
     }
 
-    public override IEnumerator DestroyElement(DamageType dmgType = DamageType.Unspecified) {
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified) {
         ElementDestroyed?.Invoke(this);
         
         PlaySound(destroyedSFX);
@@ -165,7 +165,10 @@ public class Unit : GridElement {
         if (manager.scenario.tutorial.isActiveAndEnabled && !manager.scenario.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
             manager.scenario.tutorial.StartCoroutine(manager.scenario.tutorial.DescentDamage());
         
-        yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
+        if (subGE is PlayerUnit)
+            yield return StartCoroutine(DestroySequence());
+        else
+            yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
     }
 
     public virtual void ApplyCondition(Status s) {

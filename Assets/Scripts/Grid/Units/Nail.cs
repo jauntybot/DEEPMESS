@@ -70,7 +70,7 @@ public class Nail : Unit
         }
     }
 
-    public override IEnumerator DestroyElement(DamageType dmgType = DamageType.Unspecified) {
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified) {
         
         PlaySound(destroyedSFX);
         

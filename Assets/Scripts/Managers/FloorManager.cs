@@ -539,7 +539,7 @@ public class FloorManager : MonoBehaviour
         for (int i = scenario.player.units.Count - 1; i >= 0; i-- ) {
             Unit u = scenario.player.units[i];
             if (u is not PlayerUnit && u is not Nail)
-                cos.Add(StartCoroutine(u.DestroyElement()));
+                cos.Add(StartCoroutine(u.DestroySequence()));
         }
         
         for (int i = cos.Count - 1; i >= 0; i--) {
