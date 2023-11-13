@@ -7,7 +7,7 @@ using UnityEngine;
 public class FloorSequence : ScriptableObject {
 
     public List<FloorPacket> packets;
-    public List<FloorPacket> localPackets;
+    [HideInInspector] public List<FloorPacket> localPackets;
     public FloorPacket activePacket;
 
     [HideInInspector] public int floorsTutorial;

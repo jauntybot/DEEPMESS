@@ -62,7 +62,7 @@ public class AttackData : EquipmentData
 
         Coroutine co = null; Coroutine co2 = null;
         if (target is Nail n) {
-            if (n.manager.scenario.tutorial != null && !n.manager.scenario.tutorial.nailDamageEncountered && n.manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
+            if (n.manager.scenario.tutorial != null && n.manager.scenario.tutorial.isActiveAndEnabled && !n.manager.scenario.tutorial.nailDamageEncountered && n.manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
                 n.manager.scenario.tutorial.StartCoroutine(n.manager.scenario.tutorial.NailDamage());
             }
             CameraController.instance.StartCoroutine(CameraController.instance.ScreenShake(0.125f, 0.5f));

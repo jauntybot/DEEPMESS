@@ -138,6 +138,12 @@ public class EnemyManager : UnitManager {
         Destroy(this.gameObject);
     }
 
+    public virtual void SpawnReinforcements() {
+        if (units.Count < currentGrid.lvlDef.minEnemies) {
+            
+        }
+    }
+
     protected override void RemoveUnit(GridElement ge)
     {
         base.RemoveUnit(ge);
