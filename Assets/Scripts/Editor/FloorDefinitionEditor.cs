@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 
 [CustomEditor(typeof(FloorDefinition))]
+[CanEditMultipleObjects]
 public class FloorDefinitionEditor : Editor
 {
     FloorDefinition arg;
@@ -26,6 +27,14 @@ public class FloorDefinitionEditor : Editor
                 if (GUILayout.Button("Open FloorEditor"))
                     FloorEditor.Init(arg);
                 EditorList.Show(tar.FindProperty("initSpawns"));
+                int minEnemies = EditorGUILayout.IntField("Minimum Enemies", arg.minEnemies);
+                arg.minEnemies = minEnemies;
+                if (EditorGUI.EndChangeCheck()) {
+                    foreach (FloorDefinition def in targets) {
+                        def.minEnemies = minEnemies;
+                        EditorUtility.SetDirty(def);
+                    }
+                }
             } else {
                 GUILayout.Label("Serialize a FloorAtlas to open FloorEditor.");
             }    

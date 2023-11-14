@@ -86,8 +86,6 @@ public class UnitUI : MonoBehaviour
         PlayerManager pManager = (PlayerManager)unit.manager;
         foreach (EquipmentButton b in equipButtons) {
             b.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= b.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted) && !unit.conditions.Contains(Unit.Status.Disabled) && !pManager.unitActing);
-            if (b.data is PerFloorEquipmentData && unit.usedEquip)
-                b.gameObject.GetComponentInChildren<Button>().interactable = false;
         }      
         if (overview != null )
             overview.UpdateOverview(unit.hpCurrent);
@@ -127,7 +125,7 @@ public class UnitUI : MonoBehaviour
                 EquipmentButton b = equipButtons.Find(b => b.data == unit.equipment[i]);
                 if (b == null) {
                     GameObject prefab = null; Transform parent = null; int index = 0;
-                    if (unit.equipment[i] is PerFloorEquipmentData) {
+                    if (unit.equipment[i] is SlagEquipmentData) {
                         prefab = perFloorButtonPrefab;
                         parent = equipmentPanel.transform;
                     } else if (unit.equipment[i] is HammerData) {
@@ -166,9 +164,9 @@ public class UnitUI : MonoBehaviour
 
     public void UpdateLoadout(EquipmentData equip) {
 // Remove old equipment unless the same
-        if (equip is PerFloorEquipmentData) {
+        if (equip is SlagEquipmentData) {
             for (int i = unit.equipment.Count - 1; i >= 0; i--) {
-                if (unit.equipment[i] is PerFloorEquipmentData e) {
+                if (unit.equipment[i] is SlagEquipmentData e) {
                     if (equip == e) return;
                     unit.equipment.Remove(e);
                 }
@@ -177,7 +175,7 @@ public class UnitUI : MonoBehaviour
 // Add new equipment to unit
         unit.equipment.Insert(1, equip);
         PlayerUnit pu = (PlayerUnit)unit;
-        if (equip is PerFloorEquipmentData) {
+        if (equip is SlagEquipmentData) {
             overview.equipment.enabled = true;
             overview.equipment.sprite = equip.icon;
         }

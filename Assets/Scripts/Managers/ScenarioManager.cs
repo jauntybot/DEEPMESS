@@ -72,10 +72,6 @@ public class ScenarioManager : MonoBehaviour
         runDataTracker.Init(this);
     
         yield return StartCoroutine(player.Initialize(floorManager.currentFloor));
-        if (startCavity >= 2) 
-            player.units[0].ui.UpdateLoadout(floorManager.cavityEquip[0]);      
-        if (startCavity >= 3) 
-            player.units[1].ui.UpdateLoadout(floorManager.cavityEquip[1]);
 
         if (GameplayOptionalTooltips.instance) {
             gpOptional = GameplayOptionalTooltips.instance;
@@ -158,22 +154,16 @@ public class ScenarioManager : MonoBehaviour
             default:
             case Turn.Null: break;
             case Turn.Enemy:
-                if (currentEnemy.units.Count > 0) {
-                    currentTurn = Turn.Enemy;
-                    player.StartEndTurn(false);
-                    yield return new WaitForSecondsRealtime(0.625f);
+                currentTurn = Turn.Enemy;
+                player.StartEndTurn(false);
+                yield return new WaitForSecondsRealtime(0.625f);
 
-                    if (prevTurn == Turn.Descent)
-                        StartCoroutine(currentEnemy.TakeTurn(true));
-                    else {
-                        if (uiManager.gameObject.activeSelf)
-                            yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Antibody));
-                        StartCoroutine(currentEnemy.TakeTurn(false));
-                    }
-                }
-                else if (currentEnemy.units.Count <= 0) {
-                   floorManager.Descend(prevTurn == Turn.Descent, false);
-                   Debug.Log("Empty floor descent");
+                if (prevTurn == Turn.Descent)
+                    StartCoroutine(currentEnemy.TakeTurn(true));
+                else {
+                    if (uiManager.gameObject.activeSelf)
+                        yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Antibody));
+                    StartCoroutine(currentEnemy.TakeTurn(false));
                 }
             break;
             case Turn.Player:
@@ -202,6 +192,7 @@ public class ScenarioManager : MonoBehaviour
             case Turn.Descent:
                 floorManager.previewManager.TogglePreivews(false);
                 
+                
                 if (prevTurn == Turn.Cascade) {
                     //player.currentGrid = floorManager.floors[player.currentGrid.index-1];
                     for (int i = player.units.Count - 1; i >= 0; i--) {
@@ -212,9 +203,6 @@ public class ScenarioManager : MonoBehaviour
                 }
                 currentTurn = Turn.Descent;
                 player.StartEndTurn(false);
-// Reset per floor equipment on PlayerUnits
-                foreach(Unit u in player.units)
-                    u.usedEquip = false;
                 if (uiManager.gameObject.activeSelf)
                     yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Descent));
             break;
@@ -229,7 +217,6 @@ public class ScenarioManager : MonoBehaviour
                 foreach (Unit u in player.units) {
                     if (u is not Nail) {
                         u.energyCurrent = 0;
-                        u.usedEquip = true;
                         u.elementCanvas.UpdateStatsDisplay();
                         u.ui.UpdateEquipmentButtons();
                         u.StoreInGrid(player.currentGrid);

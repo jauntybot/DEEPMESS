@@ -8,10 +8,9 @@ public class Wall : GridElement
     [SerializeField] Animator anim;
 
 
-    public override IEnumerator DestroyElement(DamageType dmgType = DamageType.Unspecified)
-    {
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified) {
         anim.SetTrigger("Destroy");
-        return base.DestroyElement(dmgType);
+        return base.DestroySequence(dmgType);
     }
 
 }

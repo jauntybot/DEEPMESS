@@ -5,8 +5,9 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName = "Equipment/PerFloor/Shell")]
 [System.Serializable]   
-public class ShellData : PerFloorEquipmentData
-{
+public class ShellData : SlagEquipmentData {
+
+
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this, null, user.grid);
@@ -30,6 +31,9 @@ public class ShellData : PerFloorEquipmentData
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
     {
         yield return base.UseEquipment(user, target);
+        Unit unit = (Unit)user;
+        foreach(Unit u in unit.manager.units)
+            u.RemoveShell();
         target.ApplyShell();
 
     }

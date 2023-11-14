@@ -7,11 +7,11 @@ public class BossUnit : EnemyUnit
 
     [SerializeField] Unit prevTarget = null;
 
-    public override IEnumerator DestroyElement(DamageType dmgType)
+    public override IEnumerator DestroySequence(DamageType dmgType)
     {
         manager.scenario.player.nail.ToggleNailState(Nail.NailState.Primed);
 
-        yield return base.DestroyElement(dmgType);
+        yield return base.DestroySequence(dmgType);
     }
 
     public override bool ValidCommand(Vector2 target, EquipmentData equip) {
@@ -21,7 +21,6 @@ public class BossUnit : EnemyUnit
         //if (grid.CoordContents(target).Count > 0 && grid.CoordContents(target)[0] == prevTarget) return false;
         if (energyCurrent < equip.energyCost && equip is not MoveData) return false;
         else if (moved && equip is MoveData) return false;
-        else if (usedEquip && (equip is PerFloorEquipmentData && equip is not HammerData)) return false;
 
         return true;
     }

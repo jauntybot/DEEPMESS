@@ -347,7 +347,7 @@ public class TutorialSequence : MonoBehaviour
 
     public IEnumerator OnShieldUse(GameObject highlight) {
         Debug.Log(floorManager.currentFloor);
-        while (!scenario.player.units[2].usedEquip && floorManager.currentFloor.index == 2) yield return null;
+        while (scenario.player.units[2].energyCurrent > 0 && floorManager.currentFloor.index == 2) yield return null;
         Destroy(highlight);
 
     }

@@ -29,10 +29,7 @@ public class PlayerUnit : Unit {
     public override void UpdateAction(EquipmentData equipment = null, int mod = 0) 
     {
         if (pManager.overrideEquipment == null) {
-            if (equipment is PerFloorEquipmentData && !usedEquip)
-                base.UpdateAction(equipment, mod);
-            else if (equipment is not PerFloorEquipmentData)
-                base.UpdateAction(equipment, mod);
+            base.UpdateAction(equipment, mod);
             pManager.EquipmentSelected(equipment);
         }
         else {
@@ -52,7 +49,7 @@ public class PlayerUnit : Unit {
             if (!equip.multiselect && equip is not MoveData) {
                 pManager.DeselectUnit();
                 pManager.StartCoroutine(pManager.UnitIsActing());
-                if (equip is PerFloorEquipmentData) equipUses++;
+                if (equip is SlagEquipmentData) equipUses++;
             }
 // movement equipment
             else if (equip is MoveData && energyCurrent > 0) {
@@ -65,7 +62,7 @@ public class PlayerUnit : Unit {
                 pManager.contextuals.UpdateContext(equip, equip.gridColor, equip.multiContext, anim, target);
 // multi-target equipment - execute full action
             } else {
-                if (equip is PerFloorEquipmentData) equipUses++;
+                if (equip is SlagEquipmentData) equipUses++;
                 if (equip is HammerData) hammerUses++; 
                 pManager.DeselectUnit();
                 pManager.StartCoroutine(pManager.UnitIsActing());
@@ -119,7 +116,7 @@ public class PlayerUnit : Unit {
     }
 
 // Override destroy so that player units are disabled instead
-    public override IEnumerator DestroyElement(DamageType dmgType) {
+    public override IEnumerator DestroySequence(DamageType dmgType) {
         
         
         PlaySound(destroyedSFX);
@@ -144,6 +141,10 @@ public class PlayerUnit : Unit {
         ElementDisabled?.Invoke(this);
         SwitchAnim(AnimState.Disabled);
         ApplyCondition(Status.Disabled);
+    }
+
+    public override IEnumerator CollideFromBelow(GridElement above) {
+        yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
     }
 
     public override void ApplyCondition(Status s)

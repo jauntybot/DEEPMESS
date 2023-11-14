@@ -42,7 +42,6 @@ public class EnemyUnit : Unit {
                 grid.DisableGridHighlight();
                 yield return co;
                 yield return new WaitForSecondsRealtime(0.125f);
-                usedEquip = true;
                 manager.DeselectUnit();
                 yield break;
             }
@@ -77,7 +76,6 @@ public class EnemyUnit : Unit {
                 grid.DisableGridHighlight();
                 yield return co;
                 yield return new WaitForSecondsRealtime(0.125f);
-                usedEquip = true;
                 manager.DeselectUnit();
             }
         }
@@ -158,7 +156,7 @@ public class EnemyUnit : Unit {
         yield return base.TakeDamage(dmg, dmgType, source);
     }
 
-    public override IEnumerator DestroyElement(DamageType dmgType)
+    public override IEnumerator DestroySequence(DamageType dmgType)
     {
         switch(dmgType) {
             case DamageType.Unspecified:
@@ -175,6 +173,6 @@ public class EnemyUnit : Unit {
             break;
         }
 
-        return base.DestroyElement(dmgType);
+        return base.DestroySequence(dmgType);
     }
 }
