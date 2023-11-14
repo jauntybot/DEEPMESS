@@ -14,7 +14,7 @@ public class Unit : GridElement {
     public bool selected;
     public EquipmentData selectedEquipment;
     public List<EquipmentData> equipment;
-    public bool moved, usedEquip;
+    public bool moved;
 
     public List<Vector2> validActionCoords;
     public List<Vector2> inRangeCoords;
@@ -87,7 +87,6 @@ public class Unit : GridElement {
         if (!validActionCoords.Contains(target)) return false;
         if (energyCurrent < equip.energyCost && equip is not MoveData) return false;
         else if (moved && equip is MoveData) return false;
-        else if (usedEquip && (equip is PerFloorEquipmentData && equip is not HammerData)) return false;
 
         return true;
     }

@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Mono.Cecil;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Equipment/PerFloor/Placeable")]
 [System.Serializable]   
-public class PlacementData : PerFloorEquipmentData
+public class PlacementData : SlagEquipmentData
 {
     public enum PlacementType { MoveAndPlace, PlaceAdjacent};
     [Header("Placement Equipment")]
@@ -15,6 +16,13 @@ public class PlacementData : PerFloorEquipmentData
     {
         yield return base.UseEquipment(user, target);
         PlayerUnit pu = (PlayerUnit)user;
+
+        for (int i = pu.manager.units.Count - 1; i >= 0; i--) {
+            if (pu.manager.units[i] is Anvil) {
+                pu.manager.units[i].StartCoroutine(pu.manager.units[i].DestroySequence());
+            }
+        }
+            
         
         GridElement toPlace = prefab.GetComponent<GridElement>();
         GridElement placed = (toPlace is Unit u) ? 

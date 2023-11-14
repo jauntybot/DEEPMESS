@@ -21,7 +21,6 @@ public class BossUnit : EnemyUnit
         //if (grid.CoordContents(target).Count > 0 && grid.CoordContents(target)[0] == prevTarget) return false;
         if (energyCurrent < equip.energyCost && equip is not MoveData) return false;
         else if (moved && equip is MoveData) return false;
-        else if (usedEquip && (equip is PerFloorEquipmentData && equip is not HammerData)) return false;
 
         return true;
     }

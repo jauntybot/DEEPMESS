@@ -5,8 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 
 [RequireComponent(typeof(AudioSource))]
-public class UIManager : MonoBehaviour
-{
+public class UIManager : MonoBehaviour {
     
     ScenarioManager scenario;
 

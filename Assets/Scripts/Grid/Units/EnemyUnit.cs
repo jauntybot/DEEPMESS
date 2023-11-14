@@ -42,7 +42,6 @@ public class EnemyUnit : Unit {
                 grid.DisableGridHighlight();
                 yield return co;
                 yield return new WaitForSecondsRealtime(0.125f);
-                usedEquip = true;
                 manager.DeselectUnit();
                 yield break;
             }
@@ -77,7 +76,6 @@ public class EnemyUnit : Unit {
                 grid.DisableGridHighlight();
                 yield return co;
                 yield return new WaitForSecondsRealtime(0.125f);
-                usedEquip = true;
                 manager.DeselectUnit();
             }
         }

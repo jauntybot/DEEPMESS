@@ -11,7 +11,7 @@ public class EnemyManager : UnitManager {
     [SerializeField] GameObject pendingUnitGFX;
     [SerializeField] List<Unit> unitsToAct = new List<Unit>();
     [SerializeField] List<GridElement> pendingUnits = new List<GridElement>();
-    List<GameObject> pendingUnitUIs = new List<GameObject>();
+    [HideInInspector] public List<GameObject> pendingUnitUIs = new List<GameObject>();
     public delegate void OnEnemyCondition(GridElement ge);
     public event OnEnemyCondition WipedOutCallback;
     protected Coroutine ongoingTurn;
@@ -170,7 +170,7 @@ public class EnemyManager : UnitManager {
 
         pendingUnitUIs = new List<GameObject>();
         foreach (Unit u in pendingUnits) {
-            GameObject obj = Instantiate(pendingUnitGFX, this.transform);
+            GameObject obj = Instantiate(pendingUnitGFX, unitParent.transform);
             obj.SetActive(true);
             
             obj.transform.localScale = Vector3.one * FloorManager.sqrSize;
@@ -198,9 +198,8 @@ public class EnemyManager : UnitManager {
         pendingUnitUIs = new List<GameObject>();
         if (pendingUnits.Count > 0) {
             yield return StartCoroutine(floorManager.DescendUnits(pendingUnits));
-            foreach (Unit u in pendingUnits) 
-                u.StoreInGrid(currentGrid);
         }
+        transform.parent = currentGrid.transform;
     }
 
     public virtual Unit Reinforcement() {
@@ -245,6 +244,7 @@ public class EnemyManager : UnitManager {
     {
         base.RemoveUnit(ge);
         if (unitsToAct.Contains((Unit)ge)) unitsToAct.Remove((Unit)ge);
+        if (pendingUnits.Contains((Unit)ge)) pendingUnits.Remove((Unit)ge);
         UIManager.instance.metaDisplay.UpdateEnemiesRemaining(units.Count);
     }
 }

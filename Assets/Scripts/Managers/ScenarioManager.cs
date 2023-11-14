@@ -72,10 +72,6 @@ public class ScenarioManager : MonoBehaviour
         runDataTracker.Init(this);
     
         yield return StartCoroutine(player.Initialize(floorManager.currentFloor));
-        if (startCavity >= 2) 
-            player.units[0].ui.UpdateLoadout(floorManager.cavityEquip[0]);      
-        if (startCavity >= 3) 
-            player.units[1].ui.UpdateLoadout(floorManager.cavityEquip[1]);
 
         if (GameplayOptionalTooltips.instance) {
             gpOptional = GameplayOptionalTooltips.instance;
@@ -196,7 +192,7 @@ public class ScenarioManager : MonoBehaviour
             case Turn.Descent:
                 floorManager.previewManager.TogglePreivews(false);
                 
-                currentEnemy.InterruptReinforcements();
+                
                 if (prevTurn == Turn.Cascade) {
                     //player.currentGrid = floorManager.floors[player.currentGrid.index-1];
                     for (int i = player.units.Count - 1; i >= 0; i--) {
@@ -207,9 +203,6 @@ public class ScenarioManager : MonoBehaviour
                 }
                 currentTurn = Turn.Descent;
                 player.StartEndTurn(false);
-// Reset per floor equipment on PlayerUnits
-                foreach(Unit u in player.units)
-                    u.usedEquip = false;
                 if (uiManager.gameObject.activeSelf)
                     yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Descent));
             break;
@@ -224,7 +217,6 @@ public class ScenarioManager : MonoBehaviour
                 foreach (Unit u in player.units) {
                     if (u is not Nail) {
                         u.energyCurrent = 0;
-                        u.usedEquip = true;
                         u.elementCanvas.UpdateStatsDisplay();
                         u.ui.UpdateEquipmentButtons();
                         u.StoreInGrid(player.currentGrid);

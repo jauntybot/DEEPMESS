@@ -4,7 +4,7 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName = "Equipment/PerFloor/Move")]
 [System.Serializable]
-public class PerFloorMoveData : PerFloorEquipmentData
+public class PerFloorMoveData : SlagEquipmentData
 {
     enum MoveType { Swap, MoveAll, Throw };
     [SerializeField] MoveType moveType;

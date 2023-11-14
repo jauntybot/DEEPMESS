@@ -378,8 +378,8 @@ public class PlayerManager : UnitManager {
     public override void DeselectUnit()
     {       
         if (selectedUnit is PlayerUnit pu && selectedUnit.selectedEquipment) {
-            if (selectedUnit.selectedEquipment is PerFloorEquipmentData) {
-                EquipmentButton butt = selectedUnit.ui.equipButtons.Find(e => e.data is PerFloorEquipmentData);
+            if (selectedUnit.selectedEquipment is SlagEquipmentData) {
+                EquipmentButton butt = selectedUnit.ui.equipButtons.Find(e => e.data is SlagEquipmentData);
                 if (butt)
                     butt.DeselectEquipment();
             } else if (selectedUnit.selectedEquipment is HammerData) {
