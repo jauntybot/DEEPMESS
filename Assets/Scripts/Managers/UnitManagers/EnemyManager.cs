@@ -10,7 +10,6 @@ public class EnemyManager : UnitManager {
     [SerializeField] Unit defaultUnit;
     [SerializeField] GameObject pendingUnitGFX;
     [SerializeField] List<Unit> unitsToAct = new List<Unit>();
-    [SerializeField] int turnCount;
     [SerializeField] List<GridElement> pendingUnits = new List<GridElement>();
     [HideInInspector] public List<GameObject> pendingUnitUIs = new List<GameObject>();
     public delegate void OnEnemyCondition(GridElement ge);
@@ -54,7 +53,6 @@ public class EnemyManager : UnitManager {
     }
 
     public virtual IEnumerator TakeTurn(bool scatter) {
-        turnCount++;
 // Reset manager and units for turn
         foreach(Unit u in units) {
             u.energyCurrent = u.energyMax;
@@ -160,9 +158,8 @@ public class EnemyManager : UnitManager {
         bool spawn = false;
 
         pendingUnits = new List<GridElement>();
-        if (turnCount > 0) {
-            //int count = currentGrid.lvlDef.minEnemies - units.Count;
-            int count = turnCount;
+        if (units.Count < currentGrid.lvlDef.minEnemies) {
+            int count = currentGrid.lvlDef.minEnemies - units.Count;
             for (int i = 0; i < count; i++) {
                 Unit reinforcement = Reinforcement();
                 if (reinforcement)
