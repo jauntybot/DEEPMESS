@@ -49,7 +49,6 @@ public class EnemyUnit : Unit {
 // Move scan
         if (!moved) {
             UpdateAction(equipment[0], moveMod);
-            Debug.Log("Move scan optimal coord");
             Vector2 targetCoord = SelectOptimalCoord(pathfinding);
             //while (!Input.GetMouseButtonDown(0)) yield return null;
             manager.SelectUnit(this);
@@ -58,7 +57,6 @@ public class EnemyUnit : Unit {
             grid.UpdateSelectedCursor(false, Vector2.one * -32);
             grid.DisableGridHighlight();
             yield return co;
-            Debug.Log("Unit action done");
             manager.DeselectUnit();
         }
 
@@ -80,6 +78,7 @@ public class EnemyUnit : Unit {
             }
         }
         grid.DisableGridHighlight();
+        Debug.Log("Unit action done");
     }
 
 
@@ -156,8 +155,7 @@ public class EnemyUnit : Unit {
         yield return base.TakeDamage(dmg, dmgType, source);
     }
 
-    public override IEnumerator DestroySequence(DamageType dmgType)
-    {
+    public override IEnumerator DestroySequence(DamageType dmgType) {
         switch(dmgType) {
             case DamageType.Unspecified:
                 gfxAnim.SetTrigger("Split");

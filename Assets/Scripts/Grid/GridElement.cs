@@ -17,7 +17,7 @@ public class GridElement : MonoBehaviour{
     public Vector2 coord;
     public bool selectable, targeted;
     [HideInInspector] public PolygonCollider2D hitbox;
-    [HideInInspector] public ElementCanvas elementCanvas;
+     public ElementCanvas elementCanvas;
     public enum DamageType { Unspecified, Melee, Gravity, Bile, Slots };
 
     bool takingDmg;
@@ -42,8 +42,7 @@ public class GridElement : MonoBehaviour{
     public SFX dmgdSFX, healedSFX, destroyedSFX;
 
 // Initialize references, scale to grid, subscribe onDeath event
-    protected virtual void Start() 
-    {
+    protected virtual void Start()  {
         audioSource = GetComponent<AudioSource>();
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
@@ -64,8 +63,7 @@ public class GridElement : MonoBehaviour{
     }
 
 // Update grid position and coordinate
-    public virtual void UpdateElement(Vector2 c) 
-    {
+    public virtual void UpdateElement(Vector2 c) {
         ElementUpdated?.Invoke(this);
         transform.position = grid.PosFromCoord(c);
         UpdateSortOrder(c);
@@ -92,8 +90,7 @@ public class GridElement : MonoBehaviour{
     }
 
   
-    public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) 
-    {
+    public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) {
         takingDmg = true;
         if (!shell || Mathf.Sign(dmg) == -1) {
             if (Mathf.Sign(dmg) == 1) 
@@ -115,9 +112,9 @@ public class GridElement : MonoBehaviour{
             RemoveShell();
         }
         if (hpCurrent <= 0) {
-            StartCoroutine(DestroySequence(dmgType));
+            yield return StartCoroutine(DestroySequence(dmgType));
         }
-        yield return new WaitForSecondsRealtime(.4f);
+        //yield return new WaitForSecondsRealtime(.4f);
         TargetElement(false);
     }
 
@@ -131,11 +128,11 @@ public class GridElement : MonoBehaviour{
                
         PlaySound(destroyedSFX);
         
+        if (elementCanvas)
+            elementCanvas.ToggleStatsDisplay(false);
         yield return new WaitForSecondsRealtime(.5f);
         foreach (SpriteRenderer sr in gfx) 
             sr.enabled = false;
-        if (elementCanvas)
-            elementCanvas.ToggleStatsDisplay(false);
         if (this.gameObject != null)
             Destroy(this.gameObject);
         

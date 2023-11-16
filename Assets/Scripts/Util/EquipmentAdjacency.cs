@@ -28,7 +28,7 @@ public class EquipmentAdjacency : MonoBehaviour
                 _coords = DiamondAdjacency(from, range, data, targetLast, true);
             break;
             case EquipmentData.AdjacencyType.Box:
-                _coords = BoxAdjacency(from, range, data, targetLast);
+                _coords = BoxAdjacency(from, range, targetLast);
             break;
         }
         if (offGrid == false) _coords = RemoveOffGridCoords(_coords);
@@ -365,7 +365,7 @@ public class EquipmentAdjacency : MonoBehaviour
         }
         return _coords;
     } 
-    protected static List<Vector2> BoxAdjacency(Vector2 from, int range, EquipmentData data, List<GridElement> targetLast) {
+    public static List<Vector2> BoxAdjacency(Vector2 from, int range, List<GridElement> targetLast = null) {
         List<Vector2> _coords = new List<Vector2>();
 
         for (int i = 1; i <= range; i++) {

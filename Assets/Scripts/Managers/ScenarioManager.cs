@@ -254,7 +254,7 @@ public class ScenarioManager : MonoBehaviour
     {
         scenario = Scenario.EndState;
         if (currentTurn == Turn.Enemy)
-            currentEnemy.EndTurnEarly();
+            currentEnemy.StopActingUnit();
         else if (currentTurn == Turn.Player)
             player.StartEndTurn(false);
         if (uiManager.gameObject.activeSelf) {

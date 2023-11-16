@@ -69,8 +69,8 @@ public class EquipmentData : ScriptableObject {
     }
 
     public virtual void EquipEquipment(Unit user) {
-        user.ui.UpdateEquipmentButtons();
-        
+        if (user is PlayerUnit pu)
+            pu.ui.UpdateEquipmentButtons();
     }
 
     public virtual void UnequipEquipment(Unit user) {

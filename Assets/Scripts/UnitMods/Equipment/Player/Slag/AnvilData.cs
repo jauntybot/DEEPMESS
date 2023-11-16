@@ -12,23 +12,31 @@ public class AnvilData : SlagEquipmentData {
         yield return base.UseEquipment(user, target);
         PlayerUnit pu = (PlayerUnit)user;
 
-        for (int i = pu.manager.units.Count - 1; i >= 0; i--) {
-            if (pu.manager.units[i] is Anvil) {
-                pu.manager.units[i].StartCoroutine(pu.manager.units[i].DestroySequence());
+// Destroy instances exceeding anvil limit
+        int activeAnvils = 0;
+        List<Anvil> anvils = new();
+        for (int i = 0; i <= pu.manager.units.Count - 1; i++) {
+            if (pu.manager.units[i] is Anvil a) {
+                anvils.Add(a);
+                activeAnvils++;
             }
         }
+        int anvilLimit = upgrades[UpgradePath.Unit] == 3 ? 1 : 0;
+        if (activeAnvils > anvilLimit) {
+            int destroyCount = activeAnvils - anvilLimit;
+            for (int i = 0; i < destroyCount; i++) {
+                anvils[0].StartCoroutine(anvils[0].DestroySequence());
+                anvils.RemoveAt(0);
+            }
+        } 
             
-        
-        GridElement toPlace = prefab.GetComponent<GridElement>();
-// Ternary to either spawn a Unit or instantiate a GridElement
-        GridElement placed = (toPlace is Unit u) ? 
-            (GridElement)pu.manager.SpawnUnit(target.coord, u) : 
-            Instantiate(prefab, user.grid.neutralGEContainer.transform).GetComponent<GridElement>();
-        if (toPlace is not Unit) placed.StoreInGrid(pu.grid);
-        if (placed.GetComponent<NestedFadeGroup.NestedFadeGroup>())
-            placed.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
-
-        placed.UpdateElement(pu.coord);            
+// Spawn new Anvil and Initialize
+        Anvil anvil = (Anvil)pu.manager.SpawnUnit(target.coord, prefab.GetComponent<Anvil>());
+        anvil.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
+        anvil.UpdateElement(pu.coord);      
+        anvil.Init(this);
+              
+// Move to coord
         yield return user.StartCoroutine(MoveToCoord(pu, target.coord));
     }
 
@@ -51,6 +59,24 @@ public IEnumerator MoveToCoord(Unit unit, Vector2 moveTo) {
         unit.UpdateElement(moveTo);
         yield return new WaitForSecondsRealtime(0.25f);
         if (!unit.targeted) unit.TargetElement(false);
+    }
+
+    public override void UpgradeEquipment(Unit user, UpgradePath targetPath) {
+        base.UpgradeEquipment(user, targetPath);
+        if (targetPath ==  UpgradePath.Unit) {
+            if (upgrades[targetPath] == 0)
+                slag.hpMax = 3;
+            else if (upgrades[targetPath] >= 1) {
+                slag.hpMax = 4;
+                slag.hpCurrent ++;
+            }
+            slag.elementCanvas.InstantiateMaxPips();
+            slag.ui.overview.InstantiateMaxPips();
+
+            if (upgrades[targetPath] >= 2)
+                range = 2;
+            else range = 1;
+        }
     }
 
 }

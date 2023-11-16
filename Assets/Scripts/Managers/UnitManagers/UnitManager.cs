@@ -105,6 +105,7 @@ public class UnitManager : MonoBehaviour {
 
     protected virtual void RemoveUnit(GridElement ge) {
         units.Remove(ge as Unit);
+        Debug.Log("Remove");
     }
 }
 

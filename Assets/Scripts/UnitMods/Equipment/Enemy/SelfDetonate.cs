@@ -61,7 +61,6 @@ public class SelfDetonate : EquipmentData
             for (int i = affectedCo.Count - 1; i >= 0; i--) {
                 if (affectedCo[i] != null) {
                     yield return affectedCo[i];
-                    Debug.Log("yielding");
                 }
                 else
                     affectedCo.RemoveAt(i);

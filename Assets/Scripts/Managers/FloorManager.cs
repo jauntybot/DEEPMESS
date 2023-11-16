@@ -366,6 +366,10 @@ public class FloorManager : MonoBehaviour
         Nail nail = null;
         List<Coroutine> descents = new List<Coroutine>();
         for (int i = units.Count - 1; i >= 0; i--) {
+            if (units[i] is Anvil a && a.data.upgrades[SlagEquipmentData.UpgradePath.Power] == 0) {
+                a.StartCoroutine(a.DestroySequence());
+                continue;
+            }
             if (units[i] is Unit u) {
                 if (u is not Nail) {
                     if (u is PlayerUnit && toFloor.slagSpawns.Count > 0) {

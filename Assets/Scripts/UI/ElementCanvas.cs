@@ -19,8 +19,7 @@ public class ElementCanvas : MonoBehaviour
 
     [SerializeField] UnitOverview overview = null;
 
-    public virtual void Initialize(GridElement ge) 
-    {
+    public virtual void Initialize(GridElement ge) {
         if (!disable) {
             element = ge;
 
@@ -36,6 +35,13 @@ public class ElementCanvas : MonoBehaviour
     }
 
     public virtual void InstantiateMaxPips() {
+        for (int i = emptyHPPips.transform.childCount - 1; i >= 0; i--)
+            Destroy(emptyHPPips.transform.GetChild(i).gameObject);
+        for (int i = hpPips.transform.childCount - 1; i >= 0; i--)
+            Destroy(hpPips.transform.GetChild(i).gameObject);
+        for (int i = dmgPanel.transform.childCount - 1; i >= 0; i--)
+            Destroy(dmgPanel.transform.GetChild(i).gameObject);
+
         if (!disable) {
             SizePipContainer(hpPips.GetComponent<RectTransform>());
             SizePipContainer(dmgPanel.GetComponent<RectTransform>());

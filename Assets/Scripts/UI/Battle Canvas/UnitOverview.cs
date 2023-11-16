@@ -36,6 +36,11 @@ public class UnitOverview : MonoBehaviour
     }
 
     public virtual void InstantiateMaxPips() {
+        for (int i = emptyHpPips.transform.childCount - 1; i >= 0; i--)
+            Destroy(emptyHpPips.transform.GetChild(i).gameObject);
+        for (int i = hpPips.transform.childCount - 1; i >= 0; i--)
+            Destroy(hpPips.transform.GetChild(i).gameObject);
+
         for (int i = unit.hpMax - 1; i >= 0; i--) {
             Instantiate(emptyPipPrefab, emptyHpPips.transform);
             Instantiate(hpPipPrefab, hpPips.transform);

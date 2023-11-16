@@ -104,12 +104,6 @@ public class PlayerManager : UnitManager {
         //u.transform.position += new Vector3(0, floorManager.floorOffset, 0);
         
         u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
-            
-                
-// Initialize equipment from prefab
-        foreach(EquipmentData e in u.equipment) {
-            e.EquipEquipment(u);
-        }
         //u.grid.RemoveElement(u);
 
         return u;

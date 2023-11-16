@@ -14,7 +14,7 @@ public class EnemyManager : UnitManager {
     [HideInInspector] public List<GameObject> pendingUnitUIs = new List<GameObject>();
     public delegate void OnEnemyCondition(GridElement ge);
     public event OnEnemyCondition WipedOutCallback;
-    protected Coroutine ongoingTurn;
+    protected Coroutine actingUnitCo;
 
     public override IEnumerator Initialize(Grid _currentGrid)
     {
@@ -26,6 +26,7 @@ public class EnemyManager : UnitManager {
         Unit u = base.SpawnUnit(coord, unit);
         //u.ElementDestroyed += DescentTriggerCheck;
         u.ElementDestroyed += CountDefeatedEnemy; 
+        u.ElementDestroyed += StopActingUnit;
         return u;
     }
 
@@ -46,7 +47,7 @@ public class EnemyManager : UnitManager {
     public virtual void DescentTriggerCheck(GridElement ge = null) {
         if (scenario.currentEnemy == this && scenario.currentTurn != ScenarioManager.Turn.Descent) {
             if (units.Count <= 0) {
-                EndTurnEarly();
+                StopActingUnit();
                 floorManager.Descend(false, false);
             }
         }
@@ -73,6 +74,7 @@ public class EnemyManager : UnitManager {
 // Loop through each unit to take it's action
         
         while (unitsToAct.Count > 0) {
+            Debug.Log("Enemy unit acting");
 // Check if the player loses before continuing turn
             bool lose = true;
             foreach (Unit u in scenario.player.units) {
@@ -82,23 +84,23 @@ public class EnemyManager : UnitManager {
                 }
             }
             if (lose || scenario.player.nail.conditions.Contains(Unit.Status.Disabled)) {
-                EndTurnEarly();
+                StopActingUnit();
                 break;
             }
 // Take either scatter action or normal action
             EnemyUnit enemy = unitsToAct[0] as EnemyUnit;
             unitsToAct.Remove(enemy);
             if (!scatter) {
-                ongoingTurn = StartCoroutine(enemy.CalculateAction());
-                yield return ongoingTurn;
+                actingUnitCo = StartCoroutine(enemy.CalculateAction());
+                yield return actingUnitCo;
                 yield return new WaitForSecondsRealtime(0.125f);
             } else {
-                ongoingTurn = StartCoroutine(enemy.ScatterTurn());
-                yield return ongoingTurn;
+                actingUnitCo = StartCoroutine(enemy.ScatterTurn());
+                yield return actingUnitCo;
                 yield return new WaitForSecondsRealtime(0.125f);
             }
+            Debug.Log("Enemy unit finished acting");
         }
-        yield return ongoingTurn;
 
         if (SpawnReinforcements()) yield return new WaitForSecondsRealtime(1.5f);
         
@@ -106,15 +108,16 @@ public class EnemyManager : UnitManager {
         EndTurn();
     }
 
-    public void EndTurnEarly() {
-        if (ongoingTurn != null) {
-            StopCoroutine(ongoingTurn);
-            ongoingTurn = null;
+    public void StopActingUnit(GridElement ge = null) {
+        if (actingUnitCo != null) {
+            //StopCoroutine(actingUnitCo);
+            actingUnitCo = null;
         }
     }
 
 
     public void EndTurn() {
+        StopActingUnit();
         if (selectedUnit)
            DeselectUnit();
         foreach (Unit unit in units) {

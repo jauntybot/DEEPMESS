@@ -7,10 +7,10 @@ public class Unit : GridElement {
     public override event OnElementUpdate ElementDestroyed;
 
     [Header("Unit")]
+    [HideInInspector] public UnitManager manager;
     protected Animator gfxAnim;
     [SerializeField] DescentVFX descentVFX;
     public GameObject airTraillVFX;
-    public UnitManager manager;
     public bool selected;
     public EquipmentData selectedEquipment;
     public List<EquipmentData> equipment;
@@ -52,6 +52,11 @@ public class Unit : GridElement {
 
         if (ui.overview)
             ui.overview.UpdateOverview(hpCurrent);
+
+// Initialize equipment from prefab
+        foreach(EquipmentData e in equipment) {
+            e.EquipEquipment(this);
+        }
     }
 
     public virtual void UpdateAction(EquipmentData equipment = null, int mod = 0) {
@@ -195,7 +200,7 @@ public class Unit : GridElement {
 
     public virtual void RemoveCondition(Status s) {
         if (conditions.Contains(s)) {
-            conditionDisplay.RemoveCondition(s);
+            if (conditionDisplay) conditionDisplay.RemoveCondition(s);
             conditions.Remove(s);
             switch(s) {
                 default: return;
