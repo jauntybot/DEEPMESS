@@ -41,6 +41,10 @@ public class FloorManager : MonoBehaviour
     [SerializeField] ParallaxImageScroll parallax;
     public DescentPreviewManager previewManager;
     [SerializeField] Animator cavityText;
+
+    public delegate void OnFloorAction();
+    public virtual event OnFloorAction DescendingUnits;
+    public virtual event OnFloorAction DescendingFloors;
    
     [Header("Grid Viz")]
     public Color playerColor;
@@ -261,6 +265,8 @@ public class FloorManager : MonoBehaviour
         if (nail)
             yield return StartCoroutine(currentFloor.ShockwaveCollapse(pos));
 
+        DescendingFloors?.Invoke();
+
         ScenarioManager.Scenario scen = ScenarioManager.Scenario.Null;
         if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) scen = ScenarioManager.Scenario.Boss;
         if (tut) {
@@ -354,10 +360,11 @@ public class FloorManager : MonoBehaviour
 
         scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         scenario.player.transform.parent = transitionParent;
+        scenario.player.nail.transform.parent = currentFloor.transform;
         scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         scenario.currentEnemy.transform.parent = transitionParent;
-        
-        scenario.player.nail.transform.parent = currentFloor.transform;
+
+        DescendingUnits?.Invoke();
 
         foreach (GridElement ge in units) {
             if (ge is Unit u) {
@@ -446,6 +453,7 @@ public class FloorManager : MonoBehaviour
         if (unit is Anvil a && a.data.upgrades[SlagEquipmentData.UpgradePath.Power] >= 2) {
             landing = StartCoroutine(a.PushOnLanding());
         }
+
         if (subElement) {
             StartCoroutine(subElement.CollideFromBelow(unit));
 

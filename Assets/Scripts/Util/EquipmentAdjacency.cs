@@ -22,7 +22,7 @@ public class EquipmentAdjacency : MonoBehaviour
                 _coords = OrthagonalAdjacency(from, range, data.filters, targetLast);
             break;
             case EquipmentData.AdjacencyType.OfType:
-                _coords = OfTypeOnBoardAdjacency(from, data.filters, from, grid);
+                _coords = OfTypeOnBoardAdjacency(data.filters, grid);
             break;
             case EquipmentData.AdjacencyType.OfTypeInRange:
                 _coords = DiamondAdjacency(from, range, data, targetLast, true);
@@ -342,7 +342,7 @@ public class EquipmentAdjacency : MonoBehaviour
     }
 
     
-    public static List<Vector2> OfTypeOnBoardAdjacency(Vector2 from, List<GridElement> elements, Vector2 origin, Grid grid) {
+    public static List<Vector2> OfTypeOnBoardAdjacency(List<GridElement> elements, Grid grid) {
         List<Vector2> _coords = new();
         
         foreach (GridElement type in elements) {

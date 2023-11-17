@@ -52,7 +52,7 @@ public class SelfDetonate : EquipmentData
                 if (user.grid.CoordContents(coord).Count > 0) {
                     foreach (GridElement ge in user.grid.CoordContents(coord)) {
                         if (ge is Unit tu && ge != user) {
-                            affectedCo.Add(tu.StartCoroutine(tu.TakeDamage(2)));
+                            affectedCo.Add(tu.StartCoroutine(tu.TakeDamage(2, GridElement.DamageType.Melee)));
                         }
                     }
                 }

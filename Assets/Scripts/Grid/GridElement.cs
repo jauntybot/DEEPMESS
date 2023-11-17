@@ -31,9 +31,8 @@ public class GridElement : MonoBehaviour{
     public virtual event OnElementUpdate ElementUpdated;
     public virtual event OnElementUpdate ElementDestroyed;
 
-    public int hpMax, hpCurrent, defense;
-    public bool shell;
-    [SerializeField] GameObject shellGFX;
+    public int hpMax, hpCurrent;
+    public Shield shield;
     public int energyCurrent, energyMax;
     
     [Header("Audio")]
@@ -78,10 +77,9 @@ public class GridElement : MonoBehaviour{
         int sort = grid.SortOrderFromCoord(c);
         foreach (SpriteRenderer sr in gfx)
             sr.sortingOrder = sort;
-        if (shellGFX) {
-            if (shellGFX.GetComponent<LineRenderer>()) shellGFX.GetComponent<LineRenderer>().sortingOrder = sort;
-            else if (shellGFX.GetComponent<SpriteRenderer>()) shellGFX.GetComponent<SpriteRenderer>().sortingOrder = sort;
-        }
+        if (shield) 
+            shield.gfx.sortingOrder = sort;
+        
     }
 
     public virtual void EnableSelection(bool state) {
@@ -92,7 +90,7 @@ public class GridElement : MonoBehaviour{
   
     public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) {
         takingDmg = true;
-        if (!shell || Mathf.Sign(dmg) == -1) {
+        if (shield == null || Mathf.Sign(dmg) == -1) {
             if (Mathf.Sign(dmg) == 1) 
                 PlaySound(dmgdSFX);
                          
@@ -107,7 +105,7 @@ public class GridElement : MonoBehaviour{
             
 
         } else {
-            RemoveShell();
+            RemoveShield();
         }
         if (hpCurrent <= 0) {
             yield return StartCoroutine(DestroySequence(dmgType));
@@ -146,7 +144,7 @@ public class GridElement : MonoBehaviour{
     }
 
     public virtual IEnumerator CollideFromBelow(GridElement above) {
-        RemoveShell();
+        RemoveShield();
         yield return StartCoroutine(DestroySequence(DamageType.Gravity));
     }
 
@@ -158,17 +156,17 @@ public class GridElement : MonoBehaviour{
         yield return null;
     }
 
-    public virtual void ApplyShell() {
-        if (!shell) {
-            shellGFX.SetActive(true);
-            shell = true;
+    public virtual void ApplyShield(Shield _shield) {
+        if (shield == null) {
+            
+            shield = _shield;
         }
     }
 
-    public virtual void RemoveShell() {
-        if (shell) {
-            shellGFX.SetActive(false);
-            shell = false;
+    public virtual void RemoveShield() {
+        if (shield) {
+            Destroy(shield.gameObject);
+            shield = null;
         }
     }
 

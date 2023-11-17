@@ -102,7 +102,7 @@ public class Unit : GridElement {
                 ApplyCondition(Status.Restricted);
             } else if (targetSqr.tileType == Tile.TileType.Bile && hpCurrent > 0) {
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
-                RemoveShell();
+                RemoveShield();
                 StartCoroutine(TakeDamage(hpMax, DamageType.Bile));
             } else if (targetSqr is TileBulb tb && this is PlayerUnit pu) {
                 if (!tb.harvested && pu.equipment.Find(e => e is BulbEquipmentData) == null)

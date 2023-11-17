@@ -21,16 +21,17 @@ MonoBehaviour:
   vfx: {fileID: 0}
   multiselect: 0
   firstTarget: {fileID: 0}
-  adjacency: 5
-  range: 0
+  adjacency: 0
+  range: 3
   aoeAdjacency: 0
   aoeRange: 0
   energyCost: 1
   animDur: 0.5
-  filters:
+  filters: []
+  targetTypes:
   - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
-  - {fileID: 1124182531442868255, guid: 3c53f14dfc3e6174e874415021915958, type: 3}
-  _filters: []
-  targetTypes: []
+  - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
   selectSFX: {fileID: 0}
   useSFX: {fileID: 11400000, guid: 768f4df616649e94c80b7de04a73116e, type: 2}
+  slag: {fileID: 0}
+  shieldPrefab: {fileID: 4540997612109558425, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}

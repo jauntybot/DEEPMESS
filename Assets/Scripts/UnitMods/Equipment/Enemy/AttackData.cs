@@ -4,10 +4,7 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName = "Equipment/Attack/Strike")]
 [System.Serializable]
-public class AttackData : EquipmentData
-{
-    
-
+public class AttackData : EquipmentData {
     public int dmg;
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
@@ -60,18 +57,20 @@ public class AttackData : EquipmentData
             timer += Time.deltaTime;
         }
 
-        Coroutine co = null;
+        List<Coroutine> cos = new();
         if (target is Nail n) {
             if (n.manager.scenario.tutorial != null && n.manager.scenario.tutorial.isActiveAndEnabled && !n.manager.scenario.tutorial.nailDamageEncountered && n.manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
                 n.manager.scenario.tutorial.StartCoroutine(n.manager.scenario.tutorial.NailDamage());
             }
             CameraController.instance.StartCoroutine(CameraController.instance.ScreenShake(0.125f, 0.5f));
-            co = user.StartCoroutine(user.TakeDamage(1, GridElement.DamageType.Melee, n));
+            cos.Add(user.StartCoroutine(user.TakeDamage(1, GridElement.DamageType.Melee, n)));
         }
-        Coroutine co2 = target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user));
-        yield return co;
-        if (co2 != null)
-            yield return co2;
+        if (target.shield && target.shield.thorns) cos.Add(user.StartCoroutine(user.TakeDamage(1, GridElement.DamageType.Melee, target)));
+        cos.Add(target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user)));
+        
+        for (int i = cos.Count - 1; i >= 0; i--)
+            yield return cos[i];
+
         Debug.Log("Attack finished");
     }
 

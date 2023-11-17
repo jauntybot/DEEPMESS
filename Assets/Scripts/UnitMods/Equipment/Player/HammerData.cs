@@ -11,7 +11,7 @@ public class HammerData : EquipmentData
     public enum Action { Lob, Strike };
     public Action action;
     GridElement.DamageType dmgType = GridElement.DamageType.Melee;
-    public SFX throwSFX, catchSFX, nailSFX, shellSFX;
+    public SFX throwSFX, catchSFX, nailSFX, shieldSFX;
    
     public void AssignHammer(GameObject h, Nail d) {
         hammer = h;
@@ -66,7 +66,7 @@ public class HammerData : EquipmentData
             return validCoords;
         } else {
             List<GridElement> targets = new(); targets.Add(user);
-            List<Vector2> _coords = EquipmentAdjacency.OfTypeOnBoardAdjacency(user.coord, targets, user.coord, user.grid);        
+            List<Vector2> _coords = EquipmentAdjacency.OfTypeOnBoardAdjacency(targets, user.grid);        
             
             Unit unit = (Unit)user;
 
@@ -156,8 +156,8 @@ public class HammerData : EquipmentData
 
 // Attack target if unit
             if (target is EnemyUnit) {
-                if (target.shell)
-                    target.PlaySound(shellSFX);
+                if (target.shield)
+                    target.PlaySound(shieldSFX);
                 else 
                     target.PlaySound(useSFX);
                 
