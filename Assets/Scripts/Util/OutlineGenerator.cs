@@ -12,7 +12,7 @@ public class OutlineGenerator : MonoBehaviour
 
     Mesh SpriteToMesh(Sprite sprite)
     {
-        Mesh mesh = new Mesh();
+        Mesh mesh = new();
         mesh.vertices = Array.ConvertAll(sprite.vertices, i => (Vector3)i);
         mesh.uv = sprite.uv;
         mesh.triangles = Array.ConvertAll(sprite.triangles, i => (int)i);
@@ -34,7 +34,7 @@ public class OutlineGenerator : MonoBehaviour
         Vector3[] vertices = mesh.vertices;
 
         // Get just the outer edges from the mesh's triangles (ignore or remove any shared edges)
-        Dictionary<string, KeyValuePair<int, int>> edges = new Dictionary<string, KeyValuePair<int, int>>();
+        Dictionary<string, KeyValuePair<int, int>> edges = new();
         for (int i = 0; i < triangles.Length; i += 3) {
             for (int e = 0; e < 3; e++) {
                 int vert1 = triangles[i + e];
@@ -49,7 +49,7 @@ public class OutlineGenerator : MonoBehaviour
         }
 
         // Create edge lookup Dictionary
-        Dictionary<int, int> lookup = new Dictionary<int, int>();
+        Dictionary<int, int> lookup = new();
         foreach (KeyValuePair<int, int> edge in edges.Values) {
             if (lookup.ContainsKey(edge.Key) == false) {
                 lookup.Add(edge.Key, edge.Value);
@@ -69,7 +69,7 @@ public class OutlineGenerator : MonoBehaviour
 
         // This vector3 gets added to each line position, so it sits in front of the mesh
         // Change the -0.1f to a positive number and it will sit behind the mesh
-        Vector3 bringFoward = new Vector3(0f, 0f, -0.1f);
+        Vector3 bringFoward = new(0f, 0f, -0.1f);
         bringFoward += transform.position;
 
         // Loop through edge vertices in order

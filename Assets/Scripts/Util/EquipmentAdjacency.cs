@@ -11,7 +11,7 @@ public class EquipmentAdjacency : MonoBehaviour
 // Accessor function, pass all params here and it will use the appropriate equation
     public static List<Vector2> GetAdjacent(Vector2 from, int range, EquipmentData data, List<GridElement> targetLast = null, Grid grid = null, bool offGrid = false)
     {
-        List<Vector2> _coords = new List<Vector2>();
+        List<Vector2> _coords = new();
 
         switch(data.adjacency) {
             default:
@@ -38,8 +38,8 @@ public class EquipmentAdjacency : MonoBehaviour
 
     public static List<Vector2> DiamondAdjacency(Vector2 from, int range, EquipmentData data, List<GridElement> targetLast, bool ofType = false) 
     {
-        List<Vector2> _coords = new List<Vector2>();
-        List<Vector2> frontier = new List<Vector2>();
+        List<Vector2> _coords = new();
+        List<Vector2> frontier = new();
         frontier.Add(from);
 
         for (int r = 1; r <= range; r++) {
@@ -48,7 +48,7 @@ public class EquipmentAdjacency : MonoBehaviour
                 frontier.Remove(frontier[f]);
 // X Axis adjacency
                 for (int x = -1; x < 2; x+=2) {
-                    Vector2 coord = new Vector2(current.x + x, current.y);
+                    Vector2 coord = new(current.x + x, current.y);
                     if (coord.x < 0 || coord.x > 7 || coord.y < 0 || coord.y >7) continue;
                     if (!_coords.Contains(coord)) {
                         bool valid = true;
@@ -90,7 +90,7 @@ public class EquipmentAdjacency : MonoBehaviour
                 }
 // Y Axis adjacency
                 for (int y = -1; y < 2; y+=2) {    
-                    Vector2 coord = new Vector2(current.x, current.y + y);
+                    Vector2 coord = new(current.x, current.y + y);
                     if (coord.x < 0 || coord.x > 7 || coord.y < 0 || coord.y >7) continue;
                     if (!_coords.Contains(coord)) {
                         bool valid = true;
@@ -138,7 +138,7 @@ public class EquipmentAdjacency : MonoBehaviour
     }
 
     public static Dictionary<Vector2, Vector2> SteppedCoordAdjacency(Vector2 from, Vector2 to, EquipmentData data) {
-        Dictionary<Vector2, Vector2> _toFrom = new Dictionary<Vector2, Vector2>();
+        Dictionary<Vector2, Vector2> _toFrom = new();
         List<Vector2> frontier = new() { from };
         Vector2 current = from;
         
@@ -148,7 +148,7 @@ public class EquipmentAdjacency : MonoBehaviour
                 frontier.Remove(frontier[f]);
 // X Axis adjacency
                 for (int x = -1; x < 2; x+=2) {
-                    Vector2 coord = new Vector2(current.x + x, current.y);
+                    Vector2 coord = new(current.x + x, current.y);
                     if (coord.x < 0 || coord.x > 7) continue;
                     if (!_toFrom.ContainsKey(coord)) {
 // If there is something already occupying this coord  
@@ -173,7 +173,7 @@ public class EquipmentAdjacency : MonoBehaviour
                 }
 // Y Axis adjacency
                 for (int y = -1; y < 2; y+=2) {    
-                    Vector2 coord = new Vector2(current.x, current.y + y);
+                    Vector2 coord = new(current.x, current.y + y);
                     if (coord.y < 0 || coord.y > 7) continue;
                     if (!_toFrom.ContainsKey(coord)) {
 // If there is something already occupying this coord                        
@@ -203,7 +203,7 @@ public class EquipmentAdjacency : MonoBehaviour
 
 // Reverse dictionary
         current = to;
-        Dictionary<Vector2, Vector2> _fromTo = new Dictionary<Vector2, Vector2>();
+        Dictionary<Vector2, Vector2> _fromTo = new();
         string dict = "";
         while (!Vector2.Equals(current, from)) {
             _fromTo.Add(_toFrom[current], current);
@@ -216,7 +216,7 @@ public class EquipmentAdjacency : MonoBehaviour
 
     
     public static Dictionary<Vector2, Vector2> ClosestSteppedCoordAdjacency(Vector2 from, Vector2 to, EquipmentData data) {
-        Dictionary<Vector2, Vector2> _toFrom = new Dictionary<Vector2, Vector2>();
+        Dictionary<Vector2, Vector2> _toFrom = new();
         List<Vector2> frontier = new() { from };
         Vector2 current = from;
         
@@ -226,7 +226,7 @@ public class EquipmentAdjacency : MonoBehaviour
                 frontier.Remove(frontier[f]);
 // X Axis adjacency
                 for (int x = -1; x < 2; x+=2) {
-                    Vector2 coord = new Vector2(current.x + x, current.y);
+                    Vector2 coord = new(current.x + x, current.y);
                     if (coord.x < 0 || coord.x > 7) continue;
                     if (!_toFrom.ContainsKey(coord)) {
 // If there is something already occupying this coord  
@@ -251,7 +251,7 @@ public class EquipmentAdjacency : MonoBehaviour
                 }
 // Y Axis adjacency
                 for (int y = -1; y < 2; y+=2) {    
-                    Vector2 coord = new Vector2(current.x, current.y + y);
+                    Vector2 coord = new(current.x, current.y + y);
                     if (coord.y < 0 || coord.y > 7) continue;
                     if (!_toFrom.ContainsKey(coord)) {
 // If there is something already occupying this coord                        
@@ -289,7 +289,7 @@ public class EquipmentAdjacency : MonoBehaviour
 
 // Reverse dictionary
         current = newTo;
-        Dictionary<Vector2, Vector2> _fromTo = new Dictionary<Vector2, Vector2>();
+        Dictionary<Vector2, Vector2> _fromTo = new();
         string dict = "";
         while (!Vector2.Equals(current, from)) {
             _fromTo.Add(_toFrom[current], current);
@@ -300,9 +300,9 @@ public class EquipmentAdjacency : MonoBehaviour
         return _fromTo;         
     }
 
-    public static List<Vector2> OrthagonalAdjacency(Vector2 from, int range, List<GridElement> filters, List<GridElement> targetLast) 
+    public static List<Vector2> OrthagonalAdjacency(Vector2 from, int range, List<GridElement> filters, List<GridElement> targetLast = null) 
     {
-        List<Vector2> _coords = new List<Vector2>();
+        List<Vector2> _coords = new();
         Vector2 dir = Vector2.zero;
         for (int d = 0; d < 4; d++) 
         {
@@ -343,7 +343,7 @@ public class EquipmentAdjacency : MonoBehaviour
 
     
     public static List<Vector2> OfTypeOnBoardAdjacency(Vector2 from, List<GridElement> elements, Vector2 origin, Grid grid) {
-        List<Vector2> _coords = new List<Vector2>();
+        List<Vector2> _coords = new();
         
         foreach (GridElement type in elements) {
             if (type is Tile) {
@@ -366,7 +366,7 @@ public class EquipmentAdjacency : MonoBehaviour
         return _coords;
     } 
     public static List<Vector2> BoxAdjacency(Vector2 from, int range, List<GridElement> targetLast = null) {
-        List<Vector2> _coords = new List<Vector2>();
+        List<Vector2> _coords = new();
 
         for (int i = 1; i <= range; i++) {
             _coords.Add(new Vector2(from.x + i, from.y));

@@ -131,7 +131,7 @@ public class PlayerUnit : Unit {
         for (int i = equipment.Count - 1; i >= 0; i--) {
             if (equipment[i] is HammerData hammer) {
                 if (!droppedHammer) {
-                    List<Unit> possiblePasses = new List<Unit>();
+                    List<Unit> possiblePasses = new();
                     foreach (Unit u in pManager.units) {
                         if (u is PlayerUnit && !u.conditions.Contains(Status.Disabled) && u != this)
                             possiblePasses.Add(u);

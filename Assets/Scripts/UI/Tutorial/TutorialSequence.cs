@@ -27,7 +27,7 @@ public class TutorialSequence : MonoBehaviour
     [HideInInspector] public string header, body;
     public bool blinking = false;
     bool cont = false;
-    List<Unit> playerUnits = new List<Unit>();
+    List<Unit> playerUnits = new();
 
     [SerializeField] Color keyColor;
 

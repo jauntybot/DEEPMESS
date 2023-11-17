@@ -39,7 +39,7 @@ public class LineController : MonoBehaviour
  
     void SetSingleColor2(LineRenderer lineRendererToChange, Color newColor)
     {
-        Gradient tempGradient = new Gradient();
+        Gradient tempGradient = new();
  
         GradientColorKey[] tempColorKeys = new GradientColorKey[2];
         tempColorKeys[0] = new GradientColorKey(newColor,0);
@@ -163,8 +163,8 @@ public class LineController : MonoBehaviour
  
     //Basically Color.Lerp?
     Color ColorLerpMath(Color firstColor, Color secondColor, float progress){
-        Vector3 firstRGB = new Vector3(firstColor.r,firstColor.g,firstColor.b);
-        Vector3 secondRGB = new Vector3(secondColor.r,secondColor.g,secondColor.b);
+        Vector3 firstRGB = new(firstColor.r,firstColor.g,firstColor.b);
+        Vector3 secondRGB = new(secondColor.r,secondColor.g,secondColor.b);
         Vector3 difference = secondRGB-firstRGB;
         Vector3 lerpedRGB = firstRGB + (progress*difference);
         return new Color(lerpedRGB.x,lerpedRGB.y,lerpedRGB.z);
@@ -178,10 +178,10 @@ public class LineController : MonoBehaviour
     //returns the gradient with a copy of the first key for intersection purposes.
     Gradient AddInitialCopy(Gradient incomingGradient)
     {
-        List<GradientColorKey> newColorKeys = new List<GradientColorKey>(incomingGradient.colorKeys);
+        List<GradientColorKey> newColorKeys = new(incomingGradient.colorKeys);
         Color interSectionColor = newColorKeys[0].color;
         newColorKeys.Insert(0,new GradientColorKey(interSectionColor,0));
-        Gradient newInitGradient = new Gradient();
+        Gradient newInitGradient = new();
         newInitGradient.colorKeys = newColorKeys.ToArray();
         return newInitGradient;
     }
@@ -189,7 +189,7 @@ public class LineController : MonoBehaviour
     //remove first and last keys since they dont shift.
     List<GradientColorKey> RemoveFirstAndLast(Gradient incomingGradient)
     {
-        List<GradientColorKey> currentColorKeys = new List<GradientColorKey>(incomingGradient.colorKeys);
+        List<GradientColorKey> currentColorKeys = new(incomingGradient.colorKeys);
         currentColorKeys.RemoveAt(currentColorKeys.Count-1);
         currentColorKeys.RemoveAt(0);
         return currentColorKeys;
@@ -257,8 +257,8 @@ public class LineController : MonoBehaviour
  
     void DrawTestLine()
     {
-        Vector3 firstPos = new Vector3(-5,0,0);
-        Vector3 secondPos = new Vector3(5,0,0);
+        Vector3 firstPos = new(-5,0,0);
+        Vector3 secondPos = new(5,0,0);
         int resolution = 100;
         myLineRenderer.positionCount = resolution;
         myLineRenderer.SetPositions(MakeLine(firstPos,secondPos,100));

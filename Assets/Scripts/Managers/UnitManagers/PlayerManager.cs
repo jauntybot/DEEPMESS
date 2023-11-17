@@ -29,8 +29,8 @@ public class PlayerManager : UnitManager {
     [SerializeField] GameObject slimeArmAnim;
 
     [Header("UNDO")]
-    public Dictionary<Unit, Vector2> undoableMoves = new Dictionary<Unit, Vector2>();
-    public Dictionary<Unit, GridElement> harvestedByMove = new Dictionary<Unit, GridElement>();
+    public Dictionary<Unit, Vector2> undoableMoves = new();
+    public Dictionary<Unit, GridElement> harvestedByMove = new();
     public List<Unit> undoOrder;
 
     [Header("GRID VIS")]
@@ -64,7 +64,7 @@ public class PlayerManager : UnitManager {
         lastHoveredCoord = new Vector2(0,0);
         gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
 
-        List<Unit> initU = new List<Unit>() {
+        List<Unit> initU = new() {
             SpawnUnit(Vector2.zero, loadout.unitPrefabs[0]),
             SpawnUnit(Vector2.zero, loadout.unitPrefabs[1]),
             SpawnUnit(Vector2.zero, loadout.unitPrefabs[2])

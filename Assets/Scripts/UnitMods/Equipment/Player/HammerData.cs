@@ -65,12 +65,12 @@ public class HammerData : EquipmentData
             
             return validCoords;
         } else {
-            List<GridElement> targets = new List<GridElement>(); targets.Add(user);
+            List<GridElement> targets = new(); targets.Add(user);
             List<Vector2> _coords = EquipmentAdjacency.OfTypeOnBoardAdjacency(user.coord, targets, user.coord, user.grid);        
             
             Unit unit = (Unit)user;
 
-            List<Vector2> allCoords = new List<Vector2>();
+            List<Vector2> allCoords = new();
             foreach (Tile sqr in user.grid.tiles)
                 allCoords.Add(sqr.coord);
             unit.inRangeCoords = allCoords;
@@ -212,7 +212,7 @@ public class HammerData : EquipmentData
 
     
     public virtual void PassHammer(PlayerUnit sender, PlayerUnit reciever) {
-        List<EquipmentData> toAdd = new List<EquipmentData>();
+        List<EquipmentData> toAdd = new();
         for (int i = sender.equipment.Count - 1; i >= 0; i--) {
             if (sender.equipment[i] is HammerData) {
                 toAdd.Add(sender.equipment[i]);

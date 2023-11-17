@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class Anvil : Unit {
 
+
+    [Header("ANVIL UNIT")]
     [HideInInspector] public AnvilData data;
     [SerializeField] Animator explosion;
+    [SerializeField] List<GridElement> targetTypes;
 
     protected override void Start() {
 // Manual override of Base.Start to exclude hp initialization
@@ -56,11 +59,11 @@ public class Anvil : Unit {
     public virtual IEnumerator Detonate() {
             explosion.gameObject.SetActive(true);
             gfx[0].enabled = false;
-        // Apply damage to units in AOE
+// Apply damage to units in AOE
             List<Vector2> aoe = EquipmentAdjacency.BoxAdjacency(coord, 1);
             grid.DisplayValidCoords(aoe, 2);
             yield return new WaitForSecondsRealtime(0.5f);
-            List<Coroutine> affectedCo = new List<Coroutine>();
+            List<Coroutine> affectedCo = new();
             grid.DisableGridHighlight();
             foreach (Vector2 coord in aoe) {
                 if (grid.CoordContents(coord).Count > 0) {
@@ -83,7 +86,65 @@ public class Anvil : Unit {
             Debug.Log("Explosion Done");
     }
 
+    public virtual IEnumerator PushOnLanding() {
+        explosion.gameObject.SetActive(true);
+        List<Vector2> aoe = EquipmentAdjacency.OrthagonalAdjacency(coord, 1, targetTypes);
+        grid.DisplayValidCoords(aoe, 2);
+        List<Coroutine> affectedCo = new();
+        foreach (Vector2 _coord in aoe) {
+            if (grid.CoordContents(_coord).Count > 0) {
+                foreach (GridElement ge in grid.CoordContents(_coord)) {
+                    if (ge is Unit tu && ge != this) {
+                        float xDelta = _coord.x - coord.x;
+                        float yDelta = _coord.y - coord.y;
+                        Vector2 targetCoord = new(_coord.x + xDelta, _coord.y + yDelta);
+                        
+                        if (grid.CoordContents(targetCoord).Count == 0) {
+                            affectedCo.Add(StartCoroutine(PushToCoord(tu, targetCoord)));
+                        }
 
+                        if (data.upgrades[SlagEquipmentData.UpgradePath.Power] == 3) StartCoroutine(tu.TakeDamage(1, DamageType.Melee));
+                    }
+                }
+            }
+        }
+
+        for (int i = affectedCo.Count - 1; i >= 0; i--) {
+            if (affectedCo[i] != null) {
+                yield return affectedCo[i];
+            }
+            else
+                affectedCo.RemoveAt(i);
+        }
+        grid.DisableGridHighlight();
+        yield return new WaitForSecondsRealtime(0.15f);
+        Debug.Log("Push Done");
+    }
+
+    public virtual IEnumerator PushToCoord(Unit unit, Vector2 moveTo, bool undo = false) {       
+// Build frontier dictionary for stepped lerp
+        Dictionary<Vector2, Vector2> fromTo = new() { { unit.coord, moveTo } };
+
+        Vector2 current = unit.coord;
+        unit.coord = moveTo;
+        
+// Lerp units position to target
+        while (!Vector2.Equals(current, moveTo)) {
+// exposed UpdateElement() functionality to selectively update sort order
+            if (unit.grid.SortOrderFromCoord(fromTo[current]) > unit.grid.SortOrderFromCoord(current))
+                unit.UpdateSortOrder(fromTo[current]);
+            Vector3 toPos = FloorManager.instance.currentFloor.PosFromCoord(fromTo[current]);
+            float timer = 0;
+            while (timer < .2f) {
+                yield return null;
+                unit.transform.position = Vector3.Lerp(unit.transform.position, toPos, timer/.2f);
+                timer += Time.deltaTime;
+            }
+            current = fromTo[current];
+            yield return null;
+        }        
+        unit.UpdateElement(moveTo);
+    }
 
     public override void EnableSelection(bool state) {}
 }

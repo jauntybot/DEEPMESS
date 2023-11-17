@@ -10,7 +10,7 @@ public class UnitConditionVFX : MonoBehaviour
 
     [SerializeField] GameObject weakenedPrefab, stunnedPrefab;
 
-    List<GameObject> activeStatus = new List<GameObject>();
+    List<GameObject> activeStatus = new();
 
     public void Init(Unit u) {
         unit = u;

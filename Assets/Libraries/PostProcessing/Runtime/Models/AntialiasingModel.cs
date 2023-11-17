@@ -42,40 +42,35 @@ namespace UnityEngine.PostProcessing
             public static FxaaQualitySettings[] presets =
             {
                 // ExtremePerformance
-                new FxaaQualitySettings
-                {
+                new() {
                     subpixelAliasingRemovalAmount = 0f,
                     edgeDetectionThreshold = 0.333f,
                     minimumRequiredLuminance = 0.0833f
                 },
 
                 // Performance
-                new FxaaQualitySettings
-                {
+                new() {
                     subpixelAliasingRemovalAmount = 0.25f,
                     edgeDetectionThreshold = 0.25f,
                     minimumRequiredLuminance = 0.0833f
                 },
 
                 // Default
-                new FxaaQualitySettings
-                {
+                new() {
                     subpixelAliasingRemovalAmount = 0.75f,
                     edgeDetectionThreshold = 0.166f,
                     minimumRequiredLuminance = 0.0833f
                 },
 
                 // Quality
-                new FxaaQualitySettings
-                {
+                new() {
                     subpixelAliasingRemovalAmount = 1f,
                     edgeDetectionThreshold = 0.125f,
                     minimumRequiredLuminance = 0.0625f
                 },
 
                 // ExtremeQuality
-                new FxaaQualitySettings
-                {
+                new() {
                     subpixelAliasingRemovalAmount = 1f,
                     edgeDetectionThreshold = 0.063f,
                     minimumRequiredLuminance = 0.0312f
@@ -105,8 +100,7 @@ namespace UnityEngine.PostProcessing
             public static FxaaConsoleSettings[] presets =
             {
                 // ExtremePerformance
-                new FxaaConsoleSettings
-                {
+                new() {
                     subpixelSpreadAmount = 0.33f,
                     edgeSharpnessAmount = 8f,
                     edgeDetectionThreshold = 0.25f,
@@ -114,8 +108,7 @@ namespace UnityEngine.PostProcessing
                 },
 
                 // Performance
-                new FxaaConsoleSettings
-                {
+                new() {
                     subpixelSpreadAmount = 0.33f,
                     edgeSharpnessAmount = 8f,
                     edgeDetectionThreshold = 0.125f,
@@ -123,8 +116,7 @@ namespace UnityEngine.PostProcessing
                 },
 
                 // Default
-                new FxaaConsoleSettings
-                {
+                new() {
                     subpixelSpreadAmount = 0.5f,
                     edgeSharpnessAmount = 8f,
                     edgeDetectionThreshold = 0.125f,
@@ -132,8 +124,7 @@ namespace UnityEngine.PostProcessing
                 },
 
                 // Quality
-                new FxaaConsoleSettings
-                {
+                new() {
                     subpixelSpreadAmount = 0.5f,
                     edgeSharpnessAmount = 4f,
                     edgeDetectionThreshold = 0.125f,
@@ -141,8 +132,7 @@ namespace UnityEngine.PostProcessing
                 },
 
                 // ExtremeQuality
-                new FxaaConsoleSettings
-                {
+                new() {
                     subpixelSpreadAmount = 0.5f,
                     edgeSharpnessAmount = 2f,
                     edgeDetectionThreshold = 0.125f,

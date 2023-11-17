@@ -9,9 +9,9 @@ public class EnemyManager : UnitManager {
 
     [SerializeField] Unit defaultUnit;
     [SerializeField] GameObject pendingUnitGFX;
-    public List<Unit> unitsToAct = new List<Unit>();
-    [SerializeField] List<GridElement> pendingUnits = new List<GridElement>();
-    [HideInInspector] public List<GameObject> pendingUnitUIs = new List<GameObject>();
+    public List<Unit> unitsToAct = new();
+    [SerializeField] List<GridElement> pendingUnits = new();
+    [HideInInspector] public List<GameObject> pendingUnitUIs = new();
     public delegate void OnEnemyCondition(GridElement ge);
     public event OnEnemyCondition WipedOutCallback;
     protected Coroutine actingUnitCo;
@@ -209,7 +209,7 @@ public class EnemyManager : UnitManager {
     public virtual Unit Reinforcement() {
         bool validCoord = false;
         Vector2 spawn = Vector2.zero;
-        List<Vector2> attemptedSpawns = new List<Vector2>();
+        List<Vector2> attemptedSpawns = new();
         while (!validCoord && attemptedSpawns.Count <= 35) {
             validCoord = true;
             spawn = new Vector2(Random.Range(1,6), Random.Range(1,6));

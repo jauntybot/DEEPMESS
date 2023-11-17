@@ -39,7 +39,7 @@ public class FloorSequence : ScriptableObject {
     }
 
     public void StartPacket(FloorPacket.PacketType type) {
-        List<FloorPacket> options = new List<FloorPacket>();
+        List<FloorPacket> options = new();
         for (int i = localPackets.Count - 1; i >= 0; i--) 
             if (localPackets[i].packetType == type) options.Add(localPackets[i]);
         

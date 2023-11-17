@@ -21,7 +21,7 @@ public class UIManager : MonoBehaviour {
     [Header("Portraits")]
     [SerializeField] Transform portraitParent;
     [SerializeField] GameObject portraitPrefab;
-    public List<UnitUI> unitPortraits = new List<UnitUI>();
+    public List<UnitUI> unitPortraits = new();
 
     [Header("Overviews")]
     [SerializeField] Transform overviewParent;

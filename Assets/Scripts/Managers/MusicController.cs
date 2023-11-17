@@ -11,7 +11,7 @@ public class MusicController : MonoBehaviour
     public MusicState currentState;
     public bool playing;
     [SerializeField] List<Track> musicTracks;
-    [SerializeField] List<Track> stateTracks = new List<Track>();
+    [SerializeField] List<Track> stateTracks = new();
     [SerializeField] SFX recordScratch;
     [SerializeField] AnimationCurve fadeOut;
     int stateTrackIndex;
@@ -46,7 +46,7 @@ public class MusicController : MonoBehaviour
         yield return new WaitForSecondsRealtime(delay);
 
 
-        List<Track> _stateTracks = new List<Track>();
+        List<Track> _stateTracks = new();
         foreach(Track t in musicTracks) {
             if (t.state == targetState) {
                 _stateTracks.Add(t);

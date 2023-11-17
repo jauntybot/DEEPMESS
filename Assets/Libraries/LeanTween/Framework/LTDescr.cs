@@ -95,7 +95,7 @@ public class LTDescr
         }
     }
 
-	public LTDescrOptional _optional = new LTDescrOptional();
+	public LTDescrOptional _optional = new();
 
 	public override string ToString(){
 		return (trans!=null ? "name:"+trans.gameObject.name : "gameObject:null")+" toggle:"+toggle+" passed:"+passed+" time:"+time+" delay:"+delay+" direction:"+direction+" from:"+from+" to:"+to+" diff:"+diff+" type:"+type+" ease:"+easeType+" useEstimatedTime:"+useEstimatedTime+" id:"+id+" hasInitiliazed:"+hasInitiliazed;
@@ -467,7 +467,7 @@ public class LTDescr
 			Vector3[] vertices = mesh.vertices;
 			Color32[] colors = new Color32[vertices.Length];
 			if (colors.Length == 0){ //MaxFW fix: add vertex colors if the mesh doesn't have any             
-				Color32 transparentWhiteColor32 = new Color32(0xff, 0xff, 0xff, 0x00);
+				Color32 transparentWhiteColor32 = new(0xff, 0xff, 0xff, 0x00);
 				colors = new Color32[mesh.vertices.Length];
 				for (int k=0; k<colors.Length; k++)
 					colors[k] = transparentWhiteColor32;
