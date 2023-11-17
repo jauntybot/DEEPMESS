@@ -12,6 +12,7 @@ public class ShieldData : SlagEquipmentData {
 
     public override void EquipEquipment(Unit user) {
         base.EquipEquipment(user);
+        activeShields = new();
         FloorManager.instance.DescendingFloors += PersistCheck;
     }
 
