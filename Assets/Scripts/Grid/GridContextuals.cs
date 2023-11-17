@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -220,10 +221,18 @@ public class GridContextuals : MonoBehaviour
 
     public void UpdateCursorAnim(Transform refTrans) {
         cursorAnimator.GetComponent<NestedFadeGroup.NestedFadeGroupSpriteRenderer>().AlphaSelf = 0.5f;
-        Animator anim = refTrans.GetComponentInChildren<Animator>();
-        cursorAnimator.runtimeAnimatorController = anim.runtimeAnimatorController;
-        cursorAnimator.transform.localScale = anim.transform.localScale;
-        cursorAnimator.transform.localPosition = anim.transform.localPosition;
+        Animator anim = null;
+        if (refTrans.GetComponentInChildren<Animator>())
+            anim = refTrans.GetComponentInChildren<Animator>();
+        if (anim) {
+            cursorAnimator.enabled = true;
+            cursorAnimator.runtimeAnimatorController = anim.runtimeAnimatorController;
+            cursorAnimator.transform.localScale = anim.transform.localScale;
+            cursorAnimator.transform.localPosition = anim.transform.localPosition;
+        } else {
+            cursorAnimator.enabled = false;
+            cursorAnimator.gameObject.GetComponent<SpriteRenderer>().sprite = refTrans.GetComponentInChildren<SpriteRenderer>().sprite;
+        }
     }
 
     public void ChangeLineColor(int highlightIndex) {

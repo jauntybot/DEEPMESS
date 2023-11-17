@@ -11,6 +11,7 @@ public class Shield : MonoBehaviour {
     public void Init(Unit target, ShieldData data) {
         unit = target;
         thorns = data.upgrades[SlagEquipmentData.UpgradePath.Power] >= 2;
+        gfx.sortingOrder = unit.grid.SortOrderFromCoord(unit.coord);
     }
 
 }
