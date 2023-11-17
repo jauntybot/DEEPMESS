@@ -64,14 +64,17 @@ public IEnumerator MoveToCoord(Unit unit, Vector2 moveTo) {
     public override void UpgradeEquipment(Unit user, UpgradePath targetPath) {
         base.UpgradeEquipment(user, targetPath);
         if (targetPath ==  UpgradePath.Unit) {
-            if (upgrades[targetPath] == 0)
+            if (upgrades[targetPath] == 0) {
                 slag.hpMax = 3;
-            else if (upgrades[targetPath] >= 1) {
+                if (slag.hpCurrent > slag.hpMax) slag.hpCurrent = slag.hpMax;
+                slag.elementCanvas.InstantiateMaxPips();
+                slag.ui.overview.InstantiateMaxPips();
+            } else if (upgrades[targetPath] == 1) {
                 slag.hpMax = 4;
                 slag.hpCurrent ++;
+                slag.elementCanvas.InstantiateMaxPips();
+                slag.ui.overview.InstantiateMaxPips();
             }
-            slag.elementCanvas.InstantiateMaxPips();
-            slag.ui.overview.InstantiateMaxPips();
 
             if (upgrades[targetPath] >= 2)
                 range = 2;
