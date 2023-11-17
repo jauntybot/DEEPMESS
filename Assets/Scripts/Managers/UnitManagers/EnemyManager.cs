@@ -9,7 +9,7 @@ public class EnemyManager : UnitManager {
 
     [SerializeField] Unit defaultUnit;
     [SerializeField] GameObject pendingUnitGFX;
-    [SerializeField] List<Unit> unitsToAct = new List<Unit>();
+    public List<Unit> unitsToAct = new List<Unit>();
     [SerializeField] List<GridElement> pendingUnits = new List<GridElement>();
     [HideInInspector] public List<GameObject> pendingUnitUIs = new List<GameObject>();
     public delegate void OnEnemyCondition(GridElement ge);
@@ -63,8 +63,6 @@ public class EnemyManager : UnitManager {
         }
         ResolveConditions();
 
-        yield return new WaitForSecondsRealtime(1/Util.fps);
-
         yield return StartCoroutine(DescendReinforcements());
 
         unitsToAct = new List<Unit>();
@@ -72,9 +70,8 @@ public class EnemyManager : UnitManager {
             unitsToAct.Add(units[i]);
 
 // Loop through each unit to take it's action
-        
         while (unitsToAct.Count > 0) {
-            Debug.Log("Enemy unit acting");
+
 // Check if the player loses before continuing turn
             bool lose = true;
             foreach (Unit u in scenario.player.units) {
@@ -83,23 +80,28 @@ public class EnemyManager : UnitManager {
                     break;
                 }
             }
-            if (lose || scenario.player.nail.conditions.Contains(Unit.Status.Disabled)) {
-                StopActingUnit();
+            if (lose || scenario.player.nail.conditions.Contains(Unit.Status.Disabled)) 
                 break;
-            }
-// Take either scatter action or normal action
-            EnemyUnit enemy = unitsToAct[0] as EnemyUnit;
-            unitsToAct.Remove(enemy);
-            if (!scatter) {
-                actingUnitCo = StartCoroutine(enemy.CalculateAction());
-                yield return actingUnitCo;
+
+// Yield to selected acting EnemyUnit coroutine
+            if (unitsToAct[0] is EnemyUnit enemy) {
+                SelectUnit(enemy);
+                StartCoroutine(scatter ? enemy.ScatterTurn() : enemy.CalculateAction());
+                unitActing = true;
+                Debug.Log("Enemy unit acting");
+
+                while (unitActing) {
+                    yield return null;
+                    if (enemy == null) unitActing = false;
+                }
+                    DeselectUnit();
                 yield return new WaitForSecondsRealtime(0.125f);
+                
+                Debug.Log("Enemy unit finished acting");
+                unitsToAct.Remove(enemy);
             } else {
-                actingUnitCo = StartCoroutine(enemy.ScatterTurn());
-                yield return actingUnitCo;
-                yield return new WaitForSecondsRealtime(0.125f);
+
             }
-            Debug.Log("Enemy unit finished acting");
         }
 
         if (SpawnReinforcements()) yield return new WaitForSecondsRealtime(1.5f);
@@ -110,14 +112,13 @@ public class EnemyManager : UnitManager {
 
     public void StopActingUnit(GridElement ge = null) {
         if (actingUnitCo != null) {
-            //StopCoroutine(actingUnitCo);
+            StopCoroutine(actingUnitCo);
             actingUnitCo = null;
         }
     }
 
 
     public void EndTurn() {
-        StopActingUnit();
         if (selectedUnit)
            DeselectUnit();
         foreach (Unit unit in units) {
@@ -243,8 +244,7 @@ public class EnemyManager : UnitManager {
             StartCoroutine(pendingUnits[i].DestroySequence());
         }
     }
-    protected override void RemoveUnit(GridElement ge)
-    {
+    protected override void RemoveUnit(GridElement ge) {
         base.RemoveUnit(ge);
         if (unitsToAct.Contains((Unit)ge)) unitsToAct.Remove((Unit)ge);
         if (pendingUnits.Contains((Unit)ge)) pendingUnits.Remove((Unit)ge);

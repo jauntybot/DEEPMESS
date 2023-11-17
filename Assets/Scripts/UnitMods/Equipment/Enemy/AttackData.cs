@@ -60,7 +60,7 @@ public class AttackData : EquipmentData
             timer += Time.deltaTime;
         }
 
-        Coroutine co = null; Coroutine co2 = null;
+        Coroutine co = null;
         if (target is Nail n) {
             if (n.manager.scenario.tutorial != null && n.manager.scenario.tutorial.isActiveAndEnabled && !n.manager.scenario.tutorial.nailDamageEncountered && n.manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
                 n.manager.scenario.tutorial.StartCoroutine(n.manager.scenario.tutorial.NailDamage());
@@ -68,10 +68,11 @@ public class AttackData : EquipmentData
             CameraController.instance.StartCoroutine(CameraController.instance.ScreenShake(0.125f, 0.5f));
             co = user.StartCoroutine(user.TakeDamage(1, GridElement.DamageType.Melee, n));
         }
-        co2 = target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user));
+        Coroutine co2 = target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user));
         yield return co;
         if (co2 != null)
             yield return co2;
+        Debug.Log("Attack finished");
     }
 
 }

@@ -46,10 +46,11 @@ public class PlayerUnit : Unit {
 // Input parsing - what kind of equipment is being used 
         if (equip) {
 // single target equipment, not movement
+            if (equip is SlagEquipmentData) equipUses++;
+            else if (equip is HammerData) hammerUses++; 
             if (!equip.multiselect && equip is not MoveData) {
                 pManager.DeselectUnit();
                 pManager.StartCoroutine(pManager.UnitIsActing());
-                if (equip is SlagEquipmentData) equipUses++;
             }
 // movement equipment
             else if (equip is MoveData && energyCurrent > 0) {
@@ -62,8 +63,6 @@ public class PlayerUnit : Unit {
                 pManager.contextuals.UpdateContext(equip, equip.gridColor, equip.multiContext, anim, target);
 // multi-target equipment - execute full action
             } else {
-                if (equip is SlagEquipmentData) equipUses++;
-                if (equip is HammerData) hammerUses++; 
                 pManager.DeselectUnit();
                 pManager.StartCoroutine(pManager.UnitIsActing());
             }
@@ -72,7 +71,14 @@ public class PlayerUnit : Unit {
             pManager.StartCoroutine(pManager.UnitIsActing());
         }
         UIManager.instance.upButton.GetComponent<Button>().interactable = false; UIManager.instance.downButton.GetComponent<Button>().interactable = false;
+// Run base coroutine
         yield return co;
+// Harvest Tile Bulb
+        if (grid.tiles.Find(sqr => sqr.coord == coord) is TileBulb tb && this is PlayerUnit pu) {
+            if (!tb.harvested && pu.equipment.Find(e => e is BulbEquipmentData) == null)
+                tb.HarvestBulb(pu);
+        }
+
         UIManager.instance.upButton.GetComponent<Button>().interactable = true; UIManager.instance.downButton.GetComponent<Button>().interactable = true;
         if (equip is MoveData && energyCurrent > 0) {
             grid.UpdateSelectedCursor(true, coord);
@@ -82,7 +88,7 @@ public class PlayerUnit : Unit {
                 ge.TargetElement(false);
         }
 
-        pManager.unitActing = false;
+        //manager.unitActing = false;
     }
 
 // Allow the player to click on this

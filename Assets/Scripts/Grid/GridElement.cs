@@ -95,9 +95,7 @@ public class GridElement : MonoBehaviour{
         if (!shell || Mathf.Sign(dmg) == -1) {
             if (Mathf.Sign(dmg) == 1) 
                 PlaySound(dmgdSFX);
-             else if (dmgType != DamageType.Slots)
-                PlaySound(healedSFX);
-            
+                         
             if (elementCanvas) {
                 yield return StartCoroutine(elementCanvas.DisplayDamageNumber(dmg));
             }
@@ -133,8 +131,9 @@ public class GridElement : MonoBehaviour{
         yield return new WaitForSecondsRealtime(.5f);
         foreach (SpriteRenderer sr in gfx) 
             sr.enabled = false;
-        if (this.gameObject != null)
-            Destroy(this.gameObject);
+        enabled = false;
+        if (gameObject != null)
+            Destroy(gameObject);
         
     }
 
@@ -153,6 +152,10 @@ public class GridElement : MonoBehaviour{
 
     public virtual void OnSharedSpace(GridElement sharedWith) {
         
+    }
+
+    public virtual IEnumerator OnDamaged() {
+        yield return null;
     }
 
     public virtual void ApplyShell() {

@@ -16,6 +16,7 @@ public class UnitManager : MonoBehaviour {
     [SerializeField] protected GameObject unitParent;
     public List<Unit> units = new List<Unit>();    
     public Unit selectedUnit;
+    public bool unitActing = false;
     [SerializeField] protected GameObject unitDescentPreview;
 
 
@@ -68,6 +69,7 @@ public class UnitManager : MonoBehaviour {
     
         u.PlaySound(u.selectedSFX);
     }
+
     public virtual void DeselectUnit() {     
         if (selectedUnit) {
 
@@ -105,7 +107,6 @@ public class UnitManager : MonoBehaviour {
 
     protected virtual void RemoveUnit(GridElement ge) {
         units.Remove(ge as Unit);
-        Debug.Log("Remove");
     }
 }
 

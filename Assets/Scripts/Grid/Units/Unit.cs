@@ -80,10 +80,7 @@ public class Unit : GridElement {
             selectedEquipment.UntargetEquipment(this);
             selectedEquipment = null;
         }
-        if (grid.tiles.Find(sqr => sqr.coord == coord) is TileBulb tb && this is PlayerUnit pu) {
-                if (!tb.harvested && pu.equipment.Find(e => e is BulbEquipmentData) == null)
-                    tb.HarvestBulb(pu);
-        }
+        manager.unitActing = false;
     }
 
     public virtual bool ValidCommand(Vector2 target, EquipmentData equip) {
@@ -134,9 +131,12 @@ public class Unit : GridElement {
         yield return new WaitForSecondsRealtime(0.5f);
 
         //gfxAnim.SetBool("Destoyed", true);
-        
-        if (this.gameObject != null)
-            Destroy(this.gameObject);
+
+        if (manager.selectedUnit == this) manager.DeselectUnit();
+
+        enabled = false;
+        if (gameObject != null)
+            Destroy(gameObject);
     }
 
 #endregion

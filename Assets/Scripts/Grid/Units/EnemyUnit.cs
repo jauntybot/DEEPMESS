@@ -1,4 +1,4 @@
-using System.Collections;
+    using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,7 +15,7 @@ public class EnemyUnit : Unit {
         UpdateAction(equipment[0], moveMod);
         Vector2 targetCoord = SelectOptimalCoord(EnemyUnit.Pathfinding.Random);
         if (Mathf.Sign(targetCoord.x) == 1) {
-            manager.SelectUnit(this);
+            //manager.SelectUnit(this);
             manager.currentGrid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
             yield return new WaitForSecondsRealtime(0.5f);
             Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, manager.currentGrid.tiles.Find(sqr => sqr.coord == targetCoord)));
@@ -24,47 +24,42 @@ public class EnemyUnit : Unit {
             yield return co;
             manager.DeselectUnit();
         }
+
+        manager.unitActing = false;
     }
 
     public virtual IEnumerator CalculateAction() {
         Debug.Log("Start Action");
-// First attack scan
-        UpdateAction(equipment[1]);
-        foreach (Vector2 coord in validActionCoords) {
-            if (ValidCommand(coord, selectedEquipment)) {
-                manager.SelectUnit(this);
-                GridElement target = null;
-                foreach (GridElement ge in grid.CoordContents(coord))
-                    target = ge;
-                yield return new WaitForSecondsRealtime(0.5f);
-                Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, target));
-                grid.UpdateSelectedCursor(false, Vector2.one * -32);
-                grid.DisableGridHighlight();
-                yield return co;
-                yield return new WaitForSecondsRealtime(0.125f);
-                manager.DeselectUnit();
-                yield break;
-            }
-        }
-// Move scan
-        if (!moved) {
-            UpdateAction(equipment[0], moveMod);
-            Vector2 targetCoord = SelectOptimalCoord(pathfinding);
-            //while (!Input.GetMouseButtonDown(0)) yield return null;
-            manager.SelectUnit(this);
-            yield return new WaitForSecondsRealtime(0.5f);
-            Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, grid.tiles.Find(sqr => sqr.coord == targetCoord)));
-            grid.UpdateSelectedCursor(false, Vector2.one * -32);
-            grid.DisableGridHighlight();
-            yield return co;
-            manager.DeselectUnit();
-        }
 
-// Second attack scan
+        yield return StartCoroutine(AttackScan());
+        if (energyCurrent > 0) {
+            if (!moved) yield return StartCoroutine(MoveScan());
+            yield return StartCoroutine(AttackScan());
+        }
+       
+        grid.DisableGridHighlight();
+        manager.unitActing = false;
+        Debug.Log("Unit action done");
+    }
+
+    protected virtual IEnumerator MoveScan() {
+        UpdateAction(equipment[0], moveMod);
+        Vector2 targetCoord = SelectOptimalCoord(pathfinding);
+        //while (!Input.GetMouseButtonDown(0)) yield return null;
+        //manager.SelectUnit(this);
+        yield return new WaitForSecondsRealtime(0.5f);
+        Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, grid.tiles.Find(sqr => sqr.coord == targetCoord)));
+        grid.UpdateSelectedCursor(false, Vector2.one * -32);
+        grid.DisableGridHighlight();
+        yield return co;
+        //manager.DeselectUnit();
+    }
+
+    protected virtual IEnumerator AttackScan() {
         UpdateAction(equipment[1]);
         foreach (Vector2 coord in validActionCoords) {
             if (ValidCommand(coord, selectedEquipment)) {
-                manager.SelectUnit(this);
+                //manager.SelectUnit(this);
                 GridElement target = null;
                 foreach (GridElement ge in grid.CoordContents(coord))
                     target = ge;
@@ -74,11 +69,9 @@ public class EnemyUnit : Unit {
                 grid.DisableGridHighlight();
                 yield return co;
                 yield return new WaitForSecondsRealtime(0.125f);
-                manager.DeselectUnit();
+                //manager.DeselectUnit();
             }
         }
-        grid.DisableGridHighlight();
-        Debug.Log("Unit action done");
     }
 
 
@@ -146,8 +139,7 @@ public class EnemyUnit : Unit {
         return coord;
     }
 
-    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null)
-    {
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) {
         int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg * 2 : dmg;
         if (hpCurrent - modifiedDmg <= hpMax/2) 
             gfxAnim.SetBool("Damaged", true);
@@ -170,7 +162,8 @@ public class EnemyUnit : Unit {
                 gfxAnim.SetTrigger("Split");
             break;
         }
-
+        EnemyManager eManager = (EnemyManager)manager;
+        
         return base.DestroySequence(dmgType);
     }
 }

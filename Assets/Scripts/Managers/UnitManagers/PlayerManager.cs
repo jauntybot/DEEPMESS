@@ -29,7 +29,6 @@ public class PlayerManager : UnitManager {
     [SerializeField] GameObject slimeArmAnim;
 
     [Header("UNDO")]
-    public bool unitActing = false;
     public Dictionary<Unit, Vector2> undoableMoves = new Dictionary<Unit, Vector2>();
     public Dictionary<Unit, GridElement> harvestedByMove = new Dictionary<Unit, GridElement>();
     public List<Unit> undoOrder;
@@ -418,14 +417,13 @@ public class PlayerManager : UnitManager {
                 DeselectUnit();
             foreach (Unit u in units) 
                 u.UpdateAction();
-            Unit lastMoved = undoOrder[undoOrder.Count - 1];
+            PlayerUnit lastMoved = (PlayerUnit)undoOrder[undoOrder.Count - 1];
             if (harvestedByMove.ContainsKey(lastMoved)) {
                 TileBulb harvested = (TileBulb)harvestedByMove[lastMoved];
                 harvested.UndoHarvest();
                 lastMoved.equipment.Find(e => e is BulbEquipmentData).UnequipEquipment(lastMoved);
                 harvestedByMove.Remove(lastMoved);
-                PlayerUnit pu = (PlayerUnit)lastMoved;
-                pu.bulbPickups--;
+                lastMoved.bulbPickups--;
             }
             MoveData move = (MoveData)cascadeMovement;
             StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved], true));
