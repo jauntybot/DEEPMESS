@@ -148,7 +148,7 @@ public class BigGrabData : SlagEquipmentData
         dir = (selection - user.coord).normalized;
         Animator anim = Instantiate(vfx).GetComponent<Animator>();
         anim.SetInteger("X", (int)dir.x); anim.SetInteger("Y", (int)dir.y);
-        List<Unit> unitsToMove = new List<Unit>();
+        List<Unit> unitsToMove = new();
         foreach (GridElement ge in user.grid.gridElements) {
             if (ge is Unit u) {
                 if (u is not Nail && u is not PlayerUnit && u is not Anvil) 
@@ -156,7 +156,7 @@ public class BigGrabData : SlagEquipmentData
             }
         }
         unitsToMove.Sort(SortByDir);
-        Dictionary<Unit, Vector2> targetPositions = new Dictionary<Unit, Vector2>();
+        Dictionary<Unit, Vector2> targetPositions = new();
         int moveRange = 1;
         foreach (Unit u in unitsToMove) {
             bool blocked = false;

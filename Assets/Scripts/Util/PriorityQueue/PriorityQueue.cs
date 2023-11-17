@@ -15,7 +15,7 @@ public class PriorityQueue<T>
     // * http://xfleury.github.io/graphsearch.html
     // * http://stackoverflow.com/questions/102398/priority-queue-in-net
 
-    private List<Tuple<T, double>> elements = new List<Tuple<T, double>>();
+    private List<Tuple<T, double>> elements = new();
 
 	public int Count
 	{

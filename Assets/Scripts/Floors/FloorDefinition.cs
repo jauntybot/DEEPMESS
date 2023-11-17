@@ -13,7 +13,7 @@ public class FloorDefinition : ScriptableObject
 
 // Combat floor refs
     public FloorAtlas atlas;
-    public List<Spawn> initSpawns = new List<Spawn>();
+    public List<Spawn> initSpawns = new();
     public int minEnemies;
 
 

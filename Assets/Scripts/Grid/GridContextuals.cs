@@ -17,7 +17,7 @@ public class GridContextuals : MonoBehaviour
 
     [SerializeField] GameObject gridCursorPrefab;
     [SerializeField] GameObject gridCursor, contextCursor;
-    List<GameObject> aoeCursors = new List<GameObject>();
+    List<GameObject> aoeCursors = new();
     Animator cursorAnimator;
     [SerializeField] NeutralElementTooltip neutralTooltip;
 
@@ -65,7 +65,7 @@ public class GridContextuals : MonoBehaviour
 
 
         Color c = _valid ? validColor : invalidColor;
-        List<GameObject> cursors = new List<GameObject>();
+        List<GameObject> cursors = new();
         foreach (GameObject curs in aoeCursors) cursors.Add(curs);
         cursors.Add(gridCursor);
         foreach (GameObject cursor in cursors) {

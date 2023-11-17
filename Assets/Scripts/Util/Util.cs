@@ -34,7 +34,7 @@ public class Util : MonoBehaviour
     }
 
     public static List<Vector3> SampledParabola ( Vector3 start, Vector3 end, float h, int segments ) {
-        List<Vector3> pts = new List<Vector3>();        
+        List<Vector3> pts = new();        
         float time = 0;
         for (float i = 0; i < segments; i+=1) {
             time = i/segments;

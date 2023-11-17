@@ -11,7 +11,7 @@ public class GridSpacing : MonoBehaviour
     [SerializeField] Transform gridContainer;
     [SerializeField] GameObject sqrPrefab, wallPrefab;
     
-    [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.12f, 0.35f);
+    [SerializeField] public Vector2 ORTHO_OFFSET = new(1.12f, 0.35f);
 
     [SerializeField] Vector2 gridSize;
     [SerializeField] float sqrSize;
@@ -64,7 +64,7 @@ public class GridSpacing : MonoBehaviour
         }
         if (calc) {
             Vector3 pos = PosFromCoord(calcIn);
-            Vector3 offset = new Vector3(pos.x + (sqrSize * gridSize.x * ORTHO_OFFSET.x/orthoXFactor1), pos.y - (sqrSize * gridSize.y * ORTHO_OFFSET.y/ySqrScale));
+            Vector3 offset = new(pos.x + (sqrSize * gridSize.x * ORTHO_OFFSET.x/orthoXFactor1), pos.y - (sqrSize * gridSize.y * ORTHO_OFFSET.y/ySqrScale));
             Debug.Log(calcIn + ", " +  offset);
             calc = false;
         }

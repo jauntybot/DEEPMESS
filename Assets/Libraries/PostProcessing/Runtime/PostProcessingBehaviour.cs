@@ -342,8 +342,8 @@ namespace UnityEngine.PostProcessing
 
         #region State management
 
-        List<PostProcessingComponentBase> m_ComponentsToEnable = new List<PostProcessingComponentBase>();
-        List<PostProcessingComponentBase> m_ComponentsToDisable = new List<PostProcessingComponentBase>();
+        List<PostProcessingComponentBase> m_ComponentsToEnable = new();
+        List<PostProcessingComponentBase> m_ComponentsToDisable = new();
 
         void CheckObservers()
         {

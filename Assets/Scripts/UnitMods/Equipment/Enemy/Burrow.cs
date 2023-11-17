@@ -43,7 +43,7 @@ public class Burrow : EquipmentData
         SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(user.coord), Quaternion.identity).GetComponent<SpriteRenderer>();
         sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
         List<Vector2> aoe = EquipmentAdjacency.GetAdjacent(user.coord, range, this, targetTypes);
-        List<Coroutine> affectedCo = new List<Coroutine>();
+        List<Coroutine> affectedCo = new();
         foreach (Vector2 coord in aoe) {
             if (user.grid.CoordContents(coord).Count > 0) {
                 foreach (GridElement ge in user.grid.CoordContents(coord)) {

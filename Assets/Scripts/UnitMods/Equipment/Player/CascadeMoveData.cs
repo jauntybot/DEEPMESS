@@ -9,7 +9,7 @@ public class CascadeMoveData : MoveData
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0)
     {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this);
-        List<Vector2> invalidCoords = new List<Vector2>();
+        List<Vector2> invalidCoords = new();
         Unit unit = (Unit)user;
         foreach (Unit u in unit.manager.units) {
             if (u is not Nail) {
@@ -32,7 +32,7 @@ public class CascadeMoveData : MoveData
     {       
 
 // Build frontier dictionary for stepped lerp
-        Dictionary<Vector2, Vector2> fromTo = new Dictionary<Vector2, Vector2>();
+        Dictionary<Vector2, Vector2> fromTo = new();
         if (animType == AnimType.Stepped) 
             fromTo = EquipmentAdjacency.SteppedCoordAdjacency(unit.coord, moveTo, this);
         else if (animType == AnimType.Lerp)

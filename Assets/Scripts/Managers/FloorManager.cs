@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Rendering;
-using UnityEngine.PlayerLoop;
+using System;
+using System.Linq;
 
 // This class generates and sequences Floor prefabs (Grid class), as well as manages the descending of units
 
@@ -155,7 +155,7 @@ public class FloorManager : MonoBehaviour
         else currentFloor.GetComponent<SortingGroup>().sortingOrder = 1;
 // Local params for animation
         Vector3 from = floorParent.transform.position;
-        Vector3 to = new Vector3(from.x, from.y + floorOffset * dir, from.z);
+        Vector3 to = new(from.x, from.y + floorOffset * dir, from.z);
         Vector3 fromScale = currentFloor.transform.localScale;
         Vector3 toScale = down? Vector3.one : Vector3.one * 0.75f;
 
@@ -203,7 +203,7 @@ public class FloorManager : MonoBehaviour
     
 
     // Function that hides units when previewing the next floor -- MOVE TO UNIT FUNCTIONALITY
-    Dictionary<Unit, bool> targetedDict = new Dictionary<Unit,bool>();
+    Dictionary<Unit, bool> targetedDict = new();
     public void HideUnits(bool state) {
         if (state) {
             targetedDict = new Dictionary<Unit, bool>();
@@ -353,24 +353,38 @@ public class FloorManager : MonoBehaviour
     public IEnumerator DropUnits(List<GridElement> units, Grid toFloor) {
 
         scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
+        scenario.player.transform.parent = transitionParent;
         scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
+        scenario.currentEnemy.transform.parent = transitionParent;
         
         scenario.player.nail.transform.parent = currentFloor.transform;
 
         foreach (GridElement ge in units) {
             if (ge is Unit u) {
                 u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
-                u.manager.transform.parent = transitionParent;
             }
         }
+        GridElement[] units1 = units.ToArray();
+        Array.Sort<GridElement>(units1, (a,b) => {
+            int x, y;
+            if (a is EnemyUnit) x = 2;
+            else if (a is PlayerUnit) x = 1;
+            else x = 0;
+            if (b is EnemyUnit) y = 2;
+            else if (b is PlayerUnit) y = 1;
+            else y = 0;
+            return x.CompareTo(y);
+        });
+        units = units1.ToList();
+
         Nail nail = null;
-        List<Coroutine> descents = new List<Coroutine>();
-        for (int i = units.Count - 1; i >= 0; i--) {
-            if (units[i] is Anvil a && a.data.upgrades[SlagEquipmentData.UpgradePath.Power] == 0) {
+        List<Coroutine> descents = new();
+        for (int i = units1.Length - 1; i >= 0; i--) {
+            if (units1[i] is Anvil a && a.data.upgrades[SlagEquipmentData.UpgradePath.Power] == 0) {
                 a.StartCoroutine(a.DestroySequence());
                 continue;
             }
-            if (units[i] is Unit u) {
+            if (units1[i] is Unit u) {
                 if (u is not Nail) {
                     if (u is PlayerUnit && toFloor.slagSpawns.Count > 0) {
                         u.coord = toFloor.slagSpawns[0];
@@ -428,11 +442,16 @@ public class FloorManager : MonoBehaviour
 
         unit.PlaySound(unit.landingSFX);
 
+        Coroutine landing = null;
+        if (unit is Anvil a && a.data.upgrades[SlagEquipmentData.UpgradePath.Power] >= 2) {
+            landing = StartCoroutine(a.PushOnLanding());
+        }
         if (subElement) {
             StartCoroutine(subElement.CollideFromBelow(unit));
 
             yield return StartCoroutine(unit.CollideFromAbove(subElement));
         }
+        if (landing != null) yield return landing;
     }
 
 // Coroutine for descending the nail at a regulated random position
@@ -446,12 +465,12 @@ public class FloorManager : MonoBehaviour
         while (!validCoord) {
             validCoord = true;
             if (toFloor.nailSpawns.Count > 0) {
-                int i = Random.Range(0, toFloor.nailSpawns.Count);
+                int i = UnityEngine.Random.Range(0, toFloor.nailSpawns.Count);
                 spawn = toFloor.nailSpawns[i];
                 toFloor.nailSpawns.RemoveAt(i);
             }
             else
-                spawn = new Vector2(Random.Range(1,6), Random.Range(1,6));
+                spawn = new Vector2(UnityEngine.Random.Range(1,6), UnityEngine.Random.Range(1,6));
                 
             foreach(Unit u in scenario.player.units) {
                 if (u.coord == spawn && u is not Nail) validCoord = false;
@@ -502,7 +521,7 @@ public class FloorManager : MonoBehaviour
         while (!validCoord) {
             validCoord = true;
 
-            spawn = new Vector2(Random.Range(1,6), Random.Range(1,6));
+            spawn = new Vector2(UnityEngine.Random.Range(1,6), UnityEngine.Random.Range(1,6));
 
             foreach (GridElement ge in currentFloor.gridElements) {
                 if (ge.coord == spawn) validCoord = false;
@@ -554,8 +573,8 @@ public class FloorManager : MonoBehaviour
         }
         
 // Lerp units into screen
-        List<Unit> units = new List<Unit> { scenario.player.units[0], scenario.player.units[1], scenario.player.units[2], scenario.player.units[3] };
-        List<Vector2> to = new List<Vector2> { currentFloor.PosFromCoord(new Vector2(3, 3)), currentFloor.PosFromCoord(new Vector2(4, 3)), currentFloor.PosFromCoord(new Vector2(3, 2)), currentFloor.PosFromCoord(new Vector2(5, 4)) };
+        List<Unit> units = new() { scenario.player.units[0], scenario.player.units[1], scenario.player.units[2], scenario.player.units[3] };
+        List<Vector2> to = new() { currentFloor.PosFromCoord(new Vector2(3, 3)), currentFloor.PosFromCoord(new Vector2(4, 3)), currentFloor.PosFromCoord(new Vector2(3, 2)), currentFloor.PosFromCoord(new Vector2(5, 4)) };
         units[0].manager.transform.parent = transitionParent;
         units[3].transform.parent = transitionParent;
         scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
@@ -634,7 +653,7 @@ public class FloorManager : MonoBehaviour
 
         // Local params for animation
         Vector3 from = floorParent.transform.position;
-        Vector3 to = new Vector3(from.x, from.y - floorOffset * 5, from.z);
+        Vector3 to = new(from.x, from.y - floorOffset * 5, from.z);
         Vector3 fromScale = currentFloor.transform.localScale;
         Vector3 toScale = Vector3.one * 0.75f;
 

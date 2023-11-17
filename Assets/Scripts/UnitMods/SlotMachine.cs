@@ -11,7 +11,7 @@ public class SlotMachine : MonoBehaviour
     UnitUI selectedUI;
     [SerializeField] Transform slotsContainer, orText;
     List<SlotMachineSlot> slots;
-    List<int> rolledEquipment = new List<int>();
+    List<int> rolledEquipment = new();
     [SerializeField] Button spinButton, backButton, healButton;
     [SerializeField] SFX slotSpin, healSFX;
     AudioSource audioSource;

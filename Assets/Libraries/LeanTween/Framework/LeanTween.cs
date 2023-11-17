@@ -268,8 +268,8 @@ public class LeanTween : MonoBehaviour {
     private static int i;
     private static int j;
     private static int finishedCnt;
-    public static AnimationCurve punch = new AnimationCurve( new Keyframe(0.0f, 0.0f ), new Keyframe(0.112586f, 0.9976035f ), new Keyframe(0.3120486f, -0.1720615f ), new Keyframe(0.4316337f, 0.07030682f ), new Keyframe(0.5524869f, -0.03141804f ), new Keyframe(0.6549395f, 0.003909959f ), new Keyframe(0.770987f, -0.009817753f ), new Keyframe(0.8838775f, 0.001939224f ), new Keyframe(1.0f, 0.0f ) );
-    public static AnimationCurve shake = new AnimationCurve( new Keyframe(0f, 0f), new Keyframe(0.25f, 1f), new Keyframe(0.75f, -1f), new Keyframe(1f, 0f) ) ;
+    public static AnimationCurve punch = new( new Keyframe(0.0f, 0.0f ), new Keyframe(0.112586f, 0.9976035f ), new Keyframe(0.3120486f, -0.1720615f ), new Keyframe(0.4316337f, 0.07030682f ), new Keyframe(0.5524869f, -0.03141804f ), new Keyframe(0.6549395f, 0.003909959f ), new Keyframe(0.770987f, -0.009817753f ), new Keyframe(0.8838775f, 0.001939224f ), new Keyframe(1.0f, 0.0f ) );
+    public static AnimationCurve shake = new( new Keyframe(0f, 0f), new Keyframe(0.25f, 1f), new Keyframe(0.75f, -1f), new Keyframe(1f, 0f) ) ;
 
     public static void init(){
         init(maxTweens);
@@ -676,7 +676,7 @@ public class LeanTween : MonoBehaviour {
     public static LTDescr[] descriptions(GameObject gameObject = null) {
         if (gameObject == null) return null;
 
-        List<LTDescr> descrs = new List<LTDescr>();
+        List<LTDescr> descrs = new();
         Transform trans = gameObject.transform;
         for (int i = 0; i <= tweenMaxSearch; i++) {
             if (tweens[i].toggle && tweens[i].trans == trans)
@@ -3471,7 +3471,7 @@ public class LTSpline {
             for(int i = 0; i < arr.Length; i++){
                 vec3s[i] = arr[i].position;
             }
-            LTSpline spline = new LTSpline(vec3s);
+            LTSpline spline = new(vec3s);
             Vector3 prevPt = spline.ptsAdj[0];
 
             Color colorBefore = Gizmos.color;
@@ -3563,7 +3563,7 @@ public class LTSpline {
 
     public Vector3[] generateVectors(){
         if (this.pts.Length >= 4) {
-            List<Vector3> meshPoints = new List<Vector3>();
+            List<Vector3> meshPoints = new();
             Vector3 prevPt = this.pts[0];
             meshPoints.Add(prevPt);
 
@@ -3628,7 +3628,7 @@ public class LTRect : System.Object{
     public float rotation;
     public Vector2 pivot;
     public Vector2 margin;
-    public Rect relativeRect = new Rect(0f,0f,float.PositiveInfinity,float.PositiveInfinity);
+    public Rect relativeRect = new(0f,0f,float.PositiveInfinity,float.PositiveInfinity);
 
     public bool rotateEnabled;
     [HideInInspector]
@@ -3722,7 +3722,7 @@ public class LTRect : System.Object{
     }
 
     public void resetForRotation(){
-        Vector3 scale = new Vector3(GUI.matrix[0,0], GUI.matrix[1,1], GUI.matrix[2,2]);
+        Vector3 scale = new(GUI.matrix[0,0], GUI.matrix[1,1], GUI.matrix[2,2]);
         if(pivot==Vector2.zero){
             pivot = new Vector2((_rect.x+((_rect.width)*0.5f )) * scale.x + GUI.matrix[0,3], (_rect.y+((_rect.height)*0.5f )) * scale.y + GUI.matrix[1,3]);
         }

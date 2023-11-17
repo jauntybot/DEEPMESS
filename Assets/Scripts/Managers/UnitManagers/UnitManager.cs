@@ -14,7 +14,7 @@ public class UnitManager : MonoBehaviour {
 
     [Header("UNIT MANAGER")]
     [SerializeField] protected GameObject unitParent;
-    public List<Unit> units = new List<Unit>();    
+    public List<Unit> units = new();    
     public Unit selectedUnit;
     public bool unitActing = false;
     [SerializeField] protected GameObject unitDescentPreview;

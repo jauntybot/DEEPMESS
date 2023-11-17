@@ -43,12 +43,12 @@ namespace UnityEngine.PostProcessing
                 // Base shape
                 var arrow = new Vector3[6]
                 {
-                    new Vector3(0f, 0f, 0f),
-                    new Vector3(0f, 1f, 0f),
-                    new Vector3(0f, 1f, 0f),
-                    new Vector3(-1f, 1f, 0f),
-                    new Vector3(0f, 1f, 0f),
-                    new Vector3(1f, 1f, 0f)
+                    new(0f, 0f, 0f),
+                    new(0f, 1f, 0f),
+                    new(0f, 1f, 0f),
+                    new(-1f, 1f, 0f),
+                    new(0f, 1f, 0f),
+                    new(1f, 1f, 0f)
                 };
 
                 // make the vertex array

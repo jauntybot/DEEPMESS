@@ -150,7 +150,7 @@ public class PlayerController : MonoBehaviour {
 
 //MOBILE CONTROL FLAG
     public RaycastHit2D ClickInput() {
-        Vector2 pos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        Vector2 pos = new(Input.mousePosition.x, Input.mousePosition.y);
         RaycastHit2D hitInfo = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(pos), Vector2.zero, Mathf.Infinity);
         return hitInfo;        
     }
@@ -159,7 +159,7 @@ public class PlayerController : MonoBehaviour {
         PointerEventData ped = new(EventSystem.current);
         ped.position = Input.mousePosition;
 
-        List<RaycastResult> rays = new List<RaycastResult>();
+        List<RaycastResult> rays = new();
         EventSystem.current.RaycastAll(ped, rays);
 
         for (int i = rays.Count - 1; i >= 0; i--) {

@@ -26,12 +26,12 @@ public class Grid : MonoBehaviour {
     public FloorDefinition lvlDef;
     [HideInInspector] public List<Vector2> slagSpawns, nailSpawns;
     private bool notation = false;
-    [SerializeField] public Vector2 ORTHO_OFFSET = new Vector2(1.15f, 0.35f);
+    [SerializeField] public Vector2 ORTHO_OFFSET = new(1.15f, 0.35f);
     [SerializeField] float shockwaveDur = .25f, collapseDur = 0.25f;
     [SerializeField] AnimationCurve shockwaveCurve;
 
-    public List<Tile> tiles = new List<Tile>();
-    public List<GridElement> gridElements = new List<GridElement>();
+    public List<Tile> tiles = new();
+    public List<GridElement> gridElements = new();
 
     [SerializeField] SFX collapseSFX;
     AudioSource audioSource;
@@ -45,7 +45,7 @@ public class Grid : MonoBehaviour {
 
 // loop through grid x,y, generate Tile grid elements, update them and add to list
     public void GenerateGrid(int i) {
-        List<Vector2> altTiles = new List<Vector2>();
+        List<Vector2> altTiles = new();
 
         foreach (FloorDefinition.Spawn spawn in lvlDef.initSpawns) {
             if (spawn.asset.prefab.GetComponent<GridElement>() is Tile) {
