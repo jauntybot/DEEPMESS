@@ -19,21 +19,17 @@ public class GridElement : MonoBehaviour{
     [HideInInspector] public PolygonCollider2D hitbox;
      public ElementCanvas elementCanvas;
     public enum DamageType { Unspecified, Melee, Gravity, Bile, Slots };
-
-    bool takingDmg;
+    public int hpMax, hpCurrent;
+    public Shield shield;
+    public int energyCurrent, energyMax;
 
     [Header("UI/UX")]
     public List<SpriteRenderer> gfx;
-
-
 
     public delegate void OnElementUpdate(GridElement ge);
     public virtual event OnElementUpdate ElementUpdated;
     public virtual event OnElementUpdate ElementDestroyed;
 
-    public int hpMax, hpCurrent;
-    public Shield shield;
-    public int energyCurrent, energyMax;
     
     [Header("Audio")]
     [HideInInspector] public AudioSource audioSource;
@@ -89,7 +85,6 @@ public class GridElement : MonoBehaviour{
 
   
     public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) {
-        takingDmg = true;
         if (shield == null || Mathf.Sign(dmg) == -1) {
             if (Mathf.Sign(dmg) == 1) 
                 PlaySound(dmgdSFX);

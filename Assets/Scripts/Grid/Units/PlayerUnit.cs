@@ -92,16 +92,17 @@ public class PlayerUnit : Unit {
     }
 
 // Allow the player to click on this
-    public override void EnableSelection(bool state) 
-    {
+    public override void EnableSelection(bool state)  {
         selectable = state;
         hitbox.enabled = state;
     }
 
-    public override void TargetElement(bool state)
-    {
+    public override void TargetElement(bool state) {
         base.TargetElement(state);
-        //ui.ToggleEquipmentPanel(state);
+        if (state && manager.scenario.currentTurn == ScenarioManager.Turn.Player)
+            ui.ToggleEquipmentPanel(state);
+        else
+            ui.ToggleEquipmentPanel(state);
         //if (energyCurrent == 0 || pManager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
     }
 
@@ -153,8 +154,7 @@ public class PlayerUnit : Unit {
         yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
     }
 
-    public override void ApplyCondition(Status s)
-    {
+    public override void ApplyCondition(Status s) {
         base.ApplyCondition(s);
         ui.ToggleEquipmentButtons();
         if (manager.scenario.tutorial.isActiveAndEnabled && !manager.scenario.tutorial.bloodEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)

@@ -601,8 +601,9 @@ public class FloorManager : MonoBehaviour
 // Endlessly falling
         cavityWait = true;
 
-        cavityText.gameObject.SetActive(true);
-        cavityText.SetBool("Active", true);
+        //cavityText.gameObject.SetActive(true);
+        //cavityText.SetBool("Active", true);
+        scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
 
         timer = 0;
         while(cavityWait) {

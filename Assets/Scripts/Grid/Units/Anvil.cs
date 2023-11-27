@@ -99,9 +99,9 @@ public class Anvil : Unit {
                         float yDelta = _coord.y - coord.y;
                         Vector2 targetCoord = new(_coord.x + xDelta, _coord.y + yDelta);
                         
-                        if (grid.CoordContents(targetCoord).Count == 0) {
+                        if (grid.CoordContents(targetCoord).Count == 0 && targetCoord.x >= 0 && targetCoord.x <= 7 && targetCoord.y >= 0 && targetCoord.y <= 0) 
                             affectedCo.Add(StartCoroutine(PushToCoord(tu, targetCoord)));
-                        }
+                        
 
                         if (data.upgrades[SlagEquipmentData.UpgradePath.Power] == 3) StartCoroutine(tu.TakeDamage(1, DamageType.Melee));
                     }
@@ -121,7 +121,7 @@ public class Anvil : Unit {
         Debug.Log("Push Done");
     }
 
-    public virtual IEnumerator PushToCoord(Unit unit, Vector2 moveTo, bool undo = false) {       
+    public virtual IEnumerator PushToCoord(Unit unit, Vector2 moveTo) {       
 // Build frontier dictionary for stepped lerp
         Dictionary<Vector2, Vector2> fromTo = new() { { unit.coord, moveTo } };
 

@@ -8,7 +8,7 @@ public class SlotMachine : MonoBehaviour
     LoadoutManager manager;
     [SerializeField] public List<EquipmentData> equipmentTable;
     public EquipmentData selectedReward;
-    UnitUI selectedUI;
+    UnitLoadoutUI selectedUI;
     [SerializeField] Transform slotsContainer, orText;
     List<SlotMachineSlot> slots;
     List<int> rolledEquipment = new();
@@ -19,7 +19,7 @@ public class SlotMachine : MonoBehaviour
 
     public void Initialize(List<EquipmentData> table) {
         
-        foreach (UnitUI ui in ScenarioManager.instance.player.loadout.unitUI) {
+        foreach (UnitLoadoutUI ui in ScenarioManager.instance.player.loadout.unitLoadoutUIs) {
             Button b = ui.slotsLoadoutButton.GetComponent<Button>();
             b.onClick.RemoveAllListeners();
             b.onClick.AddListener(ui.SwapEquipmentFromSlots);
@@ -82,7 +82,7 @@ public class SlotMachine : MonoBehaviour
         spinButton.gameObject.SetActive(false);
         orText.gameObject.SetActive(true);
         orText.GetComponent<TMPro.TMP_Text>().text = "SELECT UNIT TO SWAP EQUIPMENT";
-        foreach (UnitUI ui in ScenarioManager.instance.player.loadout.unitUI) {
+        foreach (UnitLoadoutUI ui in ScenarioManager.instance.player.loadout.unitLoadoutUIs) {
             Button b = ui.slotsLoadoutButton.GetComponent<Button>();
             b.interactable = true;
         }
@@ -95,7 +95,7 @@ public class SlotMachine : MonoBehaviour
         backButton.gameObject.SetActive(false);
         orText.gameObject.SetActive(true);
         orText.GetComponent<TMPro.TMP_Text>().text = "SELECT AN EQUIPMENT";
-        foreach (UnitUI ui in ScenarioManager.instance.player.loadout.unitUI) {
+        foreach (UnitLoadoutUI ui in ScenarioManager.instance.player.loadout.unitLoadoutUIs) {
             Button b = ui.slotsLoadoutButton.GetComponent<Button>();
             b.interactable = false;
         }
