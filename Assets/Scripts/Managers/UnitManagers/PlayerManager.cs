@@ -15,6 +15,7 @@ public class PlayerManager : UnitManager {
 
     [Header("PLAYER MANAGER")]
     public LoadoutManager loadout;
+    public UpgradeManager upgradeManager;
     public Nail nail;
     public List<HammerData> hammerActions;
     [SerializeField] EquipmentData cascadeMovement;
@@ -55,8 +56,7 @@ public class PlayerManager : UnitManager {
     }
     #endregion
 
-    public override IEnumerator Initialize(Grid _currentGrid)
-    {
+    public override IEnumerator Initialize(Grid _currentGrid) {
         yield return base.Initialize(_currentGrid);
         if (FloorManager.instance) floorManager = FloorManager.instance;
 
@@ -71,6 +71,7 @@ public class PlayerManager : UnitManager {
         };
 
         yield return StartCoroutine(loadout.Initialize(initU));
+        upgradeManager.Init(initU);
         //yield return ScenarioManager.instance.StartCoroutine(ScenarioManager.instance.SwitchTurns(ScenarioManager.Turn.Descent));
 
         SpawnHammer((PlayerUnit)units[0], hammerActions);
@@ -279,7 +280,7 @@ public class PlayerManager : UnitManager {
             foreach (GridElement ge in currentGrid.CoordContents(pos)) {
                 if (ge is Unit u) {
                     hovering = true;
-                    //if (u == prevCursorTarget) break;
+                    if (u == prevCursorTarget) break;
                     pc.ToggleCursorValid(true);
                     
                     hoveredUnit = u;
@@ -310,7 +311,9 @@ public class PlayerManager : UnitManager {
         }
 
         bool update = false;
-        if (prevCursorTarget ) {
+        
+// Resolve target state of previously hovered unit
+        if (prevCursorTarget) {
             if (pos != prevCursorTarget.coord) {
                 prevCursorTarget.TargetElement(prevCursorTargetState);
                 foreach (GridElement ge in currentGrid.CoordContents(pos)) {
@@ -327,7 +330,7 @@ public class PlayerManager : UnitManager {
                 }
             }
 // first grid mouseOver if cursor not on grid
-        } else {
+        } else if (!hoveredUnit) {
             foreach(GridElement ge in currentGrid.CoordContents(pos)) {
                 if (!ge.targeted) {
                     prevCursorTargetState = ge.targeted;
@@ -341,8 +344,7 @@ public class PlayerManager : UnitManager {
 
 #endregion
 
-    public override void SelectUnit(Unit u)
-    {
+    public override void SelectUnit(Unit u) {
         if (u.selectable) {
             base.SelectUnit(u);
             u.ui.ToggleEquipmentButtons();
@@ -368,8 +370,7 @@ public class PlayerManager : UnitManager {
         } else targetCursorState = PlayerController.CursorState.Default;
     }
 
-    public override void DeselectUnit()
-    {       
+    public override void DeselectUnit() {      
         if (selectedUnit is PlayerUnit pu && selectedUnit.selectedEquipment) {
             if (selectedUnit.selectedEquipment is SlagEquipmentData) {
                 EquipmentButton butt = selectedUnit.ui.equipButtons.Find(e => e.data is SlagEquipmentData);

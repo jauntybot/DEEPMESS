@@ -18,10 +18,10 @@ public class UIManager : MonoBehaviour {
     [SerializeField] public Button upButton;
     [SerializeField] public Button downButton, endTurnButton, undoButton;
 
-    [Header("Portraits")]
-    [SerializeField] Transform portraitParent;
-    [SerializeField] GameObject portraitPrefab;
-    public List<UnitUI> unitPortraits = new();
+    [Header("Game UIs")]
+    [SerializeField] Transform unitGameUIParent;
+    [SerializeField] GameObject unitGameUIPrefab;
+    public List<GameUnitUI> unitGameUIs = new();
 
     [Header("Overviews")]
     [SerializeField] Transform overviewParent;
@@ -53,21 +53,21 @@ public class UIManager : MonoBehaviour {
     }
 
     public void UpdatePortrait(Unit u = null, bool active = true) {
-        foreach (UnitUI ui in unitPortraits) ui.ToggleUnitPanel(false);
+        foreach (GameUnitUI ui in unitGameUIs) ui.ToggleUnitPanel(false);
     
-        UnitUI unitUI = unitPortraits.Find(p => p.unit == u);
+        GameUnitUI unitUI = unitGameUIs.Find(p => p.unit == u);
         if (unitUI == null && u != null) { unitUI = CreateUnitUI(u); }
         if (unitUI) unitUI.ToggleUnitPanel(active);        
     }
 
-    public UnitUI CreateUnitUI(Unit u) {
+    public GameUnitUI CreateUnitUI(Unit u) {
 
-        UnitUI ui = Instantiate(portraitPrefab, portraitParent).GetComponent<UnitUI>();
-        u.ui = ui.Initialize(u, overviewParent, overviewLayoutParent);
+        GameUnitUI ui = Instantiate(unitGameUIPrefab, unitGameUIParent).GetComponent<GameUnitUI>();
+        u.ui = (GameUnitUI)ui.Initialize(u, overviewParent, overviewLayoutParent);
         if (u is Nail) {
             u.ui.overview = nailOverview.Initialize(u, nailOverview.transform.parent);
         }
-        unitPortraits.Add(ui);
+        unitGameUIs.Add(ui);
 
         return ui;
     }

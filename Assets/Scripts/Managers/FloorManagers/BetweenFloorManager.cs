@@ -27,5 +27,4 @@ public class BetweenFloorManager : MonoBehaviour
             yield return null;
         }
     }
-
 }

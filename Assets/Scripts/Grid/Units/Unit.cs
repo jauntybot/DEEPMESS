@@ -29,7 +29,7 @@ public class Unit : GridElement {
     public int attackMod;
 
     [Header("UNIT UI/UX")]
-    public UnitUI ui;
+    public GameUnitUI ui;
     public DescentPreview descentPreview;
     public Sprite portrait;
     

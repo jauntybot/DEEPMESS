@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EquipmentButton : MonoBehaviour
-{
+public class EquipmentButton : MonoBehaviour {
     UnitUI ui;
     public EquipmentData data;
     public enum EquipType { PerFloor, Hammer, Bulb };

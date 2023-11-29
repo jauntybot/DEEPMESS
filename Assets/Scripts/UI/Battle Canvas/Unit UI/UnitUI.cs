@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UnitUI : MonoBehaviour
-{
-    enum UIType {Portrait, Loadout};
-    [SerializeField] UIType uiType;
+public class UnitUI : MonoBehaviour {
+
     public Unit unit;
 
     [Header("Canvas Elements")]
@@ -17,20 +15,17 @@ public class UnitUI : MonoBehaviour
 
     [Header("Equipment")]
     public List<EquipmentButton> equipButtons = new();
-    [SerializeField] GameObject equipmentPanel, hammerPanel, perFloorButtonPrefab, hammerButtonPrefab, bulbButtonPrefab;
-
-    [Header("Loadout")]
-    [SerializeField] public GameObject equipmentOptions;
-    public GameObject initialLoadoutButton, slotsLoadoutButton;
+    [SerializeField] GameObject equipmentPanel, hammerPanel, slagEquipmentButtonPrefab, hammerButtonPrefab, bulbButtonPrefab;
     [SerializeField] public SFX equipSelectSFX, hammerSelectSFX;
 
     [Header("Overview")]
     [SerializeField] public UnitOverview overview;
-    [SerializeField] GameObject overviewPrefab;
+    [SerializeField] protected GameObject overviewPrefab;
 
-    public UnitUI Initialize(Unit u, Transform overviewParent = null, Transform overviewLayoutParent = null) {
+    public virtual UnitUI Initialize(Unit u, Transform overviewParent = null, Transform overviewLayoutParent = null) {
 
         unit = u;
+        gameObject.name = unit.name + " - Unit UI";
         unitName.text = u.name;
         portrait.sprite = u.portrait;
         if (u is PlayerUnit) {
@@ -49,37 +44,21 @@ public class UnitUI : MonoBehaviour
         
         gfx.sprite = u.gfx[0].sprite;
 
-        if (initialLoadoutButton != null) {
-            initialLoadoutButton.SetActive(true); slotsLoadoutButton.SetActive(false);
-            
-            foreach (EquipmentButton button in equipButtons) {
-                button.gameObject.GetComponentInChildren<Button>().interactable = true;
-            }
-        }
-
-        if (u is PlayerUnit) {
-            if (overviewParent != null) {
-                UnitOverview view = Instantiate(overviewPrefab, overviewParent).GetComponent<UnitOverview>();
-                overview = view.Initialize(u, overviewLayoutParent);
-            }
-            UpdateEquipmentButtons();
-           
-        }
-        ToggleUnitPanel(false);
         u.ElementDestroyed += UnitDestroyed;
-
         return this;
     }
 
     public void ToggleUnitPanel(bool active) {
         if (portraitPanel)
             portraitPanel.SetActive(active);
+        //if (!active && equipmentPanel.activeSelf) ToggleEquipmentPanel(false);
 
     }
 
     public void ToggleEquipmentPanel(bool active) {
+        Debug.Log("Toggle equip panel: " + active);
         equipmentPanel.SetActive(active);
-
+        hammerPanel.SetActive(active);
     }
 
     public void ToggleEquipmentButtons() {
@@ -126,7 +105,7 @@ public class UnitUI : MonoBehaviour
                 if (b == null) {
                     GameObject prefab = null; Transform parent = null; int index = 0;
                     if (unit.equipment[i] is SlagEquipmentData) {
-                        prefab = perFloorButtonPrefab;
+                        prefab = slagEquipmentButtonPrefab;
                         parent = equipmentPanel.transform;
                     } else if (unit.equipment[i] is HammerData) {
                         prefab = hammerButtonPrefab;
@@ -150,17 +129,6 @@ public class UnitUI : MonoBehaviour
             ToggleEquipmentButtons();
     }
 
-    private void UnitDestroyed(GridElement ge) {
-        DestroyImmediate(gameObject);
-    }
-
-    public void ToggleEquipmentOptionsOn() {
-        equipmentOptions.SetActive(true);
-    }
-
-    public void ToggleEquipmentOptionsOff() {
-        equipmentOptions.SetActive(false);
-    }
 
     public void UpdateLoadout(EquipmentData equip) {
 // Remove old equipment unless the same
@@ -175,10 +143,7 @@ public class UnitUI : MonoBehaviour
 // Add new equipment to unit
         unit.equipment.Insert(1, equip);
         PlayerUnit pu = (PlayerUnit)unit;
-        if (equip is SlagEquipmentData) {
-            overview.equipment.enabled = true;
-            overview.equipment.sprite = equip.icon;
-        }
+
         UpdateEquipmentButtons(); 
         foreach (EquipmentButton button in equipButtons) button.gameObject.GetComponentInChildren<Button>().interactable = true;
 
@@ -192,6 +157,10 @@ public class UnitUI : MonoBehaviour
             UpdateLoadout(reward);
         ToggleEquipmentButtons();
         foreach (EquipmentButton button in equipButtons) button.gameObject.GetComponentInChildren<Button>().interactable = true;
+    }
+
+    private void UnitDestroyed(GridElement ge) {
+        DestroyImmediate(gameObject);
     }
 
 }

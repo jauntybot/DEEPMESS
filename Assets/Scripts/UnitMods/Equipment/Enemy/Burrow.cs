@@ -31,8 +31,7 @@ public class Burrow : EquipmentData
     }
 
     
-    public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
-    {
+    public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         yield return base.UseEquipment(user);
         yield return user.StartCoroutine(BurrowOnSelf(user));
         

@@ -674,6 +674,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 20a9e7c2a0575b44f8040600e4ab6bc9, type: 2}
+  equipType: 0
+  unit: {fileID: 0}
   button: {fileID: 0}
   selected: 0
   disarmOverlay: {fileID: 0}
@@ -759,7 +761,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7666888907102902532}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UnitUI, Assembly-CSharp
         m_MethodName: UpdateLoadout
         m_Mode: 2
@@ -809,9 +811,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d38c2447f701f49ecafacd4b870b8e8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  location: 0
   header: 
   content: 
+  anim: {fileID: 0}
   initSelf: 1
+  hammerAnim: {fileID: 0}
+  anvilAnim: {fileID: 0}
+  bigGrabAnim: {fileID: 0}
+  shieldAnim: {fileID: 0}
+  bulbAnim: {fileID: 0}
 --- !u!1 &1936756889839890775
 GameObject:
   m_ObjectHideFlags: 0
@@ -1003,7 +1012,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59f28201c55be2544ae5cc600b7bb532, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: 1c7fe50e3ed5c444fab58cb8f0ebb79b, type: 2}
+  data: {fileID: 11400000, guid: f5ae8f7ab6c55a34383d664ffd58c24b, type: 2}
+  equipType: 0
+  unit: {fileID: 0}
   button: {fileID: 0}
   selected: 0
   disarmOverlay: {fileID: 0}
@@ -1089,7 +1100,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7666888907102902532}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UnitUI, Assembly-CSharp
         m_MethodName: UpdateLoadout
         m_Mode: 2
@@ -1139,9 +1150,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d38c2447f701f49ecafacd4b870b8e8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  location: 0
   header: 
   content: 
+  anim: {fileID: 0}
   initSelf: 1
+  hammerAnim: {fileID: 0}
+  anvilAnim: {fileID: 0}
+  bigGrabAnim: {fileID: 0}
+  shieldAnim: {fileID: 0}
+  bulbAnim: {fileID: 0}
 --- !u!1 &2636900572515445265
 GameObject:
   m_ObjectHideFlags: 0
@@ -1245,6 +1263,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 117d51cb441b29f49b1417ea1d6961f4, type: 2}
+  equipType: 0
+  unit: {fileID: 0}
   button: {fileID: 0}
   selected: 0
   disarmOverlay: {fileID: 0}
@@ -1330,7 +1350,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7666888907102902532}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UnitUI, Assembly-CSharp
         m_MethodName: UpdateLoadout
         m_Mode: 2
@@ -1380,9 +1400,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d38c2447f701f49ecafacd4b870b8e8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  location: 0
   header: 
   content: 
+  anim: {fileID: 0}
   initSelf: 1
+  hammerAnim: {fileID: 0}
+  anvilAnim: {fileID: 0}
+  bigGrabAnim: {fileID: 0}
+  shieldAnim: {fileID: 0}
+  bulbAnim: {fileID: 0}
 --- !u!1 &3449306262413157140
 GameObject:
   m_ObjectHideFlags: 0
@@ -1726,7 +1753,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7666888907102902532}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UnitUI, Assembly-CSharp
         m_MethodName: ToggleEquipmentOptionsOn
         m_Mode: 1
@@ -2067,6 +2094,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: d6b47fd9c3f432243a830a8cd6465170, type: 2}
+  equipType: 0
+  unit: {fileID: 0}
   button: {fileID: 0}
   selected: 0
   disarmOverlay: {fileID: 0}
@@ -2152,7 +2181,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7666888907102902532}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UnitUI, Assembly-CSharp
         m_MethodName: UpdateLoadout
         m_Mode: 2
@@ -2202,9 +2231,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d38c2447f701f49ecafacd4b870b8e8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  location: 0
   header: 
   content: 
+  anim: {fileID: 0}
   initSelf: 1
+  hammerAnim: {fileID: 0}
+  anvilAnim: {fileID: 0}
+  bigGrabAnim: {fileID: 0}
+  shieldAnim: {fileID: 0}
+  bulbAnim: {fileID: 0}
 --- !u!1 &5378719402719704736
 GameObject:
   m_ObjectHideFlags: 0
@@ -2942,6 +2978,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: fdae265c7dbc1d944bbbabea4a5f3960, type: 2}
+  equipType: 0
+  unit: {fileID: 0}
   button: {fileID: 0}
   selected: 0
   disarmOverlay: {fileID: 0}
@@ -3027,7 +3065,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7666888907102902532}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UnitUI, Assembly-CSharp
         m_MethodName: UpdateLoadout
         m_Mode: 2
@@ -3077,9 +3115,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d38c2447f701f49ecafacd4b870b8e8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  location: 0
   header: 
   content: 
+  anim: {fileID: 0}
   initSelf: 1
+  hammerAnim: {fileID: 0}
+  anvilAnim: {fileID: 0}
+  bigGrabAnim: {fileID: 0}
+  shieldAnim: {fileID: 0}
+  bulbAnim: {fileID: 0}
 --- !u!1 &6637823120779523532
 GameObject:
   m_ObjectHideFlags: 0
@@ -3513,8 +3558,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7666888907102902539}
   - component: {fileID: 7666888907102902533}
-  - component: {fileID: 7666888907102902532}
   - component: {fileID: 3326549061947917233}
+  - component: {fileID: 8823914205508064111}
   m_Layer: 5
   m_Name: Unit UI - Loadout
   m_TagString: Untagged
@@ -3554,39 +3599,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7666888907102902536}
   m_CullTransparentMesh: 1
---- !u!114 &7666888907102902532
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7666888907102902536}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 059839bccd53ba14a9cb8d6a20768fed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  uiType: 0
-  unit: {fileID: 0}
-  portraitPanel: {fileID: 7666888908783843748}
-  unitName: {fileID: 4293906538103855586}
-  portrait: {fileID: 2900050192992033094}
-  gfx: {fileID: 6601378072240088351}
-  perFloor: {fileID: 0}
-  hammer: {fileID: 0}
-  bulb: {fileID: 0}
-  equipmentPanel: {fileID: 4611165542650454756}
-  hammerPanel: {fileID: 8016950506831994711}
-  perFloorButtonPrefab: {fileID: 7665423317416184923, guid: 6ad24dcf493bd5a45affa9c314b699f9, type: 3}
-  hammerButtonPrefab: {fileID: 7665423317416184923, guid: 85d6d13e9b053eb47809426e6ba30490, type: 3}
-  bulbButtonPrefab: {fileID: 0}
-  equipmentOptions: {fileID: 3624864556568732097}
-  initialLoadoutButton: {fileID: 4011629971176809417}
-  slotsLoadoutButton: {fileID: 6203512029628847639}
-  equipSelectSFX: {fileID: 0}
-  hammerSelectSFX: {fileID: 0}
-  overview: {fileID: 0}
-  overviewPrefab: {fileID: 4988100729897520549, guid: 5c301be69db842341ba54045e3aa0796, type: 3}
 --- !u!114 &3326549061947917233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3617,6 +3629,36 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8823914205508064111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7666888907102902536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c436d4d8384ccab428e732120c2a2ef5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unit: {fileID: 0}
+  portraitPanel: {fileID: 7666888908783843748}
+  unitName: {fileID: 4293906538103855586}
+  portrait: {fileID: 2900050192992033094}
+  gfx: {fileID: 6601378072240088351}
+  equipButtons: []
+  equipmentPanel: {fileID: 4611165542650454756}
+  hammerPanel: {fileID: 8016950506831994711}
+  slagEquipmentButtonPrefab: {fileID: 0}
+  hammerButtonPrefab: {fileID: 0}
+  bulbButtonPrefab: {fileID: 0}
+  equipSelectSFX: {fileID: 0}
+  hammerSelectSFX: {fileID: 0}
+  overview: {fileID: 0}
+  overviewPrefab: {fileID: 0}
+  equipmentOptions: {fileID: 3624864556568732097}
+  initialLoadoutButton: {fileID: 4011629971176809417}
+  slotsLoadoutButton: {fileID: 6203512029628847639}
 --- !u!1 &7666888907524514899
 GameObject:
   m_ObjectHideFlags: 0
@@ -4091,6 +4133,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 1bcc8cbb776ab164f9e1348446f94aa9, type: 2}
+  equipType: 0
+  unit: {fileID: 0}
   button: {fileID: 0}
   selected: 0
   disarmOverlay: {fileID: 0}
@@ -4176,7 +4220,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7666888907102902532}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UnitUI, Assembly-CSharp
         m_MethodName: UpdateLoadout
         m_Mode: 2
@@ -4226,9 +4270,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d38c2447f701f49ecafacd4b870b8e8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  location: 0
   header: 
   content: 
+  anim: {fileID: 0}
   initSelf: 1
+  hammerAnim: {fileID: 0}
+  anvilAnim: {fileID: 0}
+  bigGrabAnim: {fileID: 0}
+  shieldAnim: {fileID: 0}
+  bulbAnim: {fileID: 0}
 --- !u!1 &8265645180107894119
 GameObject:
   m_ObjectHideFlags: 0
