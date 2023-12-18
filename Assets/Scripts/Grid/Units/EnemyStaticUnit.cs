@@ -7,12 +7,14 @@ public class EnemyStaticUnit : EnemyUnit {
 
     public override IEnumerator ScatterTurn() {
         yield return null;
+        manager.unitActing = false;
     }
 
     public override IEnumerator CalculateAction() {
 
+        yield return StartCoroutine(AttackScan());
         yield return null;
-
+        manager.unitActing = false;
     }
 
     protected override IEnumerator AttackScan() {

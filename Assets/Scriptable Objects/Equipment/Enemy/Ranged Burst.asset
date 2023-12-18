@@ -26,13 +26,20 @@ MonoBehaviour:
   aoeAdjacency: 0
   aoeRange: 0
   energyCost: 1
-  animDur: 0.5
+  animDur: 0.35
   filters:
+  - {fileID: 2916689396987693090, guid: 9196974c7f601814c8c816639c833a0c, type: 3}
   - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
   - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
   - {fileID: 2016796106260804354, guid: b12bed586f9b98a4b9f6045893aeb48a, type: 3}
   - {fileID: 4634978180570587290, guid: c7249e601f4730c4999df2560c657aac, type: 3}
-  targetTypes: []
+  - {fileID: 2897877390811545440, guid: d00e722c41845a742aba65c37f6e0450, type: 3}
+  targetTypes:
+  - {fileID: 2016796106260804354, guid: b12bed586f9b98a4b9f6045893aeb48a, type: 3}
+  - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
+  - {fileID: 4634978180570587290, guid: c7249e601f4730c4999df2560c657aac, type: 3}
+  - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
   selectSFX: {fileID: 0}
   useSFX: {fileID: 0}
   dmg: 1
+  projectilePrefab: {fileID: 6645935981253883251, guid: 4416b403506fe974287e0549958a16e1, type: 3}

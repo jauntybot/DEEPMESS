@@ -5,21 +5,20 @@ using UnityEngine;
 public class GodParticleGE : GridElement {
 
     bool harvested = false;
-    public enum ParticleType { Orange, Green, Blue };
-    public ParticleType type;
+    public SlagEquipmentData.UpgradePath type;
 
     [SerializeField] List<Sprite> sprites;
 
     public void Init() {
-        type = (ParticleType)Random.Range(0, ParticleType.GetNames(typeof(ParticleType)).Length);
+        type = (SlagEquipmentData.UpgradePath)Random.Range(0, SlagEquipmentData.UpgradePath.GetNames(typeof(SlagEquipmentData.UpgradePath)).Length);
         switch (type) {
-            case ParticleType.Orange:
+            case SlagEquipmentData.UpgradePath.Power:
                 gfx[0].sprite = sprites[0];
             break;
-            case ParticleType.Green:
+            case SlagEquipmentData.UpgradePath.Special:
                 gfx[0].sprite = sprites[1];
             break;
-            case ParticleType.Blue:
+            case SlagEquipmentData.UpgradePath.Unit:
                 gfx[0].sprite = sprites[2];
             break;
         }

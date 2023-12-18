@@ -5,7 +5,9 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Equipment/Attack/RangedBurst")]
 [System.Serializable]
 public class RangedBurstData : EquipmentData {
+    
     public int dmg;
+    [SerializeField] GameObject projectilePrefab;
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this, targetTypes);
@@ -35,41 +37,90 @@ public class RangedBurstData : EquipmentData {
     
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         yield return base.UseEquipment(user);
-        yield return user.StartCoroutine(AttackElement(user, target));
-        
+        yield return user.StartCoroutine(BurstAttack(user));
     }
 
-    public IEnumerator AttackElement(GridElement user, GridElement target)  {
-        float timer = 0;
-        
+    public IEnumerator BurstAttack(GridElement user)  {
         user.elementCanvas.UpdateStatsDisplay();
-        while (timer < animDur/2) {
-            yield return null;
-            user.transform.position = Vector3.Lerp(user.transform.position, target.transform.position, timer/animDur);
-            timer += Time.deltaTime;
-        }
-        timer = 0;
-        while (timer < animDur/2) {
-            yield return null;
-            user.transform.position = Vector3.Lerp(user.transform.position, FloorManager.instance.currentFloor.PosFromCoord(user.coord), timer/animDur);
-            timer += Time.deltaTime;
-        }
-
         List<Coroutine> cos = new();
-        if (target is Nail n) {
-            if (n.manager.scenario.tutorial != null && n.manager.scenario.tutorial.isActiveAndEnabled && !n.manager.scenario.tutorial.nailDamageEncountered && n.manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
-                n.manager.scenario.tutorial.StartCoroutine(n.manager.scenario.tutorial.NailDamage());
+
+// X-Axis 
+        for (int x = -1; x <= 1; x += 2) {
+            GameObject projectile = Instantiate(projectilePrefab, user.transform);
+            projectile.transform.localScale = Vector3.one * FloorManager.sqrSize;
+            SpriteRenderer sr = projectile.GetComponent<SpriteRenderer>();
+            GridElement tar = null;
+            Vector2 coord = user.coord;
+            for (int i = 1; i <= range; i++) {
+                 coord = user.coord + new Vector2(i*x, 0);
+                if (coord.x < 0 || coord.x > 7) break;
+                if (user.grid.CoordContents(coord).Count > 0) {
+                    tar = user.grid.CoordContents(coord)[0];
+                    break;
+                }
             }
-            CameraController.instance.StartCoroutine(CameraController.instance.ScreenShake(0.125f, 0.5f));
-            cos.Add(user.StartCoroutine(user.TakeDamage(1, GridElement.DamageType.Melee, n)));
-        }
-        if (target.shield && target.shield.thorns) cos.Add(user.StartCoroutine(user.TakeDamage(1, GridElement.DamageType.Melee, target)));
-        cos.Add(target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user)));
+            if (user.grid.SortOrderFromCoord(coord) > user.grid.SortOrderFromCoord(user.coord))
+                sr.sortingOrder = user.grid.SortOrderFromCoord(coord);
+            else
+                sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
+
+            cos.Add(user.StartCoroutine(LaunchProjectile(projectile, user, coord, tar)));
+        }     
+// Y-Axis 
+        for (int y = -1; y <= 1; y += 2) {
+            GameObject projectile = Instantiate(projectilePrefab, user.transform);
+            SpriteRenderer sr = projectile.GetComponent<SpriteRenderer>();
+            GridElement tar = null;
+            Vector2 coord = user.coord;
+            for (int i = 1; i <= range; i++) {
+                 coord = user.coord + new Vector2(0, i*y);
+                if (coord.y < 0 || coord.y > 7) break;
+                if (user.grid.CoordContents(coord).Count > 0) {
+                    tar = user.grid.CoordContents(coord)[0];
+                    break;
+                }
+            }
+
+            cos.Add(user.StartCoroutine(LaunchProjectile(projectile, user, coord, tar)));
+        } 
         
         for (int i = cos.Count - 1; i >= 0; i--)
             yield return cos[i];
+    }
 
-        Debug.Log("Attack finished");
+    IEnumerator LaunchProjectile(GameObject projectile, GridElement user, Vector2 dest, GridElement target = null) { 
+        
+        List<Coroutine> cos = new();
+        float dur = animDur * Mathf.Abs((user.coord - dest).magnitude);
+        float timer = 0;
+
+        Vector3 startPos = user.grid.PosFromCoord(user.coord);
+        Vector3 endPos = user.grid.PosFromCoord(dest);
+
+        while (timer < animDur) {
+            yield return null;
+            timer += Time.deltaTime;
+
+            projectile.transform.position = Vector3.Lerp(startPos, endPos, timer/dur);
+        }
+
+        projectile.transform.position = endPos;
+        if (target) {
+            if (target is Nail n) {
+                if (n.manager.scenario.tutorial != null && n.manager.scenario.tutorial.isActiveAndEnabled && !n.manager.scenario.tutorial.nailDamageEncountered && n.manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
+                    n.manager.scenario.tutorial.StartCoroutine(n.manager.scenario.tutorial.NailDamage());
+                }
+                CameraController.instance.StartCoroutine(CameraController.instance.ScreenShake(0.125f, 0.5f));
+                cos.Add(user.StartCoroutine(user.TakeDamage(1, GridElement.DamageType.Melee, n)));
+            }
+            if (target.shield && target.shield.thorns) cos.Add(user.StartCoroutine(user.TakeDamage(1, GridElement.DamageType.Melee, target)));
+            cos.Add(target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user)));
+        }
+
+        Destroy(projectile);
+
+        for (int i = cos.Count - 1; i >= 0; i--)
+            yield return cos[i];
     }
 
 }
