@@ -11,7 +11,7 @@ public class GodParticleGE : GridElement {
     [SerializeField] List<Sprite> sprites;
 
     public void Init() {
-        type = (ParticleType)Random.Range(0, ParticleType.GetNames(typeof(ParticleType)).Length - 1);
+        type = (ParticleType)Random.Range(0, ParticleType.GetNames(typeof(ParticleType)).Length);
         switch (type) {
             case ParticleType.Orange:
                 gfx[0].sprite = sprites[0];

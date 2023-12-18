@@ -19,16 +19,14 @@ public class EnemyDetonateUnit : EnemyUnit
         explosion.gameObject.SetActive(true);
     }
 
-    public override IEnumerator ScatterTurn()
-    {
+    public override IEnumerator ScatterTurn() {
         if (!primed)
             yield return base.ScatterTurn();
         else
             yield return StartCoroutine(ExplodeCo());
     }
 
-    public override IEnumerator CalculateAction()
-    {
+    public override IEnumerator CalculateAction() {
         if (!primed)
             yield return base.CalculateAction();
         else 
