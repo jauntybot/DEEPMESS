@@ -33,13 +33,13 @@ public class LoadoutManager : MonoBehaviour
         foreach (UnitLoadoutUI ui in unitLoadoutUIs) {
             for (int i = 0; i <= ui.equipmentOptions.transform.childCount - 1; i++) {
                 Button b = ui.equipmentOptions.transform.GetChild(i).GetComponent<Button>();
-                for (int e = 0; e <= unitLoadoutUIs.Count - 1; e++) 
-                    b.onClick.AddListener(unitLoadoutUIs[e].ToggleEquipmentOptionsOff);
+                //for (int e = 0; e <= unitLoadoutUIs.Count - 1; e++) 
+                    //b.onClick.AddListener(unitLoadoutUIs[e].ToggleEquipmentOptionsOff);
             }
             for (int e = 0; e <= unitLoadoutUIs.Count - 1; e++) {
-                if (unitLoadoutUIs[e] != ui)
-                    ui.initialLoadoutButton.GetComponent<Button>().onClick.AddListener(unitLoadoutUIs[e].ToggleEquipmentOptionsOff);
-                initialDescentButton.onClick.AddListener(unitLoadoutUIs[e].ToggleEquipmentOptionsOff);
+                //if (unitLoadoutUIs[e] != ui)
+                    //ui.initialLoadoutButton.GetComponent<Button>().onClick.AddListener(unitLoadoutUIs[e].ToggleEquipmentOptionsOff);
+                //initialDescentButton.onClick.AddListener(unitLoadoutUIs[e].ToggleEquipmentOptionsOff);
                 
             }
         }
