@@ -87,7 +87,6 @@ public class EnemyManager : UnitManager {
                 SelectUnit(enemy);
                 StartCoroutine(scatter ? enemy.ScatterTurn() : enemy.CalculateAction());
                 unitActing = true;
-                Debug.Log("Enemy unit acting");
 
                 while (unitActing) {
                     yield return null;
@@ -96,7 +95,6 @@ public class EnemyManager : UnitManager {
                     DeselectUnit();
                 yield return new WaitForSecondsRealtime(0.125f);
                 
-                Debug.Log("Enemy unit finished acting");
                 unitsToAct.Remove(enemy);
             } else {
 

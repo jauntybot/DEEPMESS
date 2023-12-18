@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,10 +7,9 @@ using UnityEngine;
 [System.Serializable]
 public class BigGrabData : SlagEquipmentData {
  
-    int carryCapacity;
     List<GridElement> defaultFilters;
-    [SerializeField] List<GridElement> upgradeTargets;
     [SerializeField] List<GridElement> firstTargets;
+    [SerializeField] List<GridElement> upgradeTargets;
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         if (firstTarget == null) {
@@ -25,8 +25,7 @@ public class BigGrabData : SlagEquipmentData {
                     foreach(GridElement target in firstTargets) {
                         if (ge.GetType() == target.GetType()) {
                             ge.elementCanvas.ToggleStatsDisplay(true);
-                            if (ge.hpCurrent <= carryCapacity)
-                                remove = false;
+                            remove = false;
                         }
                     }
                 }
@@ -36,12 +35,8 @@ public class BigGrabData : SlagEquipmentData {
                 }
             }
             return validCoords;
-        } else {
-            List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this);
-            user.grid.DisplayValidCoords(validCoords, gridColor);
-            if (user is PlayerUnit u) u.ui.ToggleEquipmentButtons();
-            return validCoords;
-        }           
+        }
+        else return null;
     }
 
     public override void UntargetEquipment(GridElement user) {
@@ -60,10 +55,65 @@ public class BigGrabData : SlagEquipmentData {
             contextualAnimGO = target.gameObject;
             Unit unit = (Unit)user;
             unit.grid.DisableGridHighlight();
-            unit.inRangeCoords = TargetEquipment(user);
-            unit.validActionCoords = unit.inRangeCoords;
-            unit.grid.DisplayValidCoords(unit.validActionCoords, gridColor);
+
+// Nested TargetEquipment functionality inside of first UseEquipment
+            List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range, this);
+
+// SPECIAL TIER I -- Throw backwards
+            Vector2 dir = user.coord - firstTarget.coord;
+            if (upgrades[UpgradePath.Special] == 0) {
+                if (dir.x != 0) {
+                    int sign = (int)Mathf.Sign(dir.x);
+                    for (int i = 1; i <= range; i++) {
+                        Vector2 adj = new Vector2(user.coord.x + i*sign, user.coord.y);
+                        if (validCoords.Contains(adj)) 
+                            validCoords.Remove(adj);
+                    }
+                } else {
+                    int sign = (int)Mathf.Sign(dir.y);
+                    for (int i = 1; i <= range; i++) {
+                        Vector2 adj = new Vector2(user.coord.x, user.coord.y + i*sign);
+                        if (validCoords.Contains(adj)) 
+                            validCoords.Remove(adj);
+                    }
+                }
+            }
+// SPECIAL TIER II -- Throw sideways
+            if (upgrades[UpgradePath.Special] <= 1) {
+                if (dir.x != 0) {
+                    for (int i = -range; i <= range; i++) {
+                        Vector2 adj = new Vector2(user.coord.x, user.coord.y + i);
+                        if (validCoords.Contains(adj)) 
+                            validCoords.Remove(adj);
+                    }
+                } else {
+                    for (int i = -range; i <= range; i++) {
+                        Vector2 adj = new Vector2(user.coord.x + i, user.coord.y);
+                        if (validCoords.Contains(adj))
+                            validCoords.Remove(adj);
+                    }
+                }
+            }
+            user.grid.DisplayValidCoords(validCoords, gridColor);
+            unit.inRangeCoords = validCoords;
+// UNIT TIER II -- Throw onto occupied spaces
+            if (upgrades[UpgradePath.Unit] < 2) {
+                for (int i = validCoords.Count - 1; i >= 0; i--) {
+                    bool remove = false;
+                    foreach(GridElement ge in user.grid.CoordContents(validCoords[i])) {
+                        remove = true;
+                    }
+                    if (remove) {
+                        if (validCoords.Count >= i)
+                            validCoords.Remove(validCoords[i]);
+                    }
+                }
+            }
+            unit.validActionCoords = validCoords;
+
+            if (user is PlayerUnit u) u.ui.ToggleEquipmentButtons();
             user.PlaySound(selectSFX);
+
             yield return user.StartCoroutine(GrabUnit((Unit)user, (Unit)firstTarget));
         } else {
             SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(user.coord), Quaternion.identity).GetComponent<SpriteRenderer>();
@@ -114,53 +164,35 @@ public class BigGrabData : SlagEquipmentData {
             }
             thrown.StartCoroutine(thrown.CollideFromAbove(subGE));
         }
+        if (upgrades[UpgradePath.Unit] >= 1) thrown.StartCoroutine(thrown.TakeDamage(1, GridElement.DamageType.Gravity, thrower, thrown.coord - thrower.coord));
         thrown.UpdateElement(coord);
     }
 
     public override void UpgradeEquipment(Unit user, UpgradePath targetPath) {
         base.UpgradeEquipment(user, targetPath);
         if (targetPath ==  UpgradePath.Unit) {
-            if (upgrades[targetPath] == 0) {
-                slag.hpMax = 3;
-                if (slag.hpCurrent > slag.hpMax) slag.hpCurrent = slag.hpMax;
-                slag.elementCanvas.InstantiateMaxPips();
-                slag.ui.overview.InstantiateMaxPips();
-            } else if (upgrades[targetPath] == 1) {
-                slag.hpMax = 4;
-                slag.hpCurrent ++;
-                slag.elementCanvas.InstantiateMaxPips();
-                slag.ui.overview.InstantiateMaxPips();
-            } else if (upgrades[targetPath] == 2) {
-                slag.hpMax = 5;
+            if (upgrades[targetPath] == 1) {
+                slag.hpMax ++;
                 slag.hpCurrent ++;
                 slag.elementCanvas.InstantiateMaxPips();
                 slag.ui.overview.InstantiateMaxPips();
             }
-            
         } else if (targetPath == UpgradePath.Power) {
-            if (upgrades[targetPath] == 0) {
-                range = 1;
-                filters = defaultFilters;
-            } else if (upgrades[targetPath] == 1) {
-                range = 2;
-            } else if (upgrades[targetPath] == 2) {
-                range = 4;
-            } else if (upgrades[targetPath] == 3) {
-                filters = new();
-            }
-        } else if (targetPath == UpgradePath.Special) {
             if (upgrades[targetPath] == 0) {
                 foreach (GridElement ge in upgradeTargets) {
                     if (firstTargets.Contains(ge)) firstTargets.Remove(ge);
                 }
-                carryCapacity = 1;
+                range = 3;
             } else if (upgrades[targetPath] == 1) {
-                carryCapacity = 2;
+                slag.hpMax ++;
+                slag.hpCurrent ++;
+                slag.elementCanvas.InstantiateMaxPips();
+                slag.ui.overview.InstantiateMaxPips();
+
+                range += 2;
             } else if (upgrades[targetPath] == 2) {
-                foreach (GridElement ge in upgradeTargets) 
+                foreach (GridElement ge in upgradeTargets)
                     firstTargets.Add(ge);
-            } else if (upgrades[targetPath] == 3) {
-                carryCapacity = 4;
             }
         }
     }

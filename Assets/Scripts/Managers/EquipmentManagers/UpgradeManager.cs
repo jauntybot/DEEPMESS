@@ -1,29 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class UpgradeManager : MonoBehaviour {
 
-    [SerializeField] GameObject upgradePanel;
+    PlayerManager pManager;
+    List<PlayerUnit> units = new();
     public PlayerUnit selectedUnit;
+    
+    [SerializeField] GameObject upgradePanel, particlePanel, particleContainer;
+    [SerializeField] GameObject godParticleUIPrefab;
+    [SerializeField] List<Sprite> particleSprites;
     [SerializeField] TMP_Text unitName, upgradePointsTMP;
     int selectionIndex = 0;
-    List<PlayerUnit> units = new();
-    List<UnitUpgradeUI> unitUpgradeUIs;
+    //List<UnitUpgradeUI> unitUpgradeUIs;
     int upgradePoints;
 
     [SerializeField] List<UpgradeBranch> upgradeBranches;
 
 
-    public void Init(List<Unit> _units) {
+    public void Init(List<Unit> _units, PlayerManager _pManager) {
         foreach (Unit unit in _units) {
             if (unit is PlayerUnit pu)
                 units.Add(pu);
         }
+        pManager = _pManager;
+        
         foreach (UpgradeBranch branch in upgradeBranches) 
             branch.Init(this);
         
+
         selectedUnit = units[0];
         selectionIndex = 0;
         upgradePoints = 0;
@@ -35,10 +43,13 @@ public class UpgradeManager : MonoBehaviour {
         upgradePoints+=3;
         
         upgradePanel.SetActive(true);
-        upgradePointsTMP.text = "UPGRADE POINTS: " + upgradePoints;
         
-        selectedUnit = units[0];
-        selectionIndex = 0;
+        for (int i = particleContainer.transform.childCount - 1; i >= 0; i++)
+            Destroy(particleContainer.transform.GetChild(i).gameObject);
+        for (int n = 0; n <= pManager.collectedParticles.Count - 1; n++) {
+            GameObject newPart = Instantiate(godParticleUIPrefab, particleContainer.transform);
+            newPart.GetComponentInChildren<Image>().sprite = particleSprites[(int)pManager.collectedParticles[n]];
+        }
 
         while (upgrading) {
 

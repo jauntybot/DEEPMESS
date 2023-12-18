@@ -84,7 +84,7 @@ public class GridElement : MonoBehaviour{
     }
 
   
-    public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) {
+    public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, Vector2 dir = default) {
         if (shield == null || Mathf.Sign(dmg) == -1) {
             if (Mathf.Sign(dmg) == 1) 
                 PlaySound(dmgdSFX);
@@ -160,6 +160,9 @@ public class GridElement : MonoBehaviour{
 
     public virtual void RemoveShield() {
         if (shield) {
+            if (shield.healing) {
+                StartCoroutine(TakeDamage(-1));
+            }
             Destroy(shield.gameObject);
             shield = null;
         }

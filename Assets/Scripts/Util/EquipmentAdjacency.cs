@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using UnityEngine;
 
 public class EquipmentAdjacency : MonoBehaviour
@@ -156,7 +157,7 @@ public class EquipmentAdjacency : MonoBehaviour
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered
-                            if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
+                            if (data.filters == null || !(data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType())))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord,current);
                                 break;
@@ -322,9 +323,11 @@ public class EquipmentAdjacency : MonoBehaviour
                     occupied = true;
 // Valid coord if element is not filtered
                     if (filters == null || !filters.Find(f => f.GetType() == ge.GetType())) {
+                        Debug.Log("valid, " + filters.Count + ge.GetType());
                         _coords.Add(coord);
 // Valid coord if element is target, but stops frontier
                     } else if (targetLast != null) {
+                        Debug.Log("blocked");
                         blocked = true;
                         foreach(GridElement target in targetLast) {
                             if (ge.GetType() == target.GetType()) {

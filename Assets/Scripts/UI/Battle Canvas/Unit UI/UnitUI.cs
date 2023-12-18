@@ -56,7 +56,7 @@ public class UnitUI : MonoBehaviour {
     }
 
     public void ToggleEquipmentPanel(bool active) {
-        Debug.Log("Toggle equip panel: " + active);
+        
         equipmentPanel.SetActive(active);
         hammerPanel.SetActive(active);
     }
@@ -104,7 +104,7 @@ public class UnitUI : MonoBehaviour {
                 EquipmentButton b = equipButtons.Find(b => b.data == unit.equipment[i]);
                 if (b == null) {
                     GameObject prefab = null; Transform parent = null; int index = 0;
-                    if (unit.equipment[i] is SlagEquipmentData) {
+                    if (unit.equipment[i] is SlagEquipmentData && unit.equipment[i] is not HammerData) {
                         prefab = slagEquipmentButtonPrefab;
                         parent = equipmentPanel.transform;
                     } else if (unit.equipment[i] is HammerData) {

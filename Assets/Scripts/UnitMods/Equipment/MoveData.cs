@@ -10,8 +10,7 @@ public class MoveData : EquipmentData
     [SerializeField] protected AnimType animType;
 
 
-    public override List<Vector2> TargetEquipment(GridElement user, int mod = 0)
-    {
+    public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this);
         Unit u = (Unit)user;
         u.inRangeCoords = validCoords;
@@ -22,8 +21,7 @@ public class MoveData : EquipmentData
         user.grid.DisplayValidCoords(validCoords, gridColor);
         return validCoords;
     }
-    public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
-    {
+    public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         if (user is Unit unit)
             unit.moved = true;
         user.elementCanvas.UpdateStatsDisplay();

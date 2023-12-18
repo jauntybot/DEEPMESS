@@ -142,7 +142,7 @@ public class PlayerController : MonoBehaviour {
             }
         
             if (Input.GetKeyDown(KeyCode.Space)) 
-                FloorManager.instance.previewManager.PreviewButton(!FloorManager.instance.peeking);
+                FloorManager.instance.previewManager.PreviewButton();
         }
     }
 
