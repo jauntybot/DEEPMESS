@@ -24,6 +24,11 @@ public class PlayerManager : UnitManager {
     [HideInInspector] public Vector2 lastHoveredCoord;
     [HideInInspector] public int defeatedEnemies;
 
+    public delegate void OnPlayerAction(PlayerManager player);
+    public virtual event OnPlayerAction UndoClearCallback;
+
+    public List<GodParticleGE.ParticleType> collectedParticles = new();
+
     [Header("PREFABS")]
     [SerializeField] public GameObject nailPrefab;
     [SerializeField] public GameObject hammerPrefab;
@@ -71,7 +76,7 @@ public class PlayerManager : UnitManager {
         };
 
         yield return StartCoroutine(loadout.Initialize(initU));
-        upgradeManager.Init(initU);
+        upgradeManager.Init(initU, this);
         //yield return ScenarioManager.instance.StartCoroutine(ScenarioManager.instance.SwitchTurns(ScenarioManager.Turn.Descent));
 
         SpawnHammer((PlayerUnit)units[0], hammerActions);
@@ -145,6 +150,7 @@ public class PlayerManager : UnitManager {
             undoableMoves = new Dictionary<Unit, Vector2>();
             undoOrder = new List<Unit>();
             harvestedByMove = new Dictionary<Unit, GridElement>();
+            UndoClearCallback?.Invoke(this);
             ResolveConditions();
 // End Turn
         } else {
@@ -372,7 +378,7 @@ public class PlayerManager : UnitManager {
 
     public override void DeselectUnit() {      
         if (selectedUnit is PlayerUnit pu && selectedUnit.selectedEquipment) {
-            if (selectedUnit.selectedEquipment is SlagEquipmentData) {
+            if (selectedUnit.selectedEquipment is SlagEquipmentData && selectedUnit.selectedEquipment is not HammerData) {
                 EquipmentButton butt = selectedUnit.ui.equipButtons.Find(e => e.data is SlagEquipmentData);
                 if (butt)
                     butt.DeselectEquipment();
@@ -388,7 +394,7 @@ public class PlayerManager : UnitManager {
 
         }
         base.DeselectUnit();
-        turnBlink.BlinkEndTurn();
+        //turnBlink.BlinkEndTurn();
         prevCursorTargetState = false;
         contextuals.displaying = false;
         targetCursorState = PlayerController.CursorState.Default;
@@ -420,11 +426,16 @@ public class PlayerManager : UnitManager {
                 u.UpdateAction();
             PlayerUnit lastMoved = (PlayerUnit)undoOrder[undoOrder.Count - 1];
             if (harvestedByMove.ContainsKey(lastMoved)) {
-                TileBulb harvested = (TileBulb)harvestedByMove[lastMoved];
-                harvested.UndoHarvest();
-                lastMoved.equipment.Find(e => e is BulbEquipmentData).UnequipEquipment(lastMoved);
-                harvestedByMove.Remove(lastMoved);
-                lastMoved.bulbPickups--;
+                if (harvestedByMove[lastMoved] is TileBulb harvested) {
+                    harvested.UndoHarvest();
+                    lastMoved.equipment.Find(e => e is BulbEquipmentData).UnequipEquipment(lastMoved);
+                    harvestedByMove.Remove(lastMoved);
+                    lastMoved.bulbPickups--;
+                } else if (harvestedByMove[lastMoved] is GodParticleGE particle) {
+                    particle.UndoHarvest();
+                    collectedParticles.Remove(particle.type);
+                    harvestedByMove.Remove(lastMoved);
+                }
             }
             MoveData move = (MoveData)cascadeMovement;
             StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved], true));

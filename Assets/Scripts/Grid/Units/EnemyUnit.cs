@@ -1,5 +1,6 @@
     using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class EnemyUnit : Unit {
@@ -9,7 +10,7 @@ public class EnemyUnit : Unit {
     [Header("Enemy Unit")]
     public Pathfinding pathfinding;
     [SerializeField] protected Unit closestUnit;
-
+    public GameObject splatterPrefab;
 
     public virtual IEnumerator ScatterTurn() {
         UpdateAction(equipment[0], moveMod);
@@ -139,10 +140,12 @@ public class EnemyUnit : Unit {
         return coord;
     }
 
-    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) {
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, Vector2 dir = default) {
         int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg * 2 : dmg;
         if (hpCurrent - modifiedDmg <= hpMax/2) 
             gfxAnim.SetBool("Damaged", true);
+
+        Splatter(dir);
 
         yield return base.TakeDamage(dmg, dmgType, source);
     }
@@ -165,5 +168,13 @@ public class EnemyUnit : Unit {
         EnemyManager eManager = (EnemyManager)manager;
         
         return base.DestroySequence(dmgType);
+    }
+
+    public void Splatter(Vector2 dir) {
+        if (dir != default) {
+            GameObject obj = Instantiate(splatterPrefab, grid.neutralGEContainer.transform);
+            BloodSplatter splatter = obj.GetComponent<BloodSplatter>();
+            splatter.Init(this, dir);
+        }
     }
 }

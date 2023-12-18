@@ -33,8 +33,7 @@ public class EndTurnBlinking : MonoBehaviour
         return outOfEnergy;
     }
 
-    public void BlinkEndTurn()
-    {
+    public void BlinkEndTurn() {
         if (CheckEnergy()){
             if (!blinking) StartCoroutine(BlinkButton());
         }

@@ -93,8 +93,7 @@ public class Grid : MonoBehaviour {
         foreach (FloorDefinition.Spawn spawn in lvlDef.initSpawns) {
             GridElement ge = spawn.asset.prefab.GetComponent<GridElement>();
 // Spawn a Unit
-            if (ge is Unit u) 
-            {
+            if (ge is Unit u) {
                 if (u is EnemyUnit e && e is not BossUnit) {
                     enemy.SpawnUnit(spawn.coord, spawn.asset.prefab.GetComponent<Unit>());
                 } else if (u is PlayerUnit) {
@@ -327,8 +326,8 @@ public class Grid : MonoBehaviour {
             0);
     }
 
-    public int SortOrderFromCoord(Vector2 coord) {
-        return 8 + (int)coord.x - (int)coord.y;
+    public int SortOrderFromCoord(Vector2 coord, int coordSort = 0) {
+        return (8 + (int)coord.x - (int)coord.y) * 10 + coordSort;
     }
 
     public virtual void PlaySound(SFX sfx = null) {

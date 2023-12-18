@@ -24,7 +24,7 @@ public class EquipmentButton : MonoBehaviour {
     public void Initialize(UnitUI _ui, EquipmentData d, GridElement ge) {
         ui = _ui;
         data = d;
-        if (d is SlagEquipmentData) equipType = EquipType.PerFloor;
+        if (d is SlagEquipmentData && d is not HammerData) equipType = EquipType.PerFloor;
         else if (d is HammerData) equipType = EquipType.Hammer;
         else if (d is BulbEquipmentData) equipType = EquipType.Bulb;
         unit = (PlayerUnit)ge;

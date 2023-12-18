@@ -15,8 +15,8 @@ public class UIManager : MonoBehaviour {
     public MetaDisplay metaDisplay;
 
     [Header("Floor Buttons")]
-    [SerializeField] public Button upButton;
-    [SerializeField] public Button downButton, endTurnButton, undoButton;
+    [SerializeField] public Button peekButton;
+    [SerializeField] public Button endTurnButton, undoButton;
 
     [Header("Game UIs")]
     [SerializeField] Transform unitGameUIParent;
@@ -87,8 +87,7 @@ public class UIManager : MonoBehaviour {
     }
 
     public void LockFloorButtons(bool state) {
-        upButton.GetComponent<Button>().interactable = state ? false : scenario.floorManager.floors.Count - 1 > scenario.floorManager.currentFloor.index;
-        downButton.GetComponent<Button>().interactable = state ? false : scenario.floorManager.floors.Count - 1 > scenario.floorManager.currentFloor.index;
+        peekButton.GetComponent<Button>().interactable = state ? false : scenario.floorManager.floors.Count - 1 > scenario.floorManager.currentFloor.index;
     }
 
     public void LockHUDButtons(bool state) {

@@ -9,7 +9,8 @@ public class DescentPreviewManager : MonoBehaviour
     FloorManager floorManager;
     public List<DescentPreview> descentPreviews;
     public Grid currentFloor, alignmentFloor;
-    [SerializeField] public GameObject upButton, downButton;
+    [SerializeField] public Animator peekFrameAnim, peekEyeAnim;
+    [SerializeField] bool previewing;
 
     [HideInInspector] public bool tut;
 
@@ -27,7 +28,7 @@ public class DescentPreviewManager : MonoBehaviour
         if (scenario.currentTurn == ScenarioManager.Turn.Player)
             UIManager.instance.endTurnButton.interactable = !down;
         if (down) {
-            downButton.SetActive(false); upButton.SetActive(true);
+            peekFrameAnim.SetBool("Active", true); peekEyeAnim.SetBool("Active", true);
             TogglePreivews(true);
             foreach(DescentPreview dp in descentPreviews) {
                 if (dp.unit.grid == floorManager.currentFloor)
@@ -38,7 +39,8 @@ public class DescentPreviewManager : MonoBehaviour
             floorManager.transitioning = false;
         }
         else {
-            downButton.SetActive(true); upButton.SetActive(false);
+            Debug.Log("Up");
+            peekFrameAnim.SetBool("Active", false); peekEyeAnim.SetBool("Active", false);
             TogglePreivews(false);
      
             yield return StartCoroutine(floorManager.TransitionFloors(down, true));
@@ -66,17 +68,20 @@ public class DescentPreviewManager : MonoBehaviour
                 obj.SetActive(!state);
     }
 
-    public void PreviewButton(bool down) {
-        int dir = down ? 1 : -1;
+    public void PreviewButton() {
+        int dir = previewing ? 1 : -1;
+        previewing = !previewing;
+        Debug.Log(dir);
 
         if (tut && floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
-            StartCoroutine(PeekTutorial(down));
+            StartCoroutine(PeekTutorial(previewing));
         } else {
             scenario.player.DeselectUnit();
-            if (!floorManager.transitioning && floorManager.floors.Count - 1 >= floorManager.currentFloor.index + dir) {
-                StartCoroutine(PreviewFloor(down));
+            if (!floorManager.transitioning && floorManager.floors.Count - 1 >= floorManager.currentFloor.index - dir) {
+                Debug.Log("Preview");
+                StartCoroutine(PreviewFloor(previewing));
                 if (UIManager.instance.gameObject.activeSelf)
-                    UIManager.instance.PlaySound(down ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
+                    UIManager.instance.PlaySound(previewing ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
             }
         }
 
@@ -86,7 +91,7 @@ public class DescentPreviewManager : MonoBehaviour
 
         tut = false;
         yield return scenario.tutorial.StartCoroutine(scenario.tutorial.PeekButton());
-        PreviewButton(down);
+        PreviewButton();
 
     }
 

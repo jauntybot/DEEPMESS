@@ -259,16 +259,14 @@ MonoBehaviour:
   targeted: 0
   hitbox: {fileID: 0}
   elementCanvas: {fileID: 0}
+  hpMax: 1
+  hpCurrent: 0
+  shield: {fileID: 0}
+  energyCurrent: 0
+  energyMax: 0
   gfx:
   - {fileID: 1733487337013861869}
   - {fileID: 7863985710725433773}
-  hpMax: 2
-  hpCurrent: 0
-  defense: 0
-  shell: 0
-  shellGFX: {fileID: 0}
-  energyCurrent: 0
-  energyMax: 0
   audioSource: {fileID: 0}
   selectedSFX: {fileID: 11400000, guid: 22e616db63012384382f1045bd4c98ea, type: 2}
   dmgdSFX: {fileID: 0}
@@ -293,8 +291,8 @@ MonoBehaviour:
   animDur: 1
   landingSFX: {fileID: 11400000, guid: 25a2f8c31af144749ba05951663cb2a7, type: 2}
   data: {fileID: 0}
-  detonate: {fileID: 0}
   explosion: {fileID: 524089991929998665}
+  targetTypes: []
 --- !u!60 &5041107954292580696
 PolygonCollider2D:
   m_ObjectHideFlags: 0

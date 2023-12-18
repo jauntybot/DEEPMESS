@@ -44,10 +44,12 @@ public class PlayerUnit : Unit {
         Coroutine co = StartCoroutine(base.ExecuteAction(target));
 
 // Input parsing - what kind of equipment is being used 
-        if (equip) {
 // single target equipment, not movement
-            if (equip is SlagEquipmentData) equipUses++;
+        if (equip) {
+// Tally for end of run scoring
+            if (equip is SlagEquipmentData && equip is not HammerData) equipUses++;
             else if (equip is HammerData) hammerUses++; 
+
             if (!equip.multiselect && equip is not MoveData) {
                 pManager.DeselectUnit();
                 pManager.StartCoroutine(pManager.UnitIsActing());
@@ -57,12 +59,18 @@ public class PlayerUnit : Unit {
                 pManager.StartCoroutine(pManager.UnitIsActing());
                 ui.ToggleEquipmentButtons();
             }
-// multi-target equipment - first target selected
+// multi-target equipment - first target selected, update grid contextuals
             else if (equip.firstTarget != null) {
-                GridElement anim = equip.contextualAnimGO ? equip.contextualAnimGO.GetComponent<GridElement>() : null;
-                pManager.contextuals.UpdateContext(equip, equip.gridColor, equip.multiContext, anim, target);
+// Riccochet hammer check
+                if ((equip is not HammerData d) || d.upgrades[SlagEquipmentData.UpgradePath.Power] == 0 || (d.upgrades[SlagEquipmentData.UpgradePath.Power] == 1 && d.secondTarget != null)) {
+                    GridElement anim = equip.contextualAnimGO ? equip.contextualAnimGO.GetComponent<GridElement>() : null;
+                    pManager.contextuals.UpdateContext(equip, equip.gridColor, equip.multiContext, anim, target);
+                } else if (d.upgrades[SlagEquipmentData.UpgradePath.Power] == 1 && d.secondTarget == null) {
+                    GridElement anim = equip.contextualAnimGO.GetComponent<GridElement>();
+                    pManager.contextuals.UpdateContext(equip, equip.gridColor, equip.contextDisplay, anim, target);
+                }
 // multi-target equipment - execute full action
-            } else {
+            } else if ((equip is not HammerData d) || (d.upgrades[SlagEquipmentData.UpgradePath.Power] == 1 && d.secondTarget != null)) {
                 pManager.DeselectUnit();
                 pManager.StartCoroutine(pManager.UnitIsActing());
             }
@@ -70,7 +78,7 @@ public class PlayerUnit : Unit {
             pManager.DeselectUnit();
             pManager.StartCoroutine(pManager.UnitIsActing());
         }
-        UIManager.instance.upButton.GetComponent<Button>().interactable = false; UIManager.instance.downButton.GetComponent<Button>().interactable = false;
+        UIManager.instance.peekButton.GetComponent<Button>().interactable = false;
 // Run base coroutine
         yield return co;
 // Harvest Tile Bulb
@@ -79,7 +87,7 @@ public class PlayerUnit : Unit {
                 tb.HarvestBulb(pu);
         }
 
-        UIManager.instance.upButton.GetComponent<Button>().interactable = true; UIManager.instance.downButton.GetComponent<Button>().interactable = true;
+        UIManager.instance.peekButton.GetComponent<Button>().interactable = true;
         if (equip is MoveData && energyCurrent > 0) {
             grid.UpdateSelectedCursor(true, coord);
         }
@@ -138,7 +146,7 @@ public class PlayerUnit : Unit {
                             possiblePasses.Add(u);
                     }
                     if (possiblePasses.Count > 0) {                
-                        StartCoroutine(hammer.ThrowHammer(this, null, possiblePasses[Random.Range(0, possiblePasses.Count)]));   
+                        StartCoroutine(hammer.LaunchHammer(this, null, possiblePasses[Random.Range(0, possiblePasses.Count)]));   
                         droppedHammer = true;
                     }
                 }

@@ -28,7 +28,7 @@ public class FloorManager : MonoBehaviour
     public static int gridSize;
     [SerializeField] float _sqrSize;
     public static float sqrSize;
-
+    [SerializeField] GameObject godParticlePrefab;
 
     [HideInInspector] public BetweenFloorManager betweenFloor;
     
@@ -340,7 +340,7 @@ public class FloorManager : MonoBehaviour
 
     public IEnumerator DescendUnits(List<GridElement> units, EnemyManager enemy = null) {
         UpdateFloorCounter();
-        Coroutine drop = StartCoroutine(DropUnits(units, currentFloor));
+        Coroutine drop = StartCoroutine(DropUnits(units));
 
         scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
         yield return drop;
@@ -356,7 +356,7 @@ public class FloorManager : MonoBehaviour
     }
 
 // Coroutine that sequences the descent of all valid units
-    public IEnumerator DropUnits(List<GridElement> units, Grid toFloor) {
+    public IEnumerator DropUnits(List<GridElement> units) {
 
         scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         scenario.player.transform.parent = transitionParent;
@@ -371,6 +371,8 @@ public class FloorManager : MonoBehaviour
                 u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
             }
         }
+
+// Sort list of descending units in order of faction, controls order of descent
         GridElement[] units1 = units.ToArray();
         Array.Sort<GridElement>(units1, (a,b) => {
             int x, y;
@@ -387,19 +389,15 @@ public class FloorManager : MonoBehaviour
         Nail nail = null;
         List<Coroutine> descents = new();
         for (int i = units1.Length - 1; i >= 0; i--) {
-            if (units1[i] is Anvil a && a.data.upgrades[SlagEquipmentData.UpgradePath.Power] == 0) {
-                a.StartCoroutine(a.DestroySequence());
-                continue;
-            }
             if (units1[i] is Unit u) {
                 if (u is not Nail) {
-                    if (u is PlayerUnit && toFloor.slagSpawns.Count > 0) {
-                        u.coord = toFloor.slagSpawns[0];
-                        toFloor.slagSpawns.RemoveAt(0);
+                    if (u is PlayerUnit && currentFloor.slagSpawns.Count > 0) {
+                        u.coord = currentFloor.slagSpawns[0];
+                        currentFloor.slagSpawns.RemoveAt(0);
                     } 
                     GridElement subElement = null;
-                    foreach (GridElement ge in toFloor.CoordContents(u.coord)) subElement = ge;
-                    descents.Add(StartCoroutine(DropUnit(u, toFloor.PosFromCoord(u.coord) + new Vector3 (0, floorOffset*2, 0), toFloor.PosFromCoord(u.coord), subElement)));
+                    foreach (GridElement ge in currentFloor.CoordContents(u.coord)) subElement = ge;
+                    descents.Add(StartCoroutine(DropUnit(u, currentFloor.PosFromCoord(u.coord) + new Vector3 (0, floorOffset*2, 0), currentFloor.PosFromCoord(u.coord), subElement)));
                     yield return new WaitForSeconds(unitDropDur*1.5f);
                     
                 } else 
@@ -416,7 +414,9 @@ public class FloorManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.75f);
         
         if (nail)
-            yield return StartCoroutine(DropNail(nail, toFloor));
+            yield return StartCoroutine(DropNail(nail));
+
+        yield return StartCoroutine(DropParticle());
     }
 
 // Coroutine that houses the logic to descend a single unit
@@ -449,21 +449,16 @@ public class FloorManager : MonoBehaviour
 
         unit.PlaySound(unit.landingSFX);
 
-        Coroutine landing = null;
-        if (unit is Anvil a && a.data.upgrades[SlagEquipmentData.UpgradePath.Power] >= 2) {
-            landing = StartCoroutine(a.PushOnLanding());
-        }
-
         if (subElement) {
             StartCoroutine(subElement.CollideFromBelow(unit));
 
             yield return StartCoroutine(unit.CollideFromAbove(subElement));
         }
-        if (landing != null) yield return landing;
+
     }
 
 // Coroutine for descending the nail at a regulated random position
-    public IEnumerator DropNail(Nail nail, Grid toFloor) {
+    public IEnumerator DropNail(Nail nail) {
         nail.ToggleNailState(Nail.NailState.Falling);
 
         bool validCoord = false;
@@ -472,10 +467,10 @@ public class FloorManager : MonoBehaviour
 // Find a valid coord that a player unit is not in
         while (!validCoord) {
             validCoord = true;
-            if (toFloor.nailSpawns.Count > 0) {
-                int i = UnityEngine.Random.Range(0, toFloor.nailSpawns.Count);
-                spawn = toFloor.nailSpawns[i];
-                toFloor.nailSpawns.RemoveAt(i);
+            if (currentFloor.nailSpawns.Count > 0) {
+                int i = UnityEngine.Random.Range(0, currentFloor.nailSpawns.Count);
+                spawn = currentFloor.nailSpawns[i];
+                currentFloor.nailSpawns.RemoveAt(i);
             }
             else
                 spawn = new Vector2(UnityEngine.Random.Range(1,6), UnityEngine.Random.Range(1,6));
@@ -520,6 +515,56 @@ public class FloorManager : MonoBehaviour
 
         if (subElement) 
             StartCoroutine(subElement.CollideFromBelow(nail));
+    }
+
+    public IEnumerator DropParticle() {
+
+        GodParticleGE particle = Instantiate(godParticlePrefab).GetComponent<GodParticleGE>();
+        particle.Init();
+        particle.transform.parent = currentFloor.neutralGEContainer.transform;
+
+        particle.StoreInGrid(currentFloor);
+        
+        bool validCoord = false;
+        Vector2 spawn = Vector2.zero;
+
+// Find a valid coord that a player unit is not in
+        while (!validCoord) {
+            validCoord = true;
+            spawn = new Vector2(UnityEngine.Random.Range(1,6), UnityEngine.Random.Range(1,6));
+                
+            foreach(Unit u in scenario.player.units) {
+                if (u.coord == spawn) validCoord = false;
+            }
+
+            if (currentFloor.tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false;
+            if (currentFloor.tiles.Find(sqr => sqr.coord == spawn) is TileBulb) validCoord = false;
+        }
+        
+        particle.transform.position = particle.grid.PosFromCoord(spawn);
+        particle.UpdateSortOrder(spawn);
+        particle.coord = spawn;
+
+        GridElement subElement = null;
+        foreach (GridElement ge in currentFloor.CoordContents(particle.coord)) subElement = ge;
+
+        Vector3 to = currentFloor.PosFromCoord(spawn);
+        Vector3 from = to + new Vector3(0, floorOffset*2, 0);
+        float timer = 0;
+        NestedFadeGroup.NestedFadeGroup fade = particle.GetComponent<NestedFadeGroup.NestedFadeGroup>();
+        //particle.airTraillVFX.SetActive(true);
+
+        while (timer <= unitDropDur) {
+            particle.transform.localPosition = Vector3.Lerp(from, to, dropCurve.Evaluate(timer/unitDropDur));
+            fade.AlphaSelf = Mathf.Lerp(0, 1, timer/(unitDropDur/3));
+            yield return null;
+            timer += Time.deltaTime;
+        }
+
+        //particle.DescentVFX(currentFloor.tiles.Find(sqr => sqr.coord == particle.coord), subElement);
+        particle.transform.position = to;
+        particle.StoreInGrid(currentFloor);
+        fade.AlphaSelf = 1;
     }
 
     public IEnumerator SpawnBoss() {

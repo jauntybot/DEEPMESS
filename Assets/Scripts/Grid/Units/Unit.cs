@@ -113,7 +113,7 @@ public class Unit : GridElement {
         }
     }
 
-    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) {
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, Vector2 dir = default) {
 
         bool prevTargeted = targeted;
         TargetElement(true);
