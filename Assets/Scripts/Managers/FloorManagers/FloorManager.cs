@@ -413,10 +413,10 @@ public class FloorManager : MonoBehaviour
         }
         yield return new WaitForSecondsRealtime(0.75f);
         
-        if (nail)
+        if (nail) {
             yield return StartCoroutine(DropNail(nail));
-
-        yield return StartCoroutine(DropParticle());
+            yield return StartCoroutine(DropParticle());
+        }
     }
 
 // Coroutine that houses the logic to descend a single unit

@@ -8,6 +8,7 @@ public class SlagEquipmentData : EquipmentData {
     public PlayerUnit slag;
     public enum UpgradePath { Power, Special, Unit };
     public Dictionary<UpgradePath, int> upgrades = new() { {UpgradePath.Power, 0}, {UpgradePath.Special, 0}, {UpgradePath.Unit, 0}};
+    public EquipmentUpgrades upgradeStrings;
 
     public virtual void UpgradeEquipment(Unit user, UpgradePath targetPath) {
         if (upgrades[targetPath] <= 2)
@@ -25,4 +26,15 @@ public class SlagEquipmentData : EquipmentData {
         UpgradeEquipment(slag, UpgradePath.Unit);
     }
 
+}
+
+
+[System.Serializable]
+public class EquipmentUpgrades {
+
+    [SerializeField]
+    public List<string> powerStrings = new();
+    public List<string> specialStrings = new();
+    public List<string> unitStrings = new();
+    
 }

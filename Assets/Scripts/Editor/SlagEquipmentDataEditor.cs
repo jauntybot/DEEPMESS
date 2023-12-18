@@ -45,6 +45,7 @@ public class SlagEquipmentDataEditor : Editor {
                 arg.UpgradeEquipment(arg.slag, SlagEquipmentData.UpgradePath.Unit);
             }
             GUILayout.EndHorizontal();
+            
         }
         EquipmentPanel = EditorGUILayout.Foldout(EquipmentPanel, "EQUIPMENT VARS");
         if (EquipmentPanel) {

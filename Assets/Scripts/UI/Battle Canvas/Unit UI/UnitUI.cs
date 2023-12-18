@@ -42,7 +42,8 @@ public class UnitUI : MonoBehaviour {
             portrait.rectTransform.sizeDelta = new Vector2(600, 600);
         }
         
-        gfx.sprite = u.gfx[0].sprite;
+        if (gfx)
+            gfx.sprite = u.gfx[0].sprite;
 
         u.ElementDestroyed += UnitDestroyed;
         return this;
