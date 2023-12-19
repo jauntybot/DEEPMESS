@@ -4,18 +4,25 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName = "Equipment/Move")]
 [System.Serializable]
-public class MoveData : EquipmentData
-{
+public class MoveData : EquipmentData {
     protected enum AnimType { Lerp, Stepped }
     [SerializeField] protected AnimType animType;
-
+    [SerializeField] GridElement bileTile;
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
-        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this);
+// SHIELD UNIT TIER I - Bile buoyancy
+        List<GridElement> filts = new();
+        foreach(GridElement ge in filters) filts.Add(ge);
+        if (user.shield && user.shield.buoyant && filts.Contains(bileTile))
+            filts.Remove(bileTile);
+
+        List<Vector2> validCoords = EquipmentAdjacency.DiamondAdjacency(user.coord, range + mod, this, filts);
         Unit u = (Unit)user;
         u.inRangeCoords = validCoords;
         for (int i = validCoords.Count - 1; i >= 0; i--) {
-            if (user.grid.tiles.Find(sqr => sqr.coord == validCoords[i]).tileType == Tile.TileType.Bile)
+            if (user.grid.tiles.Find(sqr => sqr.coord == validCoords[i]).tileType == Tile.TileType.Bile &&
+// SHIELD UNIT TIER I - Bile buoyancy
+            !(user.shield && user.shield.buoyant))
                 validCoords.RemoveAt(i);
         }
         user.grid.DisplayValidCoords(validCoords, gridColor);

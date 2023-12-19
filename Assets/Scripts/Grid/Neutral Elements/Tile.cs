@@ -74,7 +74,7 @@ public class Tile : GridElement {
 // Offset tile animation to break up the grid
         if (anim != null) {
             string name = anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
-            anim.Play(name, 0, Util.Remap(grid.SortOrderFromCoord(c), 0, 16, 0, 4)%4);
+            anim.Play(name, 0, Util.Remap(grid.SortOrderFromCoord(c), 0, 159, 0, 23));
         }
     }
 }

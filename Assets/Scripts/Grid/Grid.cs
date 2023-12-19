@@ -315,7 +315,7 @@ public class Grid : MonoBehaviour {
     }
 
     public List<GridElement> CoordContents(Vector2 coord) {
-        return gridElements.FindAll(ge => ge.coord == coord);
+        return gridElements.FindAll(ge => ge.coord == coord && ge is not GodParticleGE);
     }
 
      public Vector3 PosFromCoord(Vector2 coord) {

@@ -6,9 +6,9 @@ public class Unit : GridElement {
 
     public override event OnElementUpdate ElementDestroyed;
 
-    [Header("Unit")]
     [HideInInspector] public UnitManager manager;
-    protected Animator gfxAnim;
+    [SerializeField] protected Animator gfxAnim;
+    [Header("Unit")]
     [SerializeField] DescentVFX descentVFX;
     public GameObject airTraillVFX;
     public bool selected;
@@ -42,7 +42,18 @@ public class Unit : GridElement {
 #region Inherited Functionality
 
     protected override void Start() {
-        base.Start();
+// Exposed base.Start functionality
+        audioSource = GetComponent<AudioSource>();
+        hitbox = GetComponent<PolygonCollider2D>();
+        hitbox.enabled = false;
+        
+        hpCurrent = hpMax;
+        energyCurrent = energyMax;
+// Create GameUnitUI through UIManager before element canvas init
+        UIManager.instance.UpdatePortrait(this, false);
+
+        elementCanvas = GetComponentInChildren<ElementCanvas>();
+        if (elementCanvas) elementCanvas.Initialize(this);
 // If first serialized GFX has an animator set Unit anim to it 
         if (gfx[0].GetComponent<Animator>()) {
             gfxAnim = gfx[0].GetComponent<Animator>();
@@ -99,11 +110,16 @@ public class Unit : GridElement {
             Tile targetSqr = grid.tiles.Find(sqr => sqr.coord == c);
             if (targetSqr.tileType == Tile.TileType.Blood) {
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
-                ApplyCondition(Status.Restricted);
+// SHIELD UNIT TIER II -- Blood bouyancy
+                if (!(shield && shield.buoyant))
+                    ApplyCondition(Status.Restricted);
             } else if (targetSqr.tileType == Tile.TileType.Bile && hpCurrent > 0) {
+// SHIELD UNIT TIER II -- Bile bouyancy
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
-                RemoveShield();
-                StartCoroutine(TakeDamage(hpMax, DamageType.Bile));
+                if (!(shield && shield.buoyant)) {
+                    RemoveShield();
+                    StartCoroutine(TakeDamage(hpMax, DamageType.Bile));
+                }
             } else if (targetSqr is TileBulb tb && this is PlayerUnit pu) {
                 if (!tb.harvested && pu.equipment.Find(e => e is BulbEquipmentData) == null)
                     tb.HarvestBulb(pu);
@@ -174,6 +190,23 @@ public class Unit : GridElement {
         else
             yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
     }
+
+    
+    public override void RemoveShield() {
+        if (shield) {
+            Shield temp = shield;
+            shield = null;
+// SHIELD UNIT TIER I - Remove buoyancy
+            if (temp.buoyant)
+                UpdateElement(coord);
+// SHIELD UNIT TIER II - Heal unit on breaking
+            if (temp.healing) {
+                StartCoroutine(TakeDamage(-1));
+            }
+            Destroy(shield.gameObject);
+        }
+    }
+
 
     public virtual void ApplyCondition(Status s) {
         if (!conditions.Contains(s)) {
