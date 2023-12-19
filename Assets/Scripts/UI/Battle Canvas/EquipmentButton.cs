@@ -4,13 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class EquipmentButton : MonoBehaviour {
-    UnitUI ui;
+    GameUnitUI ui;
     public EquipmentData data;
     public enum EquipType { PerFloor, Hammer, Bulb };
     [HideInInspector] public EquipType equipType;
     [HideInInspector] public PlayerUnit unit;
     
     [SerializeField] Button button;
+    [SerializeField] Image icon;
     public delegate void OnEquipmentUpdate(EquipmentData equipment, int rangeMod);
     private int rangeMod;
     public event OnEquipmentUpdate EquipmentSelected;
@@ -21,7 +22,7 @@ public class EquipmentButton : MonoBehaviour {
     [SerializeField] GameObject disarmOverlay;
     
 
-    public void Initialize(UnitUI _ui, EquipmentData d, GridElement ge) {
+    public void Initialize(GameUnitUI _ui, EquipmentData d, GridElement ge) {
         ui = _ui;
         data = d;
         if (d is SlagEquipmentData && d is not HammerData) equipType = EquipType.PerFloor;
@@ -29,8 +30,8 @@ public class EquipmentButton : MonoBehaviour {
         else if (d is BulbEquipmentData) equipType = EquipType.Bulb;
         unit = (PlayerUnit)ge;
         EquipmentSelected += unit.UpdateAction;
-        Image bg = GetComponentInChildren<Image>();
-        bg.sprite = data.icon;
+        if (icon)
+            icon.sprite = data.icon;
         tooltip = GetComponentInChildren<TooltipEquipmentTrigger>();
         if (tooltip)
             tooltip.Initialize(d.name);
@@ -87,6 +88,23 @@ public class EquipmentButton : MonoBehaviour {
             unit.UpdateAction();
             PlayerManager pManager = (PlayerManager)unit.manager;
             pManager.contextuals.displaying = false;
+        }
+    }
+
+    public void TriggerFrameAnim(int index) {
+        switch (index) {
+            case 0:
+                ui.frameAnim.SetTrigger("Normal");
+            break;
+            case 1:
+                ui.frameAnim.SetTrigger("Highlighted");
+            break;
+            case 2:
+                ui.frameAnim.SetTrigger("Pressed");
+            break;
+            case 3:
+                ui.frameAnim.SetTrigger("Disabled");
+            break;
         }
     }
 

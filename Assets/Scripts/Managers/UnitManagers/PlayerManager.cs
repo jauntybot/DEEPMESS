@@ -14,6 +14,7 @@ public class PlayerManager : UnitManager {
 
 
     [Header("PLAYER MANAGER")]
+    [SerializeField] List<Unit> unitPrefabs;
     public LoadoutManager loadout;
     public UpgradeManager upgradeManager;
     public Nail nail;
@@ -70,15 +71,15 @@ public class PlayerManager : UnitManager {
         gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
 
         List<Unit> initU = new() {
-            SpawnUnit(Vector2.zero, loadout.unitPrefabs[0]),
-            SpawnUnit(Vector2.zero, loadout.unitPrefabs[1]),
-            SpawnUnit(Vector2.zero, loadout.unitPrefabs[2])
+            SpawnUnit(Vector2.zero, unitPrefabs[0]),
+            SpawnUnit(Vector2.zero, unitPrefabs[1]),
+            SpawnUnit(Vector2.zero, unitPrefabs[2])
         };
 
-        yield return StartCoroutine(loadout.Initialize(initU));
+        //yield return StartCoroutine(loadout.Initialize(initU));
         upgradeManager.Init(initU, this);
         //yield return ScenarioManager.instance.StartCoroutine(ScenarioManager.instance.SwitchTurns(ScenarioManager.Turn.Descent));
-
+        yield return null;
         SpawnHammer((PlayerUnit)units[0], hammerActions);
         
         nail = (Nail)SpawnUnit(new Vector3(3, 3), nailPrefab.GetComponent<Nail>());
@@ -97,7 +98,6 @@ public class PlayerManager : UnitManager {
         if (u is PlayerUnit pu)
             pu.pManager = this;
 
-        UIManager.instance.UpdatePortrait(u, false);
         if (unit is not Nail) {
             DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
             dp.Initialize(u, floorManager.previewManager);

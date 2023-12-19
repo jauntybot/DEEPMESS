@@ -220,9 +220,15 @@ MonoBehaviour:
   unitParent: {fileID: 7493072997588697754}
   units: []
   selectedUnit: {fileID: 0}
+  unitActing: 0
   unitDescentPreview: {fileID: 4667224458327339558, guid: ea5797a6c092dd648bd71d4f3fb8d6cc, type: 3}
   pc: {fileID: 0}
+  unitPrefabs:
+  - {fileID: 7182560657884744695, guid: a7c1b613980b64f07a381f93068afd15, type: 3}
+  - {fileID: 7182560657884744695, guid: c55d4415ecdcbb84cb513fe9e1d1241e, type: 3}
+  - {fileID: 7182560657884744695, guid: 33b564e4a48b44542a9ae2b13e805fe3, type: 3}
   loadout: {fileID: 0}
+  upgradeManager: {fileID: 0}
   nail: {fileID: 0}
   hammerActions:
   - {fileID: 11400000, guid: 1b409151806cd83439f88bdaea0c4f81, type: 2}
@@ -231,12 +237,12 @@ MonoBehaviour:
   contextuals: {fileID: 7493072995628922177}
   lastHoveredCoord: {x: 0, y: 0}
   defeatedEnemies: 0
+  collectedParticles: 
   nailPrefab: {fileID: 2911188987296525511, guid: 3c53f14dfc3e6174e874415021915958, type: 3}
   hammerPrefab: {fileID: 3955549777479365904, guid: a8ad447d87fd54d3284fc69a0b042b16, type: 3}
-  gridCursor: {fileID: 810380113123956363}
   slimeArmAnim: {fileID: 0}
-  unitActing: 0
   undoOrder: []
+  gridCursor: {fileID: 810380113123956363}
   hoveredUnit: {fileID: 0}
   prevCursorTarget: {fileID: 0}
   prevCursorTargetState: 0

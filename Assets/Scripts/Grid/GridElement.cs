@@ -29,6 +29,7 @@ public class GridElement : MonoBehaviour{
     public delegate void OnElementUpdate(GridElement ge);
     public virtual event OnElementUpdate ElementUpdated;
     public virtual event OnElementUpdate ElementDestroyed;
+    public virtual event OnElementUpdate ElementShielded;
 
     
     [Header("Audio")]
@@ -153,13 +154,13 @@ public class GridElement : MonoBehaviour{
 
     public virtual void ApplyShield(Shield _shield) {
         if (shield == null) {
-            
             shield = _shield;
         }
     }
 
     public virtual void RemoveShield() {
         if (shield) {
+// SHIELD UNIT TIER II - Heal unit on breaking
             if (shield.healing) {
                 StartCoroutine(TakeDamage(-1));
             }

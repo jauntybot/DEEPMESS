@@ -23,7 +23,8 @@ public class RangedBurstData : EquipmentData {
                         if (ge is Unit u) {
                             if (u.conditions.Contains(Unit.Status.Disabled)) remove = true;
                         }
-                        ge.elementCanvas.ToggleStatsDisplay(true);
+                        if (ge.elementCanvas)
+                            ge.elementCanvas.ToggleStatsDisplay(true);
 
                     }
                 }
@@ -52,8 +53,9 @@ public class RangedBurstData : EquipmentData {
             GridElement tar = null;
             Vector2 coord = user.coord;
             for (int i = 1; i <= range; i++) {
-                 coord = user.coord + new Vector2(i*x, 0);
-                if (coord.x < 0 || coord.x > 7) break;
+                Vector2 _coord = user.coord + new Vector2(i*x, 0);
+                if (_coord.x < 0 || _coord.x > 7) break;
+                coord = _coord;
                 if (user.grid.CoordContents(coord).Count > 0) {
                     tar = user.grid.CoordContents(coord)[0];
                     break;
@@ -73,8 +75,9 @@ public class RangedBurstData : EquipmentData {
             GridElement tar = null;
             Vector2 coord = user.coord;
             for (int i = 1; i <= range; i++) {
-                 coord = user.coord + new Vector2(0, i*y);
-                if (coord.y < 0 || coord.y > 7) break;
+                Vector2 _coord = user.coord + new Vector2(0, i*y);
+                if (_coord.y < 0 || _coord.y > 7) break;
+                coord = _coord;
                 if (user.grid.CoordContents(coord).Count > 0) {
                     tar = user.grid.CoordContents(coord)[0];
                     break;
@@ -95,9 +98,11 @@ public class RangedBurstData : EquipmentData {
         float timer = 0;
 
         Vector3 startPos = user.grid.PosFromCoord(user.coord);
+        
         Vector3 endPos = user.grid.PosFromCoord(dest);
+        Debug.Log(dest + ", " + endPos);
 
-        while (timer < animDur) {
+        while (timer < dur) {
             yield return null;
             timer += Time.deltaTime;
 

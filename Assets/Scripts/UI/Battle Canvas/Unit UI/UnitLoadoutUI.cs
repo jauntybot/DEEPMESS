@@ -6,32 +6,32 @@ using TMPro;
 
 public class UnitLoadoutUI : UnitUI {
     
-    [Header("Loadout")]
-    [SerializeField] public GameObject equipmentOptions;
-    public GameObject initialLoadoutButton, slotsLoadoutButton;
+    // [Header("Loadout")]
+    // [SerializeField] public GameObject equipmentOptions;
+    // public GameObject initialLoadoutButton, slotsLoadoutButton;
 
 
-    public override UnitUI Initialize(Unit u, Transform overviewParent = null, Transform overviewLayoutParent = null) {
-        UnitUI unitUI = base.Initialize(u, overviewParent, overviewLayoutParent);
+    // public override UnitUI Initialize(Unit u, Transform overviewParent = null, Transform overviewLayoutParent = null) {
+    //     UnitUI unitUI = base.Initialize(u, overviewParent, overviewLayoutParent);
         
-        if (initialLoadoutButton != null) {
-            initialLoadoutButton.SetActive(true); 
-            slotsLoadoutButton.SetActive(false);
+    //     if (initialLoadoutButton != null) {
+    //         initialLoadoutButton.SetActive(true); 
+    //         slotsLoadoutButton.SetActive(false);
             
-            foreach (EquipmentButton button in equipButtons) {
-                button.gameObject.GetComponentInChildren<Button>().interactable = true;
-            }
-        }
+    //         foreach (EquipmentButton button in equipButtons) {
+    //             button.gameObject.GetComponentInChildren<Button>().interactable = true;
+    //         }
+    //     }
 
-        return unitUI;
-    }
+    //     return unitUI;
+    // }
 
-    public void ToggleEquipmentOptionsOn() {
-        equipmentOptions.SetActive(true);
-    }
+    // public void ToggleEquipmentOptionsOn() {
+    //     equipmentOptions.SetActive(true);
+    // }
 
-    public void ToggleEquipmentOptionsOff() {
-        equipmentOptions.SetActive(false);
-    }
+    // public void ToggleEquipmentOptionsOff() {
+    //     equipmentOptions.SetActive(false);
+    // }
 
 }

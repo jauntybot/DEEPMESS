@@ -17,7 +17,7 @@ public class EquipmentAdjacency : MonoBehaviour
         switch(data.adjacency) {
             default:
             case EquipmentData.AdjacencyType.Diamond:
-                _coords = DiamondAdjacency(from, range, data, targetLast);
+                _coords = DiamondAdjacency(from, range, data, data.filters, targetLast);
             break;
             case EquipmentData.AdjacencyType.Orthogonal:
                 _coords = OrthagonalAdjacency(from, range, data.filters, targetLast);
@@ -26,7 +26,7 @@ public class EquipmentAdjacency : MonoBehaviour
                 _coords = OfTypeOnBoardAdjacency(data.filters, grid);
             break;
             case EquipmentData.AdjacencyType.OfTypeInRange:
-                _coords = DiamondAdjacency(from, range, data, targetLast, true);
+                _coords = DiamondAdjacency(from, range, data, data.filters, targetLast, true);
             break;
             case EquipmentData.AdjacencyType.Box:
                 _coords = BoxAdjacency(from, range, targetLast);
@@ -37,8 +37,7 @@ public class EquipmentAdjacency : MonoBehaviour
         return _coords;
     }
 
-    public static List<Vector2> DiamondAdjacency(Vector2 from, int range, EquipmentData data, List<GridElement> targetLast, bool ofType = false) 
-    {
+    public static List<Vector2> DiamondAdjacency(Vector2 from, int range, EquipmentData data, List<GridElement> filters, List<GridElement> targetLast = null, bool ofType = false) {
         List<Vector2> _coords = new();
         List<Vector2> frontier = new();
         frontier.Add(from);
@@ -57,7 +56,7 @@ public class EquipmentAdjacency : MonoBehaviour
 // If there is something already occupying this coord  
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
 // Valid coord if element is not filtered
-                            if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType()) || data.filters.Find(f => ge.GetType().IsSubclassOf(f.GetType()))) {
+                            if (filters == null || filters.Find(f => f.GetType() == ge.GetType()) || filters.Find(f => ge.GetType().IsSubclassOf(f.GetType()))) {
                                 valid = false;
                                 if (targetLast != null) {
                                     foreach(GridElement target in targetLast) {
@@ -70,7 +69,7 @@ public class EquipmentAdjacency : MonoBehaviour
                             if (valid == false) break;
                         }
 // Check if Tile is valid
-                        foreach (GridElement ge in data.filters) {
+                        foreach (GridElement ge in filters) {
                             if (ge is Tile sqr) {
                                 Tile target = FloorManager.instance.currentFloor.tiles.Find(sqr => sqr.coord == coord);
                                 if (target != null) {
@@ -99,7 +98,7 @@ public class EquipmentAdjacency : MonoBehaviour
 // If there is something already occupying this coord                        
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
 // Valid coord if element is not filtered
-                            if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType()) || data.filters.Find(f => ge.GetType().IsSubclassOf(f.GetType()))) {
+                            if (filters == null || filters.Find(f => f.GetType() == ge.GetType()) || filters.Find(f => ge.GetType().IsSubclassOf(f.GetType()))) {
                                 valid = false;
                                 if (targetLast != null) {
                                     foreach(GridElement target in targetLast) {
@@ -112,7 +111,7 @@ public class EquipmentAdjacency : MonoBehaviour
                             if (valid == false) break;
                         }
 // Check if Tile is valid
-                        foreach (GridElement ge in data.filters) {
+                        foreach (GridElement ge in filters) {
                             if (ge is Tile sqr) {
                                 Tile target = FloorManager.instance.currentFloor.tiles.Find(sqr => sqr.coord == coord);
                                 if (target != null) {
@@ -182,7 +181,7 @@ public class EquipmentAdjacency : MonoBehaviour
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered
-                            if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
+                            if (data.filters == null || !(data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType())))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord, current);
                                 break;

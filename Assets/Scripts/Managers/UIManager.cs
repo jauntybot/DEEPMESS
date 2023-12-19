@@ -73,17 +73,17 @@ public class UIManager : MonoBehaviour {
     }
 
     public IEnumerator LoadOutScreen(bool first = false) {
-        loadoutBG.gameObject.SetActive(true);
-        loadoutPanel.gameObject.SetActive(true);
-        loadoutManager.DisplayLoadout(first);
-        while (scenario.currentTurn == ScenarioManager.Turn.Loadout) {
+        // loadoutBG.gameObject.SetActive(true);
+        // loadoutPanel.gameObject.SetActive(true);
+        // loadoutManager.DisplayLoadout(first);
+        // while (scenario.currentTurn == ScenarioManager.Turn.Loadout) {
 
-            yield return null;
-        }
-        loadoutBG.gameObject.SetActive(false);
-        loadoutPanel.gameObject.SetActive(false);
-        foreach(Unit u in scenario.player.units)
-            u.ui.UpdateEquipmentButtons();
+             yield return null;
+        // }
+        // loadoutBG.gameObject.SetActive(false);
+        // loadoutPanel.gameObject.SetActive(false);
+        // foreach(Unit u in scenario.player.units)
+        //     u.ui.UpdateEquipmentButtons();
     }
 
     public void LockFloorButtons(bool state) {
