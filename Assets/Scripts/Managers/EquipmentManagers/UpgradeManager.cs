@@ -67,7 +67,7 @@ public class UpgradeManager : MonoBehaviour {
         selectedParticle = part;
         foreach (UnitUpgradeUI ui in unitUpgradeUIs) {
             SlagEquipmentData.UpgradePath path = (SlagEquipmentData.UpgradePath)(int)part.type;
-            SlagEquipmentData equip = (SlagEquipmentData)ui.unit.equipment[1];
+            SlagEquipmentData equip = (SlagEquipmentData)ui.unit.equipment.Find(e => e is SlagEquipmentData && e is not HammerData);
             switch (path) {
                 case SlagEquipmentData.UpgradePath.Power:
                     ui.UpdateModifier(equip.upgradeStrings.powerStrings[equip.upgrades[path]]);

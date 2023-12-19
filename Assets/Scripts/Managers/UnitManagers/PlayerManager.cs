@@ -27,7 +27,7 @@ public class PlayerManager : UnitManager {
     public delegate void OnPlayerAction(PlayerManager player);
     public virtual event OnPlayerAction UndoClearCallback;
 
-    public List<GodParticleGE.ParticleType> collectedParticles = new();
+    public List<SlagEquipmentData.UpgradePath> collectedParticles = new();
 
     [Header("PREFABS")]
     [SerializeField] public GameObject nailPrefab;
