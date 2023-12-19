@@ -203,7 +203,7 @@ public class Unit : GridElement {
             if (temp.healing) {
                 StartCoroutine(TakeDamage(-1));
             }
-            Destroy(shield.gameObject);
+            Destroy(temp.gameObject);
         }
     }
 
