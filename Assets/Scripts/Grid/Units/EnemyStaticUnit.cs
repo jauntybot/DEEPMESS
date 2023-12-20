@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class EnemyStaticUnit : EnemyUnit {
 
-
     public override IEnumerator ScatterTurn() {
         yield return null;
         manager.unitActing = false;
@@ -19,6 +18,7 @@ public class EnemyStaticUnit : EnemyUnit {
 
     protected override IEnumerator AttackScan() {
         UpdateAction(equipment[1]);
+        gfxAnim.SetTrigger("Attack");
         yield return new WaitForSecondsRealtime(0.5f);
         Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this));
         grid.UpdateSelectedCursor(false, Vector2.one * -32);
