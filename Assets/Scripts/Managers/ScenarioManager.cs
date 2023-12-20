@@ -177,11 +177,11 @@ public class ScenarioManager : MonoBehaviour
                 }
                 if (!lose && !player.nail.conditions.Contains(Unit.Status.Disabled)) {
                     uiManager.LockFloorButtons(false);
+                    uiManager.LockHUDButtons(false);
                     if (uiManager.gameObject.activeSelf)
                         yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Slag));
 
                     currentTurn = Turn.Player;
-                    uiManager.LockHUDButtons(false);
 
                     player.StartEndTurn(true);
                 } else {
@@ -191,7 +191,7 @@ public class ScenarioManager : MonoBehaviour
 // Is not in control, this is called only to display message, coroutine continued in FloorManager
             case Turn.Descent:
                 floorManager.previewManager.TogglePreivews(false);
-                
+                uiManager.LockFloorButtons(true);
                 
                 if (prevTurn == Turn.Cascade) {
                     //player.currentGrid = floorManager.floors[player.currentGrid.index-1];

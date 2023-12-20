@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour {
 
     [Header("Top UIs")]
     public MetaDisplay metaDisplay;
+    [SerializeField] TurnOrderHover turnOrder;
 
     [Header("Floor Buttons")]
     [SerializeField] public Button peekButton;
@@ -50,6 +51,7 @@ public class UIManager : MonoBehaviour {
         scenario = ScenarioManager.instance;
         ToggleUndoButton(false);
         audioSource = GetComponent<AudioSource>();
+        turnOrder.OnHoverCallback += ToggleEnemyTurnOrder;
     }
 
     public void UpdatePortrait(Unit u = null, bool active = true) {
@@ -94,6 +96,7 @@ public class UIManager : MonoBehaviour {
         LockFloorButtons(state);
         endTurnButton.interactable = !state;
         undoButton.interactable = state ? false : scenario.player.undoOrder.Count > 0;
+        turnOrder.EnableHover(!state);
     }
 
     public void ToggleUndoButton(bool state) {
@@ -115,6 +118,11 @@ public class UIManager : MonoBehaviour {
 
     public void ToggleBattleCanvas(bool state) {
         canvasAnim.SetBool("Active", state);
+    }
+
+    void ToggleEnemyTurnOrder(bool state) {
+        foreach(Unit u in scenario.currentEnemy.units)
+            u.elementCanvas.DisplayTurnOrder(state);
     }
 
 

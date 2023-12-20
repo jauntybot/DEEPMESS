@@ -15,13 +15,13 @@ public class EnemyManager : UnitManager {
     public event OnEnemyCondition WipedOutCallback;
     protected Coroutine actingUnitCo;
 
-    public override IEnumerator Initialize(Grid _currentGrid)
-    {
+    public override IEnumerator Initialize(Grid _currentGrid) {
         yield return base.Initialize(_currentGrid);
+        for (int i = 0; i <= units.Count - 1; i++)
+            units[i].elementCanvas.UpdateTurnOrder(units.Count - i);
     }
 
-    public override Unit SpawnUnit(Vector2 coord, Unit unit)
-    {
+    public override Unit SpawnUnit(Vector2 coord, Unit unit) {
         Unit u = base.SpawnUnit(coord, unit);
         //u.ElementDestroyed += DescentTriggerCheck;
         u.ElementDestroyed += CountDefeatedEnemy; 
@@ -31,6 +31,8 @@ public class EnemyManager : UnitManager {
 
     void CountDefeatedEnemy(GridElement ge) {
         scenario.player.defeatedEnemies++;
+        for (int i = 0; i <= units.Count - 1; i++)
+            units[i].elementCanvas.UpdateTurnOrder(units.Count - i);
     }
 
     public virtual Unit SpawnBossUnit(Vector2 coord, Unit unit) {
@@ -146,6 +148,10 @@ public class EnemyManager : UnitManager {
             units[i].UpdateElement(units[i].coord);
             units.RemoveAt(i);
         }
+
+        for (int i = 0; i <= newGrid.enemy.units.Count - 1; i++)
+            newGrid.enemy.units[i].elementCanvas.UpdateTurnOrder(newGrid.enemy.units.Count - i);
+
         //eManager.DescentTriggerCheck();
         UIManager.instance.metaDisplay.UpdateEnemiesRemaining(newGrid.enemy.units.Count);
         Destroy(this.gameObject);
