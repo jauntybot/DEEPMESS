@@ -91,21 +91,4 @@ public class EquipmentButton : MonoBehaviour {
         }
     }
 
-    public void TriggerFrameAnim(int index) {
-        switch (index) {
-            case 0:
-                ui.frameAnim.SetTrigger("Normal");
-            break;
-            case 1:
-                ui.frameAnim.SetTrigger("Highlighted");
-            break;
-            case 2:
-                ui.frameAnim.SetTrigger("Pressed");
-            break;
-            case 3:
-                ui.frameAnim.SetTrigger("Disabled");
-            break;
-        }
-    }
-
 }
