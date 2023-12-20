@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class MetaDisplay : MonoBehaviour
-{
+public class MetaDisplay : MonoBehaviour {
+
     [SerializeField] TMPro.TMP_Text enemiesRemainingText;
     [SerializeField] TMPro.TMP_Text floorNumberText;
 
@@ -15,4 +15,5 @@ public class MetaDisplay : MonoBehaviour
     public void UpdateCurrentFloor(int currentFloor) {
         floorNumberText.text = currentFloor.ToString();
     }
+
 }

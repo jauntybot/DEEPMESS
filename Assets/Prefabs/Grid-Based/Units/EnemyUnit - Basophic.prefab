@@ -315,20 +315,21 @@ MonoBehaviour:
   targeted: 0
   hitbox: {fileID: 0}
   elementCanvas: {fileID: 0}
-  gfx:
-  - {fileID: 1384135093733884537}
-  - {fileID: 801149748984364264}
   hpMax: 1
   hpCurrent: 0
   shield: {fileID: 0}
   energyCurrent: 0
   energyMax: 1
+  gfx:
+  - {fileID: 1384135093733884537}
+  - {fileID: 801149748984364264}
   audioSource: {fileID: 0}
   selectedSFX: {fileID: 0}
   dmgdSFX: {fileID: 0}
   healedSFX: {fileID: 11400000, guid: c6850de864e4bc94b9c18e4bffe96839, type: 2}
   destroyedSFX: {fileID: 11400000, guid: f29e82bf2f6b7b047b42170d9cdf72ad, type: 2}
   manager: {fileID: 0}
+  gfxAnim: {fileID: 0}
   descentVFX: {fileID: 1138166803973238496}
   airTraillVFX: {fileID: 1586675079813575167}
   selected: 0
@@ -350,6 +351,7 @@ MonoBehaviour:
   landingSFX: {fileID: 11400000, guid: 11f3f41a4a75d614b8631b51374a4186, type: 2}
   pathfinding: 0
   closestUnit: {fileID: 0}
+  splatterPrefab: {fileID: 6466862827384451626, guid: bb69db6c1a1468b4e86fbcde289a923c, type: 3}
   primed: 0
   explosion: {fileID: 1847423286194606923}
 --- !u!114 &4823752203447007031

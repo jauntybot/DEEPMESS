@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using UnityEngine.PlayerLoop;
 
 // This component is required by all grid elements
 public class ElementCanvas : MonoBehaviour 
@@ -11,6 +13,7 @@ public class ElementCanvas : MonoBehaviour
     int trackedHP;
     public GameObject statDisplay, hpContainer, hpPips, emptyHPPips, statusPips;
     [SerializeField] GameObject hpPipPrefab, apPipPrefab, dmgPipPrefab, emptyPipPrefab;
+    [SerializeField] TMP_Text turnOrder;
     //[SerializeField] GameObject badgePrefab;
     //[SerializeField] Sprite weakenedSprite, stunnedSprite;
 
@@ -121,6 +124,14 @@ public class ElementCanvas : MonoBehaviour
     public void ToggleStatsDisplay(bool state) {
         if (!disable)
             statDisplay.SetActive(state);
+    }
+
+    public void DisplayTurnOrder(bool state) {
+        turnOrder.gameObject.SetActive(state);
+    }
+
+    public void UpdateTurnOrder(int order) {
+        turnOrder.text = order.ToString();
     }
 
 

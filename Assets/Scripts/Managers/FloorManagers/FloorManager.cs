@@ -254,8 +254,7 @@ public class FloorManager : MonoBehaviour
     public IEnumerator DescendFloors(bool cascade = false, bool tut = false, bool nail = true, Vector2 pos = default) {
 // Lock up current floor
         descending = true;
-        if (uiManager.gameObject.activeSelf)
-            uiManager.LockFloorButtons(true);
+        
         EnemyManager enemy = (EnemyManager)currentFloor.enemy;
         enemy.InterruptReinforcements();
 
@@ -415,7 +414,7 @@ public class FloorManager : MonoBehaviour
         
         if (nail) {
             yield return StartCoroutine(DropNail(nail));
-            yield return StartCoroutine(DropParticle());
+            //yield return StartCoroutine(DropParticle());
         }
     }
 
