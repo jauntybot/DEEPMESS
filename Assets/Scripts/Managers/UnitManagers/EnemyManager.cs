@@ -130,11 +130,12 @@ public class EnemyManager : UnitManager {
 
     public virtual void SeedUnits(Grid newGrid) {
         EnemyManager eManager = (EnemyManager) newGrid.enemy;
+        int insertIndex = newGrid.enemy.units.Count;
         for (int i = units.Count - 1; i >= 0; i--) {
             if (units[i] is BossUnit)
                 newGrid.enemy.units.Insert(0, units[i]);
             else
-                newGrid.enemy.units.Add(units[i]);
+                newGrid.enemy.units.Insert(insertIndex, units[i]);
 
 // Update subscriptions
             newGrid.enemy.SubscribeElement(units[i]);
