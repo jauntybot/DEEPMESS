@@ -7,7 +7,7 @@ public class GameUnitUI : UnitUI {
 
     [Header("Equipment")]
     public List<EquipmentButton> equipButtons = new();
-    [SerializeField] GameObject equipmentPanel, hammerPanel, slagEquipmentButtonPrefab, hammerButtonPrefab, bulbButtonPrefab;
+    [SerializeField] GameObject equipmentParent, hammerParent, bulbParent, slagEquipmentButtonPrefab, hammerButtonPrefab, bulbButtonPrefab;
     [SerializeField] public SFX equipSelectSFX, hammerSelectSFX;
     public Animator frameAnim;
 
@@ -59,14 +59,14 @@ public class GameUnitUI : UnitUI {
     public void UpdatePips() {
         emptyPips.SetInteger("Count", unit.hpMax);
         hpPips.SetInteger("Count", unit.hpCurrent);
-        Debug.Log(unit.name + " HP Max: " + unit.hpMax + ", HP Current: " + unit.hpCurrent);
     }
 
 
     public void ToggleEquipmentPanel(bool active) {
         
-        equipmentPanel.SetActive(active);
-        hammerPanel.SetActive(active);
+        equipmentParent.SetActive(active);
+        hammerParent.SetActive(active);
+        bulbParent.SetActive(active);
     }
 
     public void ToggleEquipmentButtons() {
@@ -97,13 +97,13 @@ public class GameUnitUI : UnitUI {
                     GameObject prefab = null; Transform parent = null; int index = 0;
                     if (unit.equipment[i] is SlagEquipmentData && unit.equipment[i] is not HammerData) {
                         prefab = slagEquipmentButtonPrefab;
-                        parent = equipmentPanel.transform;
+                        parent = equipmentParent.transform;
                     } else if (unit.equipment[i] is HammerData) {
                         prefab = hammerButtonPrefab;
-                        parent = hammerPanel.transform;
+                        parent = hammerParent.transform;
                     } else if (unit.equipment[i] is BulbEquipmentData) {
                         prefab = bulbButtonPrefab;
-                        parent = equipmentPanel.transform;
+                        parent = bulbParent.transform;
                         index = 1;
                     }
                     EquipmentButton newButt = Instantiate(prefab, parent).GetComponent<EquipmentButton>();
