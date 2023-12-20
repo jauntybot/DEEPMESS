@@ -107,10 +107,10 @@ public class PlayerUnit : Unit {
 
     public override void TargetElement(bool state) {
         base.TargetElement(state);
-        if (state && manager.scenario.currentTurn == ScenarioManager.Turn.Player)
-            ui.ToggleEquipmentPanel(state);
-        else
-            ui.ToggleEquipmentPanel(state);
+        // if (state && manager.scenario.currentTurn == ScenarioManager.Turn.Player)
+        //     ui.ToggleEquipmentPanel(state);
+        // else
+        //     ui.ToggleEquipmentPanel(state);
         //if (energyCurrent == 0 || pManager.selectedUnit != this) ui.ToggleEquipmentPanel(false);
     }
 

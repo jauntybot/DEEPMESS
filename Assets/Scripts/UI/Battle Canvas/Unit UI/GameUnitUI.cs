@@ -9,7 +9,6 @@ public class GameUnitUI : UnitUI {
     public List<EquipmentButton> equipButtons = new();
     [SerializeField] GameObject equipmentParent, hammerParent, bulbParent, slagEquipmentButtonPrefab, hammerButtonPrefab, bulbButtonPrefab;
     [SerializeField] public SFX equipSelectSFX, hammerSelectSFX;
-    public Animator frameAnim;
 
     [SerializeField] Animator emptyPips, hpPips;
     

@@ -71,7 +71,7 @@ public class RangedBurstData : EquipmentData {
 // Y-Axis 
         for (int y = -1; y <= 1; y += 2) {
             GameObject projectile = Instantiate(projectilePrefab, user.transform);
-            SpriteRenderer sr = projectile.GetComponent<SpriteRenderer>();
+            //SpriteRenderer sr = projectile.GetComponentInChildren<SpriteRenderer>();
             GridElement tar = null;
             Vector2 coord = user.coord;
             for (int i = 1; i <= range; i++) {
