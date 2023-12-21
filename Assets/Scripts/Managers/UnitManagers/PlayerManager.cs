@@ -410,6 +410,9 @@ public class PlayerManager : UnitManager {
         }
 
         scenario.uiManager.LockHUDButtons(false);
+        if (overrideEquipment)
+            scenario.uiManager.LockPeekButton(true);
+            
         if (selectedUnit) selectedUnit.ui.ToggleEquipmentButtons();
     }
 

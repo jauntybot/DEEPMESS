@@ -19,7 +19,6 @@ public class EquipmentButton : MonoBehaviour {
 
     TooltipEquipmentTrigger tooltip;
     public bool selected;
-    [SerializeField] GameObject disarmOverlay;
     
 
     public void Initialize(GameUnitUI _ui, EquipmentData d, GridElement ge) {
@@ -49,7 +48,7 @@ public class EquipmentButton : MonoBehaviour {
 
     public void SelectEquipment() {
         EquipmentSelected?.Invoke(data, rangeMod);
-        disarmOverlay.SetActive(true);
+        button.GetComponent<Animator>().SetBool("Disarm", true);
         
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(DeselectEquipment);
@@ -74,7 +73,7 @@ public class EquipmentButton : MonoBehaviour {
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(SelectEquipment);
 
-            disarmOverlay.SetActive(false);
+            button.GetComponent<Animator>().SetBool("Disarm", false);
             selected = false;
             
             unit.ui.UpdateEquipmentButtons();

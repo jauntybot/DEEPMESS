@@ -36,8 +36,7 @@ public class Tile : GridElement {
     }
 
 // Toggle highlight gameobject active and update it's color
-    public void ToggleValidCoord(bool state, Color? color = null, bool fill = true) 
-    {
+    public void ToggleValidCoord(bool state, Color? color = null, bool fill = true) {
         selectable = state;
 
         highlight.SetActive(state);

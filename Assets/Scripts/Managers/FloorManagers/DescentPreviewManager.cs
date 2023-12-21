@@ -50,6 +50,10 @@ public class DescentPreviewManager : MonoBehaviour
     }
 
     public void InitialPreview() {
+        UpdateFloors(null, currentFloor);
+        foreach(DescentPreview dp in descentPreviews) 
+            dp.UpdatePreview(dp.unit);
+        
         foreach(DescentPreview dp in descentPreviews) {
             if (dp.unit is PlayerUnit)
                 dp.anim.gameObject.SetActive(true);
@@ -99,7 +103,10 @@ public class DescentPreviewManager : MonoBehaviour
         currentFloor = newFloor;
         alignmentFloor = alignFloor;
         transform.parent = alignFloor.transform;
-        transform.localPosition = Vector3.zero + new Vector3(0, 3);
+        if (newFloor)
+            transform.localPosition = Vector3.zero + new Vector3(0, 3);
+        else
+            transform.localPosition = Vector3.zero;
         transform.localScale = Vector3.one;
     }
 }
