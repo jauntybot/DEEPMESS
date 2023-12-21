@@ -2,9 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DescentPreview : MonoBehaviour
-{
-
+public class DescentPreview : MonoBehaviour {
     public Unit unit;
     [SerializeField] SpriteRenderer portraitSR, bgSR;
     Sprite portrait;

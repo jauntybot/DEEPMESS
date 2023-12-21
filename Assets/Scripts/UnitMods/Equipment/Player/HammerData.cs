@@ -252,6 +252,7 @@ public class HammerData : SlagEquipmentData {
             PlayerManager manager = (PlayerManager)user.manager;
             manager.TriggerDescent();
         } 
+// Revive slag
         else if (target is PlayerUnit pu) { 
             user.PlaySound(catchSFX);
             if (pu.conditions.Contains(Unit.Status.Disabled))

@@ -175,7 +175,7 @@ public class PlayerUnit : Unit {
         SwitchAnim(AnimState.Idle);
         RemoveCondition(Status.Disabled);
         PlayerManager m = (PlayerManager)pManager;
-        StartCoroutine(m.nail.TakeDamage(1));
+        //StartCoroutine(m.nail.TakeDamage(1));
     }
 
 }

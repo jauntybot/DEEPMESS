@@ -81,33 +81,45 @@ public class ScenarioManager : MonoBehaviour
         StartCoroutine(FirstTurn());
     }
 
-    public IEnumerator FirstTurn() {
+    public IEnumerator FirstTurn(EnemyManager prevEnemy = null) {
         foreach (Unit u in player.units) {
             u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
-            u.hitbox.enabled = false;
+            //u.hitbox.enabled = false;
         }
         if (startCavity == 0) {
                 foreach (GridElement ge in player.units)
                     floorManager.currentFloor.RemoveElement(ge);
                     
                 StartCoroutine(tutorial.Tutorial());
-        } else 
+        } else {
+            if (prevEnemy) {
+                List<GridElement> unitsToDrop = new();
+                for (int i = prevEnemy.units.Count - 1; i >= 0; i--)
+                    unitsToDrop.Add((GridElement)prevEnemy.units[i]);
+                yield return StartCoroutine(floorManager.DescendUnits(unitsToDrop, null, true));
+            }
             yield return StartCoroutine(PlayerEnter());
+            yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3]} ));
+            StartCoroutine(SwitchTurns(Turn.Enemy));
+        }
     }
 
     IEnumerator PlayerEnter() {
-        uiManager.LockFloorButtons(true);
-        //floorManager.previewManager.InitialPreview();
+        uiManager.LockPeekButton(true);
+
+        player.units[0].UpdateElement(new Vector2(3,3));
+        player.units[1].UpdateElement(new Vector2(3,4));
+        player.units[2].UpdateElement(new Vector2(3,5));
+        floorManager.previewManager.InitialPreview();
         
         foreach (GridElement ge in player.units) {
-            floorManager.currentFloor.RemoveElement(ge);
+            if (floorManager.currentFloor.gridElements.Contains(ge))
+                floorManager.currentFloor.RemoveElement(ge);
         }
-        // yield return StartCoroutine(floorManager.ChooseLandingPositions());
-        // yield return new WaitForSecondsRealtime(1.25f);
+        yield return StartCoroutine(floorManager.ChooseLandingPositions());
+        yield return new WaitForSecondsRealtime(1.25f);
         
-        yield return StartCoroutine(SwitchTurns(Turn.Descent, Scenario.Combat));
-        yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3]} ));
-        StartCoroutine(SwitchTurns(Turn.Enemy));
+        //yield return StartCoroutine(SwitchTurns(Turn.Descent, Scenario.Combat));
     }
 
 #endregion
@@ -149,8 +161,7 @@ public class ScenarioManager : MonoBehaviour
             break;
         }
 // Turn state machine
-        switch(toTurn) 
-        {
+        switch(toTurn) {
             default:
             case Turn.Null: break;
             case Turn.Enemy:
@@ -176,7 +187,7 @@ public class ScenarioManager : MonoBehaviour
                     }
                 }
                 if (!lose && !player.nail.conditions.Contains(Unit.Status.Disabled)) {
-                    uiManager.LockFloorButtons(false);
+                    uiManager.LockPeekButton(false);
                     uiManager.LockHUDButtons(false);
                     if (uiManager.gameObject.activeSelf)
                         yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Slag));
@@ -191,7 +202,7 @@ public class ScenarioManager : MonoBehaviour
 // Is not in control, this is called only to display message, coroutine continued in FloorManager
             case Turn.Descent:
                 floorManager.previewManager.TogglePreivews(false);
-                uiManager.LockFloorButtons(true);
+                uiManager.LockPeekButton(true);
                 
                 if (prevTurn == Turn.Cascade) {
                     //player.currentGrid = floorManager.floors[player.currentGrid.index-1];
@@ -210,7 +221,6 @@ public class ScenarioManager : MonoBehaviour
                 currentTurn = Turn.Cascade;
                 player.currentGrid = floorManager.currentFloor;
                 floorManager.previewManager.alignmentFloor = floorManager.currentFloor;
-                floorManager.currentFloor.LockGrid(false);
                 player.StartEndTurn(true, true);
                 foreach(Unit u in player.units)
                     u.hitbox.enabled = false;
@@ -223,10 +233,11 @@ public class ScenarioManager : MonoBehaviour
                     }
                 }
                 uiManager.LockHUDButtons(false);
-                uiManager.LockFloorButtons(true);
+                uiManager.LockPeekButton(true);
                 yield return new WaitForSecondsRealtime(0.2f);
                 if (uiManager.gameObject.activeSelf)
                     yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Position));
+                floorManager.currentFloor.LockGrid(false);
             break;
         }
     }

@@ -1,16 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
 public class GameUnitUI : UnitUI {
 
     [Header("Equipment")]
     public List<EquipmentButton> equipButtons = new();
-    [SerializeField] GameObject equipmentParent, hammerParent, bulbParent, slagEquipmentButtonPrefab, hammerButtonPrefab, bulbButtonPrefab;
+    [SerializeField] GameObject equipmentParent, hammerParent, bulbParent, slagEquipmentButtonPrefab, hammerButtonPrefab, bulbButtonPrefab, gameUnitFramePrefab;
     [SerializeField] public SFX equipSelectSFX, hammerSelectSFX;
 
-    [SerializeField] Animator emptyPips, hpPips;
+    [SerializeField] Animator emptyPips, hpPips, bulbColor;
     
     [Header("Overview")]
     [SerializeField] public UnitOverview overview;
@@ -25,12 +26,18 @@ public class GameUnitUI : UnitUI {
         } else if (u is EnemyUnit) {
             portrait.rectTransform.localPosition = new Vector2(-135, -381);
             portrait.rectTransform.sizeDelta = new Vector2(600, 600);
+             GameUnitFrame frame = Instantiate(gameUnitFramePrefab, equipmentParent.transform).GetComponent<GameUnitFrame>();
+            frame.Init(u);
         } else if (u is Anvil) {
             portrait.rectTransform.localPosition = new Vector2(-17, -51);
             portrait.rectTransform.sizeDelta = new Vector2(400, 400);
+            GameUnitFrame frame = Instantiate(gameUnitFramePrefab, equipmentParent.transform).GetComponent<GameUnitFrame>();
+            frame.Init(u);
         } else if (u is Nail) {
             portrait.rectTransform.localPosition = new Vector2(-118, -170);
             portrait.rectTransform.sizeDelta = new Vector2(600, 600);
+            GameUnitFrame frame = Instantiate(gameUnitFramePrefab, equipmentParent.transform).GetComponent<GameUnitFrame>();
+            frame.Init(u);
         }
 
         if (u is PlayerUnit) {
@@ -51,13 +58,29 @@ public class GameUnitUI : UnitUI {
 
     public override void ToggleUnitPanel(bool active) {
         base.ToggleUnitPanel(active);
-        if (active)
+        if (active) {
             UpdatePips();
+            UpdateBulb();
+        }
     }
 
-    public void UpdatePips() {
+    void UpdatePips() {
         emptyPips.SetInteger("Count", unit.hpMax);
         hpPips.SetInteger("Count", unit.hpCurrent);
+    }
+
+    void UpdateBulb() {
+        BulbEquipmentData b = (BulbEquipmentData)unit.equipment.Find(e => e is BulbEquipmentData);
+        if (b) {
+            int c = 0;
+            if (b is SupportBulbData s) {
+                if (s.supportType == SupportBulbData.SupportType.Heal)
+                    c = 0;
+                else c = 1;
+            } else c = 2;
+
+            bulbColor.SetInteger("Color", c);
+        }
     }
 
 
@@ -104,6 +127,7 @@ public class GameUnitUI : UnitUI {
                         prefab = bulbButtonPrefab;
                         parent = bulbParent.transform;
                         index = 1;
+                        bulbColor = prefab.GetComponentInChildren<Animator>();
                     }
                     EquipmentButton newButt = Instantiate(prefab, parent).GetComponent<EquipmentButton>();
                     newButt.transform.localScale = Vector3.one;

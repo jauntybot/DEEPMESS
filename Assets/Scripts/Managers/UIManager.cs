@@ -59,7 +59,7 @@ public class UIManager : MonoBehaviour {
     
         GameUnitUI unitUI = unitGameUIs.Find(p => p.unit == u);
         if (unitUI == null && u != null) { unitUI = CreateUnitUI(u); }
-        if (unitUI) unitUI.ToggleUnitPanel(active);        
+        if (unitUI) unitUI.ToggleUnitPanel(active);
     }
 
     public GameUnitUI CreateUnitUI(Unit u) {
@@ -88,12 +88,12 @@ public class UIManager : MonoBehaviour {
         //     u.ui.UpdateEquipmentButtons();
     }
 
-    public void LockFloorButtons(bool state) {
+    public void LockPeekButton(bool state) {
         peekButton.GetComponent<Button>().interactable = state ? false : scenario.floorManager.floors.Count - 1 > scenario.floorManager.currentFloor.index;
     }
 
     public void LockHUDButtons(bool state) {
-        LockFloorButtons(state);
+        LockPeekButton(state);
         endTurnButton.interactable = !state;
         undoButton.interactable = state ? false : scenario.player.undoOrder.Count > 0;
         turnOrder.EnableHover(!state);

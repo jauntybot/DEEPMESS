@@ -323,7 +323,7 @@ public class FloorManager : MonoBehaviour
                 StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
             } else {
     // NODE LOGIC
-                yield return StartCoroutine(TransitionPackets());
+                yield return StartCoroutine(TransitionPackets((EnemyManager)currentFloor.enemy));
             }
         }
         descending = false;
@@ -337,9 +337,9 @@ public class FloorManager : MonoBehaviour
         uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index + 1 + cavityOffset);
     }
 
-    public IEnumerator DescendUnits(List<GridElement> units, EnemyManager enemy = null) {
+    public IEnumerator DescendUnits(List<GridElement> units, EnemyManager enemy = null, bool hardLand = false) {
         UpdateFloorCounter();
-        Coroutine drop = StartCoroutine(DropUnits(units));
+        Coroutine drop = StartCoroutine(DropUnits(units, hardLand));
 
         scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
         yield return drop;
@@ -355,7 +355,7 @@ public class FloorManager : MonoBehaviour
     }
 
 // Coroutine that sequences the descent of all valid units
-    public IEnumerator DropUnits(List<GridElement> units) {
+    public IEnumerator DropUnits(List<GridElement> units, bool hardLand) {
 
         scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         scenario.player.transform.parent = transitionParent;
@@ -390,13 +390,13 @@ public class FloorManager : MonoBehaviour
         for (int i = units1.Length - 1; i >= 0; i--) {
             if (units1[i] is Unit u) {
                 if (u is not Nail) {
-                    if (u is PlayerUnit && currentFloor.slagSpawns.Count > 0) {
-                        u.coord = currentFloor.slagSpawns[0];
-                        currentFloor.slagSpawns.RemoveAt(0);
-                    } 
+                    // if (u is PlayerUnit && currentFloor.slagSpawns.Count > 0) {
+                    //     u.coord = currentFloor.slagSpawns[0];
+                    //     currentFloor.slagSpawns.RemoveAt(0);
+                    // } 
                     GridElement subElement = null;
                     foreach (GridElement ge in currentFloor.CoordContents(u.coord)) subElement = ge;
-                    descents.Add(StartCoroutine(DropUnit(u, currentFloor.PosFromCoord(u.coord) + new Vector3 (0, floorOffset*2, 0), currentFloor.PosFromCoord(u.coord), subElement)));
+                    descents.Add(StartCoroutine(DropUnit(u, currentFloor.PosFromCoord(u.coord) + new Vector3 (0, floorOffset*2, 0), currentFloor.PosFromCoord(u.coord), subElement, hardLand)));
                     yield return new WaitForSeconds(unitDropDur*1.5f);
                     
                 } else 
@@ -419,7 +419,7 @@ public class FloorManager : MonoBehaviour
     }
 
 // Coroutine that houses the logic to descend a single unit
-    public IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null) {
+    public IEnumerator DropUnit(Unit unit, Vector3 from, Vector3 to, GridElement subElement = null, bool hardLand = false) {
         float timer = 0;
         NestedFadeGroup.NestedFadeGroup fade = unit.GetComponent<NestedFadeGroup.NestedFadeGroup>();
         unit.airTraillVFX.SetActive(true);
@@ -452,6 +452,9 @@ public class FloorManager : MonoBehaviour
             StartCoroutine(subElement.CollideFromBelow(unit));
 
             yield return StartCoroutine(unit.CollideFromAbove(subElement));
+        }
+        if (hardLand) {
+            yield return StartCoroutine(unit.TakeDamage(1, GridElement.DamageType.Gravity));
         }
 
     }
@@ -606,7 +609,7 @@ public class FloorManager : MonoBehaviour
     }
 
 
-    public IEnumerator TransitionPackets() {
+    public IEnumerator TransitionPackets(EnemyManager lastFloorEnemey = null) {
         yield return StartCoroutine(TransitionFloors(true, false));
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
         yield return new WaitForSecondsRealtime(0.25f);
@@ -647,6 +650,7 @@ public class FloorManager : MonoBehaviour
 
         //cavityText.gameObject.SetActive(true);
         //cavityText.SetBool("Active", true);
+        yield return new WaitForSecondsRealtime(0.25f);
         scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
 
         timer = 0;
@@ -684,10 +688,13 @@ public class FloorManager : MonoBehaviour
             }
             
             GenerateFloor(null, true);
+            scenario.player.transform.parent = currentFloor.transform;
             GenerateFloor();
-            yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
-            yield return StartCoroutine(DescendUnits(new List<GridElement>{ units[0], units[1], units[2], units[3]} ));
-            yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
+            descending = false;
+            yield return scenario.StartCoroutine(scenario.FirstTurn(lastFloorEnemey));
+            // yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
+            // yield return StartCoroutine(DescendUnits(new List<GridElement>{ units[0], units[1], units[2], units[3]} ));
+            // yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
         } else {
             yield return StartCoroutine(scenario.Win());
             while (scenario.scenario == ScenarioManager.Scenario.EndState) {
