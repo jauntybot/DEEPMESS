@@ -241,6 +241,7 @@ public class FloorManager : MonoBehaviour
         while (scenario.currentTurn == ScenarioManager.Turn.Cascade)
             yield return null;
         //StartCoroutine(ToggleDescentPreview(false));
+        previewManager.UpdateFloors(currentFloor, floors[currentFloor.index + 1]);            
         currentFloor.DisableGridHighlight();
 
     }
