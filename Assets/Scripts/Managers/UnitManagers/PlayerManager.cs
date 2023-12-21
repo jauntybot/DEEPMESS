@@ -62,8 +62,9 @@ public class PlayerManager : UnitManager {
     }
     #endregion
 
-    public override IEnumerator Initialize(Grid _currentGrid) {
-        yield return base.Initialize(_currentGrid);
+    public override IEnumerator Initialize(Grid _currentGrid = null) {
+        if (ScenarioManager.instance) scenario = ScenarioManager.instance;
+        if (FloorManager.instance) floorManager = FloorManager.instance;
         if (FloorManager.instance) floorManager = FloorManager.instance;
 
         contextuals.Initialize(this);
@@ -71,9 +72,9 @@ public class PlayerManager : UnitManager {
         gridCursor.transform.localScale = Vector3.one * FloorManager.sqrSize;
 
         List<Unit> initU = new() {
-            SpawnUnit(Vector2.zero, unitPrefabs[0]),
-            SpawnUnit(Vector2.zero, unitPrefabs[1]),
-            SpawnUnit(Vector2.zero, unitPrefabs[2])
+            SpawnUnit(unitPrefabs[0]),
+            SpawnUnit(unitPrefabs[1]),
+            SpawnUnit(unitPrefabs[2])
         };
 
         //yield return StartCoroutine(loadout.Initialize(initU));
@@ -82,14 +83,14 @@ public class PlayerManager : UnitManager {
         yield return null;
         SpawnHammer((PlayerUnit)units[0], hammerActions);
         
-        nail = (Nail)SpawnUnit(new Vector3(3, 3), nailPrefab.GetComponent<Nail>());
+        nail = (Nail)SpawnUnit(nailPrefab.GetComponent<Nail>());
         nail.gameObject.transform.parent = unitParent.transform;      
 
         pc = GetComponent<PlayerController>();
     }
 
 // Overriden functionality
-    public override Unit SpawnUnit(Vector2 coord, Unit unit) {
+    public override Unit SpawnUnit(Unit unit, Vector2 coord) {
         Unit u = Instantiate(unit.gameObject, unitParent.transform).GetComponent<Unit>();
 
         units.Add(u);
@@ -105,11 +106,30 @@ public class PlayerManager : UnitManager {
         }
 
         u.StoreInGrid(currentGrid);
-        //u.UpdateElement(coord);
+        u.UpdateElement(coord);
         //u.transform.position += new Vector3(0, floorManager.floorOffset, 0);
         
         u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
-        //u.grid.RemoveElement(u);
+
+        return u;
+    }
+
+    public override Unit SpawnUnit(Unit unit) {
+        Unit u = Instantiate(unit.gameObject, unitParent.transform).GetComponent<Unit>();
+
+        units.Add(u);
+        SubscribeElement(u);
+        u.manager = this;
+        if (u is PlayerUnit pu)
+            pu.pManager = this;
+
+        if (unit is not Nail) {
+            DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
+            dp.Initialize(u, floorManager.previewManager);
+            
+        }
+
+        u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
 
         return u;
     }
@@ -412,7 +432,7 @@ public class PlayerManager : UnitManager {
         scenario.uiManager.LockHUDButtons(false);
         if (overrideEquipment)
             scenario.uiManager.LockPeekButton(true);
-            
+
         if (selectedUnit) selectedUnit.ui.ToggleEquipmentButtons();
     }
 

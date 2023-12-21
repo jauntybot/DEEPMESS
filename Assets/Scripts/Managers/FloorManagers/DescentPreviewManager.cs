@@ -68,8 +68,10 @@ public class DescentPreviewManager : MonoBehaviour
             }
         }
 
-        foreach (GameObject obj in scenario.currentEnemy.pendingUnitUIs)
-                obj.SetActive(!state);
+        if (scenario.currentEnemy) {
+            foreach (GameObject obj in scenario.currentEnemy.pendingUnitUIs)
+                    obj.SetActive(!state);
+        }
     }
 
     public void PreviewButton() {

@@ -21,8 +21,8 @@ public class EnemyManager : UnitManager {
             units[i].elementCanvas.UpdateTurnOrder(units.Count - i);
     }
 
-    public override Unit SpawnUnit(Vector2 coord, Unit unit) {
-        Unit u = base.SpawnUnit(coord, unit);
+    public override Unit SpawnUnit(Unit unit, Vector2 coord) {
+        Unit u = base.SpawnUnit(unit, coord);
         //u.ElementDestroyed += DescentTriggerCheck;
         u.ElementDestroyed += CountDefeatedEnemy; 
         u.ElementDestroyed += StopActingUnit;
@@ -30,13 +30,14 @@ public class EnemyManager : UnitManager {
     }
 
     void CountDefeatedEnemy(GridElement ge) {
+        Debug.Log("Enemy defeated");
         scenario.player.defeatedEnemies++;
         for (int i = 0; i <= units.Count - 1; i++)
             units[i].elementCanvas.UpdateTurnOrder(units.Count - i);
     }
 
     public virtual Unit SpawnBossUnit(Vector2 coord, Unit unit) {
-        Unit u = SpawnUnit(coord, unit);
+        Unit u = SpawnUnit(unit, coord);
         
         units.Remove(u);
         units.Insert(0, u);
@@ -231,7 +232,7 @@ public class EnemyManager : UnitManager {
             }
         }
         if (!validCoord) return null;
-        Unit reinforcement = SpawnUnit(spawn, defaultUnit);
+        Unit reinforcement = SpawnUnit(defaultUnit, spawn);
         RemoveUnit(reinforcement);
         currentGrid.RemoveElement(reinforcement);
         reinforcement.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0f;
