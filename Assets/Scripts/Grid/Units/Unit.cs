@@ -120,9 +120,12 @@ public class Unit : GridElement {
                     RemoveShield();
                     StartCoroutine(TakeDamage(hpMax, DamageType.Bile));
                 }
-            } else if (targetSqr is TileBulb tb && this is PlayerUnit pu) {
-                if (!tb.harvested && pu.equipment.Find(e => e is BulbEquipmentData) == null)
-                    tb.HarvestBulb(pu);
+            } else if (targetSqr is TileBulb) {
+// Harvest Tile Bulb
+                if (this is PlayerUnit pu && grid.tiles.Find(sqr => sqr.coord == coord) is TileBulb tb && pu.pManager.overrideEquipment == null) {
+                    if (!tb.harvested && equipment.Find(e => e is BulbEquipmentData) == null)
+                        tb.HarvestBulb(pu);
+                }
             } else {
                 RemoveCondition(Status.Restricted);
             }

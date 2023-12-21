@@ -18,16 +18,8 @@ public class PlayerUnit : Unit {
     public int hammerUses, equipUses, bulbPickups;
 
 
-    public override void UpdateElement(Vector2 coord) {
-        base.UpdateElement(coord);
-        if (pManager.overrideEquipment)
-            transform.position += new Vector3(0, FloorManager.instance.floorOffset, 0);
-
-    }
-
 // Called when an action is applied to a unit or to clear it's actions
-    public override void UpdateAction(EquipmentData equipment = null, int mod = 0) 
-    {
+    public override void UpdateAction(EquipmentData equipment = null, int mod = 0) {
         if (pManager.overrideEquipment == null) {
             base.UpdateAction(equipment, mod);
             pManager.EquipmentSelected(equipment);
@@ -81,11 +73,6 @@ public class PlayerUnit : Unit {
         UIManager.instance.peekButton.GetComponent<Button>().interactable = false;
 // Run base coroutine
         yield return co;
-// Harvest Tile Bulb
-        if (grid.tiles.Find(sqr => sqr.coord == coord) is TileBulb tb && this is PlayerUnit pu) {
-            if (!tb.harvested && pu.equipment.Find(e => e is BulbEquipmentData) == null)
-                tb.HarvestBulb(pu);
-        }
 
         UIManager.instance.peekButton.GetComponent<Button>().interactable = true;
         if (equip is MoveData && energyCurrent > 0) {
