@@ -96,8 +96,8 @@ public class ScenarioManager : MonoBehaviour
             if (prevEnemy) {
                 List<GridElement> unitsToDrop = new();
                 for (int i = prevEnemy.units.Count - 1; i >= 0; i--)
-                    unitsToDrop.Add((GridElement)prevEnemy.units[i]);
-                yield return StartCoroutine(floorManager.DescendUnits(unitsToDrop, null, true));
+                    unitsToDrop.Add(prevEnemy.units[i]);
+                yield return StartCoroutine(floorManager.DescendUnits(unitsToDrop, prevEnemy, true));
             }
             yield return StartCoroutine(PlayerEnter());
             yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3]} ));
