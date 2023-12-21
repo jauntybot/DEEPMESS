@@ -32,7 +32,7 @@ public class AnvilData : SlagEquipmentData {
         } 
             
 // Spawn new Anvil and Initialize
-        Anvil anvil = (Anvil)pu.manager.SpawnUnit(target.coord, prefab.GetComponent<Anvil>());
+        Anvil anvil = (Anvil)pu.manager.SpawnUnit(prefab.GetComponent<Anvil>(), target.coord);
         anvil.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         anvil.UpdateElement(pu.coord);      
         anvil.Init(this);

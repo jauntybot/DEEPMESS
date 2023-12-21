@@ -237,7 +237,6 @@ public class FloorManager : MonoBehaviour
 
 
     public IEnumerator ChooseLandingPositions() {
-        yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Cascade));
         while (scenario.currentTurn == ScenarioManager.Turn.Cascade)
             yield return null;
         //StartCoroutine(ToggleDescentPreview(false));
@@ -361,8 +360,10 @@ public class FloorManager : MonoBehaviour
         scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         scenario.player.transform.parent = transitionParent;
         scenario.player.nail.transform.parent = currentFloor.transform;
-        scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
-        scenario.currentEnemy.transform.parent = transitionParent;
+        if (scenario.currentEnemy) {
+            scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
+            scenario.currentEnemy.transform.parent = transitionParent;
+        }
 
         DescendingUnits?.Invoke();
 
@@ -611,8 +612,10 @@ public class FloorManager : MonoBehaviour
 
 
     public IEnumerator TransitionPackets(EnemyManager lastFloorEnemey = null) {
-        yield return StartCoroutine(TransitionFloors(true, false));
-        yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
+        if (currentFloor) {
+            yield return StartCoroutine(TransitionFloors(true, false));
+            yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
+        }
         yield return new WaitForSecondsRealtime(0.25f);
         List<Coroutine> cos = new();
         for (int i = scenario.player.units.Count - 1; i >= 0; i-- ) {
@@ -630,7 +633,7 @@ public class FloorManager : MonoBehaviour
         
 // Lerp units into screen
         List<Unit> units = new() { scenario.player.units[0], scenario.player.units[1], scenario.player.units[2], scenario.player.units[3] };
-        List<Vector2> to = new() { currentFloor.PosFromCoord(new Vector2(3, 3)), currentFloor.PosFromCoord(new Vector2(4, 3)), currentFloor.PosFromCoord(new Vector2(3, 2)), currentFloor.PosFromCoord(new Vector2(5, 4)) };
+        List<Vector2> to = new() {new Vector2(-1.182819f, 0.5243183f), new Vector2(-2.862819f, 0.04704558f), new Vector2(-0.5108191f, -0.5781816f), new Vector2(1.841181f, -1.203409f) };
         units[0].manager.transform.parent = transitionParent;
         units[3].transform.parent = transitionParent;
         scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
@@ -679,8 +682,8 @@ public class FloorManager : MonoBehaviour
                 }
             }
             
-            units[0].manager.transform.parent = floors[currentFloor.index - 1].transform;
-            units[3].transform.parent = currentFloor.transform;
+            // units[0].manager.transform.parent = floors[currentFloor.index - 1].transform;
+            // units[3].transform.parent = currentFloor.transform;
 
             timer = 0;
             while (timer <= 0.5f) {

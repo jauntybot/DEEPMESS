@@ -61,24 +61,25 @@ public class ScenarioManager : MonoBehaviour
                 floorManager.previewManager.tut = true;
             } else {
                 tutorial.gameObject.SetActive(false);
-                floorManager.GenerateFloor(null, true); 
-                floorManager.GenerateFloor();
+                // floorManager.GenerateFloor(null, true); 
+                // floorManager.GenerateFloor();
             }
 
-            currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
-            player.transform.parent = floorManager.currentFloor.transform;
+//            currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
+//            player.transform.parent = floorManager.currentFloor.transform;
         }
         resetSceneString = SceneManager.GetActiveScene().name;
         runDataTracker.Init(this);
     
-        yield return StartCoroutine(player.Initialize(floorManager.currentFloor));
+        yield return StartCoroutine(player.Initialize());
 
         if (GameplayOptionalTooltips.instance) {
             gpOptional = GameplayOptionalTooltips.instance;
             gpOptional.Initialize();
         }
-
-        StartCoroutine(FirstTurn());
+        yield return null;
+        //StartCoroutine(FirstTurn());
+        floorManager.StartCoroutine(floorManager.TransitionPackets());
     }
 
     public IEnumerator FirstTurn(EnemyManager prevEnemy = null) {
@@ -107,6 +108,7 @@ public class ScenarioManager : MonoBehaviour
     IEnumerator PlayerEnter() {
         uiManager.LockPeekButton(true);
 
+        yield return StartCoroutine(SwitchTurns(Turn.Cascade));
         player.units[0].UpdateElement(new Vector2(3,3));
         player.units[1].UpdateElement(new Vector2(3,4));
         player.units[2].UpdateElement(new Vector2(3,5));

@@ -95,7 +95,7 @@ public class Grid : MonoBehaviour {
 // Spawn a Unit
             if (ge is Unit u) {
                 if (u is EnemyUnit e && e is not BossUnit) {
-                    enemy.SpawnUnit(spawn.coord, spawn.asset.prefab.GetComponent<Unit>());
+                    enemy.SpawnUnit(spawn.asset.prefab.GetComponent<Unit>(), spawn.coord);
                 } else if (u is PlayerUnit) {
                     slagSpawns.Add(spawn.coord);
                 }

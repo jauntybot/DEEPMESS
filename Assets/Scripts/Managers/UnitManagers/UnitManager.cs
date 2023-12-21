@@ -21,8 +21,7 @@ public class UnitManager : MonoBehaviour {
 
 
 // Called from scenario manager when game starts
-    public virtual IEnumerator Initialize(Grid _currentGrid) 
-    {
+    public virtual IEnumerator Initialize(Grid _currentGrid) {
 // Grab global refs
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
         if (FloorManager.instance) floorManager = FloorManager.instance;
@@ -32,8 +31,7 @@ public class UnitManager : MonoBehaviour {
     }
 
 // Create a new unit from prefab index, update its GridElement
-    public virtual Unit SpawnUnit(Vector2 coord, Unit unit) 
-    {
+    public virtual Unit SpawnUnit(Unit unit, Vector2 coord) {
         Unit u = Instantiate(unit.gameObject, unitParent.transform).GetComponent<Unit>();
 
         units.Add(u);
@@ -44,11 +42,26 @@ public class UnitManager : MonoBehaviour {
         if (unit is not Nail) {
             DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
             dp.Initialize(u, floorManager.previewManager);
-            
         }
 
         u.StoreInGrid(currentGrid);
         u.UpdateElement(coord);
+
+        return u;
+    }
+
+    public virtual Unit SpawnUnit(Unit unit) {
+        Unit u = Instantiate(unit.gameObject, unitParent.transform).GetComponent<Unit>();
+
+        units.Add(u);
+        SubscribeElement(u);
+        u.manager = this;
+
+        UIManager.instance.UpdatePortrait(u, false);
+        if (unit is not Nail) {
+            DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
+            dp.Initialize(u, floorManager.previewManager);
+        }
 
         return u;
     }
