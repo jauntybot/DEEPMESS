@@ -16,6 +16,10 @@ public class BloodSplatter : MonoBehaviour {
 
         transform.position = origin.grid.PosFromCoord(origin.coord + dir/3);
         //gfx.sortingOrder = origin.grid.SortOrderFromCoord(origin.coord + dir);
+        Tile parent = origin.grid.tiles.Find(t => t.coord == origin.coord+dir);
+        if (!parent || (parent && (parent.tileType == Tile.TileType.Blood || parent.tileType == Tile.TileType.Bile))) {
+            anim.SetBool("Dissolve", true);
+        }
     }
 
 }
