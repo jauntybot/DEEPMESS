@@ -119,8 +119,6 @@ public class PlayerUnit : Unit {
 
 // Override destroy so that player units are disabled instead
     public override IEnumerator DestroySequence(DamageType dmgType) {
-        
-        
         PlaySound(destroyedSFX);
 
         bool droppedHammer = false;

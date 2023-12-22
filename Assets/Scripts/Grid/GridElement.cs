@@ -18,7 +18,7 @@ public class GridElement : MonoBehaviour{
     public bool selectable, targeted;
     [HideInInspector] public PolygonCollider2D hitbox;
      public ElementCanvas elementCanvas;
-    public enum DamageType { Unspecified, Melee, Gravity, Bile, Slots };
+    public enum DamageType { Unspecified, Heal, Melee, Gravity, Bile, Slots };
     public int hpMax, hpCurrent;
     public Shield shield;
     public int energyCurrent, energyMax;
@@ -85,7 +85,7 @@ public class GridElement : MonoBehaviour{
     }
 
   
-    public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, Vector2 dir = default) {
+    public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) {
         if (shield == null || Mathf.Sign(dmg) == -1) {
             if (Mathf.Sign(dmg) == 1) 
                 PlaySound(dmgdSFX);

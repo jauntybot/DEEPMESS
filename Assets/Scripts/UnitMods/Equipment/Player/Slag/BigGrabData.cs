@@ -164,7 +164,7 @@ public class BigGrabData : SlagEquipmentData {
             }
             thrown.StartCoroutine(thrown.CollideFromAbove(subGE));
         }
-        if (upgrades[UpgradePath.Unit] >= 1) thrown.StartCoroutine(thrown.TakeDamage(1, GridElement.DamageType.Gravity, thrower, thrown.coord - thrower.coord));
+        if (upgrades[UpgradePath.Unit] >= 1) thrown.StartCoroutine(thrown.TakeDamage(1, GridElement.DamageType.Gravity, thrower));
         thrown.UpdateElement(coord);
     }
 
