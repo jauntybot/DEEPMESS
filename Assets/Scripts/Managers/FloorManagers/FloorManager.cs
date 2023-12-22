@@ -655,8 +655,16 @@ public class FloorManager : MonoBehaviour
 
         //cavityText.gameObject.SetActive(true);
         //cavityText.SetBool("Active", true);
-        yield return new WaitForSecondsRealtime(0.25f);
-        scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
+
+// Objective award and assign
+
+// Upgrade sequence
+        if (currentFloor)
+            scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
+        else {
+            cavityText.gameObject.SetActive(true);
+            cavityText.SetBool("Active", true);
+        }
 
         timer = 0;
         while(cavityWait) {
