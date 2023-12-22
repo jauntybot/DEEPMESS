@@ -172,7 +172,8 @@ public class EnemyUnit : Unit {
 
     public void Splatter(Vector2 dir) {
         if (dir != default) {
-            GameObject obj = Instantiate(splatterPrefab, grid.neutralGEContainer.transform);
+            Transform tileParent = grid.tiles.Find(t => t.coord == coord+dir).transform;
+            GameObject obj = Instantiate(splatterPrefab, tileParent);
             BloodSplatter splatter = obj.GetComponent<BloodSplatter>();
             splatter.Init(this, dir);
         }
