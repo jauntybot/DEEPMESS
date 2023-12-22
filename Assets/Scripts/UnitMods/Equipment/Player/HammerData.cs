@@ -237,7 +237,7 @@ public class HammerData : SlagEquipmentData {
             if (upgrades[UpgradePath.Special] == 1 && (user.coord - target.coord).magnitude <= 1)
                 dmg ++;
 
-            dmgCo(target.StartCoroutine(target.TakeDamage(dmg, dmgType, null, (target.coord - user.coord).normalized)));
+            dmgCo(target.StartCoroutine(target.TakeDamage(dmg, dmgType, user)));
 // UNIT TIER I -- Push element on hit
             if (upgrades[UpgradePath.Unit] == 1) {
                 pushCo(target.StartCoroutine(PushUnit(target, (target.coord - user.coord).normalized)));

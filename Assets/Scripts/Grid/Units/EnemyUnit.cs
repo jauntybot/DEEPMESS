@@ -140,17 +140,19 @@ public class EnemyUnit : Unit {
         return coord;
     }
 
-    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, Vector2 dir = default) {
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) {
         int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg * 2 : dmg;
         if (hpCurrent - modifiedDmg <= hpMax/2) 
             gfxAnim.SetBool("Damaged", true);
 
+        Vector2 dir = Vector2.zero;
+        if (source) dir = (coord - source.coord).normalized;
         Splatter(dir);
 
         yield return base.TakeDamage(dmg, dmgType, source);
     }
 
-    public override IEnumerator DestroySequence(DamageType dmgType) {
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified) {
         switch(dmgType) {
             case DamageType.Unspecified:
                 gfxAnim.SetTrigger("Split");
@@ -165,18 +167,31 @@ public class EnemyUnit : Unit {
                 gfxAnim.SetTrigger("Split");
             break;
         }
-        EnemyManager eManager = (EnemyManager)manager;
         
+        Splatter(Vector2.zero);
+
         return base.DestroySequence(dmgType);
     }
 
-    public void Splatter(Vector2 dir) {
-        if (dir != default) {
-            Tile tileParent = grid.tiles.Find(t => t.coord == coord+dir);
-            if (tileParent == null) tileParent = grid.tiles.Find(t => t.coord == coord);
-            GameObject obj = Instantiate(splatterPrefab, tileParent.transform);
-            BloodSplatter splatter = obj.GetComponent<BloodSplatter>();
-            splatter.Init(this, dir);
+    public override IEnumerator CollideFromAbove(GridElement subGE) {
+        if (manager.scenario.tutorial.isActiveAndEnabled && !manager.scenario.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
+            manager.scenario.tutorial.StartCoroutine(manager.scenario.tutorial.DescentDamage());
+        
+        if (subGE is PlayerUnit)
+            yield return StartCoroutine(DestroySequence());
+        else {
+            if (subGE is not EnemyUnit) yield return StartCoroutine(TakeDamage(1, DamageType.Gravity, subGE));
+            else yield return StartCoroutine(TakeDamage(1, DamageType.Gravity, subGE));
+
         }
+    }
+
+    public void Splatter(Vector2 dir) {
+        Tile tileParent = grid.tiles.Find(t => t.coord == coord+dir);
+        if (tileParent == null) tileParent = grid.tiles.Find(t => t.coord == coord);
+        GameObject obj = Instantiate(splatterPrefab, tileParent.transform);
+        BloodSplatter splatter = obj.GetComponent<BloodSplatter>();
+        splatter.Init(this, dir);
+        
     }
 }

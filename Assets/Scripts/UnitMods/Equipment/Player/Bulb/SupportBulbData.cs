@@ -44,7 +44,7 @@ public class SupportBulbData : BulbEquipmentData
         switch (supportType) {
             default:
             case SupportType.Heal:
-                target.StartCoroutine(target.TakeDamage(-2));
+                target.StartCoroutine(target.TakeDamage(-2, GridElement.DamageType.Heal, user));
 
             break;
             case SupportType.Surge:

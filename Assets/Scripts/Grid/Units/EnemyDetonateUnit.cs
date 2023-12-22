@@ -46,8 +46,7 @@ public class EnemyDetonateUnit : EnemyUnit
         yield return co;
     }
 
-    public override IEnumerator DestroySequence(DamageType dmgType)
-    {
+    public override IEnumerator DestroySequence(DamageType dmgType) {
         if (primed)
             yield return StartCoroutine(ExplodeCo());
         else
