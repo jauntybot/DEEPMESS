@@ -4,26 +4,22 @@ using UnityEngine;
 
 public class BloodSplatter : MonoBehaviour {
 
-    SpriteRenderer gfx;
+    Animator anim;
     
-    [SerializeField]
-    List<Sprite> directions;
-
-
     public void Init(GridElement origin, Vector2 dir) {
-        gfx = GetComponentInChildren<SpriteRenderer>();
+        anim = GetComponentInChildren<Animator>();
 
-        if (dir.x > 0)
-            gfx.sprite = directions[0];
-        else if (dir.x < 0)
-            gfx.sprite = directions[1];
-        else if (dir.y > 0)
-            gfx.sprite = directions[2];
-        else if (dir.y < 0)
-            gfx.sprite = directions[3];
+        if (dir.x > 0) anim.SetTrigger("+X");
+        else if (dir.x < 0) anim.SetTrigger("-X");
+        else if (dir.y > 0) anim.SetTrigger("+Y");
+        else if (dir.y < 0) anim.SetTrigger("-Y");
 
-        transform.position = origin.grid.PosFromCoord(origin.coord + (dir/2));
-        gfx.sortingOrder = origin.grid.SortOrderFromCoord(origin.coord + dir);
+        transform.position = origin.grid.PosFromCoord(origin.coord + dir/3);
+        //gfx.sortingOrder = origin.grid.SortOrderFromCoord(origin.coord + dir);
+        Tile parent = origin.grid.tiles.Find(t => t.coord == origin.coord+dir);
+        if (!parent || (parent && (parent.tileType == Tile.TileType.Blood || parent.tileType == Tile.TileType.Bile))) {
+            anim.SetBool("Dissolve", true);
+        }
     }
 
 }

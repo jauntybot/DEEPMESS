@@ -130,6 +130,7 @@ public class PlayerManager : UnitManager {
         }
 
         u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
+        u.transform.localScale = Vector3.one * FloorManager.sqrSize;
 
         return u;
     }
@@ -202,14 +203,11 @@ public class PlayerManager : UnitManager {
 // Get grid input from player controller, translate it to functionality
     public void GridInput(GridElement input) {
 // Player clicks on unit
-        if (input is Unit u) 
-        {
+        if (input is Unit u) {
 // Player clicks on their own unit
-            if (u.manager is PlayerManager) 
-            {
+            if (u.manager is PlayerManager) {
                 if (selectedUnit) {
-                    if (u == selectedUnit && !selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) 
-                    {  
+                    if (u == selectedUnit && !selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {  
                         //DeselectUnit();                 
                         return;
                     }
@@ -219,14 +217,14 @@ public class PlayerManager : UnitManager {
                         DeselectUnit();
                         SelectUnit(u);
                     }
-                } else
+                } else {
+                    Debug.Log("clicked unit");
                     SelectUnit(u);
+                }
             }
 // Player clicks on enemy unit
-            else if (u.manager is EnemyManager) 
-            {
-                if (selectedUnit) 
-                {
+            else if (u.manager is EnemyManager) {
+                if (selectedUnit) {
 // Unit is a target of valid action adjacency
                     if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
                         StartCoroutine(selectedUnit.ExecuteAction(u));
@@ -235,8 +233,7 @@ public class PlayerManager : UnitManager {
             }
         }
 // Player clicks on square
-        else if (input is Tile sqr) 
-        {
+        else if (input is Tile sqr) {
 // Check if square is empty
             GridElement contents = null;
             foreach (GridElement ge in currentGrid.CoordContents(sqr.coord)) {
@@ -247,7 +244,15 @@ public class PlayerManager : UnitManager {
                 GridInput(contents);
 // Square empty
             else {
-                if (selectedUnit) {
+                if (overrideEquipment && !selectedUnit) {
+                    foreach(Unit _u in units) {
+                        Debug.Log(_u.coord + ", " + sqr.coord);
+                        if (sqr.coord == _u.coord) {
+                            Debug.Log("tile clicked w/ unit");
+                            SelectUnit(_u);
+                        }
+                    }
+                } else if (selectedUnit) {
 // Square is a target of valid action adjacency
                     if (selectedUnit.ValidCommand(sqr.coord, selectedUnit.selectedEquipment)) {
                         currentGrid.DisableGridHighlight();

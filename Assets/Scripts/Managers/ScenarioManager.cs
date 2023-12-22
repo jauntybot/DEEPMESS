@@ -87,6 +87,8 @@ public class ScenarioManager : MonoBehaviour
             u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
             //u.hitbox.enabled = false;
         }
+        player.ToggleUnitSelectability(true);
+
         if (startCavity == 0) {
                 foreach (GridElement ge in player.units)
                     floorManager.currentFloor.RemoveElement(ge);
@@ -224,8 +226,6 @@ public class ScenarioManager : MonoBehaviour
                 player.currentGrid = floorManager.currentFloor;
                 floorManager.previewManager.alignmentFloor = floorManager.currentFloor;
                 player.StartEndTurn(true, true);
-                foreach(Unit u in player.units)
-                    u.hitbox.enabled = false;
                 foreach (Unit u in player.units) {
                     if (u is not Nail) {
                         u.energyCurrent = 0;
@@ -245,8 +245,8 @@ public class ScenarioManager : MonoBehaviour
     }
 
 // public function for UI buttons
-    public void EndTurn() 
-    {
+    public void EndTurn() {
+        player.overrideEquipment = null;
         if (floorManager.floorSequence.currentThreshold == FloorPacket.PacketType.Tutorial)
             tutorial.SwitchTurns();
         else
