@@ -181,12 +181,4 @@ public class GameUnitUI : UnitUI {
             overview.UpdateOverview(unit.hpCurrent);
     }
 
-    public void SwapEquipmentFromSlots() {
-        EquipmentData reward = FloorManager.instance.betweenFloor.slotMachine.selectedReward;
-        if (reward != null)
-            UpdateLoadout(reward);
-        ToggleEquipmentButtons();
-        foreach (EquipmentButton button in equipButtons) button.gameObject.GetComponentInChildren<Button>().interactable = true;
-    }
-
 }
