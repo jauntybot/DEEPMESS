@@ -41,6 +41,7 @@ public class FloorManager : MonoBehaviour {
     public delegate void OnFloorAction();
     public virtual event OnFloorAction DescendingUnits;
     public virtual event OnFloorAction DescendingFloors;
+    public virtual event OnFloorAction EnemySeeded;
    
     [Header("Grid Viz")]
     public Color playerColor;
@@ -339,8 +340,10 @@ public class FloorManager : MonoBehaviour {
         scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
         yield return drop;
 
-        if (enemy)
+        if (enemy) {
             enemy.SeedUnits(currentFloor);
+            EnemySeeded?.Invoke();
+        }
 
         scenario.player.DescendGrids(currentFloor);
         currentFloor.LockGrid(false);

@@ -6,14 +6,17 @@ using UnityEngine.UI;
 
 public class ObjectiveManager : MonoBehaviour {
 
+    [SerializeField] ObjectiveTracker tracker;
+    [SerializeField] UpgradeManager upgrade;
+
     [SerializeField] GameObject assignAwardPanel;
-    [SerializeField] GameObject objectiveUIParent, objectiveUIPrefab;
+    [SerializeField] GameObject objectiveCardParent, objectiveCardPrefab;
 
     [SerializeField] Button continueButton;
 
     [SerializeField] List<Objective> possibleObjectives;
     [SerializeField] List<Sprite> possibleRewardSprites;
-    public Dictionary<Objective, bool> activeObjectives = new();
+    public List<Objective> activeObjectives = new();
 
     bool reviewingObjectives;
 
@@ -34,25 +37,25 @@ public class ObjectiveManager : MonoBehaviour {
         assignAwardPanel.SetActive(true);
         activeObjectives = new();
         
-        activeObjectives.Add(possibleObjectives[0], false);
-        activeObjectives.Add(possibleObjectives[1], false);
+        activeObjectives.Add(possibleObjectives[0]);
+        activeObjectives.Add(possibleObjectives[1]);
 
+        tracker.AssignObjectives(activeObjectives);
+
+        for (int i = objectiveCardParent.transform.childCount - 1; i >= 0; i--)
+            Destroy(objectiveCardParent.transform.GetChild(i).gameObject);
         
-        for (int i = objectiveUIParent.transform.childCount - 1; i >= 0; i--)
-            Destroy(objectiveUIParent.transform.GetChild(i).gameObject);
-        
-        foreach(KeyValuePair<Objective,bool> entry in activeObjectives) {
-            entry.Key.resolved = false;
-            entry.Key.ObjectiveSuccessCallback += ObjectiveCompleted;
-            entry.Key.ObjectiveFailureCallback += ObjectiveFailed;
-            ObjectiveUI ob = Instantiate(objectiveUIPrefab, objectiveUIParent.transform).GetComponent<ObjectiveUI>();
-            ob.Init(entry.Key.objectiveString, entry.Key.goal, possibleRewardSprites[0]);
+        foreach(Objective ob in activeObjectives) {
+            ob.Init();
+            ObjectiveCard obUI = Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
+            obUI.Init(ob);
         }
 
-        Canvas.ForceUpdateCanvases();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(objectiveCardParent.GetComponent<RectTransform>());
 
         while (reviewingObjectives)
             yield return null;
+
         assignAwardPanel.SetActive(false);
     }
 
@@ -60,22 +63,14 @@ public class ObjectiveManager : MonoBehaviour {
         reviewingObjectives = true;
         assignAwardPanel.SetActive(true);
 
-        foreach(KeyValuePair<Objective, bool> entry in activeObjectives)
-            entry.Key.ProgressCheck(true);
+        foreach(Objective ob in activeObjectives)
+            ob.ProgressCheck(true);
 
 
         while (reviewingObjectives)
             yield return null;
+
         assignAwardPanel.SetActive(false);
-    }
-
-
-    void ObjectiveCompleted(Objective objective) {
-
-    }
-
-    void ObjectiveFailed(Objective objective) {
-
     }
 
     public void EndObjectiveSequence() {

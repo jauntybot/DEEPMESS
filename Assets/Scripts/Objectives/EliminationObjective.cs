@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Objective/Eliminations")]
+[CreateAssetMenu(menuName = "Objective/Eliminations/Basic")]
 public class EliminationObjective : Objective {
 
-    void OnElimination() {
-        
+    protected List<GridElement> targetElements;
 
-        progress++;
+    protected virtual void OnElimination(GridElement ge) {
+        
+        ProgressCheck();
     }
 
 }
