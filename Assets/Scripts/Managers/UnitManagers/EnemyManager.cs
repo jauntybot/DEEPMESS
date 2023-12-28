@@ -11,8 +11,6 @@ public class EnemyManager : UnitManager {
     public List<Unit> unitsToAct = new();
     [SerializeField] List<GridElement> pendingUnits = new();
     [HideInInspector] public List<GameObject> pendingUnitUIs = new();
-    public delegate void OnEnemyCondition(GridElement ge);
-    public event OnEnemyCondition WipedOutCallback;
     protected Coroutine actingUnitCo;
 
     public override IEnumerator Initialize(Grid _currentGrid) {

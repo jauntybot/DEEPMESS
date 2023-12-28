@@ -7,9 +7,7 @@ using System.Linq;
 
 // This class generates and sequences Floor prefabs (Grid class), as well as manages the descending of units
 
-[RequireComponent(typeof(BetweenFloorManager))]
-public class FloorManager : MonoBehaviour
-{
+public class FloorManager : MonoBehaviour {
 
     UIManager uiManager;
     ScenarioManager scenario;
@@ -29,8 +27,6 @@ public class FloorManager : MonoBehaviour
     [SerializeField] float _sqrSize;
     public static float sqrSize;
     [SerializeField] GameObject godParticlePrefab;
-
-    [HideInInspector] public BetweenFloorManager betweenFloor;
     
     [Header("Floor Transitioning")]
     public Transform transitionParent;
@@ -45,6 +41,7 @@ public class FloorManager : MonoBehaviour
     public delegate void OnFloorAction();
     public virtual event OnFloorAction DescendingUnits;
     public virtual event OnFloorAction DescendingFloors;
+    public virtual event OnFloorAction FloorDescended;
    
     [Header("Grid Viz")]
     public Color playerColor;
@@ -68,7 +65,6 @@ public class FloorManager : MonoBehaviour
     public IEnumerator Init(int startIndex) {
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
         if (UIManager.instance) uiManager = UIManager.instance;
-        betweenFloor = GetComponent<BetweenFloorManager>();
 
         floorSequence.Init(startIndex);
         
@@ -326,6 +322,7 @@ public class FloorManager : MonoBehaviour
                 yield return StartCoroutine(TransitionPackets((EnemyManager)currentFloor.enemy));
             }
         }
+        FloorDescended?.Invoke();
         descending = false;
     }
 
@@ -344,8 +341,9 @@ public class FloorManager : MonoBehaviour
         scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
         yield return drop;
 
-        if (enemy)
+        if (enemy) {
             enemy.SeedUnits(currentFloor);
+        }
 
         scenario.player.DescendGrids(currentFloor);
         currentFloor.LockGrid(false);
@@ -456,7 +454,7 @@ public class FloorManager : MonoBehaviour
             yield return StartCoroutine(unit.CollideFromAbove(subElement));
         }
         if (hardLand) {
-            yield return StartCoroutine(unit.TakeDamage(1, GridElement.DamageType.Gravity));
+            yield return StartCoroutine(unit.TakeDamage(1, GridElement.DamageType.Fall));
         }
 
     }
@@ -652,31 +650,28 @@ public class FloorManager : MonoBehaviour
         
 // Endlessly falling
         cavityWait = true;
+        StartCoroutine(FloatingUnits());
 
-        //cavityText.gameObject.SetActive(true);
-        //cavityText.SetBool("Active", true);
 
-// Objective award and assign
-
-// Upgrade sequence
-        if (currentFloor)
-            scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
-        else {
-            cavityText.gameObject.SetActive(true);
-            cavityText.SetBool("Active", true);
+// Objective award + Upgrade sequence
+        if (currentFloor) {
+            yield return scenario.objectiveManager.RewardSequence();
+            yield return scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
         }
 
+        yield return scenario.objectiveManager.AssignSequence();
+        
         timer = 0;
-        while(cavityWait) {
-            yield return null;
+        Vector3 startPos = transitionParent.transform.position;
+        while (timer <= unitDropDur*2) {
             parallax.ScrollParallax(-1);
-            transitionParent.transform.position = new Vector3(0, Mathf.Sin(timer), 0);
-
+            transitionParent.transform.position = Vector3.Lerp(startPos, Vector3.zero, timer/unitDropDur);
             timer += Time.deltaTime;
+            yield return null;
         }
 
         transitionParent.transform.position = Vector3.zero;
-        cavityText.SetBool("Active", false);
+        cavityWait = false;
 
         if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BOSS) {
             timer = 0;
@@ -686,9 +681,9 @@ public class FloorManager : MonoBehaviour
                     NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
                     units[i].transform.position = Vector3.Lerp(to[i] - new Vector2(0, floorOffset), to[i] + new Vector2(0, floorOffset*2), dropCurve.Evaluate(timer/unitDropDur));
                     fade.AlphaSelf = Mathf.Lerp(1, 0, (timer - (unitDropDur*2/3))/(unitDropDur/3));
-                    yield return null;
-                    timer += Time.deltaTime;
                 }
+                yield return null;
+                timer += Time.deltaTime;
             }
             
             // units[0].manager.transform.parent = floors[currentFloor.index - 1].transform;
@@ -712,14 +707,21 @@ public class FloorManager : MonoBehaviour
             yield return StartCoroutine(scenario.Win());
             while (scenario.scenario == ScenarioManager.Scenario.EndState) {
                 if (parallax)
-                    parallax.ScrollParallax(1);
+                    parallax.ScrollParallax(-1);
                 yield return null;
             }
         }
     }
 
-    public void ExitCavity() {
-        cavityWait = false;
+    IEnumerator FloatingUnits() {
+        float timer = 0;
+        while(cavityWait) {
+            yield return null;
+            parallax.ScrollParallax(-1);
+            transitionParent.transform.position = new Vector3(0, Mathf.Sin(timer), 0);
+
+            timer += Time.deltaTime;
+        }
     }
 
     public IEnumerator EndSequenceAnimation(GameObject arm) {

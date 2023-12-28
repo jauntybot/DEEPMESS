@@ -19,6 +19,7 @@ public class UpgradeManager : MonoBehaviour {
     [SerializeField] GameObject unitUpgradeUIPrefab;
     List<UnitUpgradeUI> unitUpgradeUIs = new();
     
+    bool upgrading;
 
 
     public void Init(List<Unit> _units, PlayerManager _pManager) {
@@ -35,7 +36,6 @@ public class UpgradeManager : MonoBehaviour {
         selectedUnit = units[0];
     }
 
-    bool upgrading;
     public IEnumerator UpgradeSequence() {
         upgrading = true;
         
@@ -59,8 +59,7 @@ public class UpgradeManager : MonoBehaviour {
             yield return null;
         }
 
-        upgradePanel.SetActive(false);
-        FloorManager.instance.ExitCavity();    
+        upgradePanel.SetActive(false); 
     }
 
     public void SelectParticle(UpgradeUIParticle part) {

@@ -21,10 +21,10 @@ public class ScenarioManager : MonoBehaviour
 #endregion
 
 // Instanced refs
+    [HideInInspector] public FloorManager floorManager;
+    [HideInInspector] public ObjectiveManager objectiveManager;
     [HideInInspector] public UIManager uiManager;
     [HideInInspector] public GameplayOptionalTooltips gpOptional;
-    [HideInInspector] public FloorManager floorManager;
-    [SerializeField] string resetSceneString;
     public TutorialSequence tutorial;
     public int startCavity;
     public EnemyManager currentEnemy;
@@ -45,12 +45,13 @@ public class ScenarioManager : MonoBehaviour
     public IEnumerator Init(int startIndex = -1) {
         if (startIndex != -1) {
             startCavity = startIndex;
-            Debug.Log("start cavity override");
         }
-        Debug.Log(startCavity);
 
         if (UIManager.instance)
             uiManager = UIManager.instance;
+        if (ObjectiveManager.instance)
+            objectiveManager = ObjectiveManager.instance;
+        
 
         if (FloorManager.instance) {
             floorManager = FloorManager.instance;
@@ -68,7 +69,6 @@ public class ScenarioManager : MonoBehaviour
 //            currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
 //            player.transform.parent = floorManager.currentFloor.transform;
         }
-        resetSceneString = SceneManager.GetActiveScene().name;
         runDataTracker.Init(this);
     
         yield return StartCoroutine(player.Initialize());
