@@ -17,7 +17,7 @@ public class ObjectiveManager : MonoBehaviour {
     [Header("Serialized Objective Pools")]
     [SerializeField] List<Objective> packetIObjectives;
     [SerializeField] List<Objective> packetIIObjectives, packetIIIObjectives;
-    [SerializeField] List<Sprite> possibleRewardSprites;
+    [SerializeField] List<Sprite> rewardSprites;
     public List<Objective> activeObjectives = new();
 
     bool reviewingObjectives;
@@ -49,7 +49,7 @@ public class ObjectiveManager : MonoBehaviour {
             activeObjectives.Add(rndBag.Next());
 
 // Create UI cards
-        tracker.AssignObjectives(activeObjectives);
+        tracker.AssignObjectives(activeObjectives, rewardSprites);
 
         for (int i = objectiveCardParent.transform.childCount - 1; i >= 0; i--)
             Destroy(objectiveCardParent.transform.GetChild(i).gameObject);
@@ -57,7 +57,7 @@ public class ObjectiveManager : MonoBehaviour {
         foreach(Objective ob in activeObjectives) {
             ob.Init();
             ObjectiveCard card = Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
-            card.Init(ob);
+            card.Init(ob, rewardSprites[(int)ob.reward]);
         }
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(objectiveCardParent.GetComponent<RectTransform>());
@@ -81,6 +81,15 @@ public class ObjectiveManager : MonoBehaviour {
             yield return null;
 
         assignAwardPanel.SetActive(false);
+    }
+
+    public IEnumerator CollectRewards() {
+        float timer = 0;
+        while (timer <= 1) {
+
+            yield return null;
+            timer += Time.deltaTime;
+        }
     }
 
     public void EndObjectiveSequence() {

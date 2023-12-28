@@ -8,7 +8,7 @@ public class ObjectiveTracker : MonoBehaviour {
     List<Objective> activeObjectives;
     [SerializeField] GameObject objectiveCardPrefab, objectiveCardParent;
 
-    public void AssignObjectives(List<Objective> _obs) {
+    public void AssignObjectives(List<Objective> _obs, List<Sprite> rewardSprites) {
         activeObjectives = _obs;
         
         for (int i = objectiveCardParent.transform.childCount - 1; i >= 0; i--)
@@ -17,7 +17,7 @@ public class ObjectiveTracker : MonoBehaviour {
         foreach(Objective ob in activeObjectives) {
             ob.Init();
             ObjectiveCard obUI = Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
-            obUI.Init(ob);
+            obUI.Init(ob, rewardSprites[(int)ob.reward]);
         }
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());

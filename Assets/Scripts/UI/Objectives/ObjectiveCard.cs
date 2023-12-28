@@ -11,10 +11,12 @@ public class ObjectiveCard : MonoBehaviour {
     [SerializeField] TMP_Text objectiveText, progressText;
 
 
-    public virtual void Init(Objective _objective) {
+    public virtual void Init(Objective _objective, Sprite rewardSprite) {
         objective = _objective;
         objective.ObjectiveUpdateCallback += UpdateCard;
-        //reward.sprite = _reward;
+        if (reward)
+            reward.sprite = rewardSprite;
+
         UpdateCard(objective);
     } 
 
@@ -28,9 +30,16 @@ public class ObjectiveCard : MonoBehaviour {
         TMPro.FontStyles style = TMPro.FontStyles.Normal;
         if (ob.resolved) 
             style = TMPro.FontStyles.Strikethrough;
-        
+        Color color = Color.white;
+        if (ob.resolved) {
+            if (ob.succeeded) color = Color.green;
+            else color = Color.red;
+        }
+
         objectiveText.fontStyle = style;
         progressText.fontStyle = style;
+        objectiveText.color = color;
+        progressText.color = color;
     }
 
 
