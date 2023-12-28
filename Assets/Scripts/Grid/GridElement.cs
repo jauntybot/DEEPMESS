@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,7 +19,7 @@ public class GridElement : MonoBehaviour{
     public bool selectable, targeted;
     [HideInInspector] public PolygonCollider2D hitbox;
      public ElementCanvas elementCanvas;
-    public enum DamageType { Unspecified, Heal, Melee, Gravity, Bile, Slots };
+    public enum DamageType { Unspecified, Heal, Melee, Fall, Crush, Bile, Slots };
     public int hpMax, hpCurrent;
     public Shield shield;
     public int energyCurrent, energyMax;
@@ -29,7 +30,6 @@ public class GridElement : MonoBehaviour{
     public delegate void OnElementUpdate(GridElement ge);
     public virtual event OnElementUpdate ElementUpdated;
     public virtual event OnElementUpdate ElementDestroyed;
-    public virtual event OnElementUpdate ElementShielded;
 
     
     [Header("Audio")]
@@ -110,21 +110,23 @@ public class GridElement : MonoBehaviour{
         TargetElement(false);
     }
 
-    public virtual void DestroyElement(DamageType dmgType = DamageType.Unspecified) {
-        StopAllCoroutines();
-        StartCoroutine(DestroySequence(dmgType));
-    }
-
     public virtual IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified) {
         ElementDestroyed?.Invoke(this);
-               
+        GridElementDestroyedEvent evt = ObjectiveEvents.GridElementDestroyedEvent;
+        evt.element = this;
+        evt.damageType = dmgType;
+        //evt.source = 
+        ObjectiveEventManager.Broadcast(evt);
+
         PlaySound(destroyedSFX);
         
         if (elementCanvas)
             elementCanvas.ToggleStatsDisplay(false);
         yield return new WaitForSecondsRealtime(.5f);
+
         foreach (SpriteRenderer sr in gfx) 
             sr.enabled = false;
+            
         enabled = false;
         if (gameObject != null)
             Destroy(gameObject);
@@ -141,7 +143,7 @@ public class GridElement : MonoBehaviour{
 
     public virtual IEnumerator CollideFromBelow(GridElement above) {
         RemoveShield();
-        yield return StartCoroutine(DestroySequence(DamageType.Gravity));
+        yield return StartCoroutine(DestroySequence(DamageType.Crush));
     }
 
     public virtual void OnSharedSpace(GridElement sharedWith) {

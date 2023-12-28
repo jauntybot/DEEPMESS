@@ -30,10 +30,7 @@ public class Unit : GridElement {
 
     [Header("UNIT UI/UX")]
     public GameUnitUI ui;
-    public DescentPreview descentPreview;
     public Sprite portrait;
-    
-    [SerializeField] float animDur = 1f;
 
     [Header("UNIT AUDIO")]
     public SFX landingSFX;
@@ -145,11 +142,14 @@ public class Unit : GridElement {
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified) {
         ElementDestroyed?.Invoke(this);
+        GridElementDestroyedEvent evt = ObjectiveEvents.GridElementDestroyedEvent;
+        evt.element = this;
+        evt.damageType = dmgType;
+        //evt.source = 
+        ObjectiveEventManager.Broadcast(evt);
         
         PlaySound(destroyedSFX);
         yield return new WaitForSecondsRealtime(0.5f);
-
-        //gfxAnim.SetBool("Destoyed", true);
 
         if (manager.selectedUnit == this) manager.DeselectUnit();
 
@@ -191,7 +191,7 @@ public class Unit : GridElement {
         if (subGE is PlayerUnit)
             yield return StartCoroutine(DestroySequence());
         else
-            yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
+            yield return StartCoroutine(TakeDamage(1, DamageType.Fall));
     }
 
     

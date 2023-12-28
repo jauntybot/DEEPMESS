@@ -160,7 +160,7 @@ public class EnemyUnit : Unit {
             case DamageType.Bile:
                 gfxAnim.SetTrigger("Melt");
             break;
-            case DamageType.Gravity:
+            case DamageType.Crush:
                 gfxAnim.SetTrigger("Crush");
             break;
             case DamageType.Melee:
@@ -180,9 +180,7 @@ public class EnemyUnit : Unit {
         if (subGE is PlayerUnit)
             yield return StartCoroutine(DestroySequence());
         else {
-            if (subGE is not EnemyUnit) yield return StartCoroutine(TakeDamage(1, DamageType.Gravity, subGE));
-            else yield return StartCoroutine(TakeDamage(1, DamageType.Gravity, subGE));
-
+            yield return StartCoroutine(TakeDamage(1, DamageType.Fall, subGE));
         }
     }
 

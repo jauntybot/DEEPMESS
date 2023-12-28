@@ -14,7 +14,9 @@ public class ObjectiveManager : MonoBehaviour {
 
     [SerializeField] Button continueButton;
 
-    [SerializeField] List<Objective> possibleObjectives;
+    [Header("Serialized Objective Pools")]
+    [SerializeField] List<Objective> packetIObjectives;
+    [SerializeField] List<Objective> packetIIObjectives, packetIIIObjectives;
     [SerializeField] List<Sprite> possibleRewardSprites;
     public List<Objective> activeObjectives = new();
 
@@ -35,11 +37,18 @@ public class ObjectiveManager : MonoBehaviour {
     public IEnumerator AssignSequence() {
         reviewingObjectives = true;
         assignAwardPanel.SetActive(true);
-        activeObjectives = new();
-        
-        activeObjectives.Add(possibleObjectives[0]);
-        activeObjectives.Add(possibleObjectives[1]);
+        continueButton.GetComponentInChildren<TMPro.TMP_Text>().text = "ACCEPT OBJECTIVES";
 
+        activeObjectives = new();
+
+// Randomly assign objectives
+        ShuffleBag<Objective> rndBag = new();
+        for (int i = packetIObjectives.Count - 1; i >= 0; i--)
+            rndBag.Add(packetIObjectives[i]);
+        for (int u = 0; u <= 2; u++)
+            activeObjectives.Add(rndBag.Next());
+
+// Create UI cards
         tracker.AssignObjectives(activeObjectives);
 
         for (int i = objectiveCardParent.transform.childCount - 1; i >= 0; i--)
@@ -47,8 +56,8 @@ public class ObjectiveManager : MonoBehaviour {
         
         foreach(Objective ob in activeObjectives) {
             ob.Init();
-            ObjectiveCard obUI = Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
-            obUI.Init(ob);
+            ObjectiveCard card = Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
+            card.Init(ob);
         }
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(objectiveCardParent.GetComponent<RectTransform>());
@@ -62,6 +71,7 @@ public class ObjectiveManager : MonoBehaviour {
     public IEnumerator RewardSequence() {
         reviewingObjectives = true;
         assignAwardPanel.SetActive(true);
+        continueButton.GetComponentInChildren<TMPro.TMP_Text>().text = "COLLECT REWARDS";
 
         foreach(Objective ob in activeObjectives)
             ob.ProgressCheck(true);

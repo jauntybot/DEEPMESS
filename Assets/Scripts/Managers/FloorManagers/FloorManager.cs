@@ -41,7 +41,7 @@ public class FloorManager : MonoBehaviour {
     public delegate void OnFloorAction();
     public virtual event OnFloorAction DescendingUnits;
     public virtual event OnFloorAction DescendingFloors;
-    public virtual event OnFloorAction EnemySeeded;
+    public virtual event OnFloorAction FloorDescended;
    
     [Header("Grid Viz")]
     public Color playerColor;
@@ -322,6 +322,7 @@ public class FloorManager : MonoBehaviour {
                 yield return StartCoroutine(TransitionPackets((EnemyManager)currentFloor.enemy));
             }
         }
+        FloorDescended?.Invoke();
         descending = false;
     }
 
@@ -342,7 +343,6 @@ public class FloorManager : MonoBehaviour {
 
         if (enemy) {
             enemy.SeedUnits(currentFloor);
-            EnemySeeded?.Invoke();
         }
 
         scenario.player.DescendGrids(currentFloor);
@@ -454,7 +454,7 @@ public class FloorManager : MonoBehaviour {
             yield return StartCoroutine(unit.CollideFromAbove(subElement));
         }
         if (hardLand) {
-            yield return StartCoroutine(unit.TakeDamage(1, GridElement.DamageType.Gravity));
+            yield return StartCoroutine(unit.TakeDamage(1, GridElement.DamageType.Fall));
         }
 
     }
