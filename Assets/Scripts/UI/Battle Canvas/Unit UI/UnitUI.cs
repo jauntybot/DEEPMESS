@@ -13,7 +13,7 @@ public class UnitUI : MonoBehaviour {
     public Image portrait;
     
 
-    public virtual UnitUI Initialize(Unit u, Transform overviewParent = null, Transform overviewLayoutParent = null) {
+    public virtual UnitUI Initialize(Unit u) {
 
         unit = u;
         gameObject.name = unit.name + " - Unit UI";

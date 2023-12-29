@@ -18,7 +18,7 @@ public class UpgradeBranch : MonoBehaviour {
     
     public void ProgressBranch() {
         tier++;
-        upgradeManager.UpgradeUnit(upgradePath);
+        
         UpdateBranch();
     }
 

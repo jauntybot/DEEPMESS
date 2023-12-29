@@ -8,11 +8,10 @@ using System;
 public class UpgradeManager : MonoBehaviour {
 
     PlayerManager pManager;
-    List<PlayerUnit> units = new();
-    public PlayerUnit selectedUnit;
     
     [SerializeField] GameObject upgradePanel, unitUIContainer, particlePanel, particleContainer;
     [SerializeField] GameObject godParticleUIPrefab;
+    List<SlagEquipmentData.UpgradePath> particles = new();
     public UpgradeUIParticle selectedParticle;
 
 
@@ -23,17 +22,24 @@ public class UpgradeManager : MonoBehaviour {
 
 
     public void Init(List<Unit> _units, PlayerManager _pManager) {
+        for (int i = unitUIContainer.transform.childCount - 1; i >= 0; i--)
+            Destroy(unitUIContainer.transform.GetChild(i).gameObject);
         foreach (Unit unit in _units) {
             if (unit is PlayerUnit pu) {
-                units.Add(pu);
                 UnitUpgradeUI ui = Instantiate(unitUpgradeUIPrefab, unitUIContainer.transform).GetComponent<UnitUpgradeUI>();
-                ui.Initialize(pu);
+                ui.Initialize(pu, this);
                 unitUpgradeUIs.Add(ui);
             }
         }
+        UnitUpgradeUI hammer = Instantiate(unitUpgradeUIPrefab, unitUIContainer.transform).GetComponent<UnitUpgradeUI>();
+        hammer.Initialize(_pManager.hammerActions[0], this);
+        unitUpgradeUIs.Add(hammer);
         pManager = _pManager;      
+    }
 
-        selectedUnit = units[0];
+    public void CollectParticles(List<SlagEquipmentData.UpgradePath> _particles) {
+        foreach (SlagEquipmentData.UpgradePath part in _particles) 
+            particles.Add(part);
     }
 
     public IEnumerator UpgradeSequence() {
@@ -44,9 +50,9 @@ public class UpgradeManager : MonoBehaviour {
 // Instantiate particle UI buttons from PlayerManager
         for (int i = particleContainer.transform.childCount - 1; i >= 0; i--)
             Destroy(particleContainer.transform.GetChild(i).gameObject);
-        for (int n = 0; n <= pManager.collectedParticles.Count - 1; n++) {
+        for (int n = 0; n <= particles.Count - 1; n++) {
             UpgradeUIParticle newPart = Instantiate(godParticleUIPrefab, particleContainer.transform).GetComponent<UpgradeUIParticle>();
-            newPart.Init(pManager.collectedParticles[n]);
+            newPart.Init(particles[n]);
         }
         foreach (Transform part in particleContainer.transform) {
             UpgradeUIParticle partUI = part.GetComponent<UpgradeUIParticle>();
@@ -64,20 +70,9 @@ public class UpgradeManager : MonoBehaviour {
 
     public void SelectParticle(UpgradeUIParticle part) {
         selectedParticle = part;
+        SlagEquipmentData.UpgradePath path = (SlagEquipmentData.UpgradePath)(int)part.type;
         foreach (UnitUpgradeUI ui in unitUpgradeUIs) {
-            SlagEquipmentData.UpgradePath path = (SlagEquipmentData.UpgradePath)(int)part.type;
-            SlagEquipmentData equip = (SlagEquipmentData)ui.unit.equipment.Find(e => e is SlagEquipmentData && e is not HammerData);
-            switch (path) {
-                case SlagEquipmentData.UpgradePath.Power:
-                    ui.UpdateModifier(equip.upgradeStrings.powerStrings[equip.upgrades[path]]);
-                break;
-                case SlagEquipmentData.UpgradePath.Special:
-                    ui.UpdateModifier(equip.upgradeStrings.specialStrings[equip.upgrades[path]]);
-                break;
-                case SlagEquipmentData.UpgradePath.Unit:
-                    ui.UpdateModifier(equip.upgradeStrings.unitStrings[equip.upgrades[path]]);
-                break;
-            }
+            ui.UpdateModifier(path);
         }
     }
 
@@ -86,16 +81,14 @@ public class UpgradeManager : MonoBehaviour {
     }
 
     public void ApplyParticle() {
-
+        particles.Remove(selectedParticle.type);
+        Destroy(selectedParticle.gameObject);
+        foreach(UnitUpgradeUI ui in unitUpgradeUIs)
+            ui.ClearModifier();
     }
 
     public void EndUpgradeSequence() {
         upgrading = false;
-    }
-
-    public void UpgradeUnit(SlagEquipmentData.UpgradePath upgradePath) {
-        SlagEquipmentData data = (SlagEquipmentData)selectedUnit.equipment.Find(e => e is SlagEquipmentData);
-        data.UpgradeEquipment(selectedUnit, upgradePath);
     }
 
 }

@@ -22,7 +22,7 @@ MonoBehaviour:
   multiselect: 1
   firstTarget: {fileID: 0}
   adjacency: 1
-  range: 5
+  range: 3
   aoeAdjacency: 0
   aoeRange: 0
   energyCost: 1
@@ -32,15 +32,16 @@ MonoBehaviour:
   selectSFX: {fileID: 11400000, guid: 9a3d6531a09935b49afcc3ef0b43c9a9, type: 2}
   useSFX: {fileID: 11400000, guid: 406a2da6a39de9a4abce72e256e055b4, type: 2}
   slag: {fileID: 0}
+  totalUpgrades: 12
   upgradeStrings:
     powerStrings:
-    - +1 Unit HP"\n"+2 Throw Range
+    - +1 Unit HP<br>+2 Throw range
     - Grab and throw anything
     specialStrings:
     - Throw behind unit
     - Throw to the sides of unit
     unitStrings:
-    - +1 Unit HP"\n"Deal 1 damage on throw
+    - +1 Unit HP<br>Deal 1 damage on throw
     - Throw onto occupied spaces
   firstTargets:
   - {fileID: 2016796106260804354, guid: b12bed586f9b98a4b9f6045893aeb48a, type: 3}

@@ -21,28 +21,28 @@ public class SlagEquipmentDataEditor : Editor {
             GUILayout.Label("SPECIAL: " + arg.upgrades[SlagEquipmentData.UpgradePath.Special]);
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Upgrade"))
-                arg.UpgradeEquipment(arg.slag, SlagEquipmentData.UpgradePath.Special);
+                arg.UpgradeEquipment(SlagEquipmentData.UpgradePath.Special);
             if (GUILayout.Button("Reset")) {
                 arg.upgrades[SlagEquipmentData.UpgradePath.Special] = -1;
-                arg.UpgradeEquipment(arg.slag, SlagEquipmentData.UpgradePath.Special);
+                arg.UpgradeEquipment(SlagEquipmentData.UpgradePath.Special);
             }
             GUILayout.EndHorizontal();
             GUILayout.Label("POWER: " + arg.upgrades[SlagEquipmentData.UpgradePath.Power]);
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Upgrade"))
-                arg.UpgradeEquipment(arg.slag, SlagEquipmentData.UpgradePath.Power);
+                arg.UpgradeEquipment( SlagEquipmentData.UpgradePath.Power);
             if (GUILayout.Button("Reset")) {
                 arg.upgrades[SlagEquipmentData.UpgradePath.Power] = -1;
-                arg.UpgradeEquipment(arg.slag, SlagEquipmentData.UpgradePath.Power);
+                arg.UpgradeEquipment(SlagEquipmentData.UpgradePath.Power);
             }
             GUILayout.EndHorizontal();
             GUILayout.Label("UNIT: " + arg.upgrades[SlagEquipmentData.UpgradePath.Unit]);
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Upgrade"))
-                arg.UpgradeEquipment(arg.slag, SlagEquipmentData.UpgradePath.Unit);
+                arg.UpgradeEquipment(SlagEquipmentData.UpgradePath.Unit);
             if (GUILayout.Button("Reset")) {
                 arg.upgrades[SlagEquipmentData.UpgradePath.Unit] = -1;
-                arg.UpgradeEquipment(arg.slag, SlagEquipmentData.UpgradePath.Unit);
+                arg.UpgradeEquipment(SlagEquipmentData.UpgradePath.Unit);
             }
             GUILayout.EndHorizontal();
             

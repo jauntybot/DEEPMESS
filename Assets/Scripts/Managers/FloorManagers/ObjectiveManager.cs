@@ -80,6 +80,13 @@ public class ObjectiveManager : MonoBehaviour {
         while (reviewingObjectives)
             yield return null;
 
+// Particles collected, sent to upgrade manager
+        List<SlagEquipmentData.UpgradePath> particles = new();
+        foreach (Objective ob in activeObjectives) {
+            if (ob.succeeded) particles.Add(ob.reward);
+        }
+        upgrade.CollectParticles(particles);
+
         assignAwardPanel.SetActive(false);
     }
 

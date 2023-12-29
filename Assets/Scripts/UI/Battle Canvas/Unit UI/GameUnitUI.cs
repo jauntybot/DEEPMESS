@@ -17,8 +17,8 @@ public class GameUnitUI : UnitUI {
     [SerializeField] public UnitOverview overview;
     [SerializeField] protected GameObject overviewPrefab;
 
-    public override UnitUI Initialize(Unit u, Transform overviewParent = null, Transform overviewLayoutParent = null) {
-        UnitUI unitUI = base.Initialize(u, overviewParent, overviewLayoutParent);
+    public UnitUI Initialize(Unit u, Transform overviewParent = null, Transform overviewLayoutParent = null) {
+        UnitUI unitUI = base.Initialize(u);
 // Hard-coded portrait sprite placement <<.<<
         if (u is PlayerUnit) {
             portrait.rectTransform.localPosition = new Vector2(-113, -95);    

@@ -84,15 +84,15 @@ public class AnvilData : SlagEquipmentData {
         unit.UpdateElement(moveTo);
     }
 
-    public override void UpgradeEquipment(Unit user, UpgradePath targetPath) {
-        base.UpgradeEquipment(user, targetPath);
+    public override void UpgradeEquipment(UpgradePath targetPath) {
+        base.UpgradeEquipment(targetPath);
         if (targetPath ==  UpgradePath.Unit) {
 // UNIT TIER I - Upgrade move distance after placing
             if (upgrades[targetPath] == 1)
                 range = 3;
 // UNIT TIER II - Upgrade unit base movement
             else if (upgrades[targetPath] == 2) {
-                user.moveMod += 1;
+                slag.moveMod += 1;
                 adjacency = AdjacencyType.OfTypeInRange;
                 contextDisplay = GridContextuals.ContextDisplay.Parabolic;
             }
