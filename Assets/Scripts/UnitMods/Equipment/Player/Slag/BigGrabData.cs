@@ -168,8 +168,8 @@ public class BigGrabData : SlagEquipmentData {
         thrown.UpdateElement(coord);
     }
 
-    public override void UpgradeEquipment(Unit user, UpgradePath targetPath) {
-        base.UpgradeEquipment(user, targetPath);
+    public override void UpgradeEquipment(UpgradePath targetPath) {
+        base.UpgradeEquipment(targetPath);
         if (targetPath ==  UpgradePath.Unit) {
             if (upgrades[targetPath] == 1) {
                 slag.hpMax ++;

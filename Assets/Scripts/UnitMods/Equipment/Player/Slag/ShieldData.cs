@@ -66,8 +66,8 @@ public class ShieldData : SlagEquipmentData {
         target.ApplyShield(shield);
     }
 
-    public override void UpgradeEquipment(Unit user, UpgradePath targetPath) {
-        base.UpgradeEquipment(user, targetPath);
+    public override void UpgradeEquipment(UpgradePath targetPath) {
+        base.UpgradeEquipment(targetPath);
         if (targetPath == UpgradePath.Power) {
             if (upgrades[targetPath] == 0) {
                 adjacency = AdjacencyType.Diamond;
@@ -78,7 +78,7 @@ public class ShieldData : SlagEquipmentData {
             }
             if (upgrades[targetPath] == 2) {
                 range = 3;
-                user.moveMod += 1;
+                slag.moveMod += 1;
             }
         } else if (targetPath ==  UpgradePath.Unit) {
             if (upgrades[targetPath] == 1) {
