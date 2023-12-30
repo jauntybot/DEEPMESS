@@ -46,11 +46,11 @@ public class EnemyDetonateUnit : EnemyUnit
         yield return co;
     }
 
-    public override IEnumerator DestroySequence(DamageType dmgType) {
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
         if (primed)
             yield return StartCoroutine(ExplodeCo());
         else
-            yield return base.DestroySequence(dmgType);
+            yield return base.DestroySequence(dmgType, source, sourceEquip);
     }
 
 }

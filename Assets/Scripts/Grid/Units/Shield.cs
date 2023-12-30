@@ -5,6 +5,7 @@ using UnityEngine;
 public class Shield : MonoBehaviour {
 
     [HideInInspector] public Unit unit;
+    [HideInInspector] public ShieldData data;
     public SpriteRenderer gfx;
     public bool buoyant, thorns, healing;
 

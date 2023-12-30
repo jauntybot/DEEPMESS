@@ -140,7 +140,7 @@ public class EnemyUnit : Unit {
         return coord;
     }
 
-    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) {
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
         int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg * 2 : dmg;
         if (hpCurrent - modifiedDmg <= hpMax/2) 
             gfxAnim.SetBool("Damaged", true);
@@ -152,7 +152,7 @@ public class EnemyUnit : Unit {
         yield return base.TakeDamage(dmg, dmgType, source);
     }
 
-    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified) {
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
         switch(dmgType) {
             case DamageType.Unspecified:
                 gfxAnim.SetTrigger("Split");
@@ -170,15 +170,15 @@ public class EnemyUnit : Unit {
         
         Splatter(Vector2.zero);
 
-        return base.DestroySequence(dmgType);
+        return base.DestroySequence(dmgType, source, sourceEquip);
     }
 
-    public override IEnumerator CollideFromAbove(GridElement subGE) {
+    public override IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0) {
         if (manager.scenario.tutorial.isActiveAndEnabled && !manager.scenario.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
             manager.scenario.tutorial.StartCoroutine(manager.scenario.tutorial.DescentDamage());
         
         if (subGE is PlayerUnit)
-            yield return StartCoroutine(DestroySequence());
+            yield return StartCoroutine(DestroySequence(DamageType.Fall, subGE));
         else {
             yield return StartCoroutine(TakeDamage(1, DamageType.Fall, subGE));
         }

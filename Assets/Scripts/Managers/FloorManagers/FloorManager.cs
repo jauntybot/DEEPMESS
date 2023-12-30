@@ -253,6 +253,11 @@ public class FloorManager : MonoBehaviour {
         
         EnemyManager enemy = (EnemyManager)currentFloor.enemy;
         enemy.InterruptReinforcements();
+        List<Unit> enemyUnits = new();
+        foreach (GridElement ge in currentFloor.gridElements) {
+            if (ge is Unit u)
+                enemyUnits.Add(u);
+        }
 
         currentFloor.DisableGridHighlight();
         currentFloor.LockGrid(true);
@@ -306,6 +311,7 @@ public class FloorManager : MonoBehaviour {
                 // }
                 
 // Descend units from previous floor
+
                 yield return StartCoroutine(DescendUnits(floors[currentFloor.index -1].gridElements, enemy));
 
 // Check for boss spawn
@@ -323,6 +329,11 @@ public class FloorManager : MonoBehaviour {
             }
         }
         FloorDescended?.Invoke();
+        FloorDescentEvent evt = ObjectiveEvents.FloorDescentEvent;
+        evt.floorIndex = currentFloor.index;
+        evt.enemyDescentsCount = enemyUnits.Count;
+        ObjectiveEventManager.Broadcast(evt);
+
         descending = false;
     }
 
@@ -451,9 +462,8 @@ public class FloorManager : MonoBehaviour {
         if (subElement) {
             StartCoroutine(subElement.CollideFromBelow(unit));
 
-            yield return StartCoroutine(unit.CollideFromAbove(subElement));
-        }
-        if (hardLand) {
+            yield return StartCoroutine(unit.CollideFromAbove(subElement, hardLand?1:0));
+        } else if (hardLand) {
             yield return StartCoroutine(unit.TakeDamage(1, GridElement.DamageType.Fall));
         }
 
@@ -616,19 +626,19 @@ public class FloorManager : MonoBehaviour {
             yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
         }
         yield return new WaitForSecondsRealtime(0.25f);
-        List<Coroutine> cos = new();
-        for (int i = scenario.player.units.Count - 1; i >= 0; i-- ) {
-            Unit u = scenario.player.units[i];
-            if (u is not PlayerUnit && u is not Nail)
-                cos.Add(StartCoroutine(u.DestroySequence()));
-        }
-        
-        for (int i = cos.Count - 1; i >= 0; i--) {
-            if (cos[i] != null) 
-                yield return cos[i];
-            else
-                cos.RemoveAt(i);
-        }
+// Destroy Anvils
+        // List<Coroutine> cos = new();
+        // for (int i = scenario.player.units.Count - 1; i >= 0; i-- ) {
+        //     Unit u = scenario.player.units[i];
+        //     if (u is not PlayerUnit && u is not Nail)
+        //         cos.Add(StartCoroutine(u.DestroySequence()));
+        // }
+        // for (int i = cos.Count - 1; i >= 0; i--) {
+        //     if (cos[i] != null) 
+        //         yield return cos[i];
+        //     else
+        //         cos.RemoveAt(i);
+        // }
         
 // Lerp units into screen
         List<Unit> units = new() { scenario.player.units[0], scenario.player.units[1], scenario.player.units[2], scenario.player.units[3] };
@@ -650,7 +660,7 @@ public class FloorManager : MonoBehaviour {
         
 // Endlessly falling
         cavityWait = true;
-        StartCoroutine(FloatingUnits());
+        Coroutine floating = StartCoroutine(FloatingUnits());
 
 
 // Objective award + Upgrade sequence
@@ -661,6 +671,7 @@ public class FloorManager : MonoBehaviour {
 
         yield return scenario.objectiveManager.AssignSequence();
         
+        StopCoroutine(floating);
         timer = 0;
         Vector3 startPos = transitionParent.transform.position;
         while (timer <= unitDropDur*2) {

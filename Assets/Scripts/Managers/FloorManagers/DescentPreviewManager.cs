@@ -77,7 +77,10 @@ public class DescentPreviewManager : MonoBehaviour
     public void PreviewButton() {
         int dir = previewing ? 1 : -1;
         previewing = !previewing;
-        Debug.Log(dir);
+        
+        FloorPeekEvent evt = ObjectiveEvents.FloorPeekEvent;
+        evt.down = dir != 1;
+        ObjectiveEventManager.Broadcast(evt);
 
         if (tut && floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
             StartCoroutine(PeekTutorial(previewing));

@@ -54,6 +54,10 @@ public class EquipmentData : ScriptableObject {
     }
 
     public virtual IEnumerator UseEquipment(GridElement user, GridElement target = null) {
+        OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
+        evt.data = this; evt.user = user; evt.target = target;
+        ObjectiveEventManager.Broadcast(evt);
+        
         user.energyCurrent -= energyCost;
         if (user is PlayerUnit pu) {
             PlayerManager manager = (PlayerManager)pu.manager;
@@ -61,7 +65,6 @@ public class EquipmentData : ScriptableObject {
             manager.undoOrder = new List<Unit>();
         }
         user.elementCanvas.UpdateStatsDisplay();
-
         
         user.PlaySound(useSFX);
 

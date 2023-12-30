@@ -19,7 +19,7 @@ public class GridElement : MonoBehaviour{
     public bool selectable, targeted;
     [HideInInspector] public PolygonCollider2D hitbox;
      public ElementCanvas elementCanvas;
-    public enum DamageType { Unspecified, Heal, Melee, Fall, Crush, Bile, Slots };
+    public enum DamageType { Unspecified, Heal, Melee, Fall, Crush, Bile, Explosion };
     public int hpMax, hpCurrent;
     public Shield shield;
     public int energyCurrent, energyMax;
@@ -85,7 +85,8 @@ public class GridElement : MonoBehaviour{
     }
 
   
-    public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) {
+    public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+        ObjectiveEventManager.Broadcast(GenerateDamageEvent(dmgType, dmg, source, sourceEquip));
         if (shield == null || Mathf.Sign(dmg) == -1) {
             if (Mathf.Sign(dmg) == 1) 
                 PlaySound(dmgdSFX);
@@ -104,19 +105,25 @@ public class GridElement : MonoBehaviour{
             RemoveShield();
         }
         if (hpCurrent <= 0) {
-            yield return StartCoroutine(DestroySequence(dmgType));
+            yield return StartCoroutine(DestroySequence(dmgType, source, sourceEquip));
         }
         //yield return new WaitForSecondsRealtime(.4f);
         TargetElement(false);
     }
 
-    public virtual IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified) {
-        ElementDestroyed?.Invoke(this);
-        GridElementDestroyedEvent evt = ObjectiveEvents.GridElementDestroyedEvent;
+    protected virtual GridElementDamagedEvent GenerateDamageEvent(DamageType dmgType, int dmg, GridElement source = null, EquipmentData sourceEquip = null) {
+        GridElementDamagedEvent evt = ObjectiveEvents.GridElementDamagedEvent;
         evt.element = this;
         evt.damageType = dmgType;
-        //evt.source = 
-        ObjectiveEventManager.Broadcast(evt);
+        evt.dmg = dmg;
+        evt.source = source;
+        evt.sourceEquip = sourceEquip;
+        return evt;
+    }
+
+    public virtual IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+        ElementDestroyed?.Invoke(this);
+        ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
 
         PlaySound(destroyedSFX);
         
@@ -130,7 +137,15 @@ public class GridElement : MonoBehaviour{
         enabled = false;
         if (gameObject != null)
             Destroy(gameObject);
-        
+    }
+
+    protected virtual GridElementDestroyedEvent GenerateDestroyEvent(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+        GridElementDestroyedEvent evt = ObjectiveEvents.GridElementDestroyedEvent;
+        evt.element = this;
+        evt.damageType = dmgType;
+        evt.source = source;
+        evt.sourceEquip = sourceEquip;
+        return evt;
     }
 
     public virtual void TargetElement(bool state) 
@@ -145,6 +160,13 @@ public class GridElement : MonoBehaviour{
         RemoveShield();
         yield return StartCoroutine(DestroySequence(DamageType.Crush));
     }
+
+// For when a Slag is acting on a Unit to move it, such as BigGrab or any push mechanics
+    public virtual IEnumerator CollideFromBelow(GridElement above, GridElement source, EquipmentData sourceEquip) {
+        RemoveShield();
+        yield return StartCoroutine(DestroySequence(DamageType.Crush, source, sourceEquip));
+    }
+
 
     public virtual void OnSharedSpace(GridElement sharedWith) {
         

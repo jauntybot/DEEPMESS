@@ -8,8 +8,10 @@ public class Objective : ScriptableObject {
 
     public string objectiveString;
     public int progress, goal;
-    public bool resolved, succeeded;
+    public enum Operator { OrMore, LessThan }
+    public Operator operation;
     public SlagEquipmentData.UpgradePath reward;
+    public bool resolved, succeeded;
     public delegate void OnObjectiveCondition(Objective objective);
     public event OnObjectiveCondition ObjectiveUpdateCallback;
 
@@ -23,12 +25,23 @@ public class Objective : ScriptableObject {
 
     public virtual void ProgressCheck(bool final = false) {
         if (!resolved) {
-            if (progress >= goal) {
+            switch (operation) {
+                case Operator.OrMore:
+                    if (progress >= goal) {
+                        resolved = true;
+                        succeeded = true;
+                    } 
+                break;
+                case Operator.LessThan:
+                    if (progress >= goal) {
+                        resolved = true;
+                    }
+                break;
+            }
+            if (final) {
                 resolved = true;
-                succeeded = true;
-            } 
-            if (final) 
-                resolved = true;
+                if (progress < goal) succeeded = true;
+            }
 
             ObjectiveUpdateCallback?.Invoke(this);
         }

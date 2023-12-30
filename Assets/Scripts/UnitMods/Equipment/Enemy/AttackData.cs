@@ -58,15 +58,19 @@ public class AttackData : EquipmentData {
         }
 
         List<Coroutine> cos = new();
+        int thornDmg = 0;
         if (target is Nail n) {
             if (n.manager.scenario.tutorial != null && n.manager.scenario.tutorial.isActiveAndEnabled && !n.manager.scenario.tutorial.nailDamageEncountered && n.manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
                 n.manager.scenario.tutorial.StartCoroutine(n.manager.scenario.tutorial.NailDamage());
             }
             CameraController.instance.StartCoroutine(CameraController.instance.ScreenShake(0.125f, 0.5f));
-            cos.Add(user.StartCoroutine(user.TakeDamage(1, GridElement.DamageType.Melee, n)));
+            dmg++;
         }
-        if (target.shield && target.shield.thorns) cos.Add(user.StartCoroutine(user.TakeDamage(1, GridElement.DamageType.Melee, target)));
-        cos.Add(target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user)));
+// SHIELD SPECIAL TIER II -- Deal thorns damage to attacking unit
+        if (target.shield && target.shield.thorns) dmg++;
+
+        if (thornDmg > 0) cos.Add(user.StartCoroutine(user.TakeDamage(1, GridElement.DamageType.Melee, target)));
+        cos.Add(target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user, this)));
         
         for (int i = cos.Count - 1; i >= 0; i--)
             yield return cos[i];

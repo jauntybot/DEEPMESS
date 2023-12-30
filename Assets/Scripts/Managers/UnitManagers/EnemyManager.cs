@@ -117,6 +117,10 @@ public class EnemyManager : UnitManager {
 
 
     public void EndTurn() {
+        EndTurnEvent evt = ObjectiveEvents.EndTurnEvent;
+        evt.player = true;
+        ObjectiveEventManager.Broadcast(evt);
+
         if (selectedUnit)
            DeselectUnit();
         foreach (Unit unit in units) {
@@ -244,7 +248,7 @@ public class EnemyManager : UnitManager {
         pendingUnitUIs = new List<GameObject>();
 
         for (int i = pendingUnits.Count - 1; i >= 0; i--) {
-            StartCoroutine(pendingUnits[i].DestroySequence());
+            Destroy(pendingUnits[i].gameObject);
         }
     }
     protected override void RemoveUnit(GridElement ge) {

@@ -5,11 +5,9 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Objective/Eliminations")]
 public class EliminationObjective : Objective {
     
-    public enum ObjectiveType { EnemyEliminations, EnemyCrushes, EnemyOnEnemyEliminations, AnvilEliminations, WallEliminations };
-    
-    [Header("Enemy Conditions")]
+    public enum ObjectiveType { EnemyEliminations, EnemyCrushes, EnemyOnEnemyEliminations, DestroyAnvils, DestroyWalls, AnvilEliminations, BigGrabEliminations, ShieldEliminations };
+    [Header("Elimination Conditions")]
     [SerializeField] ObjectiveType objectiveType;
-    protected List<GridElement> targetElements;
 
     public override void Init() {
         base.Init();
@@ -26,13 +24,22 @@ public class EliminationObjective : Objective {
                 if (evt.element is EnemyUnit && evt.damageType == GridElement.DamageType.Crush) progress++;
             break;
             case ObjectiveType.EnemyOnEnemyEliminations:
-
+                if (evt.element is EnemyUnit && evt.source is EnemyUnit) progress++;
             break;
-            case ObjectiveType.AnvilEliminations:
+            case ObjectiveType.DestroyAnvils:
                 if (evt.element is Anvil) progress++;
             break;
-            case ObjectiveType.WallEliminations:
+            case ObjectiveType.DestroyWalls:
                 if (evt.element is Wall) progress++;
+            break;
+            case ObjectiveType.AnvilEliminations:
+                if (evt.element is EnemyUnit && evt.source is Anvil) progress++;
+            break;
+            case ObjectiveType.BigGrabEliminations:
+                if (evt.element is EnemyUnit && evt.sourceEquip is BigGrabData) progress++;
+            break;
+            case ObjectiveType.ShieldEliminations:
+                if (evt.element is EnemyUnit && (evt.source.shield || evt.sourceEquip is ShieldData)) progress++;
             break;
         }
 

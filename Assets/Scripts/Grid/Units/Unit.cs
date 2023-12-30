@@ -129,31 +129,55 @@ public class Unit : GridElement {
         }
     }
 
-    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null) {
+// For when a Slag is acting on a Unit to move it, such as BigGrab or any push mechanics
+    public virtual void UpdateElement(Vector2 c, GridElement source = null, EquipmentData sourceEquip = null) {
+        base.UpdateElement(c);
+        if (manager.scenario.currentTurn != ScenarioManager.Turn.Cascade) {
+            Tile targetSqr = grid.tiles.Find(sqr => sqr.coord == c);
+            if (targetSqr.tileType == Tile.TileType.Blood) {
+                targetSqr.PlaySound(targetSqr.dmgdSFX);
+// SHIELD UNIT TIER II -- Blood bouyancy
+                if (!(shield && shield.buoyant))
+                    ApplyCondition(Status.Restricted);
+            } else if (targetSqr.tileType == Tile.TileType.Bile && hpCurrent > 0) {
+// SHIELD UNIT TIER II -- Bile bouyancy
+                targetSqr.PlaySound(targetSqr.dmgdSFX);
+                if (!(shield && shield.buoyant)) {
+                    RemoveShield();
+                    StartCoroutine(TakeDamage(hpMax, DamageType.Bile, source, sourceEquip));
+                }
+            } else if (targetSqr is TileBulb) {
+// Harvest Tile Bulb
+                if (this is PlayerUnit pu && grid.tiles.Find(sqr => sqr.coord == coord) is TileBulb tb && pu.pManager.overrideEquipment == null) {
+                    if (!tb.harvested && equipment.Find(e => e is BulbEquipmentData) == null)
+                        tb.HarvestBulb(pu);
+                }
+            } else {
+                RemoveCondition(Status.Restricted);
+            }
+        }
+    }
+
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
 
         bool prevTargeted = targeted;
         TargetElement(true);
 
         int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg * 2 : dmg;
-        yield return base.TakeDamage(modifiedDmg, dmgType, source);
+        yield return base.TakeDamage(modifiedDmg, dmgType, source, sourceEquip);
 
         TargetElement(targeted);
     }
 
-    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified) {
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
         ElementDestroyed?.Invoke(this);
-        GridElementDestroyedEvent evt = ObjectiveEvents.GridElementDestroyedEvent;
-        evt.element = this;
-        evt.damageType = dmgType;
-        //evt.source = 
-        ObjectiveEventManager.Broadcast(evt);
+        ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
         
         PlaySound(destroyedSFX);
         yield return new WaitForSecondsRealtime(0.5f);
 
         if (manager.selectedUnit == this) manager.DeselectUnit();
 
-        enabled = false;
         if (gameObject != null)
             Destroy(gameObject);
     }
@@ -184,14 +208,27 @@ public class Unit : GridElement {
 
     }
 
-    public virtual IEnumerator CollideFromAbove(GridElement subGE) {
+    public virtual IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0) {
+// Tutorial tooltip popup
         if (manager.scenario.tutorial.isActiveAndEnabled && !manager.scenario.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
             manager.scenario.tutorial.StartCoroutine(manager.scenario.tutorial.DescentDamage());
         
         if (subGE is PlayerUnit)
             yield return StartCoroutine(DestroySequence());
         else
-            yield return StartCoroutine(TakeDamage(1, DamageType.Fall));
+            yield return StartCoroutine(TakeDamage(1 + hardLand, DamageType.Fall));
+    }
+
+// For when a Slag is acting on a Unit to move it, such as BigGrab or any push mechanics
+    public virtual IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0, GridElement source = null, EquipmentData sourceEquip = null) {
+// Tutorial tooltip popup
+        if (manager.scenario.tutorial.isActiveAndEnabled && !manager.scenario.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
+            manager.scenario.tutorial.StartCoroutine(manager.scenario.tutorial.DescentDamage());
+        
+        if (subGE is PlayerUnit)
+            yield return StartCoroutine(DestroySequence());
+        else
+            yield return StartCoroutine(TakeDamage(1 + hardLand, DamageType.Fall, source, sourceEquip));
     }
 
     
@@ -215,6 +252,12 @@ public class Unit : GridElement {
         if (!conditions.Contains(s)) {
             conditions.Add(s);
             conditionDisplay.UpdateCondition(s);
+
+            UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
+            evt.condition = s;
+            evt.target = this;
+            ObjectiveEventManager.Broadcast(evt);
+
             switch(s) {
                 default: return;
                 case Status.Normal: return;

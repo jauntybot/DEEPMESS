@@ -12,7 +12,7 @@ public class ObjectiveManager : MonoBehaviour {
     [SerializeField] GameObject assignAwardPanel;
     [SerializeField] GameObject objectiveCardParent, objectiveCardPrefab;
 
-    [SerializeField] Button continueButton;
+    [SerializeField] Button rerollButton, continueButton;
 
     [Header("Serialized Objective Pools")]
     [SerializeField] List<Objective> packetIObjectives;
@@ -34,44 +34,11 @@ public class ObjectiveManager : MonoBehaviour {
     }
     #endregion
 
-    public IEnumerator AssignSequence() {
-        reviewingObjectives = true;
-        assignAwardPanel.SetActive(true);
-        continueButton.GetComponentInChildren<TMPro.TMP_Text>().text = "ACCEPT OBJECTIVES";
-
-        activeObjectives = new();
-
-// Randomly assign objectives
-        ShuffleBag<Objective> rndBag = new();
-        for (int i = packetIObjectives.Count - 1; i >= 0; i--)
-            rndBag.Add(packetIObjectives[i]);
-        for (int u = 0; u <= 2; u++)
-            activeObjectives.Add(rndBag.Next());
-
-// Create UI cards
-        tracker.AssignObjectives(activeObjectives, rewardSprites);
-
-        for (int i = objectiveCardParent.transform.childCount - 1; i >= 0; i--)
-            Destroy(objectiveCardParent.transform.GetChild(i).gameObject);
-        
-        foreach(Objective ob in activeObjectives) {
-            ob.Init();
-            ObjectiveCard card = Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
-            card.Init(ob, rewardSprites[(int)ob.reward]);
-        }
-
-        LayoutRebuilder.ForceRebuildLayoutImmediate(objectiveCardParent.GetComponent<RectTransform>());
-
-        while (reviewingObjectives)
-            yield return null;
-
-        assignAwardPanel.SetActive(false);
-    }
-
     public IEnumerator RewardSequence() {
         reviewingObjectives = true;
         assignAwardPanel.SetActive(true);
         continueButton.GetComponentInChildren<TMPro.TMP_Text>().text = "COLLECT REWARDS";
+        rerollButton.gameObject.SetActive(false);
 
         foreach(Objective ob in activeObjectives)
             ob.ProgressCheck(true);
@@ -88,6 +55,60 @@ public class ObjectiveManager : MonoBehaviour {
         upgrade.CollectParticles(particles);
 
         assignAwardPanel.SetActive(false);
+    }
+
+    public IEnumerator AssignSequence() {
+        reviewingObjectives = true;
+        assignAwardPanel.SetActive(true);
+        continueButton.GetComponentInChildren<TMPro.TMP_Text>().text = "ACCEPT OBJECTIVES";
+        rerollButton.gameObject.SetActive(true);
+
+        RerollObjectives();
+
+        while (reviewingObjectives)
+            yield return null;
+
+        assignAwardPanel.SetActive(false);
+    }
+
+
+    public void RerollObjectives() {
+       activeObjectives = new();
+
+        List<Objective> packetObjectives = new();
+        switch(FloorManager.instance.floorSequence.activePacket.packetType) {
+            default:
+            case FloorPacket.PacketType.I:
+                packetObjectives = packetIObjectives;
+            break;
+            case FloorPacket.PacketType.II:
+                packetObjectives = packetIIObjectives;
+            break;
+            case FloorPacket.PacketType.III:
+                packetObjectives = packetIIIObjectives;
+            break;
+        }
+
+// Randomly assign objectives
+        ShuffleBag<Objective> rndBag = new();
+        for (int i = packetObjectives.Count - 1; i >= 0; i--)
+            rndBag.Add(packetObjectives[i]);
+        for (int u = 0; u <= 2; u++)
+            activeObjectives.Add(rndBag.Next());
+
+// Create UI cards
+        tracker.AssignObjectives(activeObjectives, rewardSprites);
+
+        for (int i = objectiveCardParent.transform.childCount - 1; i >= 0; i--)
+            Destroy(objectiveCardParent.transform.GetChild(i).gameObject);
+        
+        foreach(Objective ob in activeObjectives) {
+            ob.Init();
+            ObjectiveCard card = Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
+            card.Init(ob, rewardSprites[(int)ob.reward]);
+        }
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(objectiveCardParent.GetComponent<RectTransform>());
     }
 
     public IEnumerator CollectRewards() {

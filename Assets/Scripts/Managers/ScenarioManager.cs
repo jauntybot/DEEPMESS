@@ -246,6 +246,10 @@ public class ScenarioManager : MonoBehaviour
 
 // public function for UI buttons
     public void EndTurn() {
+        EndTurnEvent evt = ObjectiveEvents.EndTurnEvent;
+        evt.player = false;
+        ObjectiveEventManager.Broadcast(evt);
+
         player.overrideEquipment = null;
         if (floorManager.floorSequence.currentThreshold == FloorPacket.PacketType.Tutorial)
             tutorial.SwitchTurns();

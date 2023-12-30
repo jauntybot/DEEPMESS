@@ -453,6 +453,7 @@ public class PlayerManager : UnitManager {
             foreach (Unit u in units) 
                 u.UpdateAction();
             PlayerUnit lastMoved = (PlayerUnit)undoOrder[undoOrder.Count - 1];
+// Undo bulb harvest
             if (harvestedByMove.ContainsKey(lastMoved)) {
                 if (harvestedByMove[lastMoved] is TileBulb harvested) {
                     harvested.UndoHarvest();
@@ -465,6 +466,16 @@ public class PlayerManager : UnitManager {
                     harvestedByMove.Remove(lastMoved);
                 }
             }
+// Undo objective scoring
+            Tile targetSqr = currentGrid.tiles.Find(sqr => sqr.coord == lastMoved.coord);
+            if (targetSqr.tileType == Tile.TileType.Blood) {
+                UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
+                evt.condition = Unit.Status.Restricted;
+                evt.target = lastMoved;
+                evt.undo = true;
+                ObjectiveEventManager.Broadcast(evt);
+            }
+// Snap unit to undo position
             MoveData move = (MoveData)cascadeMovement;
             StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved], true));
             lastMoved.moved = false;
