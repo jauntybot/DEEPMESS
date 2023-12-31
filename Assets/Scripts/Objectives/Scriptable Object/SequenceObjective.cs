@@ -21,6 +21,7 @@ public class SequenceObjective : Objective {
             case ObjectiveType.TwoKillDescend:
                 ObjectiveEventManager.AddListener<GridElementDestroyedEvent>(TwoKillDescendCheck);
                 ObjectiveEventManager.AddListener<FloorDescentEvent>(TwoKillDescendCheck);
+                ObjectiveEventManager.AddListener<EndTurnEvent>(TwoKillDescendCheck);
             break;
             case ObjectiveType.StandInBlood:
                 ObjectiveEventManager.AddListener<UnitConditionEvent>(StandInBloodCheck);
@@ -48,6 +49,11 @@ public class SequenceObjective : Objective {
         if (progress >= 2) progress++;
         ProgressCheck();
         if (!resolved) progress = 0;
+    }
+
+    protected virtual void TwoKillDescendCheck(EndTurnEvent evt) {
+        if (evt.toTurn == ScenarioManager.Turn.Player && !resolved) progress = 0;
+        ProgressCheck();
     }
 
 // Stand in blood

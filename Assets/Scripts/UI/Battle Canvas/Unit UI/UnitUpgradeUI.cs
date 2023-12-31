@@ -9,9 +9,10 @@ public class UnitUpgradeUI : UnitUI {
     UpgradeManager upgrade;
     SlagEquipmentData equip;
     [SerializeField] Button upgradeButton;
-    [SerializeField] TMP_Text modifiersTMP, activeModifiersTMP;
     [SerializeField] GameObject particlePrefab;
-    public RectTransform particlesLayout, emptyParticlesLayout;
+    public RectTransform slot1, slot2, slot3;
+    [SerializeField] TMP_Text slot1ModifiersTMP, slot2ModifiersTMP, slot3ModifiersTMP;
+    int appliedUpgrades = 0;
     [SerializeField] List<Color> particleSprites;
     SlagEquipmentData.UpgradePath activeParticle;
 
@@ -23,6 +24,11 @@ public class UnitUpgradeUI : UnitUI {
         equip = (SlagEquipmentData)u.equipment.Find(e => e is SlagEquipmentData && e is not HammerData);
         upgradeButton.GetComponent<UpgradeButtonHoldHandler>().Init(this);
         upgrade = _upgrade;
+        appliedUpgrades = 0;
+                
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
+
         return ui;
     }
 
@@ -32,17 +38,19 @@ public class UnitUpgradeUI : UnitUI {
         unitName.text = "HAMMER";
         equip = hammer;
         upgradeButton.GetComponent<UpgradeButtonHoldHandler>().Init(this);
-        Destroy(emptyParticlesLayout.GetChild(emptyParticlesLayout.childCount - 1).gameObject);
+        Destroy(slot3.gameObject);
         upgrade = _upgrade;
+        appliedUpgrades = 0;
         return this;
     }
 
     public void UpdateModifier(SlagEquipmentData.UpgradePath path) {
         ClearModifier();
+
         activeParticle = path;
         string mod = "";
         if (equip.totalUpgrades < 3 || equip.upgrades[path] < 2) {
-            previewParticle = Instantiate(particlePrefab, particlesLayout);
+            previewParticle = Instantiate(particlePrefab, CurrentSlot());
             previewParticle.GetComponentInChildren<Image>().color = new Color(particleSprites[(int)path].r, particleSprites[(int)path].g, particleSprites[(int)path].b, 0.6f);
             switch (path) {
                 case SlagEquipmentData.UpgradePath.Power:
@@ -56,7 +64,28 @@ public class UnitUpgradeUI : UnitUI {
                 break;
             }
         } else mod = "MAX UPGRADES";
-        modifiersTMP.text = mod;
+
+        TMP_Text tmp;
+        switch (appliedUpgrades) {
+            default:
+            case 0: tmp = slot1ModifiersTMP; break;
+            case 1: tmp = slot2ModifiersTMP; break;
+            case 2: tmp = slot3ModifiersTMP; break;
+        }
+        tmp.transform.parent.gameObject.SetActive(true);
+        tmp.text = mod;
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
+    }
+
+    public RectTransform CurrentSlot() {
+        switch (appliedUpgrades) {
+            default:
+            case 0: return slot1;
+            case 1: return slot2;
+            case 2: return slot3;
+        }
     }
 
     public void ClearModifier(bool apply = false) {
@@ -67,26 +96,37 @@ public class UnitUpgradeUI : UnitUI {
             image.color = new Color(image.color.r, image.color.g, image.color.b, 1);
             previewParticle = null;
         }
-        modifiersTMP.text = "";
+
+        if (!apply) {
+            TMP_Text tmp;
+            switch (appliedUpgrades) {
+                default:
+                case 0: tmp = slot1ModifiersTMP; break;
+                case 1: tmp = slot2ModifiersTMP; break;
+                case 2: tmp = slot3ModifiersTMP; break;
+            }
+            tmp.transform.parent.gameObject.SetActive(false);
+            tmp.text = "";
+            
+        }
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
     }
 
 
     public void ApplyUpgrade() {
-        equip.UpgradeEquipment(activeParticle);
-        ClearModifier(true);
+        TMP_Text tmp;
+        switch (appliedUpgrades) {
+            default:
+            case 0: tmp = slot1ModifiersTMP; break;
+            case 1: tmp = slot2ModifiersTMP; break;
+            case 2: tmp = slot3ModifiersTMP; break;
+        }
+        tmp.transform.parent.gameObject.SetActive(true);
+        appliedUpgrades++;
 
-        string activeMods = "";
-        for (int i = 0; i <= equip.upgrades[SlagEquipmentData.UpgradePath.Power] - 1; i++) {
-            activeMods += equip.upgradeStrings.powerStrings[i] + '\n';
-        }
-        for (int i = 0; i <= equip.upgrades[SlagEquipmentData.UpgradePath.Special] - 1; i++) {
-            activeMods += equip.upgradeStrings.specialStrings[i] + '\n';
-        }
-        for (int i = 0; i <= equip.upgrades[SlagEquipmentData.UpgradePath.Unit] - 1; i++) {
-            activeMods += equip.upgradeStrings.unitStrings[i] + '\n';
-        }
-        activeModifiersTMP.text = activeMods;
-        
+        equip.UpgradeEquipment(activeParticle);
         upgrade.ApplyParticle();
     }
 

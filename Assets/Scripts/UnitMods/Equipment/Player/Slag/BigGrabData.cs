@@ -119,6 +119,11 @@ public class BigGrabData : SlagEquipmentData {
             SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(user.coord), Quaternion.identity).GetComponent<SpriteRenderer>();
             sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
             Coroutine co = user.StartCoroutine(ThrowUnit((Unit)user, (Unit)firstTarget, target.coord));
+            
+            OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
+            evt.data = this; evt.user = user; evt.target = firstTarget;
+            ObjectiveEventManager.Broadcast(evt);
+            
             firstTarget = null;
             yield return base.UseEquipment(user);
             yield return co;

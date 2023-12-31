@@ -118,7 +118,7 @@ public class EnemyManager : UnitManager {
 
     public void EndTurn() {
         EndTurnEvent evt = ObjectiveEvents.EndTurnEvent;
-        evt.player = true;
+        evt.toTurn = ScenarioManager.Turn.Player;
         ObjectiveEventManager.Broadcast(evt);
 
         if (selectedUnit)

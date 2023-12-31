@@ -45,7 +45,7 @@ public class UnitConditionEvent : ObjectiveEvent {
 }
 
 public class EndTurnEvent : ObjectiveEvent {
-    public bool player = true;
+    public ScenarioManager.Turn toTurn = ScenarioManager.Turn.Null;
 }
 
 public class FloorPeekEvent : ObjectiveEvent {

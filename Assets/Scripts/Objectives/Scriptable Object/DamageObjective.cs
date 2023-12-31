@@ -19,10 +19,10 @@ public class DamageObjective : Objective {
         switch (objectiveType) {
             default:
             case ObjectiveType.SlagDamage:
-                if (evt.damageType != GridElement.DamageType.Heal && (evt.element is PlayerUnit || evt.element is Nail)) progress++;
+                if (evt.damageType != GridElement.DamageType.Heal && !evt.element.shield && (evt.element is PlayerUnit || evt.element is Nail)) progress++;
             break;
             case ObjectiveType.NailDamage:
-                if (evt.damageType != GridElement.DamageType.Heal && evt.element is Nail) progress++;
+                if (evt.damageType != GridElement.DamageType.Heal && !evt.element.shield && evt.element is Nail) progress++;
             break;
             case ObjectiveType.ShieldDamage:
                 if (evt.element.shield) progress++;

@@ -149,7 +149,7 @@ public class EnemyUnit : Unit {
         if (source) dir = (coord - source.coord).normalized;
         Splatter(dir);
 
-        yield return base.TakeDamage(dmg, dmgType, source);
+        yield return base.TakeDamage(dmg, dmgType, source, sourceEquip);
     }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {

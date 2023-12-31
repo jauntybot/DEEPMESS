@@ -34,7 +34,8 @@ public class UpgradeButtonHoldHandler : MonoBehaviour, IUpdateSelectedHandler, I
     public void OnPointerDown(PointerEventData data) {
         isPressed = true;
         confirmProg = 0;
-        radialProg.transform.SetParent(ui.emptyParticlesLayout.GetChild(ui.particlesLayout.childCount -1));
+        radialProg.transform.SetParent(ui.CurrentSlot());
+        radialProg.transform.SetSiblingIndex(0);
         radialProg.transform.localPosition = Vector3.zero;
         if (ui.previewParticle) {
             Image image = ui.previewParticle.GetComponentInChildren<Image>();

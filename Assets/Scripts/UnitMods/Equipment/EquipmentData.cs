@@ -53,11 +53,7 @@ public class EquipmentData : ScriptableObject {
         
     }
 
-    public virtual IEnumerator UseEquipment(GridElement user, GridElement target = null) {
-        OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
-        evt.data = this; evt.user = user; evt.target = target;
-        ObjectiveEventManager.Broadcast(evt);
-        
+    public virtual IEnumerator UseEquipment(GridElement user, GridElement target = null) {      
         user.energyCurrent -= energyCost;
         if (user is PlayerUnit pu) {
             PlayerManager manager = (PlayerManager)pu.manager;

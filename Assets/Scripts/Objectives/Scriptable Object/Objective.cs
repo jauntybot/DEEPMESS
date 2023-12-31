@@ -40,7 +40,16 @@ public class Objective : ScriptableObject {
             }
             if (final) {
                 resolved = true;
-                if (progress < goal) succeeded = true;
+                switch (operation) {
+                    case Operator.OrMore:
+                        if (progress >= goal) 
+                            succeeded = true;
+                    break;
+                    case Operator.LessThan:
+                        if (progress < goal) 
+                            succeeded = true;
+                    break;
+                };
             }
 
             ObjectiveUpdateCallback?.Invoke(this);

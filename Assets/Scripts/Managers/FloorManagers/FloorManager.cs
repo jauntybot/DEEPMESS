@@ -255,12 +255,17 @@ public class FloorManager : MonoBehaviour {
         enemy.InterruptReinforcements();
         List<Unit> enemyUnits = new();
         foreach (GridElement ge in currentFloor.gridElements) {
-            if (ge is Unit u)
+            if (ge is EnemyUnit u)
                 enemyUnits.Add(u);
         }
 
         currentFloor.DisableGridHighlight();
         currentFloor.LockGrid(true);
+
+        FloorDescentEvent evt = ObjectiveEvents.FloorDescentEvent;
+        evt.floorIndex = currentFloor.index;
+        evt.enemyDescentsCount = enemyUnits.Count;
+        ObjectiveEventManager.Broadcast(evt);
 
         if (nail)
             yield return StartCoroutine(currentFloor.ShockwaveCollapse(pos));
@@ -329,10 +334,6 @@ public class FloorManager : MonoBehaviour {
             }
         }
         FloorDescended?.Invoke();
-        FloorDescentEvent evt = ObjectiveEvents.FloorDescentEvent;
-        evt.floorIndex = currentFloor.index;
-        evt.enemyDescentsCount = enemyUnits.Count;
-        ObjectiveEventManager.Broadcast(evt);
 
         descending = false;
     }
@@ -463,7 +464,7 @@ public class FloorManager : MonoBehaviour {
             StartCoroutine(subElement.CollideFromBelow(unit));
 
             yield return StartCoroutine(unit.CollideFromAbove(subElement, hardLand?1:0));
-        } else if (hardLand) {
+        } else if (hardLand && currentFloor.tiles.Find(t => t.coord == unit.coord).tileType != Tile.TileType.Bile) {
             yield return StartCoroutine(unit.TakeDamage(1, GridElement.DamageType.Fall));
         }
 
@@ -642,7 +643,7 @@ public class FloorManager : MonoBehaviour {
         
 // Lerp units into screen
         List<Unit> units = new() { scenario.player.units[0], scenario.player.units[1], scenario.player.units[2], scenario.player.units[3] };
-        List<Vector2> to = new() {new Vector2(-1.182819f, 3.5243183f), new Vector2(-2.862819f, 3.04704558f), new Vector2(-0.5108191f, 2.5781816f), new Vector2(1.841181f, 2.203409f) };
+        List<Vector2> to = new() {new Vector2(-1.182819f, 0.5243183f), new Vector2(-2.862819f, 0.04704558f), new Vector2(-0.5108191f, -0.5781816f), new Vector2(1.841181f, -1.203409f) };
         units[0].manager.transform.parent = transitionParent;
         units[3].transform.parent = transitionParent;
         scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
@@ -651,7 +652,7 @@ public class FloorManager : MonoBehaviour {
             parallax.ScrollParallax(-1);
             for (int i = 0; i <= units.Count - 1; i++) {
                 NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
-                units[i].transform.position = Vector3.Lerp(to[i] + new Vector2(0, floorOffset*2), to[i] - new Vector2(0, floorOffset), dropCurve.Evaluate(timer/unitDropDur));
+                units[i].transform.position = Vector3.Lerp(to[i] + new Vector2(0, floorOffset*2), to[i], dropCurve.Evaluate(timer/unitDropDur));
                 fade.AlphaSelf = Mathf.Lerp(0, 1, timer/(unitDropDur/3));
             }
             yield return null;
@@ -690,7 +691,7 @@ public class FloorManager : MonoBehaviour {
                 parallax.ScrollParallax(-1);
                 for (int i = 0; i <= units.Count - 1; i++) {
                     NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
-                    units[i].transform.position = Vector3.Lerp(to[i] - new Vector2(0, floorOffset), to[i] + new Vector2(0, floorOffset*2), dropCurve.Evaluate(timer/unitDropDur));
+                    units[i].transform.position = Vector3.Lerp(to[i], to[i] + new Vector2(0, floorOffset*2), dropCurve.Evaluate(timer/unitDropDur));
                     fade.AlphaSelf = Mathf.Lerp(1, 0, (timer - (unitDropDur*2/3))/(unitDropDur/3));
                 }
                 yield return null;

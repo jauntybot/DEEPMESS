@@ -64,12 +64,12 @@ public class AttackData : EquipmentData {
                 n.manager.scenario.tutorial.StartCoroutine(n.manager.scenario.tutorial.NailDamage());
             }
             CameraController.instance.StartCoroutine(CameraController.instance.ScreenShake(0.125f, 0.5f));
-            dmg++;
+            thornDmg++;
         }
 // SHIELD SPECIAL TIER II -- Deal thorns damage to attacking unit
-        if (target.shield && target.shield.thorns) dmg++;
+        if (target.shield && target.shield.thorns) thornDmg++;
 
-        if (thornDmg > 0) cos.Add(user.StartCoroutine(user.TakeDamage(1, GridElement.DamageType.Melee, target)));
+        if (thornDmg > 0) cos.Add(user.StartCoroutine(user.TakeDamage(thornDmg, GridElement.DamageType.Melee, target)));
         cos.Add(target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user, this)));
         
         for (int i = cos.Count - 1; i >= 0; i--)

@@ -515,27 +515,6 @@ public class PlayerManager : UnitManager {
         transform.SetSiblingIndex(3);
     }
 
-    Dictionary<Unit, bool> prevTargetStates;
-    public void DisplayAllHP(bool active) {
-        if (active) prevTargetStates = new Dictionary<Unit, bool>();
-        foreach (Unit u in units) {
-            if (active) {
-                prevTargetStates.Add(u, u.targeted);
-                u.TargetElement(true);
-            } else {
-                u.targeted = prevTargetStates[u];
-            }
-        }
-        foreach(Unit u in scenario.currentEnemy.units) {
-            if (active) {
-                prevTargetStates.Add(u, u.targeted);
-                u.TargetElement(true);
-            } else {
-                u.targeted = prevTargetStates[u];
-            }
-        }
-    }
-
     public IEnumerator RetrieveNailAnimation() {
         GameObject arm = Instantiate(slimeArmAnim, floorManager.transitionParent);
         nail.transform.parent = floorManager.transitionParent;

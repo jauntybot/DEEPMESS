@@ -2,9 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyDetonateUnit : EnemyUnit
-{
-
+public class EnemyDetonateUnit : EnemyUnit {
 
     public bool primed;
     [SerializeField] Animator explosion;
@@ -34,6 +32,7 @@ public class EnemyDetonateUnit : EnemyUnit
     }
 
     IEnumerator ExplodeCo() {
+
         manager.SelectUnit(this);
         UpdateAction(equipment[1]);
         grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
@@ -47,9 +46,10 @@ public class EnemyDetonateUnit : EnemyUnit
     }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        if (primed)
+        if (primed) {
+            ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
             yield return StartCoroutine(ExplodeCo());
-        else
+        } else
             yield return base.DestroySequence(dmgType, source, sourceEquip);
     }
 

@@ -8,6 +8,7 @@ public class ObjectiveManager : MonoBehaviour {
 
     [SerializeField] ObjectiveTracker tracker;
     [SerializeField] UpgradeManager upgrade;
+    int packetCount = 0;
 
     [SerializeField] GameObject assignAwardPanel;
     [SerializeField] GameObject objectiveCardParent, objectiveCardPrefab;
@@ -31,6 +32,7 @@ public class ObjectiveManager : MonoBehaviour {
             return;
         }
         ObjectiveManager.instance = this;
+        packetCount = 0;
     }
     #endregion
 
@@ -55,6 +57,7 @@ public class ObjectiveManager : MonoBehaviour {
         upgrade.CollectParticles(particles);
 
         assignAwardPanel.SetActive(false);
+        packetCount++;
     }
 
     public IEnumerator AssignSequence() {
@@ -75,16 +78,16 @@ public class ObjectiveManager : MonoBehaviour {
     public void RerollObjectives() {
        activeObjectives = new();
 
-        List<Objective> packetObjectives = new();
-        switch(FloorManager.instance.floorSequence.activePacket.packetType) {
+        List<Objective> packetObjectives;
+        switch(ScenarioManager.instance.startCavity + packetCount) {
             default:
-            case FloorPacket.PacketType.I:
+            case 1:
                 packetObjectives = packetIObjectives;
             break;
-            case FloorPacket.PacketType.II:
+            case 2:
                 packetObjectives = packetIIObjectives;
             break;
-            case FloorPacket.PacketType.III:
+            case 3:
                 packetObjectives = packetIIIObjectives;
             break;
         }
@@ -95,10 +98,8 @@ public class ObjectiveManager : MonoBehaviour {
             rndBag.Add(packetObjectives[i]);
         for (int u = 0; u <= 2; u++)
             activeObjectives.Add(rndBag.Next());
-
+        
 // Create UI cards
-        tracker.AssignObjectives(activeObjectives, rewardSprites);
-
         for (int i = objectiveCardParent.transform.childCount - 1; i >= 0; i--)
             Destroy(objectiveCardParent.transform.GetChild(i).gameObject);
         
@@ -107,8 +108,11 @@ public class ObjectiveManager : MonoBehaviour {
             ObjectiveCard card = Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
             card.Init(ob, rewardSprites[(int)ob.reward]);
         }
+        tracker.AssignObjectives(activeObjectives, rewardSprites);
 
+        LayoutRebuilder.ForceRebuildLayoutImmediate(tracker.GetComponent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(objectiveCardParent.GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
     }
 
     public IEnumerator CollectRewards() {

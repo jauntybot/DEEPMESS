@@ -101,8 +101,9 @@ public class ScenarioManager : MonoBehaviour
                     unitsToDrop.Add(prevEnemy.units[i]);
                 yield return StartCoroutine(floorManager.DescendUnits(unitsToDrop, prevEnemy, true));
             }
+            player.units[3].grid = floorManager.currentFloor;
             yield return StartCoroutine(PlayerEnter());
-            yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3]} ));
+            yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3] }));
             StartCoroutine(SwitchTurns(Turn.Enemy));
         }
     }
@@ -247,7 +248,7 @@ public class ScenarioManager : MonoBehaviour
 // public function for UI buttons
     public void EndTurn() {
         EndTurnEvent evt = ObjectiveEvents.EndTurnEvent;
-        evt.player = false;
+        evt.toTurn = Turn.Enemy;
         ObjectiveEventManager.Broadcast(evt);
 
         player.overrideEquipment = null;

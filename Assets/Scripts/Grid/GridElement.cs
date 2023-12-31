@@ -158,7 +158,7 @@ public class GridElement : MonoBehaviour{
 
     public virtual IEnumerator CollideFromBelow(GridElement above) {
         RemoveShield();
-        yield return StartCoroutine(DestroySequence(DamageType.Crush));
+        yield return StartCoroutine(DestroySequence(DamageType.Crush, above));
     }
 
 // For when a Slag is acting on a Unit to move it, such as BigGrab or any push mechanics

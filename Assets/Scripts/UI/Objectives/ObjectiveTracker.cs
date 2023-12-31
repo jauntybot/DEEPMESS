@@ -15,13 +15,8 @@ public class ObjectiveTracker : MonoBehaviour {
             Destroy(objectiveCardParent.transform.GetChild(i).gameObject);
         
         foreach(Objective ob in activeObjectives) {
-            ob.Init();
-            ObjectiveCard obUI = Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
-            obUI.Init(ob, rewardSprites[(int)ob.reward]);
+            ObjectiveCard card = Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
+            card.Init(ob, rewardSprites[(int)ob.reward]);
         }
-
-        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
-        LayoutRebuilder.ForceRebuildLayoutImmediate(objectiveCardParent.GetComponent<RectTransform>());
     }
-
 }
