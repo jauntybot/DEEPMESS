@@ -45,6 +45,7 @@ public class FloorSequence : ScriptableObject {
         
         int index = Random.Range(0, options.Count-1);
 
+// Replace active packet params manually
         activePacket.packetType = options[index].packetType;
 
         activePacket.firstFloors = new List<FloorDefinition>();

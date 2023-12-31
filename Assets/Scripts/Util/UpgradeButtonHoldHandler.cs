@@ -34,8 +34,13 @@ public class UpgradeButtonHoldHandler : MonoBehaviour, IUpdateSelectedHandler, I
     public void OnPointerDown(PointerEventData data) {
         isPressed = true;
         confirmProg = 0;
-        radialProg.transform.SetParent(ui.emptyParticlesLayout.GetChild(ui.particlesLayout.childCount -1));
+        radialProg.transform.SetParent(ui.CurrentSlot());
+        radialProg.transform.SetSiblingIndex(0);
         radialProg.transform.localPosition = Vector3.zero;
+        if (ui.previewParticle) {
+            Image image = ui.previewParticle.GetComponentInChildren<Image>();
+            image.color = new Color(image.color.r, image.color.g, image.color.b, 1);
+        }
     }
 
     public void OnPointerUp(PointerEventData data) {
@@ -56,10 +61,6 @@ public class UpgradeButtonHoldHandler : MonoBehaviour, IUpdateSelectedHandler, I
     }
 
     public void DisplayProgress() {
-        if (ui.previewParticle) {
-            Image image = ui.previewParticle.GetComponentInChildren<Image>();
-            image.color = new Color(image.color.r, image.color.g, image.color.b, 1);
-        }
         radialProg.fillAmount = confirmProg/holdDur;
 
         if (confirmProg >= holdDur) {

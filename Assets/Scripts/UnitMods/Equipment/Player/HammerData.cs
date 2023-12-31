@@ -22,15 +22,14 @@ public class HammerData : SlagEquipmentData {
     }
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
-
         if (firstTarget == null) {
             return TargetThrow((PlayerUnit)user, user.coord);
         } else {
 // POWER TIER I - Target an additional enemy before Slag
-            if (upgrades[UpgradePath.Power] == 1 && secondTarget == null) {
-                return TargetThrow((PlayerUnit)user, firstTarget.coord);
-// Target Slags
-            } else {
+//             if (upgrades[UpgradePath.Power] == 1 && secondTarget == null) {
+//                 return TargetThrow((PlayerUnit)user, firstTarget.coord);
+// // Target Slags
+//             } else {
                 Unit unit = (Unit)user;
 
                 List<GridElement> targets = new(); targets.Add(user);
@@ -50,7 +49,7 @@ public class HammerData : SlagEquipmentData {
                     }
                 }
                 return _coords;
-            }
+            //}
         }        
     }
 
@@ -110,22 +109,22 @@ public class HammerData : SlagEquipmentData {
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         if (firstTarget != null) {
 // POWER TIER I - Target an additional enemy before Slag
-            if (upgrades[UpgradePath.Power] == 1 && secondTarget == null) {
-                secondTarget = target;
-                Unit unit = (Unit)user;
-                unit.grid.DisableGridHighlight();
+            // if (upgrades[UpgradePath.Power] == 1 && secondTarget == null) {
+            //     secondTarget = target;
+            //     Unit unit = (Unit)user;
+            //     unit.grid.DisableGridHighlight();
 
-                unit.validActionCoords = TargetEquipment(user);
+            //     unit.validActionCoords = TargetEquipment(user);
                 
-                foreach (Unit u in unit.manager.units) {
-                    if (u is PlayerUnit)
-                        u.TargetElement(true);
-                }
-                if (selectSFX)
-                    user.PlaySound(selectSFX);
+            //     foreach (Unit u in unit.manager.units) {
+            //         if (u is PlayerUnit)
+            //             u.TargetElement(true);
+            //     }
+            //     if (selectSFX)
+            //         user.PlaySound(selectSFX);
                     
-                yield return null;
-            } else {
+            //     yield return null;
+            // } else {
                 user.energyCurrent -= energyCost;
                 if (user is PlayerUnit pu) {
                     PlayerManager manager = (PlayerManager)pu.manager;
@@ -134,7 +133,7 @@ public class HammerData : SlagEquipmentData {
                 }
                 user.elementCanvas.UpdateStatsDisplay();
                 yield return user.StartCoroutine(LaunchHammer((PlayerUnit)user, firstTarget, (PlayerUnit)target, secondTarget));    
-            }
+            //}
         } else {
             firstTarget = target;
             Unit unit = (Unit)user;
@@ -175,10 +174,10 @@ public class HammerData : SlagEquipmentData {
             user.PlaySound(throwSFX);
 
 // POWER TIER I - Ricochet hammer to second target before passing to slag
-        if (target2 != null)  {
-            Debug.Log("second throw");
-            yield return user.StartCoroutine(ThrowHammer(user, target2, result => hammerPos = result, co1 => targetCo = co1, Color32 => pushCo = Color32));
-        }
+        // if (target2 != null)  {
+        //     Debug.Log("second throw");
+        //     yield return user.StartCoroutine(ThrowHammer(user, target2, result => hammerPos = result, co1 => targetCo = co1, Color32 => pushCo = Color32));
+        // }
 
         if (throwSFX)
             user.PlaySound(throwSFX);
@@ -237,7 +236,7 @@ public class HammerData : SlagEquipmentData {
             if (upgrades[UpgradePath.Special] == 1 && (user.coord - target.coord).magnitude <= 1)
                 dmg ++;
 
-            dmgCo(target.StartCoroutine(target.TakeDamage(dmg, dmgType, user)));
+            dmgCo(target.StartCoroutine(target.TakeDamage(dmg, dmgType, user, sourceEquip: this)));
 // UNIT TIER I -- Push element on hit
             if (upgrades[UpgradePath.Unit] == 1) {
                 pushCo(target.StartCoroutine(PushUnit(target, (target.coord - user.coord).normalized)));

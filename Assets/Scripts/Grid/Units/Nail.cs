@@ -70,12 +70,14 @@ public class Nail : Unit
         }
     }
 
-    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified) {
-        
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
         PlaySound(destroyedSFX);
         
         yield return null;
+        
         ElementDisabled?.Invoke(this);
+        ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));
+
         ApplyCondition(Status.Disabled);
         //gfxAnim.SetBool("Destoyed", true);
     }

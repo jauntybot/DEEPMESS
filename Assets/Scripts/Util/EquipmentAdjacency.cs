@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
 
-public class EquipmentAdjacency : MonoBehaviour
-{
+public static class EquipmentAdjacency {
 
 // Equations used for calculating adjacent coordinates
 #region Coordinate Adjacency
 
 // Accessor function, pass all params here and it will use the appropriate equation
-    public static List<Vector2> GetAdjacent(Vector2 from, int range, EquipmentData data, List<GridElement> targetLast = null, Grid grid = null, bool offGrid = false)
-    {
+    public static List<Vector2> GetAdjacent(Vector2 from, int range, EquipmentData data, List<GridElement> targetLast = null, Grid grid = null, bool offGrid = false) {
         List<Vector2> _coords = new();
 
         switch(data.adjacency) {
@@ -156,7 +154,7 @@ public class EquipmentAdjacency : MonoBehaviour
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered
-                            if (data.filters == null || !(data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType())))) {
+                            if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord,current);
                                 break;
@@ -181,7 +179,7 @@ public class EquipmentAdjacency : MonoBehaviour
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered
-                            if (data.filters == null || !(data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType())))) {
+                            if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord, current);
                                 break;

@@ -32,15 +32,19 @@ public class SelfDetonate : EquipmentData
     }
 
 
-    public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
-    {
+    public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         yield return base.UseEquipment(user, target);
+
         
         EnemyDetonateUnit u = (EnemyDetonateUnit)user;
         if (!u.primed) {
             u.PrimeSelf();
             user.PlaySound(chargeSFX);
         } else {
+            OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
+            evt.data = this; evt.user = user;
+            ObjectiveEventManager.Broadcast(evt);
+
             u.Explode();
             u.primed = false;
             user.PlaySound(selfDetonateSFX);
@@ -52,7 +56,7 @@ public class SelfDetonate : EquipmentData
                 if (user.grid.CoordContents(coord).Count > 0) {
                     foreach (GridElement ge in user.grid.CoordContents(coord)) {
                         if (ge is Unit tu && ge != user) {
-                            affectedCo.Add(tu.StartCoroutine(tu.TakeDamage(2, GridElement.DamageType.Melee)));
+                            affectedCo.Add(tu.StartCoroutine(tu.TakeDamage(2, GridElement.DamageType.Explosion, user, this)));
                         }
                     }
                 }

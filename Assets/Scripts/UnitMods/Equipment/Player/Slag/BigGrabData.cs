@@ -119,6 +119,11 @@ public class BigGrabData : SlagEquipmentData {
             SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(user.coord), Quaternion.identity).GetComponent<SpriteRenderer>();
             sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
             Coroutine co = user.StartCoroutine(ThrowUnit((Unit)user, (Unit)firstTarget, target.coord));
+            
+            OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
+            evt.data = this; evt.user = user; evt.target = firstTarget;
+            ObjectiveEventManager.Broadcast(evt);
+            
             firstTarget = null;
             yield return base.UseEquipment(user);
             yield return co;
@@ -160,12 +165,14 @@ public class BigGrabData : SlagEquipmentData {
             GridElement subGE = null;
             foreach (GridElement ge in thrower.grid.CoordContents(coord)) {
                 subGE = ge;
-                ge.StartCoroutine(ge.CollideFromBelow(thrown));
+                ge.StartCoroutine(ge.CollideFromBelow(thrown, thrower, this));
             }
-            thrown.StartCoroutine(thrown.CollideFromAbove(subGE));
+            thrown.StartCoroutine(thrown.CollideFromAbove(subGE, 0, thrower, this));
         }
-        if (upgrades[UpgradePath.Unit] >= 1) thrown.StartCoroutine(thrown.TakeDamage(1, GridElement.DamageType.Fall, thrower));
-        thrown.UpdateElement(coord);
+// UNIT TIER I - Deal damage on throw
+        if (upgrades[UpgradePath.Unit] >= 1) thrown.StartCoroutine(thrown.TakeDamage(1, GridElement.DamageType.Fall, thrower, this));
+        
+        thrown.UpdateElement(coord, thrower, this);
     }
 
     public override void UpgradeEquipment(UpgradePath targetPath) {

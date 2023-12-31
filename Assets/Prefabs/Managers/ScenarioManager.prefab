@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 395662736343092640}
   - component: {fileID: 395662736343092655}
   - component: {fileID: 395662736343092654}
-  - component: {fileID: 395662736343092653}
   m_Layer: 0
   m_Name: ScenarioManager
   m_TagString: Untagged
@@ -50,16 +49,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3679fa74a0cb3cf4fafd58512b8b93c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  floorManager: {fileID: 0}
+  objectiveManager: {fileID: 0}
   uiManager: {fileID: 0}
   gpOptional: {fileID: 0}
-  floorManager: {fileID: 0}
-  resetSceneString: Working Game Scene
   tutorial: {fileID: 0}
   startCavity: 0
   currentEnemy: {fileID: 0}
   player: {fileID: 395662737843368441}
-  particles:
-  - {fileID: 3874705921596286590, guid: 208df7a43a784c84082cf0c716e08e1a, type: 3}
   messagePanel: {fileID: 0}
   runDataTracker: {fileID: 0}
   scenario: 0
@@ -86,7 +83,7 @@ MonoBehaviour:
   bossSpawn: 0
   _gridSize: 8
   _sqrSize: 1.5
-  betweenFloor: {fileID: 0}
+  godParticlePrefab: {fileID: 0}
   transitionParent: {fileID: 395662738020585122}
   floorOffset: 3
   transitionDur: 0.1
@@ -135,20 +132,6 @@ MonoBehaviour:
   equipmentColor: {r: 0.84313726, g: 0.78431374, b: 0.09803922, a: 0.24705882}
   movePreview: {r: 0.49019608, g: 0.74509805, b: 0.29411766, a: 0.1254902}
   enemyMovePreview: {r: 0.88235295, g: 0.33333334, b: 0.49019608, a: 0.1254902}
---- !u!114 &395662736343092653
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 395662736343092641}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0774dd2219f1aae4ebd135a1e4586ae2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slotMachine: {fileID: 0}
-  slotMachineInterval: 10
 --- !u!1 &395662736360046273
 GameObject:
   m_ObjectHideFlags: 0

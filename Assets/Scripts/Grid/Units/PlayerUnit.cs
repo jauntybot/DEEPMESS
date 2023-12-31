@@ -118,7 +118,7 @@ public class PlayerUnit : Unit {
     }
 
 // Override destroy so that player units are disabled instead
-    public override IEnumerator DestroySequence(DamageType dmgType) {
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
         PlaySound(destroyedSFX);
 
         bool droppedHammer = false;
@@ -138,7 +138,10 @@ public class PlayerUnit : Unit {
             }
         }
         yield return null;
+
         ElementDisabled?.Invoke(this);
+        ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));
+        
         SwitchAnim(AnimState.Disabled);
         ApplyCondition(Status.Disabled);
     }

@@ -111,15 +111,18 @@ public class RangedBurstData : EquipmentData {
 
         projectile.transform.position = endPos;
         if (target) {
+            int thornDmg = 0;
             if (target is Nail n) {
                 if (n.manager.scenario.tutorial != null && n.manager.scenario.tutorial.isActiveAndEnabled && !n.manager.scenario.tutorial.nailDamageEncountered && n.manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
                     n.manager.scenario.tutorial.StartCoroutine(n.manager.scenario.tutorial.NailDamage());
                 }
                 CameraController.instance.StartCoroutine(CameraController.instance.ScreenShake(0.125f, 0.5f));
-                cos.Add(user.StartCoroutine(user.TakeDamage(1, GridElement.DamageType.Melee, n)));
+                thornDmg++;
             }
-            if (target.shield && target.shield.thorns) cos.Add(user.StartCoroutine(user.TakeDamage(1, GridElement.DamageType.Melee, target)));
-            cos.Add(target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user)));
+            if (target.shield && target.shield.thorns) thornDmg++;
+
+            if (thornDmg > 0) cos.Add(user.StartCoroutine(user.TakeDamage(thornDmg, GridElement.DamageType.Melee, target)));
+            cos.Add(target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user, this)));
         }
 
         Destroy(projectile);

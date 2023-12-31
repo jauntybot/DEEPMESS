@@ -116,7 +116,7 @@ public class SlotMachine : MonoBehaviour
                 if (pu.conditions.Contains(Unit.Status.Disabled))
                     pu.Stabilize();
                 else
-                    pu.StartCoroutine(u.TakeDamage(-1, GridElement.DamageType.Slots));
+                    pu.StartCoroutine(u.TakeDamage(-1, GridElement.DamageType.Heal));
             }
         }
     }

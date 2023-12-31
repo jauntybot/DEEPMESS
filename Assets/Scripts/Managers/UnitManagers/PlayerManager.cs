@@ -453,6 +453,7 @@ public class PlayerManager : UnitManager {
             foreach (Unit u in units) 
                 u.UpdateAction();
             PlayerUnit lastMoved = (PlayerUnit)undoOrder[undoOrder.Count - 1];
+// Undo bulb harvest
             if (harvestedByMove.ContainsKey(lastMoved)) {
                 if (harvestedByMove[lastMoved] is TileBulb harvested) {
                     harvested.UndoHarvest();
@@ -465,6 +466,16 @@ public class PlayerManager : UnitManager {
                     harvestedByMove.Remove(lastMoved);
                 }
             }
+// Undo objective scoring
+            Tile targetSqr = currentGrid.tiles.Find(sqr => sqr.coord == lastMoved.coord);
+            if (targetSqr.tileType == Tile.TileType.Blood) {
+                UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
+                evt.condition = Unit.Status.Restricted;
+                evt.target = lastMoved;
+                evt.undo = true;
+                ObjectiveEventManager.Broadcast(evt);
+            }
+// Snap unit to undo position
             MoveData move = (MoveData)cascadeMovement;
             StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved], true));
             lastMoved.moved = false;
@@ -502,27 +513,6 @@ public class PlayerManager : UnitManager {
         contextuals.grid = newGrid;
         transform.parent = newGrid.transform;
         transform.SetSiblingIndex(3);
-    }
-
-    Dictionary<Unit, bool> prevTargetStates;
-    public void DisplayAllHP(bool active) {
-        if (active) prevTargetStates = new Dictionary<Unit, bool>();
-        foreach (Unit u in units) {
-            if (active) {
-                prevTargetStates.Add(u, u.targeted);
-                u.TargetElement(true);
-            } else {
-                u.targeted = prevTargetStates[u];
-            }
-        }
-        foreach(Unit u in scenario.currentEnemy.units) {
-            if (active) {
-                prevTargetStates.Add(u, u.targeted);
-                u.TargetElement(true);
-            } else {
-                u.targeted = prevTargetStates[u];
-            }
-        }
     }
 
     public IEnumerator RetrieveNailAnimation() {
