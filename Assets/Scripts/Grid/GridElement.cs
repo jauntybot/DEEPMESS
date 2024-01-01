@@ -148,8 +148,7 @@ public class GridElement : MonoBehaviour{
         return evt;
     }
 
-    public virtual void TargetElement(bool state) 
-    {
+    public virtual void TargetElement(bool state) {
         targeted = state;
         if (elementCanvas) {
             elementCanvas.ToggleStatsDisplay(state);

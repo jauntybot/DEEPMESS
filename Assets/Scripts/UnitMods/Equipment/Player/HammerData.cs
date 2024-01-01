@@ -20,6 +20,18 @@ public class HammerData : SlagEquipmentData {
         hammer = h;
         nail = d;
     }
+    
+    public virtual void EquipEquipment(Unit user, bool first) {
+        base.EquipEquipment(user);
+    }
+
+    public override void EquipEquipment(Unit user) {
+        if (user is PlayerUnit pu)
+            pu.ui.UpdateEquipmentButtons();
+
+        slag = (PlayerUnit)user;
+        if (upgrades[UpgradePath.Unit] >= 1) slag.moveMod++;
+    }
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         if (firstTarget == null) {
@@ -232,13 +244,13 @@ public class HammerData : SlagEquipmentData {
             
             Instantiate(vfx, user.grid.PosFromCoord(target.coord) + new Vector3(0, 1, 0), Quaternion.identity);
             int dmg = 1;
-// SPECIAL TIER I -- Deal additional damage if adjacent
-            if (upgrades[UpgradePath.Special] == 1 && (user.coord - target.coord).magnitude <= 1)
+// PWER TIER I -- Deal additional damage if adjacent
+            if (upgrades[UpgradePath.Power] == 1 && (user.coord - target.coord).magnitude <= 1)
                 dmg ++;
 
             dmgCo(target.StartCoroutine(target.TakeDamage(dmg, dmgType, user, sourceEquip: this)));
-// UNIT TIER I -- Push element on hit
-            if (upgrades[UpgradePath.Unit] == 1) {
+// SPECIAL TIER I -- Push element on hit
+            if (upgrades[UpgradePath.Special] == 1) {
                 pushCo(target.StartCoroutine(PushUnit(target, (target.coord - user.coord).normalized)));
             }
         }
@@ -280,14 +292,16 @@ public class HammerData : SlagEquipmentData {
     public virtual void PassHammer(PlayerUnit sender, PlayerUnit reciever) {
         List<EquipmentData> toAdd = new();
         for (int i = sender.equipment.Count - 1; i >= 0; i--) {
-            if (sender.equipment[i] is HammerData) {
-                toAdd.Add(sender.equipment[i]);
+            if (sender.equipment[i] is HammerData h) {
+                toAdd.Add(h);
 
-                sender.equipment.Remove(sender.equipment[i]);
+                sender.equipment.Remove(h);
+// UNIT TIER I - Remove movement boost from hammer carrier
+                if (h.upgrades[UpgradePath.Unit] >= 1) sender.moveMod--;
             }
         }
         for (int i = toAdd.Count - 1; i >= 0; i--) 
-            reciever.equipment.Add(toAdd[i]);
+            toAdd[i].EquipEquipment(reciever);
 
         sender.gfx.Remove(hammer.GetComponentInChildren<SpriteRenderer>());
         hammer.transform.parent = reciever.transform;
@@ -298,5 +312,9 @@ public class HammerData : SlagEquipmentData {
         sender.ui.UpdateEquipmentButtons();
     }
 
-
+    public override void UpgradeEquipment(UpgradePath targetPath) {
+        base.UpgradeEquipment(targetPath);
+// UNIT TIER I - Increase hammer carriers movement
+        if (upgrades[UpgradePath.Unit] >= 1) slag.moveMod++;
+    }
 }

@@ -9,7 +9,7 @@ public class UpgradeManager : MonoBehaviour {
 
     PlayerManager pManager;
     
-    [SerializeField] GameObject upgradePanel, unitUIContainer, particlePanel, particleContainer;
+    [SerializeField] GameObject upgradeScreen, upgradePanel, unitUIContainer, particlePanel, particleContainer;
     [SerializeField] GameObject godParticleUIPrefab;
     List<SlagEquipmentData.UpgradePath> particles = new();
     public UpgradeUIParticle selectedParticle;
@@ -45,7 +45,9 @@ public class UpgradeManager : MonoBehaviour {
     public IEnumerator UpgradeSequence() {
         upgrading = true;
         
-        upgradePanel.SetActive(true);
+        upgradeScreen.SetActive(true);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(upgradePanel.GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
         
 // Instantiate particle UI buttons from PlayerManager
         for (int i = particleContainer.transform.childCount - 1; i >= 0; i--)
@@ -65,7 +67,7 @@ public class UpgradeManager : MonoBehaviour {
             yield return null;
         }
 
-        upgradePanel.SetActive(false); 
+        upgradeScreen.SetActive(false); 
     }
 
     public void SelectParticle(UpgradeUIParticle part) {
@@ -74,6 +76,9 @@ public class UpgradeManager : MonoBehaviour {
         foreach (UnitUpgradeUI ui in unitUpgradeUIs) {
             ui.UpdateModifier(path);
         }
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(upgradePanel.GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
     }
 
     public void DeselectParticle() {
@@ -85,6 +90,9 @@ public class UpgradeManager : MonoBehaviour {
         Destroy(selectedParticle.gameObject);
         foreach(UnitUpgradeUI ui in unitUpgradeUIs)
             ui.ClearModifier();
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(upgradePanel.GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
     }
 
     public void EndUpgradeSequence() {

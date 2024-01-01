@@ -24,6 +24,7 @@ public class SlagEquipmentData : EquipmentData {
         base.EquipEquipment(user);
         slag = (PlayerUnit)user;
         upgrades = new Dictionary<UpgradePath, int>{{UpgradePath.Power, -1}, {UpgradePath.Special, -1}, {UpgradePath.Unit, -1}};
+        totalUpgrades = 0;
         UpgradeEquipment(UpgradePath.Special);
         UpgradeEquipment(UpgradePath.Power);
         UpgradeEquipment(UpgradePath.Unit);

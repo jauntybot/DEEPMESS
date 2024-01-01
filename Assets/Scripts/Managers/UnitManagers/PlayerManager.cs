@@ -143,7 +143,7 @@ public class PlayerManager : UnitManager {
         h.transform.GetChild(0).transform.localPosition = new Vector3(0.5f, 0, 0);
         foreach(HammerData equip in hammerData) {
             unit.equipment.Insert(unit.equipment.Count, equip);
-            equip.EquipEquipment(unit);
+            equip.EquipEquipment(unit, true);
             equip.AssignHammer(h, nail);
         }        
         unit.ui.UpdateEquipmentButtons();

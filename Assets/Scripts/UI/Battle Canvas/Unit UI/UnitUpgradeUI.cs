@@ -97,17 +97,18 @@ public class UnitUpgradeUI : UnitUI {
             previewParticle = null;
         }
 
+        TMP_Text tmp;
+        switch (appliedUpgrades) {
+            default:
+            case 0: tmp = slot1ModifiersTMP; break;
+            case 1: tmp = slot2ModifiersTMP; break;
+            case 2: tmp = slot3ModifiersTMP; break;
+        }
         if (!apply) {
-            TMP_Text tmp;
-            switch (appliedUpgrades) {
-                default:
-                case 0: tmp = slot1ModifiersTMP; break;
-                case 1: tmp = slot2ModifiersTMP; break;
-                case 2: tmp = slot3ModifiersTMP; break;
-            }
             tmp.transform.parent.gameObject.SetActive(false);
-            tmp.text = "";
-            
+            tmp.text = "";   
+        } else {
+            tmp.transform.parent.gameObject.SetActive(true);
         }
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
@@ -123,7 +124,7 @@ public class UnitUpgradeUI : UnitUI {
             case 1: tmp = slot2ModifiersTMP; break;
             case 2: tmp = slot3ModifiersTMP; break;
         }
-        tmp.transform.parent.gameObject.SetActive(true);
+        ClearModifier(true);
         appliedUpgrades++;
 
         equip.UpgradeEquipment(activeParticle);
