@@ -300,8 +300,10 @@ public class HammerData : SlagEquipmentData {
                 if (h.upgrades[UpgradePath.Unit] >= 1) sender.moveMod--;
             }
         }
-        for (int i = toAdd.Count - 1; i >= 0; i--) 
+        for (int i = toAdd.Count - 1; i >= 0; i--) {
+            reciever.equipment.Add(toAdd[i]);
             toAdd[i].EquipEquipment(reciever);
+        }
 
         sender.gfx.Remove(hammer.GetComponentInChildren<SpriteRenderer>());
         hammer.transform.parent = reciever.transform;

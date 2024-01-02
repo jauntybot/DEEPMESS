@@ -18,8 +18,8 @@ public class BloodSplatter : MonoBehaviour {
         Tile parent1 = origin.grid.tiles.Find(t => t.coord == origin.coord+dir);
         Tile parent2 = origin.grid.tiles.Find(t => t.coord == origin.coord);
         transform.position = origin.grid.PosFromCoord(origin.coord);
-        if (!parent1 || (parent1 && (parent1.tileType == Tile.TileType.Blood || parent1.tileType == Tile.TileType.Bile))
-            || parent2.tileType == Tile.TileType.Blood || parent2.tileType == Tile.TileType.Bile) {
+        if (!parent1 || (parent1 && (parent1.tileType != Tile.TileType.Bone || parent1 is TileBulb))
+            || parent2.tileType != Tile.TileType.Bone || parent1 is TileBulb) {
             anim.SetBool("Dissolve", true);
         }
     }

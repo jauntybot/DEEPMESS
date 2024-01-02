@@ -22,8 +22,7 @@ public class CascadeMoveData : MoveData {
         return validCoords;
     }
 
-    public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
-    {
+    public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         yield return user.StartCoroutine(MoveToCoord((Unit)user, target.coord));
     }
 

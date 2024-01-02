@@ -108,7 +108,7 @@ public class Unit : GridElement {
             if (targetSqr.tileType == Tile.TileType.Blood) {
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
 // SHIELD UNIT TIER II -- Blood bouyancy
-                if (!(shield && shield.buoyant))
+                if (!conditions.Contains(Status.Disabled) && !(shield && shield.buoyant))
                     ApplyCondition(Status.Restricted);
             } else if (targetSqr.tileType == Tile.TileType.Bile && hpCurrent > 0) {
 // SHIELD UNIT TIER II -- Bile bouyancy
@@ -137,7 +137,7 @@ public class Unit : GridElement {
             if (targetSqr.tileType == Tile.TileType.Blood) {
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
 // SHIELD UNIT TIER II -- Blood bouyancy
-                if (!(shield && shield.buoyant))
+                if (!conditions.Contains(Status.Disabled) && !(shield && shield.buoyant))
                     ApplyCondition(Status.Restricted);
             } else if (targetSqr.tileType == Tile.TileType.Bile && hpCurrent > 0) {
 // SHIELD UNIT TIER II -- Bile bouyancy
@@ -152,7 +152,8 @@ public class Unit : GridElement {
                     if (!tb.harvested && equipment.Find(e => e is BulbEquipmentData) == null)
                         tb.HarvestBulb(pu);
                 }
-            } else {
+            } 
+            if (targetSqr.tileType != Tile.TileType.Blood) {
                 RemoveCondition(Status.Restricted);
             }
         }
@@ -247,18 +248,24 @@ public class Unit : GridElement {
 
 
     public virtual void ApplyCondition(Status s) {
+        UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
+        evt.undo = false;
+        evt.condition = s;
+        evt.target = this;
+        ObjectiveEventManager.Broadcast(evt);
+
         if (!conditions.Contains(s)) {
             conditions.Add(s);
             conditionDisplay.UpdateCondition(s);
 
-            UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
-            evt.condition = s;
-            evt.target = this;
-            ObjectiveEventManager.Broadcast(evt);
 
             switch(s) {
                 default: return;
                 case Status.Normal: return;
+                case Status.Restricted:
+                    if (this is PlayerUnit)
+                        ui.UpdateEquipmentButtons();
+                break;
                 case Status.Immobilized:
                     moved = true;
                 break;

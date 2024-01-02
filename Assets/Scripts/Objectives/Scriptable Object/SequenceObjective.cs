@@ -59,7 +59,10 @@ public class SequenceObjective : Objective {
 // Stand in blood
     protected virtual void StandInBloodCheck(UnitConditionEvent evt) {
         if (evt.condition == Unit.Status.Restricted && evt.target is PlayerUnit) {
-            if (evt.undo) progress--;
+            if (evt.undo) {
+                progress--;
+                if (progress < goal) resolved = false;  
+            } 
             else progress++;
         }
         ProgressCheck();

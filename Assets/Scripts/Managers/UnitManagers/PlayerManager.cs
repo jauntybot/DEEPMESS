@@ -233,10 +233,10 @@ public class PlayerManager : UnitManager {
             }
         }
 // Player clicks on square
-        else if (input is Tile sqr) {
+        else if (input is Tile tile) {
 // Check if square is empty
             GridElement contents = null;
-            foreach (GridElement ge in currentGrid.CoordContents(sqr.coord)) {
+            foreach (GridElement ge in currentGrid.CoordContents(tile.coord)) {
                 contents = ge;
             }
 // Square not empty, recurse this function with reference to square contents
@@ -246,17 +246,17 @@ public class PlayerManager : UnitManager {
             else {
                 if (overrideEquipment && !selectedUnit) {
                     foreach(Unit _u in units) {
-                        Debug.Log(_u.coord + ", " + sqr.coord);
-                        if (sqr.coord == _u.coord) {
+                        Debug.Log(_u.coord + ", " + tile.coord);
+                        if (tile.coord == _u.coord) {
                             Debug.Log("tile clicked w/ unit");
                             SelectUnit(_u);
                         }
                     }
                 } else if (selectedUnit) {
 // Square is a target of valid action adjacency
-                    if (selectedUnit.ValidCommand(sqr.coord, selectedUnit.selectedEquipment)) {
+                    if (selectedUnit.ValidCommand(tile.coord, selectedUnit.selectedEquipment)) {
                         currentGrid.DisableGridHighlight();
-                        StartCoroutine(selectedUnit.ExecuteAction(sqr));
+                        StartCoroutine(selectedUnit.ExecuteAction(tile));
                     } else 
                         DeselectUnit();
                 }
@@ -379,7 +379,7 @@ public class PlayerManager : UnitManager {
         if (u.selectable) {
             base.SelectUnit(u);
             u.ui.ToggleEquipmentButtons();
-            if (!u.moved && u is PlayerUnit) {
+            if (u is PlayerUnit && (!u.moved || overrideEquipment)) {
                 u.selectedEquipment = u.equipment[0];
                 u.UpdateAction(u.selectedEquipment, u.moveMod);
             }
@@ -467,7 +467,7 @@ public class PlayerManager : UnitManager {
                 }
             }
 // Undo objective scoring
-            Tile targetSqr = currentGrid.tiles.Find(sqr => sqr.coord == lastMoved.coord);
+            Tile targetSqr = currentGrid.tiles.Find(tile => tile.coord == lastMoved.coord);
             if (targetSqr.tileType == Tile.TileType.Blood) {
                 UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
                 evt.condition = Unit.Status.Restricted;
@@ -480,6 +480,15 @@ public class PlayerManager : UnitManager {
             StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved], true));
             lastMoved.moved = false;
             lastMoved.elementCanvas.UpdateStatsDisplay();
+// Lazy override for stand in blood count
+            targetSqr = currentGrid.tiles.Find(tile => tile.coord == undoableMoves[lastMoved]);
+            if (targetSqr.tileType == Tile.TileType.Blood) {
+                UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
+                evt.condition = Unit.Status.Restricted;
+                evt.target = lastMoved;
+                evt.undo = true;
+                ObjectiveEventManager.Broadcast(evt);
+            }
 
             undoOrder.Remove(lastMoved);
             undoableMoves.Remove(lastMoved);

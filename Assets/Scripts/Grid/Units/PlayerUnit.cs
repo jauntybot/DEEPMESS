@@ -30,6 +30,16 @@ public class PlayerUnit : Unit {
         }
     }
 
+    public override bool ValidCommand(Vector2 target, EquipmentData equip) {
+        if (equip == null) return false;
+        if (validActionCoords.Count == 0) return false;
+        if (!validActionCoords.Contains(target)) return false;
+        if (energyCurrent < equip.energyCost && equip is not MoveData) return false;
+        else if (moved && equip is MoveData && !pManager.overrideEquipment) return false;
+
+        return true;
+    }
+
     public override IEnumerator ExecuteAction(GridElement target = null) {
         
         EquipmentData equip = selectedEquipment;

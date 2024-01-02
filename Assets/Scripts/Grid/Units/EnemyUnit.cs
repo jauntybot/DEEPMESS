@@ -84,36 +84,39 @@ public class EnemyUnit : Unit {
                 // Dictionary<Vector2, Vector2> shortestPath = new Dictionary<Vector2, Vector2>();
                 // Vector2 targetCoord = coord;
                 // Debug.Log("First while loop");
-                // while (!shortestPath.ContainsKey(coord)) {
-                //     foreach (Unit unit in manager.scenario.player.units) {
-                //         if (!unit.conditions.Contains(Status.Disabled)) {
-                //             List<Vector2> targetCoords = EquipmentAdjacency.GetAdjacent(unit.coord, equipment[1].range, equipment[0]);
-                //             foreach (Vector2 c in targetCoords) {
-                //                 Dictionary<Vector2, Vector2> fromTo = new Dictionary<Vector2, Vector2>(); 
-                //                 fromTo = EquipmentAdjacency.ClosestSteppedCoordAdjacency(coord, c, equipment[0]);
-                //                 if (fromTo != null && fromTo.Count < shortestPathCount) {
-                //                     shortestPath = fromTo;
-                //                     shortestPathCount = fromTo.Count;
-                //                     targetCoord = c;
-                //                 }
-                //             }
-                //         }
-                //     }
-                // }
+// Calculate a path from each target to self
+//                 while (!shortestPath.ContainsKey(coord)) {
+//                     foreach (Unit unit in manager.scenario.player.units) {
+// // Don't target disabled slags
+//                         if (!unit.conditions.Contains(Status.Disabled)) {
+// // Possible spaces in range of and originating from target
+//                             List<Vector2> targetCoords = EquipmentAdjacency.GetAdjacent(unit.coord, equipment[1].range, equipment[0]);
+//                             foreach (Vector2 c in targetCoords) {
+//                                 Dictionary<Vector2, Vector2> fromTo = new Dictionary<Vector2, Vector2>(); 
+//                                 fromTo = EquipmentAdjacency.ClosestSteppedCoordAdjacency(coord, c, equipment[0]);
+//                                 if (fromTo != null && fromTo.Count < shortestPathCount) {
+//                                     shortestPath = fromTo;
+//                                     shortestPathCount = fromTo.Count;
+//                                     targetCoord = c;
+//                                 }
+//                             }
+//                         }
+//                     }
+//                 }
 
-                // if (targetCoord != coord) {
-                //     grid.tiles.Find(t => t.coord == targetCoord).ToggleValidCoord(true, Color.blue, true);
-                //     string coords = "MoveTo Coord: " + targetCoord + ", ";
-                //     targetCoord = coord;
-                //     for (int i = 1; i <= equipment[0].range; i++) {
-                //         targetCoord = shortestPath[targetCoord];
-                //         coords += i + ": " + targetCoord + ", ";
-                //     }
-                //     Debug.Log(coords);
-                //     grid.tiles.Find(t => t.coord == targetCoord).ToggleValidCoord(true, Color.white, true);
-                // }
+//                 if (targetCoord != coord) {
+//                     grid.tiles.Find(t => t.coord == targetCoord).ToggleValidCoord(true, Color.blue, true);
+//                     string coords = "MoveTo Coord: " + targetCoord + ", ";
+//                     targetCoord = coord;
+//                     for (int i = 1; i <= equipment[0].range; i++) {
+//                         targetCoord = shortestPath[targetCoord];
+//                         coords += i + ": " + targetCoord + ", ";
+//                     }
+//                     Debug.Log(coords);
+//                     grid.tiles.Find(t => t.coord == targetCoord).ToggleValidCoord(true, Color.white, true);
+//                 }
                 
-                // return targetCoord;
+//                 return targetCoord;
 
 // Old logic
                 closestUnit = null;
@@ -137,6 +140,7 @@ public class EnemyUnit : Unit {
                     return validActionCoords[rndIndex];
                 } else return coord;
         }
+// Fallout, returns own coord
         return coord;
     }
 
