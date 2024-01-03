@@ -28,6 +28,7 @@ public class FloorSequence : ScriptableObject {
             break;
             case 1:
                 currentThreshold = FloorPacket.PacketType.Tutorial;
+                floorsGot = floorsTutorial;
             break;
             case 2:
                 currentThreshold = FloorPacket.PacketType.I;
