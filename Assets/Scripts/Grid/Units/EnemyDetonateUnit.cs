@@ -18,17 +18,35 @@ public class EnemyDetonateUnit : EnemyUnit {
     }
 
     public override IEnumerator ScatterTurn() {
-        if (!primed)
-            yield return base.ScatterTurn();
-        else
-            yield return StartCoroutine(ExplodeCo());
+        if (!conditions.Contains(Status.Stunned)) {
+            if (!primed)
+                yield return base.ScatterTurn();
+            else
+                yield return StartCoroutine(ExplodeCo());
+        } else {
+            moved = true;
+            energyCurrent = 0;
+            yield return new WaitForSecondsRealtime(0.125f);
+            RemoveCondition(Status.Stunned);
+        }
+    
     }
 
     public override IEnumerator CalculateAction() {
-        if (!primed)
-            yield return base.CalculateAction();
-        else 
-            yield return StartCoroutine(ExplodeCo());
+        if (!conditions.Contains(Status.Stunned)) {
+            if (!primed)
+                yield return base.CalculateAction();
+            else 
+                yield return StartCoroutine(ExplodeCo());
+        }
+        else {
+            moved = true;
+            energyCurrent = 0;
+            yield return new WaitForSecondsRealtime(0.125f);
+        }
+
+        grid.DisableGridHighlight();
+        manager.unitActing = false;
     }
 
     IEnumerator ExplodeCo() {

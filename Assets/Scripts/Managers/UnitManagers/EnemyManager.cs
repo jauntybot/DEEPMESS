@@ -57,6 +57,7 @@ public class EnemyManager : UnitManager {
 // Reset manager and units for turn
         foreach(Unit u in units) {
             u.energyCurrent = u.energyMax;
+            u.selectable = true;
             if (!u.conditions.Contains(Unit.Status.Immobilized))
                 u.moved = false;
             u.elementCanvas.UpdateStatsDisplay();
@@ -93,7 +94,7 @@ public class EnemyManager : UnitManager {
                     yield return null;
                     if (enemy == null) unitActing = false;
                 }
-                    DeselectUnit();
+                DeselectUnit();
                 yield return new WaitForSecondsRealtime(0.125f);
                 
                 unitsToAct.Remove(enemy);
@@ -104,8 +105,9 @@ public class EnemyManager : UnitManager {
 
         if (SpawnReinforcements()) yield return new WaitForSecondsRealtime(1.5f);
         
-
-        EndTurn();
+        Unit lastUnit = units[units.Count - 1];
+        if (lastUnit is BossUnit && lastUnit.energyCurrent != 0)
+            EndTurn();
     }
 
     public void StopActingUnit(GridElement ge = null) {

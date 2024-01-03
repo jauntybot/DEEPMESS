@@ -24,7 +24,9 @@ public class EliminationObjective : Objective {
                 if (evt.element is EnemyUnit && evt.damageType == GridElement.DamageType.Crush) progress++;
             break;
             case ObjectiveType.EnemyOnEnemyEliminations:
+            if (evt.source) {
                 if (evt.element is EnemyUnit && evt.source is EnemyUnit) progress++;
+            }
             break;
             case ObjectiveType.DestroyAnvils:
                 if (evt.element is Anvil) progress++;
@@ -33,13 +35,19 @@ public class EliminationObjective : Objective {
                 if (evt.element is Wall) progress++;
             break;
             case ObjectiveType.AnvilEliminations:
+            if (evt.source) {
                 if (evt.element is EnemyUnit && evt.source is Anvil) progress++;
+            }
             break;
             case ObjectiveType.BigGrabEliminations:
+            if (evt.sourceEquip) {
                 if (evt.element is EnemyUnit && evt.sourceEquip is BigGrabData) progress++;
+            }
             break;
             case ObjectiveType.ShieldEliminations:
-                if (evt.element is EnemyUnit && (evt.source.shield || evt.sourceEquip is ShieldData)) progress++;
+                if (evt.source && evt.sourceEquip) {
+                    if (evt.element is EnemyUnit && (evt.source.shield || evt.sourceEquip is ShieldData)) progress++;
+                }
             break;
         }
 

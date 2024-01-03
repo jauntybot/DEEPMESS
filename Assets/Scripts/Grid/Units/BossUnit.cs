@@ -8,8 +8,8 @@ public class BossUnit : EnemyUnit
     [SerializeField] Unit prevTarget = null;
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        manager.scenario.player.nail.ToggleNailState(Nail.NailState.Primed);
 
+        StartCoroutine(manager.scenario.FinalDrop());
         yield return base.DestroySequence(dmgType, source, sourceEquip);
     }
 

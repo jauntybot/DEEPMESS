@@ -228,7 +228,11 @@ public class PlayerManager : UnitManager {
 // Unit is a target of valid action adjacency
                     if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
                         StartCoroutine(selectedUnit.ExecuteAction(u));
-                    } 
+                    } else {
+                        SelectUnit(u);
+                    }
+                } else {
+                    SelectUnit(u);
                 }
             }
         }
@@ -378,10 +382,14 @@ public class PlayerManager : UnitManager {
     public override void SelectUnit(Unit u) {
         if (u.selectable) {
             base.SelectUnit(u);
-            u.ui.ToggleEquipmentButtons();
-            if (u is PlayerUnit && (!u.moved || overrideEquipment)) {
-                u.selectedEquipment = u.equipment[0];
-                u.UpdateAction(u.selectedEquipment, u.moveMod);
+            if (u is PlayerUnit) {
+                u.ui.ToggleEquipmentButtons();
+                if (!u.moved || overrideEquipment) {
+                    u.selectedEquipment = u.equipment[0];
+                    u.UpdateAction(u.selectedEquipment, u.moveMod);
+                }
+            } else if (u is EnemyUnit) {
+                
             }
             prevCursorTargetState = true;
         }

@@ -287,7 +287,7 @@ public class FloorManager : MonoBehaviour {
 // Check if at the end of packet / if there was a sub floor generated, if not packet is done
             if (floors.Count - 1 > currentFloor.index) {
 // Generate next floor if still mid packet
-                if (!floorSequence.ThresholdCheck() || floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) {
+                if (!floorSequence.ThresholdCheck()) { //|| floorSequence.currentThreshold == FloorPacket.PacketType.BOSS
                     GenerateFloor();       
                 }
 
@@ -302,10 +302,10 @@ public class FloorManager : MonoBehaviour {
                         scenario.gpOptional.StartCoroutine(scenario.gpOptional.TileBulb());
                     if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is EnemyDetonateUnit) != null && !scenario.gpOptional.basophicEncountered)
                         scenario.gpOptional.StartCoroutine(scenario.gpOptional.Basophic());
-                    if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS && !scenario.gpOptional.prebossEncountered) {
-                        Debug.Log("Preboss");
-                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Preboss());
-                    }
+                    // if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS && !scenario.gpOptional.prebossEncountered) {
+                        
+                    //     scenario.gpOptional.StartCoroutine(scenario.gpOptional.Preboss());
+                    // }
                 }
 
 // Yield for cascade sequence
@@ -316,16 +316,7 @@ public class FloorManager : MonoBehaviour {
                 // }
                 
 // Descend units from previous floor
-
                 yield return StartCoroutine(DescendUnits(floors[currentFloor.index -1].gridElements, enemy));
-
-// Check for boss spawn
-                if (floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && floorSequence.floorsGot >= 2 && !bossSpawn) {
-                    yield return new WaitForSecondsRealtime(0.75f);
-                    yield return StartCoroutine(SpawnBoss());
-                }
-
-
                  
                 StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
             } else {
@@ -424,7 +415,7 @@ public class FloorManager : MonoBehaviour {
         }
         yield return new WaitForSecondsRealtime(0.75f);
         
-        if (nail) {
+        if (nail && floorSequence.currentThreshold != FloorPacket.PacketType.BOSS) {
             yield return StartCoroutine(DropNail(nail));
             //yield return StartCoroutine(DropParticle());
         }
@@ -685,7 +676,7 @@ public class FloorManager : MonoBehaviour {
         transitionParent.transform.position = Vector3.zero;
         cavityWait = false;
 
-        if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BOSS) {
+        if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BARRIER) {
             timer = 0;
             while (timer <= unitDropDur) {
                 parallax.ScrollParallax(-1);
@@ -712,9 +703,6 @@ public class FloorManager : MonoBehaviour {
             GenerateFloor();
             descending = false;
             yield return scenario.StartCoroutine(scenario.FirstTurn(lastFloorEnemey));
-            // yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
-            // yield return StartCoroutine(DescendUnits(new List<GridElement>{ units[0], units[1], units[2], units[3]} ));
-            // yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
         } else {
             yield return StartCoroutine(scenario.Win());
             while (scenario.scenario == ScenarioManager.Scenario.EndState) {
@@ -734,6 +722,14 @@ public class FloorManager : MonoBehaviour {
 
             timer += Time.deltaTime;
         }
+    }
+
+    public IEnumerator FinalDescent() {
+        currentFloor.StartCoroutine(currentFloor.ShockwaveCollapse(scenario.player.nail.coord));
+        floors[currentFloor.index++].StartCoroutine(floors[currentFloor.index++].ShockwaveCollapse(scenario.player.nail.coord));
+        yield return new WaitForSecondsRealtime(1f);
+        yield return StartCoroutine(TransitionPackets());
+        //yield return StartCoroutine(TransitionFloors(true, false));
     }
 
     public IEnumerator EndSequenceAnimation(GameObject arm) {

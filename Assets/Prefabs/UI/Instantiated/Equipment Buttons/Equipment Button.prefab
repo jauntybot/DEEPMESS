@@ -88,6 +88,7 @@ GameObject:
   - component: {fileID: 8834564816556985114}
   - component: {fileID: 1908760782141500424}
   - component: {fileID: 3535551238317346783}
+  - component: {fileID: 3208455473210610322}
   m_Layer: 5
   m_Name: Equipment Button
   m_TagString: Untagged
@@ -136,7 +137,6 @@ MonoBehaviour:
   button: {fileID: 3535551238317346783}
   icon: {fileID: 6104662904831299874}
   selected: 0
-  disarmOverlay: {fileID: 7081682024473950785}
 --- !u!95 &1908760782141500424
 Animator:
   serializedVersion: 5
@@ -213,6 +213,28 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &3208455473210610322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3148064648971439186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d38c2447f701f49ecafacd4b870b8e8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  location: 0
+  header: 
+  content: 
+  anim: {fileID: 0}
+  initSelf: 0
+  hammerAnim: {fileID: 9100000, guid: 157099bd39027ab40b567b4c0ab0e0e1, type: 2}
+  anvilAnim: {fileID: 9100000, guid: eddd93494180fdb4196f6a754b467505, type: 2}
+  bigGrabAnim: {fileID: 9100000, guid: e915736a45026014b95124341a6ceacc, type: 2}
+  shieldAnim: {fileID: 9100000, guid: 7705e762e8c818a4f99312b79c8fb2fd, type: 2}
+  bulbAnim: {fileID: 9100000, guid: d0b47f0618f75e7459fdba973bd776a2, type: 2}
 --- !u!1 &3511847932273497200
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,7 +9,7 @@ public class Nail : Unit
 
     public MoveData nailDrop;
 
-    public enum NailState { Falling, Primed, Buried }
+    public enum NailState { Falling, Primed, Buried, Hiding }
     public NailState nailState;
 
     [SerializeField] GameObject primedVFX;
@@ -40,6 +40,7 @@ public class Nail : Unit
                 primedVFX.SetActive(true);
                 PlaySound(primedSFX);
             break;
+            case NailState.Hiding:
             case NailState.Buried:
                 gfxAnim.SetBool("Falling", false);
                 gfxAnim.SetBool("Primed", false);

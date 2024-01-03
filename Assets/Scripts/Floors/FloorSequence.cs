@@ -35,6 +35,9 @@ public class FloorSequence : ScriptableObject {
             case 3:
                 currentThreshold = FloorPacket.PacketType.III;
             break;
+            case 4:
+                currentThreshold = FloorPacket.PacketType.BOSS;
+            break;
         }
     }
 

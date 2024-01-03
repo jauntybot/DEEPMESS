@@ -72,7 +72,6 @@ public class UnitUpgradeUI : UnitUI {
             case 1: tmp = slot2ModifiersTMP; break;
             case 2: tmp = slot3ModifiersTMP; break;
         }
-        tmp.transform.parent.gameObject.SetActive(true);
         tmp.text = mod;
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
@@ -105,10 +104,7 @@ public class UnitUpgradeUI : UnitUI {
             case 2: tmp = slot3ModifiersTMP; break;
         }
         if (!apply) {
-            tmp.transform.parent.gameObject.SetActive(false);
             tmp.text = "";   
-        } else {
-            tmp.transform.parent.gameObject.SetActive(true);
         }
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());

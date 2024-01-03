@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1886912618144298279}
   - component: {fileID: 6912311780771685941}
   - component: {fileID: 6773061551549272372}
+  - component: {fileID: 2316212377225429814}
   m_Layer: 5
   m_Name: Bulb Button
   m_TagString: Untagged
@@ -144,6 +145,28 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+--- !u!114 &2316212377225429814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2430055713328527690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d38c2447f701f49ecafacd4b870b8e8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  location: 0
+  header: 
+  content: 
+  anim: {fileID: 0}
+  initSelf: 0
+  hammerAnim: {fileID: 9100000, guid: 157099bd39027ab40b567b4c0ab0e0e1, type: 2}
+  anvilAnim: {fileID: 9100000, guid: eddd93494180fdb4196f6a754b467505, type: 2}
+  bigGrabAnim: {fileID: 9100000, guid: e915736a45026014b95124341a6ceacc, type: 2}
+  shieldAnim: {fileID: 9100000, guid: 7705e762e8c818a4f99312b79c8fb2fd, type: 2}
+  bulbAnim: {fileID: 9100000, guid: d0b47f0618f75e7459fdba973bd776a2, type: 2}
 --- !u!1 &2466197756267761857
 GameObject:
   m_ObjectHideFlags: 0

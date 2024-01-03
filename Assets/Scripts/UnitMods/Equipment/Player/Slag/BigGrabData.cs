@@ -169,6 +169,8 @@ public class BigGrabData : SlagEquipmentData {
             }
             thrown.StartCoroutine(thrown.CollideFromAbove(subGE, 0, thrower, this));
         }
+        thrown.ApplyCondition(Unit.Status.Stunned);
+        
 // UNIT TIER I - Deal damage on throw
         if (upgrades[UpgradePath.Unit] >= 1) thrown.StartCoroutine(thrown.TakeDamage(1, GridElement.DamageType.Fall, thrower, this));
         

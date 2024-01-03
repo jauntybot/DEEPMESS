@@ -69,6 +69,7 @@ public class ScenarioManager : MonoBehaviour
 //            currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
 //            player.transform.parent = floorManager.currentFloor.transform;
         }
+
         runDataTracker.Init(this);
     
         yield return StartCoroutine(player.Initialize());
@@ -79,7 +80,9 @@ public class ScenarioManager : MonoBehaviour
         }
         yield return null;
         //StartCoroutine(FirstTurn());
-        floorManager.StartCoroutine(floorManager.TransitionPackets());
+
+        if (startCavity != 0)
+            floorManager.StartCoroutine(floorManager.TransitionPackets());
     }
 
     public IEnumerator FirstTurn(EnemyManager prevEnemy = null) {
@@ -103,7 +106,15 @@ public class ScenarioManager : MonoBehaviour
             }
             player.units[3].grid = floorManager.currentFloor;
             yield return StartCoroutine(PlayerEnter());
-            yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3] }));
+            List<GridElement> units = new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3] };
+            if (floorManager.floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && !floorManager.bossSpawn)
+                units.RemoveAt(3);
+            
+            yield return StartCoroutine(floorManager.DescendUnits(units));
+            if (floorManager.floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && !floorManager.bossSpawn) {
+                yield return new WaitForSecondsRealtime(0.75f);
+                yield return StartCoroutine(floorManager.SpawnBoss());
+            }
             StartCoroutine(SwitchTurns(Turn.Enemy));
         }
     }
@@ -258,8 +269,12 @@ public class ScenarioManager : MonoBehaviour
             StartCoroutine(SwitchTurns());
     }
 
-    public IEnumerator Win() 
-    {
+    public IEnumerator FinalDrop() {
+        yield return StartCoroutine(floorManager.DropNail(player.nail));
+        yield return StartCoroutine(floorManager.FinalDescent());
+    }
+
+    public IEnumerator Win() {
         if (uiManager.gameObject.activeSelf) {
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Win));
             uiManager.ToggleBattleCanvas(false);

@@ -1,6 +1,4 @@
-    using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
+using System.Collections;
 using UnityEngine;
 
 public class EnemyUnit : Unit {
@@ -32,10 +30,18 @@ public class EnemyUnit : Unit {
     public virtual IEnumerator CalculateAction() {
         Debug.Log("Start Action");
 
-        yield return StartCoroutine(AttackScan());
-        if (energyCurrent > 0) {
-            if (!moved) yield return StartCoroutine(MoveScan());
+        if (!conditions.Contains(Status.Stunned)) {
             yield return StartCoroutine(AttackScan());
+            if (energyCurrent > 0) {
+                if (!moved) yield return StartCoroutine(MoveScan());
+                yield return StartCoroutine(AttackScan());
+            }
+        } else {
+            moved = true;
+            energyCurrent = 0;
+            yield return new WaitForSecondsRealtime(0.125f);
+            RemoveCondition(Status.Stunned);
+            yield return new WaitForSecondsRealtime(0.25f);
         }
        
         grid.DisableGridHighlight();
