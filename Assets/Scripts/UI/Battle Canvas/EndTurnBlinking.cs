@@ -7,7 +7,6 @@ public class EndTurnBlinking : MonoBehaviour
 {
     ScenarioManager scenario;
     PlayerManager playerManager;
-    [SerializeField] GameObject endTurn;
     [SerializeField] Animator highlightAnim;
 
     private bool outOfEnergy;

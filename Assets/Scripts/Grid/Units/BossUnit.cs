@@ -8,8 +8,7 @@ public class BossUnit : EnemyUnit
     [SerializeField] Unit prevTarget = null;
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-
-        StartCoroutine(manager.scenario.FinalDrop());
+        manager.StartCoroutine(manager.scenario.FinalDrop());
         yield return base.DestroySequence(dmgType, source, sourceEquip);
     }
 

@@ -427,7 +427,7 @@ public class PlayerManager : UnitManager {
 
         }
         base.DeselectUnit();
-        //turnBlink.BlinkEndTurn();
+        turnBlink.BlinkEndTurn();
         prevCursorTargetState = false;
         contextuals.displaying = false;
         targetCursorState = PlayerController.CursorState.Default;
@@ -521,7 +521,8 @@ public class PlayerManager : UnitManager {
         for (int i = units.Count - 1; i >= 0; i--) {
             currentGrid.RemoveElement(units[i]);
             
-            units[i].StoreInGrid(newGrid);
+            if (!(floorManager.floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && units[i] is Nail))
+                units[i].StoreInGrid(newGrid);
                 
             if (units[i].conditions.Contains(Unit.Status.Immobilized))
                 units[i].RemoveCondition(Unit.Status.Immobilized);

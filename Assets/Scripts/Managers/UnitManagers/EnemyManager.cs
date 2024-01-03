@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.U2D;
 
@@ -64,11 +65,11 @@ public class EnemyManager : UnitManager {
         }
         ResolveConditions();
 
-        yield return StartCoroutine(DescendReinforcements());
-
         unitsToAct = new List<Unit>();
         for (int i = units.Count - 1; i >= 0; i--)
             unitsToAct.Add(units[i]);
+
+        yield return StartCoroutine(DescendReinforcements());
 
 // Loop through each unit to take it's action
         while (unitsToAct.Count > 0) {
@@ -100,14 +101,15 @@ public class EnemyManager : UnitManager {
                 unitsToAct.Remove(enemy);
             } else {
 
-            }
+           }
         }
 
-        if (SpawnReinforcements()) yield return new WaitForSecondsRealtime(1.5f);
         
         Unit lastUnit = units[units.Count - 1];
-        if (lastUnit is BossUnit && lastUnit.energyCurrent != 0)
+        if (lastUnit is not BossUnit || (lastUnit is BossUnit && lastUnit.energyCurrent != 0)) {
+            if (SpawnReinforcements()) yield return new WaitForSecondsRealtime(1.5f);
             EndTurn();
+        }
     }
 
     public void StopActingUnit(GridElement ge = null) {
@@ -133,7 +135,7 @@ public class EnemyManager : UnitManager {
         StartCoroutine(scenario.SwitchTurns());
     }
 
-    public virtual void SeedUnits(Grid newGrid) {
+    public virtual void SeedUnits(Grid newGrid, bool toSelf) {
         EnemyManager eManager = (EnemyManager) newGrid.enemy;
         int insertIndex = newGrid.enemy.units.Count;
         for (int i = units.Count - 1; i >= 0; i--) {
@@ -147,7 +149,10 @@ public class EnemyManager : UnitManager {
             units[i].manager = eManager;
             //units[i].ElementDestroyed += eManager.DescentTriggerCheck;
             //units[i].ElementDestroyed -= DescentTriggerCheck;
+            units[i].ElementDestroyed += CountDefeatedEnemy; 
+            units[i].ElementDestroyed += StopActingUnit;
             units[i].ElementDestroyed -= currentGrid.RemoveElement;
+            
 
             units[i].transform.parent = newGrid.enemy.transform;
             units[i].StoreInGrid(newGrid);
@@ -160,17 +165,13 @@ public class EnemyManager : UnitManager {
 
         //eManager.DescentTriggerCheck();
         UIManager.instance.metaDisplay.UpdateEnemiesRemaining(newGrid.enemy.units.Count);
-        Destroy(this.gameObject);
+        if (!toSelf)
+           Destroy(this.gameObject);
     }
 
     public virtual bool SpawnReinforcements() {
-        if (pendingUnits.Count > 0) {
-            foreach (Unit u in pendingUnits) 
-                units.Add(u);
-        }
         bool spawn = false;
 
-        pendingUnits = new List<GridElement>();
         if (units.Count < currentGrid.lvlDef.minEnemies) {
             int count = currentGrid.lvlDef.minEnemies - units.Count;
             for (int i = 0; i < count; i++) {
@@ -189,7 +190,6 @@ public class EnemyManager : UnitManager {
             obj.transform.localScale = Vector3.one * FloorManager.sqrSize;
             obj.transform.position = currentGrid.PosFromCoord(u.coord);
             int sort = currentGrid.SortOrderFromCoord(u.coord);
-            Debug.Log(u.coord + ", " + obj.transform.position);
             
             SpriteShapeRenderer srr = obj.GetComponentInChildren<SpriteShapeRenderer>();
             LineRenderer lr = obj.GetComponentInChildren<LineRenderer>();
@@ -210,8 +210,11 @@ public class EnemyManager : UnitManager {
         }
         pendingUnitUIs = new List<GameObject>();
         if (pendingUnits.Count > 0) {
-            yield return StartCoroutine(floorManager.DescendUnits(pendingUnits));
+            yield return StartCoroutine(floorManager.DescendUnits(pendingUnits, this));
+            
         }
+        pendingUnits = new List<GridElement>();
+
         transform.parent = currentGrid.transform;
     }
 

@@ -121,6 +121,7 @@ public class ScenarioManager : MonoBehaviour
 
     IEnumerator PlayerEnter() {
         uiManager.LockPeekButton(true);
+        currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
 
         yield return StartCoroutine(SwitchTurns(Turn.Cascade));
         player.units[0].UpdateElement(new Vector2(3,3));
@@ -270,11 +271,13 @@ public class ScenarioManager : MonoBehaviour
     }
 
     public IEnumerator FinalDrop() {
+        yield return new WaitForSecondsRealtime(1.5f);
         yield return StartCoroutine(floorManager.DropNail(player.nail));
         yield return StartCoroutine(floorManager.FinalDescent());
     }
 
     public IEnumerator Win() {
+        scenario = Scenario.EndState;
         if (uiManager.gameObject.activeSelf) {
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Win));
             uiManager.ToggleBattleCanvas(false);
@@ -283,8 +286,7 @@ public class ScenarioManager : MonoBehaviour
         runDataTracker.UpdateAndDisplay(true, floorManager.currentFloor.index + 1, player.defeatedEnemies);
     }
 
-    public IEnumerator Lose() 
-    {
+    public IEnumerator Lose() {
         scenario = Scenario.EndState;
         if (currentTurn == Turn.Enemy)
             currentEnemy.StopActingUnit();

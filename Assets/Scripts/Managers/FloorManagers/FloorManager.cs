@@ -302,8 +302,7 @@ public class FloorManager : MonoBehaviour {
                         scenario.gpOptional.StartCoroutine(scenario.gpOptional.TileBulb());
                     if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is EnemyDetonateUnit) != null && !scenario.gpOptional.basophicEncountered)
                         scenario.gpOptional.StartCoroutine(scenario.gpOptional.Basophic());
-                    // if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS && !scenario.gpOptional.prebossEncountered) {
-                        
+                    // if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS && !scenario.gpOptional.prebossEncountered) { 
                     //     scenario.gpOptional.StartCoroutine(scenario.gpOptional.Preboss());
                     // }
                 }
@@ -345,7 +344,7 @@ public class FloorManager : MonoBehaviour {
         yield return drop;
 
         if (enemy) {
-            enemy.SeedUnits(currentFloor);
+            enemy.SeedUnits(currentFloor, enemy == currentFloor.enemy);
         }
 
         scenario.player.DescendGrids(currentFloor);
@@ -656,27 +655,30 @@ public class FloorManager : MonoBehaviour {
 
 
 // Objective award + Upgrade sequence
-        if (currentFloor) {
-            yield return scenario.objectiveManager.RewardSequence();
-            yield return scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
-        }
+        if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BOSS) {
+            if (currentFloor) {
+                yield return scenario.objectiveManager.RewardSequence();
+                yield return scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
+            }
 
-        yield return scenario.objectiveManager.AssignSequence();
+            yield return scenario.objectiveManager.AssignSequence();
+        }
         
-        StopCoroutine(floating);
-        timer = 0;
-        Vector3 startPos = transitionParent.transform.position;
-        while (timer <= unitDropDur*2) {
-            parallax.ScrollParallax(-1);
-            transitionParent.transform.position = Vector3.Lerp(startPos, Vector3.zero, timer/unitDropDur);
-            timer += Time.deltaTime;
-            yield return null;
-        }
 
-        transitionParent.transform.position = Vector3.zero;
-        cavityWait = false;
+        if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BOSS) {
+            StopCoroutine(floating);
+            timer = 0;
+            Vector3 startPos = transitionParent.transform.position;
+            while (timer <= unitDropDur*2) {
+                parallax.ScrollParallax(-1);
+                transitionParent.transform.position = Vector3.Lerp(startPos, Vector3.zero, timer/unitDropDur);
+                timer += Time.deltaTime;
+                yield return null;
+            }
 
-        if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BARRIER) {
+            transitionParent.transform.position = Vector3.zero;
+            cavityWait = false;
+
             timer = 0;
             while (timer <= unitDropDur) {
                 parallax.ScrollParallax(-1);
@@ -725,6 +727,10 @@ public class FloorManager : MonoBehaviour {
     }
 
     public IEnumerator FinalDescent() {
+        descending = true;
+        currentFloor.DisableGridHighlight();
+        currentFloor.LockGrid(true);
+
         currentFloor.StartCoroutine(currentFloor.ShockwaveCollapse(scenario.player.nail.coord));
         floors[currentFloor.index++].StartCoroutine(floors[currentFloor.index++].ShockwaveCollapse(scenario.player.nail.coord));
         yield return new WaitForSecondsRealtime(1f);

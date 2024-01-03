@@ -62,7 +62,6 @@ public class Burrow : EquipmentData
         }
         
         FloorManager.instance.Descend(false, true, user.coord);
-        yield return new WaitForSecondsRealtime(1f);
     }
 
 }

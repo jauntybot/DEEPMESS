@@ -27,18 +27,22 @@ public class FloorSequence : ScriptableObject {
                 currentThreshold = FloorPacket.PacketType.Tutorial;
             break;
             case 1:
-                currentThreshold = FloorPacket.PacketType.I;
+                currentThreshold = FloorPacket.PacketType.Tutorial;
             break;
             case 2:
-                currentThreshold = FloorPacket.PacketType.II;
+                currentThreshold = FloorPacket.PacketType.I;
+                floorsGot = floorsI;
             break;
             case 3:
-                currentThreshold = FloorPacket.PacketType.III;
+                currentThreshold = FloorPacket.PacketType.II;
+                floorsGot = floorsII;
             break;
             case 4:
-                currentThreshold = FloorPacket.PacketType.BOSS;
+                currentThreshold = FloorPacket.PacketType.III;
+                floorsGot = floorsIII;
             break;
         }
+        activePacket.packetType = currentThreshold;
     }
 
     public void StartPacket(FloorPacket.PacketType type) {
@@ -98,7 +102,7 @@ public class FloorSequence : ScriptableObject {
 
         if (activePacket.packetType != currentThreshold || activePacket.floors.Count == 0) {
             StartPacket(currentThreshold);
-            if (prevType == FloorPacket.PacketType.BOSS && currentThreshold == FloorPacket.PacketType.BOSS) {
+            if (currentThreshold == FloorPacket.PacketType.BOSS) {
                 int index = activePacket.inOrder ? 0 : Random.Range(0, activePacket.firstFloors.Count-1);
                     FloorDefinition floor = activePacket.floors[index];
                     activePacket.floors.Remove(floor);
