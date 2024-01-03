@@ -79,10 +79,11 @@ public class ScenarioManager : MonoBehaviour
             gpOptional.Initialize();
         }
         yield return null;
-        //StartCoroutine(FirstTurn());
 
         if (startCavity != 0)
             floorManager.StartCoroutine(floorManager.TransitionPackets());
+        else 
+            StartCoroutine(FirstTurn());
     }
 
     public IEnumerator FirstTurn(EnemyManager prevEnemy = null) {
@@ -93,10 +94,10 @@ public class ScenarioManager : MonoBehaviour
         player.ToggleUnitSelectability(true);
 
         if (startCavity == 0) {
-                foreach (GridElement ge in player.units)
-                    floorManager.currentFloor.RemoveElement(ge);
-                    
-                StartCoroutine(tutorial.Tutorial());
+            foreach (GridElement ge in player.units)
+                floorManager.currentFloor.RemoveElement(ge);
+                
+            StartCoroutine(tutorial.Tutorial());
         } else {
             if (prevEnemy) {
                 List<GridElement> unitsToDrop = new();

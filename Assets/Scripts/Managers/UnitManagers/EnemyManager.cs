@@ -105,8 +105,9 @@ public class EnemyManager : UnitManager {
         }
 
         
-        Unit lastUnit = units[units.Count - 1];
-        if (lastUnit is not BossUnit || (lastUnit is BossUnit && lastUnit.energyCurrent != 0)) {
+        Unit lastUnit = null;
+        if (units.Count > 0) lastUnit = units[units.Count - 1];
+        if (!lastUnit || lastUnit is not BossUnit || (lastUnit is BossUnit && lastUnit.energyCurrent != 0)) {
             if (SpawnReinforcements()) yield return new WaitForSecondsRealtime(1.5f);
             EndTurn();
         }

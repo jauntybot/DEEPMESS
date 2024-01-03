@@ -341,14 +341,15 @@ public class FloorManager : MonoBehaviour {
         Coroutine drop = StartCoroutine(DropUnits(units, hardLand));
 
         scenario.currentEnemy = (EnemyManager)currentFloor.enemy;
+        
         yield return drop;
 
         if (enemy) {
             enemy.SeedUnits(currentFloor, enemy == currentFloor.enemy);
         }
-
         scenario.player.DescendGrids(currentFloor);
         currentFloor.LockGrid(false);
+
 
         if (uiManager.gameObject.activeSelf)    
             uiManager.metaDisplay.UpdateEnemiesRemaining(scenario.currentEnemy.units.Count);

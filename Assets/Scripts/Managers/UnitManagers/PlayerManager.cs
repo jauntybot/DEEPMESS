@@ -519,7 +519,8 @@ public class PlayerManager : UnitManager {
         UIManager.instance.ToggleUndoButton(undoOrder.Count > 0);
 
         for (int i = units.Count - 1; i >= 0; i--) {
-            currentGrid.RemoveElement(units[i]);
+            if (currentGrid && currentGrid.gridElements.Contains(units[i]))
+                currentGrid.RemoveElement(units[i]);
             
             if (!(floorManager.floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && units[i] is Nail))
                 units[i].StoreInGrid(newGrid);

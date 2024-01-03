@@ -63,12 +63,17 @@ public class TutorialSequence : MonoBehaviour
     }
     
     public IEnumerator Tutorial() {
-        for (int i = 0; i <= scenario.player.units.Count - 1; i++)
-            playerUnits.Add(scenario.player.units[i]);
+        for (int i = 0; i <= scenario.player.units.Count - 1; i++) {
+            Unit u = scenario.player.units[i];
+            playerUnits.Add(u);
+            u.grid = floorManager.currentFloor;
+            if (floorManager.currentFloor.gridElements.Contains(u))
+                floorManager.currentFloor.RemoveElement(u);
+        }
         //scenario.player.units[1].ui.overview.gameObject.SetActive(false); scenario.player.units[2].ui.overview.gameObject.SetActive(false);
         scenario.player.units.RemoveAt(1); scenario.player.units.RemoveAt(1);
 
-
+        floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
         yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ scenario.player.units[1] }));
         //foreach (Unit unit in scenario.player.units) unit.gameObject.SetActive(false);
         yield return new WaitForSecondsRealtime(0.5f);
@@ -76,8 +81,10 @@ public class TutorialSequence : MonoBehaviour
         yield return new WaitForSecondsRealtime(1.25f);
         yield return StartCoroutine(SplashMessage());
         
+// Drop Flat
         yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
         floorManager.currentFloor.RemoveElement(scenario.player.units[0]);
+        scenario.player.units[0].coord = new Vector2(1,2);
         yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement> { scenario.player.units[0] }));
         yield return new WaitForSecondsRealtime(0.15f);
 
@@ -521,7 +528,7 @@ public class TutorialSequence : MonoBehaviour
                 scenario.player.units.Insert(1, playerUnits[1]);
                 //scenario.player.units[1].ui.overview.gameObject.SetActive(true);
                 floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
-                floorManager.currentFloor.slagSpawns.Add(floorManager.currentFloor.lvlDef.initSpawns.Find(s => s.asset.prefab.GetComponent<PlayerUnit>()).coord);
+                scenario.player.units[1].coord = new Vector2(6,1);
                 yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[1] }));
                 scenario.currentTurn = ScenarioManager.Turn.Descent;
                 
@@ -529,11 +536,14 @@ public class TutorialSequence : MonoBehaviour
             case 1:
                 yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
                 EnemyManager prevEnemy = scenario.currentEnemy;
-
+                
+                floorManager.GenerateFloor(floorManager.floorSequence.GetFloor());
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
+                
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
 
+                scenario.player.units[2].coord = new Vector2(2,4);
                 for (int i = scenario.player.units.Count - 1; i >= 0; i--) {
                     toDescend.Add(scenario.player.units[i]);
                 }
@@ -563,9 +573,8 @@ public class TutorialSequence : MonoBehaviour
                 floorManager.currentFloor.RemoveElement(scenario.player.units[2]);
                 yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[2] }));
                 yield return new WaitForSecondsRealtime(0.15f);
-                floorManager.floorSequence.ThresholdCheck();
             break;
-            case 2:
+            case 3:
                 Coroutine co = floorManager.StartCoroutine(floorManager.TransitionPackets());
                 PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
                 yield return new WaitForSecondsRealtime(2f);

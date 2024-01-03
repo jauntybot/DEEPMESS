@@ -271,8 +271,7 @@ public class Grid : MonoBehaviour {
         gridElements.Add(ge);
     }
 
-    public void RemoveElement(GridElement ge) 
-    {
+    public void RemoveElement(GridElement ge) {
         gridElements.Remove(ge);
     }
 
