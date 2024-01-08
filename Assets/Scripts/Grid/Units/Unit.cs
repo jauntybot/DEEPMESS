@@ -160,25 +160,29 @@ public class Unit : GridElement {
     }
 
     public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        TargetElement(true);
+        if (!destroyed) {
+            TargetElement(true);
 
-        int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg * 2 : dmg;
-        yield return base.TakeDamage(modifiedDmg, dmgType, source, sourceEquip);
+            int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg * 2 : dmg;
+            yield return base.TakeDamage(modifiedDmg, dmgType, source, sourceEquip);
 
-        TargetElement(targeted);
+            TargetElement(targeted);
+        }
     }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        ElementDestroyed?.Invoke(this);
-        ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
-        
-        PlaySound(destroyedSFX);
-        yield return new WaitForSecondsRealtime(0.5f);
+        if (!destroyed) {
+            ElementDestroyed?.Invoke(this);
+            ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
+            
+            PlaySound(destroyedSFX);
+            yield return new WaitForSecondsRealtime(0.5f);
 
-        if (manager.selectedUnit == this) manager.DeselectUnit();
+            if (manager.selectedUnit == this) manager.DeselectUnit();
 
-        if (gameObject != null)
-            Destroy(gameObject);
+            if (gameObject != null)
+                Destroy(gameObject);
+        }
     }
 
 #endregion
@@ -242,7 +246,7 @@ public class Unit : GridElement {
             if (temp.healing) {
                 StartCoroutine(TakeDamage(-1));
             }
-            Destroy(temp.gameObject);
+            temp.DestroySelf();
         }
     }
 

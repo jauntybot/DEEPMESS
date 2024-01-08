@@ -243,6 +243,7 @@ public class FloorManager : MonoBehaviour {
 
     public void Descend(bool cascade = false, bool nail = true, Vector2 pos = default) {
         bool tut = floorSequence.activePacket.packetType == FloorPacket.PacketType.Tutorial;
+        Debug.Log("Tutorial Descent: " + tut);
         StartCoroutine(DescendFloors(cascade, tut, nail, pos));
         
     }

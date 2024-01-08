@@ -23,6 +23,7 @@ public class GridElement : MonoBehaviour{
     public int hpMax, hpCurrent;
     public Shield shield;
     public int energyCurrent, energyMax;
+    public bool destroyed;
 
     [Header("UI/UX")]
     public List<SpriteRenderer> gfx;
@@ -86,29 +87,31 @@ public class GridElement : MonoBehaviour{
 
   
     public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        ObjectiveEventManager.Broadcast(GenerateDamageEvent(dmgType, dmg, source, sourceEquip));
-        if (shield == null || Mathf.Sign(dmg) == -1) {
-            if (Mathf.Sign(dmg) == 1) 
-                PlaySound(dmgdSFX);
-                         
-            if (elementCanvas) {
-                yield return StartCoroutine(elementCanvas.DisplayDamageNumber(dmg));
+        if (!destroyed) {
+            ObjectiveEventManager.Broadcast(GenerateDamageEvent(dmgType, dmg, source, sourceEquip));
+            if (shield == null || Mathf.Sign(dmg) == -1) {
+                if (Mathf.Sign(dmg) == 1) 
+                    PlaySound(dmgdSFX);
+                            
+                if (elementCanvas) {
+                    yield return StartCoroutine(elementCanvas.DisplayDamageNumber(dmg));
+                }
+
+                hpCurrent -= dmg;
+                
+                if (hpCurrent < 0) hpCurrent = 0;
+                if (hpCurrent > hpMax) hpCurrent = hpMax;
+                
+
+            } else {
+                RemoveShield();
             }
-
-            hpCurrent -= dmg;
-            
-            if (hpCurrent < 0) hpCurrent = 0;
-            if (hpCurrent > hpMax) hpCurrent = hpMax;
-            
-
-        } else {
-            RemoveShield();
+            if (hpCurrent <= 0) {
+                yield return StartCoroutine(DestroySequence(dmgType, source, sourceEquip));
+            }
+            //yield return new WaitForSecondsRealtime(.4f);
+            TargetElement(false);
         }
-        if (hpCurrent <= 0) {
-            yield return StartCoroutine(DestroySequence(dmgType, source, sourceEquip));
-        }
-        //yield return new WaitForSecondsRealtime(.4f);
-        TargetElement(false);
     }
 
     protected virtual GridElementDamagedEvent GenerateDamageEvent(DamageType dmgType, int dmg, GridElement source = null, EquipmentData sourceEquip = null) {
@@ -122,21 +125,24 @@ public class GridElement : MonoBehaviour{
     }
 
     public virtual IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        ElementDestroyed?.Invoke(this);
-        ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
+        if (!destroyed) {
+            destroyed = true;
+            ElementDestroyed?.Invoke(this);
+            ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
 
-        PlaySound(destroyedSFX);
-        
-        if (elementCanvas)
-            elementCanvas.ToggleStatsDisplay(false);
-        yield return new WaitForSecondsRealtime(.5f);
-
-        foreach (SpriteRenderer sr in gfx) 
-            sr.enabled = false;
+            PlaySound(destroyedSFX);
             
-        enabled = false;
-        if (gameObject != null)
-            Destroy(gameObject);
+            if (elementCanvas)
+                elementCanvas.ToggleStatsDisplay(false);
+            yield return new WaitForSecondsRealtime(.5f);
+
+            foreach (SpriteRenderer sr in gfx) 
+                sr.enabled = false;
+                
+            enabled = false;
+            if (gameObject != null)
+                Destroy(gameObject);
+        }
     }
 
     protected virtual GridElementDestroyedEvent GenerateDestroyEvent(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {

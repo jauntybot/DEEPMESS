@@ -575,6 +575,7 @@ public class TutorialSequence : MonoBehaviour
                 yield return new WaitForSecondsRealtime(0.15f);
             break;
             case 3:
+                Debug.Log("Tutorial Descend");  
                 Coroutine co = floorManager.StartCoroutine(floorManager.TransitionPackets());
                 PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
                 yield return new WaitForSecondsRealtime(2f);

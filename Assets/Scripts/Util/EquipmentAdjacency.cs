@@ -324,7 +324,6 @@ public static class EquipmentAdjacency {
                         _coords.Add(coord);
 // Valid coord if element is target, but stops frontier
                     } else if (targetLast != null) {
-                        Debug.Log("blocked");
                         blocked = true;
                         foreach(GridElement target in targetLast) {
                             if (ge.GetType() == target.GetType()) {

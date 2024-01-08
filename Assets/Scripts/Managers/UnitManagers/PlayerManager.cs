@@ -218,7 +218,6 @@ public class PlayerManager : UnitManager {
                         SelectUnit(u);
                     }
                 } else {
-                    Debug.Log("clicked unit");
                     SelectUnit(u);
                 }
             }

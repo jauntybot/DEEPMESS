@@ -151,36 +151,40 @@ public class EnemyUnit : Unit {
     }
 
     public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg * 2 : dmg;
-        if (hpCurrent - modifiedDmg <= hpMax/2) 
-            gfxAnim.SetBool("Damaged", true);
+        if (!destroyed) {
+            int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg * 2 : dmg;
+            if (hpCurrent - modifiedDmg <= hpMax/2) 
+                gfxAnim.SetBool("Damaged", true);
 
-        Vector2 dir = Vector2.zero;
-        if (source) dir = (coord - source.coord).normalized;
-        Splatter(dir);
+            Vector2 dir = Vector2.zero;
+            if (source) dir = (coord - source.coord).normalized;
+            Splatter(dir);
 
-        yield return base.TakeDamage(dmg, dmgType, source, sourceEquip);
+            yield return base.TakeDamage(dmg, dmgType, source, sourceEquip);
+        }
     }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        switch(dmgType) {
-            case DamageType.Unspecified:
-                gfxAnim.SetTrigger("Split");
-            break;
-            case DamageType.Bile:
-                gfxAnim.SetTrigger("Melt");
-            break;
-            case DamageType.Crush:
-                gfxAnim.SetTrigger("Crush");
-            break;
-            case DamageType.Melee:
-                gfxAnim.SetTrigger("Split");
-            break;
-        }
-        
-        Splatter(Vector2.zero);
+        if (!destroyed) {
+            switch(dmgType) {
+                case DamageType.Unspecified:
+                    gfxAnim.SetTrigger("Split");
+                break;
+                case DamageType.Bile:
+                    gfxAnim.SetTrigger("Melt");
+                break;
+                case DamageType.Crush:
+                    gfxAnim.SetTrigger("Crush");
+                break;
+                case DamageType.Melee:
+                    gfxAnim.SetTrigger("Split");
+                break;
+            }
+            
+            Splatter(Vector2.zero);
 
-        return base.DestroySequence(dmgType, source, sourceEquip);
+            yield return base.DestroySequence(dmgType, source, sourceEquip);
+        }
     }
 
     public override IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0) {

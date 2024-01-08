@@ -64,11 +64,13 @@ public class EnemyDetonateUnit : EnemyUnit {
     }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        if (primed) {
-            ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
-            yield return StartCoroutine(ExplodeCo());
-        } else
-            yield return base.DestroySequence(dmgType, source, sourceEquip);
+        if (!destroyed) {
+            if (primed) {
+                ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
+                yield return StartCoroutine(ExplodeCo());
+            } else
+                yield return base.DestroySequence(dmgType, source, sourceEquip);
+        }
     }
 
 }

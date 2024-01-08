@@ -14,6 +14,7 @@ public class HammerData : SlagEquipmentData {
     public enum Action { Lob, Strike };
     public Action action;
     GridElement.DamageType dmgType = GridElement.DamageType.Melee;
+    [SerializeField] GameObject meleeVFX;
     public SFX throwSFX, catchSFX, nailSFX, shieldSFX;
    
     public void AssignHammer(GameObject h, Nail d) {
@@ -245,8 +246,10 @@ public class HammerData : SlagEquipmentData {
             Instantiate(vfx, user.grid.PosFromCoord(target.coord) + new Vector3(0, 1, 0), Quaternion.identity);
             int dmg = 1;
 // PWER TIER I -- Deal additional damage if adjacent
-            if (upgrades[UpgradePath.Power] == 1 && (user.coord - target.coord).magnitude <= 1)
+            if (upgrades[UpgradePath.Power] == 1 && (user.coord - target.coord).magnitude <= 1) {
                 dmg ++;
+                Instantiate(meleeVFX, user.grid.PosFromCoord(target.coord), Quaternion.identity);
+            }
 
             dmgCo(target.StartCoroutine(target.TakeDamage(dmg, dmgType, user, sourceEquip: this)));
 // SPECIAL TIER I -- Push element on hit
