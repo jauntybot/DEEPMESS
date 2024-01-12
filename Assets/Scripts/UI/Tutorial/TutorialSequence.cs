@@ -100,6 +100,7 @@ public class TutorialSequence : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.5f);
         yield return StartCoroutine(HittingTheNail());
         cont = false;
+        
 
         while (!cont) yield return null;
 // Descent 1
@@ -200,7 +201,8 @@ public class TutorialSequence : MonoBehaviour
             yield return new WaitForSecondsRealtime(1/Util.fps);
             
         }
-
+        
+        UIManager.instance.ToggleBattleCanvas(true);
         
         screenFade.SetTrigger("FadeOut");
         Vector3 prevPos = tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition;
