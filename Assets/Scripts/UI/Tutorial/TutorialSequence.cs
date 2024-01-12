@@ -156,16 +156,25 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "";
-        body = "We are inside the top layers of <b>" + ColorToRichText("GOD'S", keyColor) + "</b> head. Our <b>" + ColorToRichText("PURPOSE", keyColor) + "</b> is buried deep here. We need you to <b>" + ColorToRichText("DIG", keyColor) + "</b>." + '\n';
+        body = "Listen up, squish! We're on a big brain mission. Gottat feast on <b>" + ColorToRichText("tasty thoughts", keyColor) + "</b>, yeah? Scavenge, gobble, we'll make it this place our own." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             
         }
+
+        header = "";
+        body = "Gotta dive deeper into the noggin. Down, down, where the <b>" + ColorToRichText("juice gets jucier", keyColor) + "</b>. We're after the prime cuts, not the stale scraps." + '\n';
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+
+        }
         
         header = "";
-        body = "We will send you a <b>" + ColorToRichText("SLAG", keyColor) + "</b> unit to control during our excavation.";
+        body = "We'll toss ya a <b>" + ColorToRichText("Slag unit", keyColor) + "</b>. Control it during our dig.";
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -178,7 +187,7 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator ExplainMovement() {
         screenFade.gameObject.SetActive(true);
 
-        body = "<b>" + ColorToRichText("SLAGS", keyColor) + "</b> can move around the floor. Select the Slag and move it. <b>" + ColorToRichText("LINE IT UP WITH THE NAIL.", keyColor) + "</b>" + '\n';
+        body = "Unlike us, <b>" + ColorToRichText("Slags", keyColor) + "</b> can move on the floor. Select this one, move it. <b>" + ColorToRichText("Line it up with the Nail", keyColor) + "</b>." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -195,7 +204,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "HITTING THE NAIL";
-        body = "The <b>" + ColorToRichText("HAMMER", keyColor) + "</b> is our main tool. Select it in the bottom left corner of your screen and throw it in a <b>" + ColorToRichText("STRAIGHT LINE", keyColor) + "</b> to strike a target. Then select a <b>" + ColorToRichText("SLAG", keyColor) + "</b> for the Hammer to bounce back to. <b>" + ColorToRichText("STRIKE THE NAIL", keyColor) + "</b>" + '\n';
+        body = "<b>" + ColorToRichText("Hammer's", keyColor) + "</b> our main tool. Grab it from the bottom left of your screen. <b>" + ColorToRichText("Chuck it straight", keyColor) + "</b>, smack a target. Then pick the Slag for it to <b>" + ColorToRichText("bounce back", keyColor) + "</b> to. For now, the <b>" + ColorToRichText("Nail's", keyColor) + "</b> your target. Give it a whirl or stand there looking dumb." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ hittingTheNailAnim });
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -231,7 +240,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
         
         header = "DIGGING DOWN";
-        body = "Striking the <b>" + ColorToRichText("NAIL", keyColor) + "</b> with the <b>" + ColorToRichText("HAMMER", keyColor) + "</b> destroys the floor. <b>" + ColorToRichText("ALL UNITS CRASH BELOW", keyColor) + "</b>. We progress." + '\n';
+        body = "Hit the <b>" + ColorToRichText("Nail", keyColor) + "</b> with the <b>" + ColorToRichText("Hammer", keyColor) + "</b>—floor crumbles, <b>" + ColorToRichText("all units crash below", keyColor) + "</b>. That's progress, squish." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -246,7 +255,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "NAIL PRIMING";
-        body = "We need a full turn to get the <b>" + ColorToRichText("NAIL", keyColor) + "</b> ready for another descent. When the Nail is not primed, <b>" + ColorToRichText("IT CANNOT BE HIT BY THE HAMMER", keyColor) + "</b>" + '\n';
+        body = "We need a breather for the next descent. <b>" + ColorToRichText("Until the Nail is primed, it can't be hit", keyColor) + "</b> by the Hammer or enemies. Smart, right?" + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -281,7 +290,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "HITTING ENEMIES";
-        body = "The <b>" + ColorToRichText("HAMMER", keyColor) + "</b> can be <b>" + ColorToRichText("BOUNCED BETWEEN SLAGS", keyColor) + "</b>. Strike the enemy and select the <b>" + ColorToRichText("OTHER SLAG", keyColor) + "</b> to bounce it to. If no enemies remain on the floor, a descent is forced." + '\n';
+        body = "Hammer's like a boomerang—chuck it at an enemy, then you can <b>" + ColorToRichText("pick any Slag to bounce it back to", keyColor) + "</b>. Keep the rhythm or get beat, squish." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ hittingEnemiesAnim });
 
         while (!tooltip.skip) {
@@ -326,7 +335,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "PLAYER TURN";
-        body = "<b>" + ColorToRichText("SLAGS", keyColor) + "</b> can move and take an action on each turn. <b>" + ColorToRichText("DESCENDING", keyColor) + "</b> to the next floor <b>" + ColorToRichText("STARTS A NEW TURN", keyColor) + "</b>." + '\n';
+        body = "Slags hustle, <b>" + ColorToRichText("moving and acting on their turn", keyColor) + "</b>. You're up when the enemies finish their turn. When you dive down to the next floor, <b>" + ColorToRichText("a fresh start", keyColor) + "</b>. Keep it flowing." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -342,7 +351,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "EQUIPMENT";
-        body = "Your first equipment is the <b>" + ColorToRichText("SHIELD", keyColor) + "</b>. Erect a Shield around any <b>" + ColorToRichText("SLAG", keyColor) + "</b> or the <b>" + ColorToRichText("NAIL", keyColor) + "</b>, protecting it from damage. Equipment can be used <b>" + ColorToRichText("ONCE PER FLOOR", keyColor) + "</b>." + '\n';
+        body = "<b>" + ColorToRichText("Slags pack gear", keyColor) + "</b>—special stuff. You can have them <b>" + ColorToRichText("use gear or Hammer each turn", keyColor) + "</b>. Eyes up, squish. Plan the play or end up short on actions." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ shieldAnim });
 
         while (!tooltip.skip) {
@@ -370,7 +379,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "ENEMY TURN";
-        body = "<b>" + ColorToRichText("ENEMY UNITS", keyColor) + "</b> can move and attack on their turn. These enemies can <b>" + ColorToRichText("MOVE 2 TILES", keyColor) + "</b> and <b>" + ColorToRichText("STRIKE ANYTHING ADJACENT", keyColor) + "</b>." + '\n';
+        body = "<b>" + ColorToRichText("Enemy units ain't decoration", keyColor) + "</b>. They move, they strike. These move 2 tiles and then <b>" + ColorToRichText("attack anything", keyColor) + "</b> nearby." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -387,7 +396,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "";
-        body = "You will unlock more equipment as you breach cavities on our descent. We need to get through to the <b>" + ColorToRichText("15th FLOOR", keyColor) + "</b>. It is time. <b>" + ColorToRichText("DIG DEEP. MAKE MESS.", keyColor) + "</b>";
+        body = "Playtime's over, squish. Time for the real deal. <b>" + ColorToRichText("Dig. Make mess", keyColor) + "</b>.";
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -403,7 +412,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "ENEMY SCATTER";
-        body = "When we land on a floor, <b>" + ColorToRichText("ENEMIES SCATTER", keyColor) + "</b> but do not attack." + '\n';
+        body = "When we land, <b>" + ColorToRichText("enemies scatter but don't attack", keyColor) + "</b>. A little dance before the real brawl." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -427,7 +436,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "NAIL DAMAGE";
-        body = "We deal damage back to enemies that <b>" + ColorToRichText("ATTACK THE NAIL", keyColor) + "</b>." + '\n';
+        body = "Enemies get a taste of their own medicine when they hit the Nail. Smack the big guy, <b>" + ColorToRichText("get smacked back", keyColor) + "</b>. Make 'em regret laying a finger on our centerpiece." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -444,7 +453,7 @@ public class TutorialSequence : MonoBehaviour
         
         Destroy(destroyHighlight);
         header = "PEEK AHEAD";
-        body = "The <b>" + ColorToRichText("PEEK BUTTON", keyColor) + "</b> [space] lets you preview the next floor. You can see where enemies and other hazards are located." + '\n';
+        body = "<b>" + ColorToRichText("Peek button", keyColor) + "</b>, big ol' eye in the <b>" + ColorToRichText("bottom right", keyColor) + "</b>. Use it. <b>" + ColorToRichText("Preview the next floor", keyColor) + "</b>—enemies, hazards, the works. It helps to know what's comin'." + '\n';
         brTooltip.SetText(body, header, true);
 
         while (!brTooltip.skip) {
@@ -460,7 +469,7 @@ public class TutorialSequence : MonoBehaviour
         bloodEncountered = true;
 
         header = "BLOOD TILES";
-        body = "Blood tiles <b>" + ColorToRichText("PREVENT SLAGS", keyColor) + "</b> from using the <b>" + ColorToRichText("HAMMER", keyColor) + "</b> or <b>" + ColorToRichText("EQUIPMENT", keyColor) + "</b> while standing in it. View tile information in the top right when hovering over a tile" + '\n';
+        body = "<b>" + ColorToRichText("Blood tiles", keyColor) + "</b>? Slags can't swing Hammer or use gear on those. Check the <b>" + ColorToRichText("top right", keyColor) + "</b> when hovering on a tile. Watch your step, squish." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -476,7 +485,7 @@ public class TutorialSequence : MonoBehaviour
     public IEnumerator UndoTutorial() {
         
         header = "UNDO BUTTON";
-        body = "You can <b>" + ColorToRichText("UNDO", keyColor) + "</b> [z] any <b>" + ColorToRichText("SLAG'S MOVEMENT", keyColor) + "</b>. Once any Slag performs an action, you cannot undo any <b>" + ColorToRichText("PREVIOUS MOVES", keyColor) + "</b>." + '\n';
+        body = "Slags got an <b>" + ColorToRichText("Undo button", keyColor) + "</b>. Move around and reset, but once you take an action, no backtracking. Think ahead, squish." + '\n';
         brTooltip.SetText(body, header, true);
 
         while (!brTooltip.skip) {
@@ -501,7 +510,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "DESCENT DAMAGE";
-        body = "<b>" + ColorToRichText("SLAGS", keyColor) + "</b> and <b>" + ColorToRichText("ENEMIES CRUSH", keyColor) + "</b> anything they land on. They take damage as a result." + '\n';
+        body = "<b>" + ColorToRichText("Slags", keyColor) + "</b> and <b>" + ColorToRichText("enemies crush", keyColor) + "</b> anything they land on. No free rides though—units take damage for squashing." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
