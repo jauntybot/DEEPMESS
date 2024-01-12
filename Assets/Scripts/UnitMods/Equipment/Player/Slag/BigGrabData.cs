@@ -48,21 +48,19 @@ public class BigGrabData : SlagEquipmentData {
     }
 
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
-        if (firstTarget == null) {
-            yield return null;
-            
+        if (firstTarget == null) {          
             SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(user.coord), Quaternion.identity).GetComponent<SpriteRenderer>();
             sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
             firstTarget = target;
             contextualAnimGO = target.gameObject;
             Unit unit = (Unit)user;
             unit.grid.DisableGridHighlight();
+            Vector2 dir = user.coord - target.coord;
 
 // Nested TargetEquipment functionality inside of first UseEquipment
             List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range, this);
 
 // SPECIAL TIER I -- Throw backwards
-            Vector2 dir = user.coord - firstTarget.coord;
             if (upgrades[UpgradePath.Special] == 0) {
                 if (dir.x != 0) {
                     int sign = (int)Mathf.Sign(dir.x);
@@ -98,6 +96,7 @@ public class BigGrabData : SlagEquipmentData {
             }
             user.grid.DisplayValidCoords(validCoords, gridColor);
             unit.inRangeCoords = validCoords;
+
 // UNIT TIER II -- Throw onto occupied spaces
             if (upgrades[UpgradePath.Unit] < 2) {
                 for (int i = validCoords.Count - 1; i >= 0; i--) {
@@ -120,6 +119,7 @@ public class BigGrabData : SlagEquipmentData {
         } else {
             SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(user.coord), Quaternion.identity).GetComponent<SpriteRenderer>();
             sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
+            
             Coroutine co = user.StartCoroutine(ThrowUnit((Unit)user, (Unit)firstTarget, target.coord));
             
             OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
@@ -186,7 +186,7 @@ public class BigGrabData : SlagEquipmentData {
                 slag.hpMax ++;
                 slag.hpCurrent ++;
                 slag.elementCanvas.InstantiateMaxPips();
-                slag.ui.overview.InstantiateMaxPips();
+                slag.ui.overview.hPPips.InstantiateMaxPips();
             }
         } else if (targetPath == UpgradePath.Power) {
             if (upgrades[targetPath] == 0) {
@@ -198,7 +198,7 @@ public class BigGrabData : SlagEquipmentData {
                 slag.hpMax ++;
                 slag.hpCurrent ++;
                 slag.elementCanvas.InstantiateMaxPips();
-                slag.ui.overview.InstantiateMaxPips();
+                slag.ui.overview.hPPips.InstantiateMaxPips();
 
                 range += 2;
             } else if (upgrades[targetPath] == 2) {

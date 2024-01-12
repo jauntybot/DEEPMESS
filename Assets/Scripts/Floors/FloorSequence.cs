@@ -86,8 +86,6 @@ public class FloorSequence : ScriptableObject {
     }
 
     public FloorDefinition GetFloor() {
-        ThresholdCheck();
-
 // First floor of packet
         if (activePacket.packetType != currentThreshold || activePacket.floors.Count == 0) {
             StartPacket(currentThreshold);

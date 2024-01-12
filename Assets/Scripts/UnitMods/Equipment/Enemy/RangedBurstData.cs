@@ -56,7 +56,7 @@ public class RangedBurstData : EquipmentData {
             Vector2 coord = user.coord;
             for (int i = 1; i <= range; i++) {
                 Vector2 _coord = user.coord + new Vector2(i*x, 0);
-                if (_coord.x < 0 || _coord.x > 7) break;
+                //if (_coord.x < 0 || _coord.x > 7) break;
                 coord = _coord;
                 if (user.grid.CoordContents(coord).Count > 0) {
                     tar = user.grid.CoordContents(coord)[0];
@@ -81,7 +81,7 @@ public class RangedBurstData : EquipmentData {
             Vector2 coord = user.coord;
             for (int i = 1; i <= range; i++) {
                 Vector2 _coord = user.coord + new Vector2(0, i*y);
-                if (_coord.y < 0 || _coord.y > 7) break;
+                //if (_coord.y < 0 || _coord.y > 7) break;
                 coord = _coord;
                 if (user.grid.CoordContents(coord).Count > 0) {
                     tar = user.grid.CoordContents(coord)[0];
@@ -117,6 +117,7 @@ public class RangedBurstData : EquipmentData {
         }
 
         projectile.transform.position = endPos;
+
         if (target) {
             int thornDmg = 0;
             if (target is Nail n) {

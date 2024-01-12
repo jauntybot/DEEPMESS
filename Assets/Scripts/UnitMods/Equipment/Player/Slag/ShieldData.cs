@@ -86,7 +86,7 @@ public class ShieldData : SlagEquipmentData {
                 slag.hpCurrent += 1;
                 if (slag.hpCurrent > slag.hpMax) slag.hpCurrent = slag.hpMax;
                 slag.elementCanvas.InstantiateMaxPips();
-                slag.ui.overview.InstantiateMaxPips();
+                slag.ui.overview.hPPips.InstantiateMaxPips();
             }
         }
     }

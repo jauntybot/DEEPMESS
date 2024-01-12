@@ -148,7 +148,6 @@ public class HammerData : SlagEquipmentData {
                 yield return user.StartCoroutine(LaunchHammer((PlayerUnit)user, firstTarget, (PlayerUnit)target, secondTarget));    
             //}
         } else {
-            yield return null;
             firstTarget = target;
             Unit unit = (Unit)user;
             unit.grid.DisableGridHighlight();

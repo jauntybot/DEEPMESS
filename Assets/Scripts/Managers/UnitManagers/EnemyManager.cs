@@ -66,8 +66,10 @@ public class EnemyManager : UnitManager {
         ResolveConditions();
 
         unitsToAct = new List<Unit>();
-        for (int i = units.Count - 1; i >= 0; i--)
+        for (int i = units.Count - 1; i >= 0; i--) {
             unitsToAct.Add(units[i]);
+            units[i].ElementDestroyed += RemoveUnitToAct;
+        }
 
         yield return StartCoroutine(DescendReinforcements());
 
@@ -101,7 +103,7 @@ public class EnemyManager : UnitManager {
                 unitsToAct.Remove(enemy);
             } else {
 
-           }
+            }
         }
 
         
@@ -111,6 +113,11 @@ public class EnemyManager : UnitManager {
             if (SpawnReinforcements()) yield return new WaitForSecondsRealtime(1.5f);
             EndTurn();
         }
+    }
+
+    void RemoveUnitToAct(GridElement element) {
+        if (element is Unit unit && unitsToAct.Contains(unit))
+            unitsToAct.Remove(unit);
     }
 
     public void StopActingUnit(GridElement ge = null) {

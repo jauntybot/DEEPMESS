@@ -41,10 +41,8 @@ public class PlayerUnit : Unit {
     }
 
     public override IEnumerator ExecuteAction(GridElement target = null) {
-        
         EquipmentData equip = selectedEquipment;
-        Coroutine co = StartCoroutine(base.ExecuteAction(target));
-
+        Coroutine co = null;
 // Input parsing - what kind of equipment is being used 
 // single target equipment, not movement
         if (equip) {
@@ -53,6 +51,7 @@ public class PlayerUnit : Unit {
             else if (equip is HammerData) hammerUses++; 
 // Base equipment, no multitarget
             if (!equip.multiselect) {
+                co = StartCoroutine(base.ExecuteAction(target));
                 if (equip is not MoveData || energyCurrent <= 0) {
                     pManager.DeselectUnit();
                     pManager.StartCoroutine(pManager.UnitIsActing());
@@ -66,10 +65,12 @@ public class PlayerUnit : Unit {
             } else {
 // execute full action
                 if (equip.firstTarget != null) {
-                    pManager.DeselectUnit();
+                    //pManager.DeselectUnit();
                     pManager.StartCoroutine(pManager.UnitIsActing());
+                    co = StartCoroutine(base.ExecuteAction(target));
 // first target selected, update grid contextuals  
                 } else {
+                    co = StartCoroutine(base.ExecuteAction(target));
                     GridElement anim = equip.contextualAnimGO.GetComponent<GridElement>();
                     pManager.contextuals.UpdateContext(equip, equip.gridColor, equip.multiContext, anim, target);
                 }
@@ -85,6 +86,7 @@ public class PlayerUnit : Unit {
         UIManager.instance.peekButton.GetComponent<Button>().interactable = true;
         if (equip is MoveData && energyCurrent > 0) {
             grid.UpdateSelectedCursor(true, coord);
+            ui.ToggleEquipmentButtons();
         }
         else {
             foreach(GridElement ge in pManager.currentGrid.gridElements) 
@@ -92,6 +94,7 @@ public class PlayerUnit : Unit {
         }
 
         //manager.unitActing = false;
+        //pManager.DeselectUnit();
     }
 
 // Allow the player to click on this

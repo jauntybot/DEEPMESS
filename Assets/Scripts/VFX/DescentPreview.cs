@@ -36,6 +36,7 @@ public class DescentPreview : MonoBehaviour {
     }
 
     void DestroySelf(GridElement blank) {
+        Debug.Log("Remove Preview");
         mgmt.descentPreviews.Remove(this);
         Destroy(gameObject);
     }

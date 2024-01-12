@@ -151,8 +151,9 @@ GameObject:
   - component: {fileID: 8574484296505380485}
   - component: {fileID: 3840698977484378146}
   - component: {fileID: 6386190110407734008}
+  - component: {fileID: 3252146254780948413}
   m_Layer: 5
-  m_Name: Pips BG
+  m_Name: HP Pips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -218,3 +219,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 5
+--- !u!114 &3252146254780948413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7050809990257132417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 505d0169840a0604b8c06d0153561406, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unit: {fileID: 0}
+  hpPips: {fileID: 5105724815829101390}
+  emptyHpPips: {fileID: 3673204540582814287}
+  hpPipPrefab: {fileID: 349637072702703587, guid: d65b772272ab2f8428f2cc6337cb2e50, type: 3}
+  emptyPipPrefab: {fileID: 6600319606246332010, guid: df67de3e75a0ea84689ac7e89c6c478b, type: 3}

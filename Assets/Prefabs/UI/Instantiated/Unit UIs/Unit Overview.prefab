@@ -1184,14 +1184,11 @@ MonoBehaviour:
   unit: {fileID: 0}
   overviewPanel: {fileID: 1618839985929868883}
   mini: {fileID: 4626897514143453546}
+  hPPips: {fileID: 2030496327952127846}
   movePip: {fileID: 8185932352705461414}
   actionPip: {fileID: 8931545590395087095}
   hammerPossession: {fileID: 4777380639026836610}
   bulbPossession: {fileID: 5567021771343207094}
-  hpPips: {fileID: 8635399140259685269}
-  emptyHpPips: {fileID: 285394178598103700}
-  hpPipPrefab: {fileID: 6918762094188802550, guid: 2a41b64e918844444bc1cb989632a096, type: 3}
-  emptyPipPrefab: {fileID: 6918762094188802550, guid: 962f6bd811e087446b039015ea4a22cb, type: 3}
   bulbImage: {fileID: 8747192945092567118}
   healBulb: {fileID: 1631000193, guid: 2fd7e1dc867d7ae4da2643ca5ca92597, type: 3}
   supportBulb: {fileID: 509855465, guid: 5c42ff5d22bcfe948879fb9fbe8f97be, type: 3}
@@ -1667,7 +1664,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7050809990257132417, guid: b8e4e626c437f5a4daf49311da2067c1, type: 3}
       propertyPath: m_Name
-      value: Pips BG
+      value: HP Pips
       objectReference: {fileID: 0}
     - target: {fileID: 8574484296505380485, guid: b8e4e626c437f5a4daf49311da2067c1, type: 3}
       propertyPath: m_Pivot.x
@@ -1755,18 +1752,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8e4e626c437f5a4daf49311da2067c1, type: 3}
---- !u!224 &285394178598103700 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3673204540582814287, guid: b8e4e626c437f5a4daf49311da2067c1, type: 3}
+--- !u!114 &2030496327952127846 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3252146254780948413, guid: b8e4e626c437f5a4daf49311da2067c1, type: 3}
   m_PrefabInstance: {fileID: 3534257459873417435}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 505d0169840a0604b8c06d0153561406, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &5184351698870191710 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8574484296505380485, guid: b8e4e626c437f5a4daf49311da2067c1, type: 3}
-  m_PrefabInstance: {fileID: 3534257459873417435}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &8635399140259685269 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5105724815829101390, guid: b8e4e626c437f5a4daf49311da2067c1, type: 3}
   m_PrefabInstance: {fileID: 3534257459873417435}
   m_PrefabAsset: {fileID: 0}

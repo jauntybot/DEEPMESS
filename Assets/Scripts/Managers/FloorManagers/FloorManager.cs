@@ -657,7 +657,8 @@ public class FloorManager : MonoBehaviour {
 
 // Objective award + Upgrade sequence
         if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BOSS) {
-            if (floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial && floorSequence.activePacket.packetType != FloorPacket.PacketType.I) {
+            uiManager.ToggleBattleCanvas(false);
+            if (floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial && currentFloor != null) {
                 yield return scenario.objectiveManager.RewardSequence();
                 yield return scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
             }
@@ -666,7 +667,7 @@ public class FloorManager : MonoBehaviour {
         }
         
 
-        if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BOSS) {
+        if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BARRIER) {
             StopCoroutine(floating);
             timer = 0;
             Vector3 startPos = transitionParent.transform.position;
@@ -700,6 +701,7 @@ public class FloorManager : MonoBehaviour {
                 parallax.ScrollParallax(-1);
                 timer += Time.deltaTime;
             }
+            uiManager.ToggleBattleCanvas(true);
             
             GenerateFloor(null, true);
             scenario.player.transform.parent = currentFloor.transform;
@@ -735,7 +737,9 @@ public class FloorManager : MonoBehaviour {
         currentFloor.StartCoroutine(currentFloor.ShockwaveCollapse(scenario.player.nail.coord));
         floors[currentFloor.index++].StartCoroutine(floors[currentFloor.index++].ShockwaveCollapse(scenario.player.nail.coord));
         yield return new WaitForSecondsRealtime(1f);
-        yield return StartCoroutine(TransitionPackets());
+        Coroutine co = StartCoroutine(TransitionPackets());
+        floorSequence.currentThreshold = FloorPacket.PacketType.BARRIER;
+        yield return co;
         //yield return StartCoroutine(TransitionFloors(true, false));
     }
 
