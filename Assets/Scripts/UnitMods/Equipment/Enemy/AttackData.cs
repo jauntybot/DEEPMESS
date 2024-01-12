@@ -6,6 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public class AttackData : EquipmentData {
     public int dmg;
+    [SerializeField] GameObject strikeVFX, thornsVFX;
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this, targetTypes);
@@ -33,31 +34,23 @@ public class AttackData : EquipmentData {
     }
 
     
-    public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
-    {
+    public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         yield return base.UseEquipment(user);
         yield return user.StartCoroutine(AttackElement(user, target));
         
     }
 
-    public IEnumerator AttackElement(GridElement user, GridElement target) 
-    {
+    public IEnumerator AttackElement(GridElement user, GridElement target) {
         float timer = 0;
+        Vector2 dir = target.coord - user.coord;
         
         user.elementCanvas.UpdateStatsDisplay();
-        while (timer < animDur/2) {
-            yield return null;
-            user.transform.position = Vector3.Lerp(user.transform.position, target.transform.position, timer/animDur);
-            timer += Time.deltaTime;
-        }
-        timer = 0;
-        while (timer < animDur/2) {
-            yield return null;
-            user.transform.position = Vector3.Lerp(user.transform.position, FloorManager.instance.currentFloor.PosFromCoord(user.coord), timer/animDur);
-            timer += Time.deltaTime;
-        }
+        Debug.Log(dir);
+        GameObject vfx = Instantiate(strikeVFX, FloorManager.instance.currentFloor.PosFromCoord(target.coord - dir/2), Quaternion.identity);
+        vfx.GetComponent<SpriteRenderer>().sortingOrder = user.gfx[0].sortingOrder++;
+        vfx.GetComponent<Animator>().SetInteger("X", (int)dir.x);
+        vfx.GetComponent<Animator>().SetInteger("Y", (int)dir.y);
 
-        List<Coroutine> cos = new();
         int thornDmg = 0;
         if (target is Nail n) {
             if (n.manager.scenario.tutorial != null && n.manager.scenario.tutorial.isActiveAndEnabled && !n.manager.scenario.tutorial.nailDamageEncountered && n.manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
@@ -68,7 +61,26 @@ public class AttackData : EquipmentData {
         }
 // SHIELD SPECIAL TIER II -- Deal thorns damage to attacking unit
         if (target.shield && target.shield.thorns) thornDmg++;
+        if (thornDmg > 0) {
+            GameObject go = Instantiate(thornsVFX, target.transform.position, Quaternion.identity);
+            go.GetComponent<SpriteRenderer>().sortingOrder = target.gfx[0].sortingOrder++;
+        }
 
+        while (timer < animDur/2) {
+            yield return null;
+            user.transform.position = Vector3.Lerp(user.transform.position, FloorManager.instance.currentFloor.PosFromCoord(target.coord - dir/2), timer/animDur);
+            timer += Time.deltaTime;
+        }
+
+        timer = 0;
+        while (timer < animDur/2) {
+            yield return null;
+            user.transform.position = Vector3.Lerp(user.transform.position, FloorManager.instance.currentFloor.PosFromCoord(user.coord), timer/animDur);
+            timer += Time.deltaTime;
+        }
+
+        List<Coroutine> cos = new();
+   
         if (thornDmg > 0) cos.Add(user.StartCoroutine(user.TakeDamage(thornDmg, GridElement.DamageType.Melee, target)));
         cos.Add(target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user, this)));
         

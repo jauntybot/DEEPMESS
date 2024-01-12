@@ -46,8 +46,6 @@ public class UpgradeManager : MonoBehaviour {
         upgrading = true;
         
         upgradeScreen.SetActive(true);
-        LayoutRebuilder.ForceRebuildLayoutImmediate(upgradePanel.GetComponent<RectTransform>());
-        Canvas.ForceUpdateCanvases();
         
 // Instantiate particle UI buttons from PlayerManager
         for (int i = particleContainer.transform.childCount - 1; i >= 0; i--)
@@ -61,6 +59,8 @@ public class UpgradeManager : MonoBehaviour {
             Button butt = part.GetComponent<Button>();
             butt.onClick.AddListener(delegate{SelectParticle(partUI);});
         }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(upgradePanel.GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
 
         while (upgrading) {
 

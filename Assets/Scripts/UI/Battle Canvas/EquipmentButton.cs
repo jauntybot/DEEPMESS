@@ -10,7 +10,7 @@ public class EquipmentButton : MonoBehaviour {
     [HideInInspector] public EquipType equipType;
     [HideInInspector] public PlayerUnit unit;
     
-    [SerializeField] Button button;
+    public Button button;
     [SerializeField] Image icon;
     public delegate void OnEquipmentUpdate(EquipmentData equipment, int rangeMod);
     private int rangeMod;

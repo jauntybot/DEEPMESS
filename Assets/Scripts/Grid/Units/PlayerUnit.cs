@@ -51,30 +51,28 @@ public class PlayerUnit : Unit {
 // Tally for end of run scoring
             if (equip is SlagEquipmentData && equip is not HammerData) equipUses++;
             else if (equip is HammerData) hammerUses++; 
-
-            if (!equip.multiselect && equip is not MoveData) {
-                pManager.DeselectUnit();
-                pManager.StartCoroutine(pManager.UnitIsActing());
-            }
-// movement equipment
-            else if (equip is MoveData && energyCurrent > 0) {
-                pManager.StartCoroutine(pManager.UnitIsActing());
-                ui.ToggleEquipmentButtons();
-            }
-// multi-target equipment - first target selected, update grid contextuals
-            else if (equip.firstTarget != null) {
-// Riccochet hammer check
-                if ((equip is not HammerData d) || d.upgrades[SlagEquipmentData.UpgradePath.Power] == 0 || (d.upgrades[SlagEquipmentData.UpgradePath.Power] == 1 && d.secondTarget != null)) {
-                    GridElement anim = equip.contextualAnimGO ? equip.contextualAnimGO.GetComponent<GridElement>() : null;
-                    pManager.contextuals.UpdateContext(equip, equip.gridColor, equip.multiContext, anim, target);
-                } else if (d.upgrades[SlagEquipmentData.UpgradePath.Power] == 1 && d.secondTarget == null) {
-                    GridElement anim = equip.contextualAnimGO.GetComponent<GridElement>();
-                    pManager.contextuals.UpdateContext(equip, equip.gridColor, equip.contextDisplay, anim, target);
+// Base equipment, no multitarget
+            if (!equip.multiselect) {
+                if (equip is not MoveData || energyCurrent <= 0) {
+                    pManager.DeselectUnit();
+                    pManager.StartCoroutine(pManager.UnitIsActing());
                 }
-// multi-target equipment - execute full action
-            } else if ((equip is not HammerData d) || (d.upgrades[SlagEquipmentData.UpgradePath.Power] == 1 && d.secondTarget != null)) {
-                pManager.DeselectUnit();
-                pManager.StartCoroutine(pManager.UnitIsActing());
+// movement equipment
+                else if (energyCurrent > 0) {
+                    pManager.StartCoroutine(pManager.UnitIsActing());
+                    ui.ToggleEquipmentButtons();
+                }
+// multi-target equipment
+            } else {
+// execute full action
+                if (equip.firstTarget != null) {
+                    pManager.DeselectUnit();
+                    pManager.StartCoroutine(pManager.UnitIsActing());
+// first target selected, update grid contextuals  
+                } else {
+                    GridElement anim = equip.contextualAnimGO.GetComponent<GridElement>();
+                    pManager.contextuals.UpdateContext(equip, equip.gridColor, equip.multiContext, anim, target);
+                }
             }
         } else {
             pManager.DeselectUnit();

@@ -3064,25 +3064,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 9100000, guid: d0b47f0618f75e7459fdba973bd776a2, type: 2}
     - target: {fileID: 2017525369693994961, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
-      propertyPath: keyColor.a
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2017525369693994961, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
-      propertyPath: keyColor.b
-      value: 0.60973996
-      objectReference: {fileID: 0}
-    - target: {fileID: 2017525369693994961, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
-      propertyPath: keyColor.g
-      value: 0.5892963
-      objectReference: {fileID: 0}
-    - target: {fileID: 2017525369693994961, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
-      propertyPath: keyColor.r
-      value: 0.9811321
-      objectReference: {fileID: 0}
-    - target: {fileID: 2017525369693994961, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
       propertyPath: peekButton
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1558221972}
     - target: {fileID: 2017525369693994961, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
       propertyPath: basophicAnim
       value: 
@@ -3142,6 +3126,11 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 2017525369693994798, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+--- !u!224 &1558221972 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8462929460768246666, guid: 578d591cdf9694298b8819611910b639, type: 3}
+  m_PrefabInstance: {fileID: 1164701228}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1565708789
 GameObject:
   m_ObjectHideFlags: 0
@@ -3931,7 +3920,7 @@ PrefabInstance:
       objectReference: {fileID: 1741837995}
     - target: {fileID: 395662736343092655, guid: c7ad32a40800c3e4c9616a1c22e962d1, type: 3}
       propertyPath: startCavity
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 395662736343092655, guid: c7ad32a40800c3e4c9616a1c22e962d1, type: 3}
       propertyPath: messagePanel

@@ -5,16 +5,28 @@ using UnityEngine;
 public class EnemyDetonateUnit : EnemyUnit {
 
     public bool primed;
-    [SerializeField] Animator explosion;
+    [SerializeField] GameObject explosionVFX;
 
     public void PrimeSelf() {
         primed = true;
         gfxAnim.SetBool("Primed", true);
     }
 
-    public void Explode() {
+    public IEnumerator Explode() {
         gfxAnim.SetTrigger("Explode");
-        explosion.gameObject.SetActive(true);
+        Grid grid = FloorManager.instance.currentFloor;
+        GameObject go = Instantiate(explosionVFX, grid.PosFromCoord(coord), Quaternion.identity);
+        go.GetComponentInChildren<SpriteRenderer>().sortingOrder = grid.SortOrderFromCoord(coord);
+        yield return new WaitForSecondsRealtime(0.25f);
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                Vector2 c = coord + new Vector2(x,y);
+                if (c == coord || c.x < 0 || c.x > 7 || c.y < 0 || c.y > 7) break;
+                GameObject g = Instantiate(explosionVFX, grid.PosFromCoord(c), Quaternion.identity);
+                g.GetComponentInChildren<SpriteRenderer>().sortingOrder = grid.SortOrderFromCoord(c);
+            }
+        }
+
     }
 
     public override IEnumerator ScatterTurn() {

@@ -43,7 +43,6 @@ public class Anvil : Unit {
     }
 
     public override IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0) {
-
         yield return StartCoroutine(TakeDamage(hpCurrent));
 
     }

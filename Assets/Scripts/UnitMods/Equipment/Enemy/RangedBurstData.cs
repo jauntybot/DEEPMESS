@@ -48,8 +48,10 @@ public class RangedBurstData : EquipmentData {
 // X-Axis 
         for (int x = -1; x <= 1; x += 2) {
             GameObject projectile = Instantiate(projectilePrefab, user.transform);
-            projectile.transform.localScale = Vector3.one * FloorManager.sqrSize;
+            projectile.GetComponentInChildren<Animator>().SetInteger("X", x);
+            projectile.GetComponentInChildren<Animator>().SetInteger("Y", 0);
             SpriteRenderer sr = projectile.GetComponentInChildren<SpriteRenderer>();
+            
             GridElement tar = null;
             Vector2 coord = user.coord;
             for (int i = 1; i <= range; i++) {
@@ -71,6 +73,9 @@ public class RangedBurstData : EquipmentData {
 // Y-Axis 
         for (int y = -1; y <= 1; y += 2) {
             GameObject projectile = Instantiate(projectilePrefab, user.transform);
+            projectile.GetComponentInChildren<Animator>().SetInteger("X", 0);
+            projectile.GetComponentInChildren<Animator>().SetInteger("Y", y);
+            SpriteRenderer sr = projectile.GetComponentInChildren<SpriteRenderer>();
             
             GridElement tar = null;
             Vector2 coord = user.coord;
@@ -83,6 +88,10 @@ public class RangedBurstData : EquipmentData {
                     break;
                 }
             }
+            if (user.grid.SortOrderFromCoord(coord) > user.grid.SortOrderFromCoord(user.coord))
+                sr.sortingOrder = user.grid.SortOrderFromCoord(coord);
+            else
+                sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
 
             cos.Add(user.StartCoroutine(LaunchProjectile(projectile, user, coord, tar)));
         } 
@@ -97,10 +106,8 @@ public class RangedBurstData : EquipmentData {
         float dur = animDur * Mathf.Abs((user.coord - dest).magnitude);
         float timer = 0;
 
-        Vector3 startPos = user.grid.PosFromCoord(user.coord);
-        
+        Vector3 startPos = user.grid.PosFromCoord(user.coord);        
         Vector3 endPos = user.grid.PosFromCoord(dest);
-        Debug.Log(dest + ", " + endPos);
 
         while (timer < dur) {
             yield return null;

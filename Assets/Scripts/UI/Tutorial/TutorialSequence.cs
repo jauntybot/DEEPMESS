@@ -104,6 +104,8 @@ public class TutorialSequence : MonoBehaviour
         while (!cont) yield return null;
 // Descent 1
         yield return StartCoroutine(DiggingDown());
+        yield return StartCoroutine(scenario.messagePanel.PlayMessage(MessagePanel.Message.Antibody));
+        yield return StartCoroutine(ScatterTurn());
         yield return StartCoroutine(EnemyTurn());
 
         yield return new WaitForSecondsRealtime(1.25f);
@@ -113,11 +115,14 @@ public class TutorialSequence : MonoBehaviour
 
         cont = false;
         while (!cont) yield return null;
-// Descent 3
+// Descent 2
 
-        yield return StartCoroutine(EnemyTurn());
         StopCoroutine(co);
-        yield return new WaitForSecondsRealtime(0.25f);
+        
+        yield return StartCoroutine(scenario.messagePanel.PlayMessage(MessagePanel.Message.Antibody));
+        yield return StartCoroutine(EnemyTurn());
+        yield return new WaitForSecondsRealtime(0.75f);
+
         yield return StartCoroutine(Equipment());
         if (!hittingEnemies)
             StartCoroutine(AttackingEnemies());
@@ -209,8 +214,8 @@ public class TutorialSequence : MonoBehaviour
         tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = prevPos + new Vector3(680, 0);
               
        
-        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.equipButtons[0].gameObject.transform);
-        highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
+        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.equipButtons[1].button.transform.GetChild(0).transform);
+        highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
         highlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
         PlayerUnit pu = (PlayerUnit)scenario.player.units[0];
         while (pu.hammerUses == 0) yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -239,7 +244,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "NAIL PRIMING";
-        body = "We need time to get the <b>" + ColorToRichText("NAIL", keyColor) + "</b> ready for another descent. When the Nail is not primed, <b>" + ColorToRichText("IT CANNOT BE HIT BY THE HAMMER", keyColor) + "</b>" + '\n';
+        body = "We need a full turn to get the <b>" + ColorToRichText("NAIL", keyColor) + "</b> ready for another descent. When the Nail is not primed, <b>" + ColorToRichText("IT CANNOT BE HIT BY THE HAMMER", keyColor) + "</b>" + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -280,6 +285,7 @@ public class TutorialSequence : MonoBehaviour
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
+
         screenFade.SetTrigger("FadeOut");
         Vector3 prevPos = tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition;
         float timer = 0;
@@ -292,7 +298,7 @@ public class TutorialSequence : MonoBehaviour
         }
 
         tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = prevPos + new Vector3(680, 0);
-        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.equipButtons[0].gameObject.transform);
+        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.equipButtons[1].button.transform.GetChild(0).transform);
         highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
         highlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
 
@@ -344,7 +350,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
 
-        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.equipButtons[0].gameObject.transform);
+        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.equipButtons[0].button.transform);
         highlight.transform.parent.transform.parent.transform.parent.transform.parent.gameObject.SetActive(true);
         highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
         highlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
@@ -392,10 +398,6 @@ public class TutorialSequence : MonoBehaviour
 
 // Gameplay optional - tutorial specific - tooltips
     public IEnumerator ScatterTurn() {
-        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
-            yield return null;
-        }
-        yield return new WaitForSecondsRealtime(0.25f);
         screenFade.gameObject.SetActive(true);
 
         header = "ENEMY SCATTER";
@@ -514,9 +516,9 @@ public class TutorialSequence : MonoBehaviour
         List<GridElement> toDescend = new();
         switch(descents) {
             case 0:
-                yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
                 floorManager.GenerateFloor(floorManager.floorSequence.GetFloor());
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
+                yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
                 
@@ -525,24 +527,22 @@ public class TutorialSequence : MonoBehaviour
 
                 floorManager.currentFloor.slagSpawns = new();
                 yield return StartCoroutine(floorManager.DescendUnits(toDescend));
+// Add pony to the drop list
                 scenario.player.units.Insert(1, playerUnits[1]);
-                //scenario.player.units[1].ui.overview.gameObject.SetActive(true);
                 floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
                 scenario.player.units[1].coord = new Vector2(6,1);
                 yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[1] }));
-                scenario.currentTurn = ScenarioManager.Turn.Descent;
                 
             break;
             case 1:
-                yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
                 EnemyManager prevEnemy = scenario.currentEnemy;
                 
                 floorManager.GenerateFloor(floorManager.floorSequence.GetFloor());
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
-                
+                yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
-
+                
                 scenario.player.units[2].coord = new Vector2(2,4);
                 for (int i = scenario.player.units.Count - 1; i >= 0; i--) {
                     toDescend.Add(scenario.player.units[i]);
@@ -551,10 +551,10 @@ public class TutorialSequence : MonoBehaviour
             
                 yield return StartCoroutine(floorManager.DescendUnits(toDescend, prevEnemy));
                 
+// Find a valid coord that a player unit is not in
                 bool validCoord = false;
                 Vector2 spawn = Vector2.zero;
 
-        // Find a valid coord that a player unit is not in
                 while (!validCoord) {
                     validCoord = true;
                     
@@ -565,23 +565,31 @@ public class TutorialSequence : MonoBehaviour
 
                     if (floorManager.currentFloor.tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Blood) validCoord = false;
                 }
-                
-                floorManager.currentFloor.slagSpawns = new List<Vector2>{ spawn };
-                
+// Add spike to the drop list
                 scenario.player.units.Insert(2, playerUnits[2]);
-                //scenario.player.units[2].ui.overview.gameObject.SetActive(true);
                 floorManager.currentFloor.RemoveElement(scenario.player.units[2]);
+                scenario.player.units[2].coord = spawn;
                 yield return StartCoroutine(floorManager.DescendUnits( new List<GridElement> { scenario.player.units[2] }));
-                yield return new WaitForSecondsRealtime(0.15f);
             break;
-            case 3:
-                Debug.Log("Tutorial Descend");  
-                Coroutine co = floorManager.StartCoroutine(floorManager.TransitionPackets());
-                PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
-                yield return new WaitForSecondsRealtime(2f);
-                yield return StartCoroutine(TutorialEnd());
-                StartCoroutine(ScatterTurn());
-                yield return co;
+            default:
+                EnemyManager enemy = (EnemyManager)floorManager.currentFloor.enemy;
+                if (floorManager.floors.Count - 1 > floorManager.currentFloor.index) {
+                    if (!floorManager.floorSequence.ThresholdCheck()) {
+                        floorManager.GenerateFloor();       
+                    }
+
+                    scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
+                    yield return StartCoroutine(floorManager.TransitionFloors(true, false));
+                    
+                    yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Null));
+                    yield return new WaitForSecondsRealtime(0.25f);
+                    
+    // Descend units from previous floor
+                    yield return StartCoroutine(floorManager.DescendUnits(floorManager.floors[floorManager.currentFloor.index -1].gridElements, enemy));
+                    
+                    StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
+                } else 
+                    yield return StartCoroutine(floorManager.TransitionPackets(enemy));
             break;
         }
         descents++;

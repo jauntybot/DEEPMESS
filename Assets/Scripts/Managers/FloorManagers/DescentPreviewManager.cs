@@ -37,9 +37,7 @@ public class DescentPreviewManager : MonoBehaviour
 
             yield return StartCoroutine(floorManager.TransitionFloors(down, true));
             floorManager.transitioning = false;
-        }
-        else {
-            Debug.Log("Up");
+        } else {
             peekFrameAnim.SetBool("Active", false); peekEyeAnim.SetBool("Active", false);
             TogglePreivews(false);
      
@@ -87,7 +85,6 @@ public class DescentPreviewManager : MonoBehaviour
         } else {
             scenario.player.DeselectUnit();
             if (!floorManager.transitioning && floorManager.floors.Count - 1 >= floorManager.currentFloor.index - dir) {
-                Debug.Log("Preview");
                 StartCoroutine(PreviewFloor(previewing));
                 if (UIManager.instance.gameObject.activeSelf)
                     UIManager.instance.PlaySound(previewing ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());

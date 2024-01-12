@@ -49,6 +49,8 @@ public class BigGrabData : SlagEquipmentData {
 
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         if (firstTarget == null) {
+            yield return null;
+            
             SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(user.coord), Quaternion.identity).GetComponent<SpriteRenderer>();
             sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
             firstTarget = target;

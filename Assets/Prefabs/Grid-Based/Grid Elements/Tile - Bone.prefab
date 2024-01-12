@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 536337883
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 91b84cbabec4cf14e810f5513db08daf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 65ecccb905fd51740be8e97b00d2c9b3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -493,6 +493,7 @@ MonoBehaviour:
   shield: {fileID: 0}
   energyCurrent: 0
   energyMax: 0
+  destroyed: 0
   gfx:
   - {fileID: 4548692920616438334}
   audioSource: {fileID: 0}
@@ -507,10 +508,8 @@ MonoBehaviour:
   blackColor: {r: 0.91764706, g: 0.91764706, b: 0.91764706, a: 1}
   highlight: {fileID: 5847650023900071179}
   rndSprite:
-  - {fileID: 21300000, guid: 34796c3fee804ff498d5f5994253ae5c, type: 3}
-  - {fileID: 21300000, guid: f1e00d6d925a5494f978a26b45e83b9d, type: 3}
-  - {fileID: 21300000, guid: 1ee104f939512f649b8c6169ecc8997f, type: 3}
-  - {fileID: 21300000, guid: 8b0b2e227b6d55b4785b0a219ec9e7fa, type: 3}
+  - {fileID: 21300000, guid: 65ecccb905fd51740be8e97b00d2c9b3, type: 3}
+  - {fileID: 21300000, guid: 11d7be9d4307c4747a4755effb43d35d, type: 3}
   anim: {fileID: 0}
 --- !u!60 &8517864744566959261
 PolygonCollider2D:
@@ -563,6 +562,7 @@ MonoBehaviour:
   apPipPrefab: {fileID: 0}
   dmgPipPrefab: {fileID: 0}
   emptyPipPrefab: {fileID: 0}
+  turnOrder: {fileID: 0}
   dmgPanel: {fileID: 0}
   dmgAnim: {fileID: 0}
   overview: {fileID: 0}

@@ -45,7 +45,7 @@ public class SelfDetonate : EquipmentData
             evt.data = this; evt.user = user;
             ObjectiveEventManager.Broadcast(evt);
 
-            u.Explode();
+            u.StartCoroutine(u.Explode());
             u.primed = false;
             user.PlaySound(selfDetonateSFX);
 

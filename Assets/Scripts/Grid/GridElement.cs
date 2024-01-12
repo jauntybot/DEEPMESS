@@ -106,11 +106,11 @@ public class GridElement : MonoBehaviour{
             } else {
                 RemoveShield();
             }
+            //yield return new WaitForSecondsRealtime(.4f);
+            TargetElement(false);
             if (hpCurrent <= 0) {
                 yield return StartCoroutine(DestroySequence(dmgType, source, sourceEquip));
             }
-            //yield return new WaitForSecondsRealtime(.4f);
-            TargetElement(false);
         }
     }
 

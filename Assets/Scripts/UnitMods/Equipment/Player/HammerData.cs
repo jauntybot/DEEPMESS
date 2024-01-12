@@ -148,6 +148,7 @@ public class HammerData : SlagEquipmentData {
                 yield return user.StartCoroutine(LaunchHammer((PlayerUnit)user, firstTarget, (PlayerUnit)target, secondTarget));    
             //}
         } else {
+            yield return null;
             firstTarget = target;
             Unit unit = (Unit)user;
             unit.grid.DisableGridHighlight();
@@ -160,9 +161,8 @@ public class HammerData : SlagEquipmentData {
             }
             if (selectSFX)
                 user.PlaySound(selectSFX);
-                
-            yield return null;
         }
+        Debug.Log("Hammer action done");
     }
 
     public virtual IEnumerator LaunchHammer(PlayerUnit user, GridElement target = null, Unit passTo = null, GridElement target2 = null) {

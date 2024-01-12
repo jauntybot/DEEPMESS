@@ -26,7 +26,7 @@ public class Shield : MonoBehaviour {
         gfx.sortingOrder = unit.grid.SortOrderFromCoord(unit.coord);
     }
 
-    public void DestroySelf() {
+    public void DestroySelf(GridElement source = null) {
         anim.SetTrigger("Destroy");
     }
 }

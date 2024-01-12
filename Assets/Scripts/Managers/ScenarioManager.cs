@@ -62,12 +62,7 @@ public class ScenarioManager : MonoBehaviour
                 floorManager.previewManager.tut = true;
             } else {
                 tutorial.gameObject.SetActive(false);
-                // floorManager.GenerateFloor(null, true); 
-                // floorManager.GenerateFloor();
             }
-
-//            currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
-//            player.transform.parent = floorManager.currentFloor.transform;
         }
 
         runDataTracker.Init(this);
@@ -93,7 +88,7 @@ public class ScenarioManager : MonoBehaviour
         }
         player.ToggleUnitSelectability(true);
 
-        if (startCavity == 0) {
+        if (floorManager.floorSequence.activePacket.packetType == FloorPacket.PacketType.Tutorial) {
             foreach (GridElement ge in player.units)
                 floorManager.currentFloor.RemoveElement(ge);
                 

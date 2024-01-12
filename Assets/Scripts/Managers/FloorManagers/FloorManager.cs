@@ -454,7 +454,6 @@ public class FloorManager : MonoBehaviour {
 
         if (subElement) {
             StartCoroutine(subElement.CollideFromBelow(unit));
-
             yield return StartCoroutine(unit.CollideFromAbove(subElement, hardLand?1:0));
         } else if (hardLand && currentFloor.tiles.Find(t => t.coord == unit.coord).tileType != Tile.TileType.Bile) {
             yield return StartCoroutine(unit.TakeDamage(1, GridElement.DamageType.Fall));
@@ -658,7 +657,7 @@ public class FloorManager : MonoBehaviour {
 
 // Objective award + Upgrade sequence
         if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BOSS) {
-            if (currentFloor) {
+            if (floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial && floorSequence.activePacket.packetType != FloorPacket.PacketType.I) {
                 yield return scenario.objectiveManager.RewardSequence();
                 yield return scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
             }

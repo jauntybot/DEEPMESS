@@ -152,8 +152,6 @@ public class EnemyManager : UnitManager {
             //units[i].ElementDestroyed -= DescentTriggerCheck;
             units[i].ElementDestroyed += CountDefeatedEnemy; 
             units[i].ElementDestroyed += StopActingUnit;
-            units[i].ElementDestroyed -= currentGrid.RemoveElement;
-            
 
             units[i].transform.parent = newGrid.enemy.transform;
             units[i].StoreInGrid(newGrid);

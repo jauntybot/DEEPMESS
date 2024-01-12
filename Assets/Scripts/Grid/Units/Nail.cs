@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Nail : Unit
-{
+public class Nail : Unit {
     public override event OnElementUpdate ElementUpdated;
 
     public MoveData nailDrop;
@@ -50,7 +49,7 @@ public class Nail : Unit
         ui.overview.UpdateOverview(hpCurrent);
     }
 
-     public override void UpdateElement(Vector2 c) {
+    public override void UpdateElement(Vector2 c) {
         ElementUpdated?.Invoke(this);
         transform.position = grid.PosFromCoord(c);
         UpdateSortOrder(c);
