@@ -74,7 +74,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "BULBS";
-        body = "<b>" + ColorToRichText("BULBS", keyColor) + "</b> are consumable items that <b>" + ColorToRichText("SLAGS", keyColor) + "</b> can pick up. Each Slag can hold 1 bulb that can be <b>" + ColorToRichText("THROWN", keyColor) + "</b> as a <b>" + ColorToRichText("FREE ACTION", keyColor) + "</b>." + '\n';
+        body = "<b>" + ColorToRichText("Bulbs", keyColor) + "</b>, handy munchies for your Slags. Step on them to grab, 1 per Slag. Use it or chuck it on the grid. <b>" + ColorToRichText("Bulbs are a free action", keyColor) + "</b>, so don't hoard them." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ bulbAnim });
 
         while (!tooltip.skip) {
@@ -109,7 +109,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "SLAG REVIVE";
-        body = "<b>" + ColorToRichText("SLAGS", keyColor) + "</b> that have been downed can be <b>" + ColorToRichText("REVIVED", keyColor) + "</b>. Strike the downed Slag with the <b>" + ColorToRichText("HAMMER", keyColor) + "</b> to <b>" + ColorToRichText("TRANSFUSE 1HP FROM THE NAIL", keyColor) + "</b>." + '\n';
+        body = "Slags get downed, no biggie. Hammer the downed one to <b>" + ColorToRichText("bring 'em back with 1 HP", keyColor) + "</b>. Revive or let 'em nap. Your call, squish." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ reviveAnim });
 
         while (!tooltip.skip) 
@@ -129,7 +129,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "NEW DANGERS";
-        body = "This enemy can <b>" + ColorToRichText("EXPLODE", keyColor) + "</b>, dealing damage to <b>" + ColorToRichText("ALL SURROUNDING TILES", keyColor) + "</b>." + '\n';
+        body = "This <b>" + ColorToRichText("baddie's a bomb", keyColor) + "</b>. After readying up, it will damage <b>" + ColorToRichText("all the tiles around it", keyColor) + "</b> when it pops. Handle with care or deal with the damage." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ basophicAnim });
 
         while (!tooltip.skip) {
@@ -153,7 +153,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "DANGER AHEAD";
-        body = "Uh-oh, sounds like something <b>" + ColorToRichText("BIG", keyColor) + "</b> is coming..." + '\n';
+        body = "Sounds like trouble's knocking, <b>" + ColorToRichText("big time", keyColor) + "</b>. Nail stays put till the dust settles. <b>" + ColorToRichText("Your dance, squish", keyColor) + "</b>. We'll be chillin' up here." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -173,7 +173,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "BIG THREAT";
-        body = "This is the <b>" + ColorToRichText("STRONGEST ENEMY", keyColor) + "</b> we have faced yet! It can move further than other enemies. When it attacks, it damages <b>" + ColorToRichText("ALL SURROUNDING TILES", keyColor) + "</b>, causing everything to crash through to the floor below. You will <b>" + ColorToRichText("NOT", keyColor) + "</b> be able to <b>" + ColorToRichText("STRIKE THE NAIL", keyColor) + "</b> until we deal with this enemy." + '\n';
+        body = "That orange's the toughest nut yet! Move? Far. Attack? It's a ground-shaker, <b>" + ColorToRichText("causing everything to crash below", keyColor) + "</b>. Careful, squish. This one means business." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
