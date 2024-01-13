@@ -227,23 +227,24 @@ public class EnemyManager : UnitManager {
     public virtual Unit Reinforcement() {
         bool validCoord = false;
         Vector2 spawn = Vector2.zero;
-        List<Vector2> attemptedSpawns = new();
-        while (!validCoord && attemptedSpawns.Count <= 35) {
-            validCoord = true;
-            spawn = new Vector2(Random.Range(1,6), Random.Range(1,6));
-
-            if (attemptedSpawns.Contains(spawn)) {
-                validCoord = false;
-            } else {
-                attemptedSpawns.Add(spawn);
-                if (pendingUnits.Find(u => u.coord == spawn)) validCoord = false;
-                foreach (GridElement ge in currentGrid.gridElements) {
-                    if (ge.coord == spawn) validCoord = false;
-                }
-
-                if (currentGrid.tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false; 
+        
+        ShuffleBag<Vector2> spawns = new ShuffleBag<Vector2>();
+        for (int x = 1; x <= 6; x++) {
+            for (int y = 1; y <= 6; y++) {
+                if (currentGrid.CoordContents(new Vector2(x,y)) == null) spawns.Add(new Vector2(x,y));
             }
         }
+        
+        while (!validCoord && spawns.Count > 0) {
+            validCoord = true;          
+            
+            spawn = spawns.Next();
+            
+            if (pendingUnits.Find(u => u.coord == spawn)) validCoord = false;
+            if (currentGrid.tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false; 
+            
+        }
+
         if (!validCoord) return null;
         Unit reinforcement = SpawnUnit(defaultUnit, spawn);
         RemoveUnit(reinforcement);

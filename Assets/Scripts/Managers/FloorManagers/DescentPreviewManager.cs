@@ -96,7 +96,7 @@ public class DescentPreviewManager : MonoBehaviour
     IEnumerator PeekTutorial(bool down) {
 
         tut = false;
-        yield return scenario.tutorial.StartCoroutine(scenario.tutorial.PeekButton());
+        yield return floorManager.tutorial.StartCoroutine(floorManager.tutorial.PeekButton());
         PreviewButton();
 
     }

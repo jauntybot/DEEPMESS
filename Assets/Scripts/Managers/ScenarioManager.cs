@@ -25,7 +25,6 @@ public class ScenarioManager : MonoBehaviour
     [HideInInspector] public ObjectiveManager objectiveManager;
     [HideInInspector] public UIManager uiManager;
     [HideInInspector] public GameplayOptionalTooltips gpOptional;
-    public TutorialSequence tutorial;
     public int startCavity;
     public EnemyManager currentEnemy;
     public PlayerManager player;
@@ -56,13 +55,6 @@ public class ScenarioManager : MonoBehaviour
         if (FloorManager.instance) {
             floorManager = FloorManager.instance;
             yield return StartCoroutine(floorManager.Init(startCavity));
-            if (startCavity == 0) {
-                tutorial.gameObject.SetActive(true);
-                tutorial.Initialize(this);
-                floorManager.previewManager.tut = true;
-            } else {
-                tutorial.gameObject.SetActive(false);
-            }
         }
 
         runDataTracker.Init(this);
@@ -92,7 +84,7 @@ public class ScenarioManager : MonoBehaviour
             foreach (GridElement ge in player.units)
                 floorManager.currentFloor.RemoveElement(ge);
                 
-            StartCoroutine(tutorial.Tutorial());
+            StartCoroutine(floorManager.tutorial.Tutorial());
         } else {
             if (prevEnemy) {
                 List<GridElement> unitsToDrop = new();
@@ -261,7 +253,7 @@ public class ScenarioManager : MonoBehaviour
 
         player.overrideEquipment = null;
         if (floorManager.floorSequence.currentThreshold == FloorPacket.PacketType.Tutorial)
-            tutorial.SwitchTurns();
+            floorManager.tutorial.SwitchTurns();
         else
             StartCoroutine(SwitchTurns());
     }

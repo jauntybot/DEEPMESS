@@ -16,6 +16,7 @@ public class FloorManager : MonoBehaviour {
     [SerializeField] public GameObject floorPrefab;
     [SerializeField] Transform floorParent;
     [SerializeField] public FloorSequence floorSequence;
+    public TutorialSequence tutorial;
     public bool gridHightlightOverride;
     public Grid currentFloor;
     int currentGridIndex;
@@ -67,6 +68,14 @@ public class FloorManager : MonoBehaviour {
         if (UIManager.instance) uiManager = UIManager.instance;
 
         floorSequence.Init(startIndex);
+        if (startIndex == 0) {
+            tutorial.gameObject.SetActive(true);
+            tutorial.Initialize(scenario);
+            previewManager.tut = true;
+        } else {
+            tutorial.gameObject.SetActive(false);
+        }
+        floorSequence.StartPacket(floorSequence.currentThreshold);
         
         yield return null;
     }

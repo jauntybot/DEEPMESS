@@ -30,7 +30,6 @@ public class FloorSequence : ScriptableObject {
             case 4: currentThreshold = FloorPacket.PacketType.BOSS; break;
         }
         activePacket.packetType = currentThreshold;
-        StartPacket(currentThreshold);
     }
 
     public void StartPacket(FloorPacket.PacketType type) {
