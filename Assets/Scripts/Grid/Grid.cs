@@ -170,7 +170,13 @@ public class Grid : MonoBehaviour {
                 yield return null;
                 timer += Time.deltaTime;
             }
-        }    
+        }
+        foreach (GridElement ge in gridElements) {
+            if (ge is Unit u)
+                u.gfxAnim.SetBool("Falling", true);
+        }
+        player.hammerActions[0].hammer.SetActive(true);
+        player.hammerActions[0].hammer.GetComponentInChildren<Animator>().SetBool("Falling", true);
         for (int i = collapseCo.Count - 1; i >= 0; i--) {
             if (collapseCo[i] != null) 
                 yield return collapseCo[i];

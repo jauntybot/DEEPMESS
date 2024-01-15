@@ -265,8 +265,8 @@ public class FloorManager : MonoBehaviour {
         enemy.InterruptReinforcements();
         List<Unit> enemyUnits = new();
         foreach (GridElement ge in currentFloor.gridElements) {
-            if (ge is EnemyUnit u)
-                enemyUnits.Add(u);
+            if (ge is EnemyUnit eu)
+                enemyUnits.Add(eu);
         }
 
         currentFloor.DisableGridHighlight();
@@ -436,6 +436,7 @@ public class FloorManager : MonoBehaviour {
         float timer = 0;
         NestedFadeGroup.NestedFadeGroup fade = unit.GetComponent<NestedFadeGroup.NestedFadeGroup>();
         unit.airTraillVFX.SetActive(true);
+        unit.gfxAnim.SetBool("Falling", true);
         // float slowLeft = 0;
         while (timer <= unitDropDur) {
             unit.transform.position = Vector3.Lerp(from, to, dropCurve.Evaluate(timer/unitDropDur));
@@ -460,6 +461,11 @@ public class FloorManager : MonoBehaviour {
         fade.AlphaSelf = 1;
 
         unit.PlaySound(unit.landingSFX);
+        unit.gfxAnim.SetBool("Falling", false);
+        if (unit is PlayerUnit pu && pu.equipment.Find(e => e is HammerData)) {
+            scenario.player.hammerActions[0].hammer.SetActive(false);
+            scenario.player.hammerActions[0].hammer.GetComponentInChildren<Animator>().SetBool("Falling", false);
+        }
 
         if (subElement) {
             StartCoroutine(subElement.CollideFromBelow(unit));
@@ -644,6 +650,9 @@ public class FloorManager : MonoBehaviour {
 // Lerp units into screen
         List<Unit> units = new() { scenario.player.units[0], scenario.player.units[1], scenario.player.units[2], scenario.player.units[3] };
         List<Vector2> to = new() {new Vector2(-1.182819f, 4.0243183f), new Vector2(-2.862819f, 3.54704558f), new Vector2(-0.5108191f, 2.9218184f), new Vector2(1.841181f, 2.296591f) };
+        foreach (Unit u in units) u.gfxAnim.SetBool("Falling", true);
+        scenario.player.hammerActions[0].hammer.SetActive(true);
+        scenario.player.hammerActions[0].hammer.GetComponentInChildren<Animator>().SetBool("Falling", true);
         units[0].manager.transform.parent = transitionParent;
         units[3].transform.parent = transitionParent;
         scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   

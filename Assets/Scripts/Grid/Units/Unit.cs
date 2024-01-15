@@ -7,7 +7,7 @@ public class Unit : GridElement {
     public override event OnElementUpdate ElementDestroyed;
 
     [HideInInspector] public UnitManager manager;
-    [SerializeField] protected Animator gfxAnim;
+    public Animator gfxAnim;
     [Header("Unit")]
     [SerializeField] DescentVFX descentVFX;
     public GameObject airTraillVFX;
