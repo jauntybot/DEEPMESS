@@ -36,6 +36,8 @@ public class NeutralElementTooltip : Tooltip
         }
 
         contentField.text = content;
+
+        StartCoroutine(Rebuild());
     }
 
     public void HoverOver(GridElement ge = null) {

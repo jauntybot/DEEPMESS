@@ -59,7 +59,7 @@ public class Tooltip : MonoBehaviour
         //layoutElement.enabled = (headerLength > textWrapLimit || contentLength > textWrapLimit) ? true : false;
     }
 
-    IEnumerator Rebuild() {
+    protected IEnumerator Rebuild() {
         yield return null;
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
