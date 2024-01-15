@@ -51,51 +51,58 @@ public class GridContextuals : MonoBehaviour
         gridCursor.SetActive(state);
         gridCursor.transform.position = grid.PosFromCoord(coord);
         
-        bool occupied = false;
-        foreach (GridElement ge in grid.CoordContents(coord)) {
-            if (ge is not Unit) {
-                occupied = true;
-                neutralTooltip.HoverOver(ge);
+        if (state) {
+            bool occupied = false;
+            foreach (GridElement ge in grid.CoordContents(coord)) {
+                if (ge is not Unit) {
+                    occupied = true;
+                    neutralTooltip.HoverOver(ge);
+                }
             }
-        }
-        if (!occupied) {
-            Tile tile = grid.tiles.Find(t => t.coord == coord);
-            if (tile != null)
-                neutralTooltip.HoverOver(tile);
-        } 
+            if (!occupied) {
+                Tile tile = grid.tiles.Find(t => t.coord == coord);
+                if (tile != null)
+                    neutralTooltip.HoverOver(tile);
+            } 
 
 
-        Color c = _valid ? validColor : invalidColor;
-        List<GameObject> cursors = new();
-        foreach (GameObject curs in aoeCursors) cursors.Add(curs);
-        cursors.Add(gridCursor);
-        foreach (GameObject cursor in cursors) {
-            SpriteShapeRenderer ssr = cursor.GetComponentInChildren<SpriteShapeRenderer>();
-            if (ssr) {
-                ssr.color = new Color(c.r, c.g, c.b, fill ? 0.25f : 0);
-                ssr.sortingOrder = grid.SortOrderFromCoord(coord);
+            Color c = _valid ? validColor : invalidColor;
+            List<GameObject> cursors = new();
+            foreach (GameObject curs in aoeCursors) cursors.Add(curs);
+            cursors.Add(gridCursor);
+            foreach (GameObject cursor in cursors) {
+                SpriteShapeRenderer ssr = cursor.GetComponentInChildren<SpriteShapeRenderer>();
+                if (ssr) {
+                    ssr.color = new Color(c.r, c.g, c.b, fill ? 0.25f : 0);
+                    ssr.sortingOrder = grid.SortOrderFromCoord(coord);
+                }
+                LineRenderer lr = cursor.GetComponentInChildren<LineRenderer>();
+                if (lr) {
+                    lr.startColor = new Color(c.r, c.g, c.b, 0.75f); lr.endColor = new Color(c.r, c.g, c.b, 0.75f);
+                    lr.sortingOrder = grid.SortOrderFromCoord(coord);
+                }
             }
-            LineRenderer lr = cursor.GetComponentInChildren<LineRenderer>();
-            if (lr) {
-                lr.startColor = new Color(c.r, c.g, c.b, 0.75f); lr.endColor = new Color(c.r, c.g, c.b, 0.75f);
-                lr.sortingOrder = grid.SortOrderFromCoord(coord);
-            }
-        }
+        } else 
+            neutralTooltip.HoverOver();
     }
 
 // Update call w/o Vector2 reference
     public void UpdateGridCursor(bool state, bool fill = false, bool _valid = true) {
         gridCursor.SetActive(state);
-        Color c = _valid ? validColor : invalidColor;
+        
+        if (state) {
+            Color c = _valid ? validColor : invalidColor;
 
-        SpriteShapeRenderer ssr = gridCursor.GetComponentInChildren<SpriteShapeRenderer>();
-        if (ssr) {
-            ssr.color = new Color(c.r, c.g, c.b, fill ? 0.25f : 0);
-        }
-        LineRenderer lr = gridCursor.GetComponentInChildren<LineRenderer>();
-        if (lr) {
-            lr.startColor = new Color(c.r, c.g, c.b, 0.75f); lr.endColor = new Color(c.r, c.g, c.b, 0.75f);
-        }
+            SpriteShapeRenderer ssr = gridCursor.GetComponentInChildren<SpriteShapeRenderer>();
+            if (ssr) {
+                ssr.color = new Color(c.r, c.g, c.b, fill ? 0.25f : 0);
+            }
+            LineRenderer lr = gridCursor.GetComponentInChildren<LineRenderer>();
+            if (lr) {
+                lr.startColor = new Color(c.r, c.g, c.b, 0.75f); lr.endColor = new Color(c.r, c.g, c.b, 0.75f);
+            }
+        } else
+        neutralTooltip.HoverOver();
     }
 
     public void DisplayGridContextuals(GridElement origin, EquipmentData data, int gridColor, GameObject refTrans = null) {

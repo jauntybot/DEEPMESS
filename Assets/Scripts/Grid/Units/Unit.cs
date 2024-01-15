@@ -24,7 +24,6 @@ public class Unit : GridElement {
     [Header("Modifiers")]
     public List<Status> conditions;
     public UnitConditionVFX conditionDisplay;
-    private int prevMod;
     public int moveMod;
     public int attackMod;
 

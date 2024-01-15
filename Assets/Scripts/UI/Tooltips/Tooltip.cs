@@ -16,13 +16,13 @@ public class Tooltip : MonoBehaviour
     
     public int textWrapLimit;
 
-    [SerializeField] RectTransform rectTransform;
+    [SerializeField] protected RectTransform rectTransform;
 
     public virtual void SetText(string content = "", string header = "", bool clickToSkip = false, List<RuntimeAnimatorController> gif = null) {
         if (string.IsNullOrEmpty(header)) 
-            headerField.gameObject.SetActive(false);
+            headerField.transform.parent.gameObject.SetActive(false);
         else {
-            headerField.gameObject.SetActive(true);
+            headerField.transform.parent.gameObject.SetActive(true);
             headerField.text = header;
         }
 
@@ -41,17 +41,28 @@ public class Tooltip : MonoBehaviour
             }
         }
 
-        contentField.text = content;
+        if (string.IsNullOrEmpty(content))
+            contentField.transform.parent.gameObject.SetActive(false);
+        else {
+            contentField.transform.parent.gameObject.SetActive(true);
+            contentField.text = content;
+        }
         
         transform.GetChild(0).gameObject.SetActive(true);
-        Canvas.ForceUpdateCanvases();
+
+        StartCoroutine(Rebuild());
 
         //limit text width
         //int headerLength = headerField.text.Length;
         //int contentLength = contentField.text.Length;
 
         //layoutElement.enabled = (headerLength > textWrapLimit || contentLength > textWrapLimit) ? true : false;
+    }
 
+    IEnumerator Rebuild() {
+        yield return null;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
     }
 
     protected virtual void Update() {
@@ -75,8 +86,6 @@ public class Tooltip : MonoBehaviour
                 rectTransform.pivot = localAnchor;
                 rectTransform.anchoredPosition = new Vector2(25 - localAnchor.x * 50, 25 - localAnchor.y * 50);
             break;
-        }
-        if (align == Alignment.ToCursor) {
         }
     }
 }

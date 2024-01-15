@@ -6,12 +6,13 @@ using TMPro;
 
 public class UnitUpgradeUI : UnitUI {
 
-    UpgradeManager upgrade;
+    public UpgradeManager upgrade;
     SlagEquipmentData equip;
+    public HPPips hpPips;
     [SerializeField] Button upgradeButton;
-    [SerializeField] GameObject particlePrefab;
-    public RectTransform slot1, slot2, slot3;
-    [SerializeField] TMP_Text slot1ModifiersTMP, slot2ModifiersTMP, slot3ModifiersTMP;
+    [SerializeField] GameObject nuggetPrefab;
+    [SerializeField] Transform slotContainer;
+    public List<NuggetSlot> slots;
     int appliedUpgrades = 0;
     [SerializeField] List<Color> particleSprites;
     SlagEquipmentData.UpgradePath activeParticle;
@@ -21,10 +22,17 @@ public class UnitUpgradeUI : UnitUI {
 
     public UnitUI Initialize(Unit u, UpgradeManager _upgrade) {
         UnitUI ui = base.Initialize(u);
+        hpPips.Init(u);
+
         equip = (SlagEquipmentData)u.equipment.Find(e => e is SlagEquipmentData && e is not HammerData);
         upgradeButton.GetComponent<UpgradeButtonHoldHandler>().Init(this);
         upgrade = _upgrade;
         appliedUpgrades = 0;
+
+        foreach (NuggetSlot slot in slots) {
+            slot.radialFill.fillAmount = 0;
+            slot.DisplayPopup(false);
+        }
                 
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
@@ -38,7 +46,12 @@ public class UnitUpgradeUI : UnitUI {
         unitName.text = "HAMMER";
         equip = hammer;
         upgradeButton.GetComponent<UpgradeButtonHoldHandler>().Init(this);
-        Destroy(slot3.gameObject);
+        
+        foreach (NuggetSlot slot in slots) {
+            slot.radialFill.fillAmount = 0;
+            slot.DisplayPopup(false);
+        }
+
         upgrade = _upgrade;
         appliedUpgrades = 0;
         return this;
@@ -50,41 +63,42 @@ public class UnitUpgradeUI : UnitUI {
         activeParticle = path;
         string mod = "";
         if (equip.totalUpgrades < 3 || equip.upgrades[path] < 2) {
-            previewParticle = Instantiate(particlePrefab, CurrentSlot());
-            previewParticle.GetComponentInChildren<Image>().color = new Color(particleSprites[(int)path].r, particleSprites[(int)path].g, particleSprites[(int)path].b, 0.6f);
+            previewParticle = Instantiate(nuggetPrefab, CurrentSlot().transform);
+            Image nugget = previewParticle.GetComponentInChildren<Image>();
+            nugget.color = new Color(nugget.color.r, nugget.color.g, nugget.color.b, 0.6f);
+            Animator anim = previewParticle.GetComponentInChildren<Animator>();
             switch (path) {
-                case SlagEquipmentData.UpgradePath.Power:
+                case SlagEquipmentData.UpgradePath.Shunt:
                     mod = equip.upgradeStrings.powerStrings[equip.upgrades[path]];
+                    anim.SetInteger("Color", 0);
                 break;
-                case SlagEquipmentData.UpgradePath.Special:
+                case SlagEquipmentData.UpgradePath.Scab:
                     mod = equip.upgradeStrings.specialStrings[equip.upgrades[path]];
+                    anim.SetInteger("Color", 1);
                 break;
-                case SlagEquipmentData.UpgradePath.Unit:
+                case SlagEquipmentData.UpgradePath.Sludge:
                     mod = equip.upgradeStrings.unitStrings[equip.upgrades[path]];
+                    anim.SetInteger("Color", 2);
                 break;
             }
         } else mod = "MAX UPGRADES";
 
-        TMP_Text tmp;
-        switch (appliedUpgrades) {
+        string no = "I";
+        switch(equip.upgrades[path]) {
             default:
-            case 0: tmp = slot1ModifiersTMP; break;
-            case 1: tmp = slot2ModifiersTMP; break;
-            case 2: tmp = slot3ModifiersTMP; break;
+            case 0: break;
+            case 1: no = "II"; break;
+            case 2: no = ""; break;
         }
-        tmp.text = mod;
+
+        CurrentSlot().UpdateModifier(path.ToString().ToUpper() + " " + no, mod);
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
     }
 
-    public RectTransform CurrentSlot() {
-        switch (appliedUpgrades) {
-            default:
-            case 0: return slot1;
-            case 1: return slot2;
-            case 2: return slot3;
-        }
+    public NuggetSlot CurrentSlot() {
+        return slots[appliedUpgrades];
     }
 
     public void ClearModifier(bool apply = false) {
@@ -96,15 +110,14 @@ public class UnitUpgradeUI : UnitUI {
             previewParticle = null;
         }
 
-        TMP_Text tmp;
-        switch (appliedUpgrades) {
-            default:
-            case 0: tmp = slot1ModifiersTMP; break;
-            case 1: tmp = slot2ModifiersTMP; break;
-            case 2: tmp = slot3ModifiersTMP; break;
-        }
-        if (!apply) {
-            tmp.text = "";   
+        if (!apply) 
+            CurrentSlot().UpdateModifier("", "");
+        else {
+            CurrentSlot().FillSlot();
+            if (hpPips) {
+                hpPips.InstantiateMaxPips();
+                hpPips.UpdatePips(unit.hpCurrent);
+            }
         }
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
@@ -113,13 +126,6 @@ public class UnitUpgradeUI : UnitUI {
 
 
     public void ApplyUpgrade() {
-        TMP_Text tmp;
-        switch (appliedUpgrades) {
-            default:
-            case 0: tmp = slot1ModifiersTMP; break;
-            case 1: tmp = slot2ModifiersTMP; break;
-            case 2: tmp = slot3ModifiersTMP; break;
-        }
         ClearModifier(true);
         appliedUpgrades++;
 

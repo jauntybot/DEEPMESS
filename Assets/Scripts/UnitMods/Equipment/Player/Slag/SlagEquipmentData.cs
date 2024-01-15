@@ -6,8 +6,8 @@ using UnityEngine;
 public class SlagEquipmentData : EquipmentData {
 
     public PlayerUnit slag;
-    public enum UpgradePath { Power, Special, Unit };
-    public Dictionary<UpgradePath, int> upgrades = new() { {UpgradePath.Power, 0}, {UpgradePath.Special, 0}, {UpgradePath.Unit, 0}};
+    public enum UpgradePath { Shunt, Scab, Sludge };
+    public Dictionary<UpgradePath, int> upgrades = new() { {UpgradePath.Shunt, 0}, {UpgradePath.Scab, 0}, {UpgradePath.Sludge, 0}};
     public int totalUpgrades;
     public EquipmentUpgrades upgradeStrings;
 
@@ -23,11 +23,11 @@ public class SlagEquipmentData : EquipmentData {
     public override void EquipEquipment(Unit user) {
         base.EquipEquipment(user);
         slag = (PlayerUnit)user;
-        upgrades = new Dictionary<UpgradePath, int>{{UpgradePath.Power, -1}, {UpgradePath.Special, -1}, {UpgradePath.Unit, -1}};
+        upgrades = new Dictionary<UpgradePath, int>{{UpgradePath.Shunt, -1}, {UpgradePath.Scab, -1}, {UpgradePath.Sludge, -1}};
         totalUpgrades = 0;
-        UpgradeEquipment(UpgradePath.Special);
-        UpgradeEquipment(UpgradePath.Power);
-        UpgradeEquipment(UpgradePath.Unit);
+        UpgradeEquipment(UpgradePath.Scab);
+        UpgradeEquipment(UpgradePath.Shunt);
+        UpgradeEquipment(UpgradePath.Sludge);
     }
 
 }

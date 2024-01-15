@@ -17,14 +17,26 @@ public class EnemyDetonateUnit : EnemyUnit {
         Grid grid = FloorManager.instance.currentFloor;
         GameObject go = Instantiate(explosionVFX, grid.PosFromCoord(coord), Quaternion.identity);
         go.GetComponentInChildren<SpriteRenderer>().sortingOrder = grid.SortOrderFromCoord(coord);
-        yield return new WaitForSecondsRealtime(0.25f);
+        float t = 0;
+        while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        List<Vector2> secondWave = new();
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
                 Vector2 c = coord + new Vector2(x,y);
-                if (c == coord || c.x < 0 || c.x > 7 || c.y < 0 || c.y > 7) break;
+                if (c == coord || c.x < 0 || c.x > 7 || c.y < 0 || c.y > 7) continue;
+                if (x != 0 && y != 0) {
+                    secondWave.Add(c);
+                    continue;
+                }
                 GameObject g = Instantiate(explosionVFX, grid.PosFromCoord(c), Quaternion.identity);
                 g.GetComponentInChildren<SpriteRenderer>().sortingOrder = grid.SortOrderFromCoord(c);
             }
+        }
+        t = 0;
+        while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        foreach (Vector2 c in secondWave) {
+            GameObject g = Instantiate(explosionVFX, grid.PosFromCoord(c), Quaternion.identity);
+            g.GetComponentInChildren<SpriteRenderer>().sortingOrder = grid.SortOrderFromCoord(c);
         }
 
     }

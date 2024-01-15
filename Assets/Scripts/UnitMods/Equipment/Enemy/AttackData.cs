@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public class AttackData : EquipmentData {
     public int dmg;
-    [SerializeField] GameObject strikeVFX, thornsVFX;
+    [SerializeField] GameObject strikeVFX, thornsVFX, thornsInflictedVFX;
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this, targetTypes);
@@ -64,6 +64,8 @@ public class AttackData : EquipmentData {
         if (thornDmg > 0) {
             GameObject go = Instantiate(thornsVFX, target.transform.position, Quaternion.identity);
             go.GetComponent<SpriteRenderer>().sortingOrder = target.gfx[0].sortingOrder++;
+            go = Instantiate(thornsInflictedVFX, user.transform.position, Quaternion.identity);
+            go.GetComponent<SpriteRenderer>().sortingOrder = user.gfx[0].sortingOrder++;
         }
 
         while (timer < animDur/2) {
@@ -81,7 +83,7 @@ public class AttackData : EquipmentData {
 
         List<Coroutine> cos = new();
    
-        if (thornDmg > 0) cos.Add(user.StartCoroutine(user.TakeDamage(thornDmg, GridElement.DamageType.Melee, target)));
+        if (thornDmg > 0) cos.Add(user.StartCoroutine(user.TakeDamage(thornDmg, GridElement.DamageType.Melee, target, target.shield ? target.shield.data : null)));
         cos.Add(target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user, this)));
         
         for (int i = cos.Count - 1; i >= 0; i--)

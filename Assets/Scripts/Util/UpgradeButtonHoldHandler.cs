@@ -4,11 +4,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UpgradeButtonHoldHandler : MonoBehaviour, IUpdateSelectedHandler, IPointerDownHandler, IPointerUpHandler {
+public class UpgradeButtonHoldHandler : MonoBehaviour, IUpdateSelectedHandler, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler {
 
     UnitUpgradeUI ui;
-    public Button upgradeButton;
-    [SerializeField] Image radialProg;
+    Image radialProg;
     bool isPressed;
     [SerializeField] float holdDur;
     float confirmProg;
@@ -20,23 +19,34 @@ public class UpgradeButtonHoldHandler : MonoBehaviour, IUpdateSelectedHandler, I
         DisplayProgress();
     }
 
+    public void OnPointerEnter(PointerEventData data) {
+        foreach (NuggetSlot slot in ui.slots) {
+            if (slot.filled)
+                slot.DisplayPopup(true);
+        }
+        if (ui.upgrade.selectedParticle)
+            ui.CurrentSlot().DisplayPopup(true);
+    }
+
+    public void OnPointerExit(PointerEventData data) {
+        foreach (NuggetSlot slot in ui.slots) {
+            slot.DisplayPopup(false);
+        }
+    }
+
     public void OnUpdateSelected(BaseEventData data) {
         if (ui.previewParticle) {
             if (isPressed) {
                 ProgressConfirm();
             }
             DisplayProgress();
-        } else {
-            ResetProgress();
         }
     }
 
     public void OnPointerDown(PointerEventData data) {
         isPressed = true;
         confirmProg = 0;
-        radialProg.transform.SetParent(ui.CurrentSlot());
-        radialProg.transform.SetSiblingIndex(0);
-        radialProg.transform.localPosition = Vector3.zero;
+        radialProg = ui.CurrentSlot().radialFill;
         if (ui.previewParticle) {
             Image image = ui.previewParticle.GetComponentInChildren<Image>();
             image.color = new Color(image.color.r, image.color.g, image.color.b, 1);
@@ -61,7 +71,8 @@ public class UpgradeButtonHoldHandler : MonoBehaviour, IUpdateSelectedHandler, I
     }
 
     public void DisplayProgress() {
-        radialProg.fillAmount = confirmProg/holdDur;
+        if (radialProg)
+            radialProg.fillAmount = confirmProg/holdDur;
 
         if (confirmProg >= holdDur) {
             ui.ApplyUpgrade();

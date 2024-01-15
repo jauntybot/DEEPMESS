@@ -9,7 +9,7 @@ public class UIManager : MonoBehaviour {
     
     ScenarioManager scenario;
 
-    [SerializeField] Animator canvasAnim;
+    public Animator canvasAnim;
 
     [Header("Top UIs")]
     public MetaDisplay metaDisplay;

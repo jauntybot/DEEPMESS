@@ -38,23 +38,49 @@ public class ObjectiveManager : MonoBehaviour {
 
     public IEnumerator RewardSequence() {
         reviewingObjectives = true;
-        assignAwardPanel.SetActive(true);
-        continueButton.GetComponentInChildren<TMPro.TMP_Text>().text = "COLLECT REWARDS";
-        rerollButton.gameObject.SetActive(false);
-
         foreach(Objective ob in activeObjectives)
             ob.ProgressCheck(true);
 
+        assignAwardPanel.SetActive(true);
+        continueButton.gameObject.SetActive(false);
+        rerollButton.gameObject.SetActive(false);
 
-        while (reviewingObjectives)
+        float t = 0;
+        foreach(Transform child in objectiveCardParent.transform) {
+            Animator anim = child.GetComponent<Animator>();
+            Objective ob = child.GetComponent<ObjectiveCard>().objective;
+            int c = 0;
+            switch (ob.reward) {
+                default:
+                case SlagEquipmentData.UpgradePath.Shunt: break;
+                case SlagEquipmentData.UpgradePath.Scab: c = 1; break;
+                case SlagEquipmentData.UpgradePath.Sludge: c = 2; break;
+            }
+            anim.SetInteger("Color", c);
+            anim.SetTrigger("SlideIn");
+            anim.SetTrigger("Resolved");
+            anim.SetBool("Success", ob.succeeded);
+            if (ob.succeeded) upgrade.CollectNugget(ob.reward);
+            t = 0;
+            while (t < 1.25f) {
+                t += Time.deltaTime;
+                yield return null;
+            }
+            Debug.Log("Card Done");
+        }
+
+        t = 0;
+        while (t < 1.25f) {
+            t += Time.deltaTime;
             yield return null;
+        }
+        Debug.Log("Review Done");
 
 // Particles collected, sent to upgrade manager
         List<SlagEquipmentData.UpgradePath> particles = new();
         foreach (Objective ob in activeObjectives) {
             if (ob.succeeded) particles.Add(ob.reward);
         }
-        upgrade.CollectParticles(particles);
 
         assignAwardPanel.SetActive(false);
         packetCount++;
@@ -63,10 +89,11 @@ public class ObjectiveManager : MonoBehaviour {
     public IEnumerator AssignSequence() {
         reviewingObjectives = true;
         assignAwardPanel.SetActive(true);
+        continueButton.gameObject.SetActive(true);
         continueButton.GetComponentInChildren<TMPro.TMP_Text>().text = "ACCEPT OBJECTIVES";
         rerollButton.gameObject.SetActive(true);
 
-        RerollObjectives();
+        StartCoroutine(RerollObjectives());
 
         while (reviewingObjectives)
             yield return null;
@@ -74,8 +101,11 @@ public class ObjectiveManager : MonoBehaviour {
         assignAwardPanel.SetActive(false);
     }
 
+    public void Reroll() {
+        StartCoroutine(RerollObjectives());
+    }
 
-    public void RerollObjectives() {
+    IEnumerator RerollObjectives() {
        activeObjectives = new();
 
         List<Objective> packetObjectives;
@@ -102,17 +132,31 @@ public class ObjectiveManager : MonoBehaviour {
 // Create UI cards
         for (int i = objectiveCardParent.transform.childCount - 1; i >= 0; i--)
             Destroy(objectiveCardParent.transform.GetChild(i).gameObject);
+        objectiveCardParent.GetComponent<HorizontalLayoutGroup>().enabled = true;
+        foreach(Objective ob in activeObjectives) 
+            Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
         
-        foreach(Objective ob in activeObjectives) {
-            ob.Init();
-            ObjectiveCard card = Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
-            card.Init(ob, rewardSprites[(int)ob.reward]);
-        }
         tracker.AssignObjectives(activeObjectives, rewardSprites);
-
+        
         LayoutRebuilder.ForceRebuildLayoutImmediate(tracker.GetComponent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(objectiveCardParent.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
+
+        yield return null;
+        objectiveCardParent.GetComponent<HorizontalLayoutGroup>().enabled = false;
+
+// Init UI card animations
+        for (int o = 0; o <= activeObjectives.Count - 1; o++) {
+            activeObjectives[o].Init();
+            objectiveCardParent.transform.GetChild(o).GetComponent<ObjectiveCard>().Init(activeObjectives[o]);
+            float t = 0;
+            while (t < 0.25f) {
+                t += Time.deltaTime;
+                yield return null;
+            }
+        }
+
+
     }
 
     public IEnumerator CollectRewards() {

@@ -14,13 +14,13 @@ public class Shield : MonoBehaviour {
         anim = gfx.GetComponent<Animator>();
         unit = target;
 // UNIT TIER I - Prevents liquid tile effects
-        if (data.upgrades[SlagEquipmentData.UpgradePath.Unit] >= 1) {
+        if (data.upgrades[SlagEquipmentData.UpgradePath.Sludge] >= 1) {
             buoyant = true;
         }
 // UNIT TIER II - Heals users
-        healing = data.upgrades[SlagEquipmentData.UpgradePath.Unit] >= 2; 
+        healing = data.upgrades[SlagEquipmentData.UpgradePath.Sludge] >= 2; 
 // SPECIAL TIER II - Damages attackers
-        thorns = data.upgrades[SlagEquipmentData.UpgradePath.Special] >= 2;
+        thorns = data.upgrades[SlagEquipmentData.UpgradePath.Scab] >= 2;
 
         
         gfx.sortingOrder = unit.grid.SortOrderFromCoord(unit.coord);

@@ -7,14 +7,15 @@ public class Wall : GridElement
 
     [SerializeField] Animator anim;
     [SerializeField] List<Sprite> rndSprite;
+    [SerializeField] List<PolygonCollider2D> colliders;
 
     protected override void Start() {
         base.Start();
         anim.enabled = false;
         if (rndSprite.Count > 0) {
-            gfx[0].sprite = rndSprite[Random.Range(0,rndSprite.Count)];
-            Debug.Log("Rndm wall");
-
+            int rnd = Random.Range(0,rndSprite.Count);
+            gfx[0].sprite = rndSprite[rnd];
+            hitbox = colliders[rnd];
         }
     }
 

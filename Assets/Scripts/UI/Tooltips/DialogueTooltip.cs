@@ -56,6 +56,4 @@ public class DialogueTooltip : Tooltip
         }
     }
 
-    protected override void Update() {}
-
 }

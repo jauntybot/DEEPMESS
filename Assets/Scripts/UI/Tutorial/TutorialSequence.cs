@@ -211,7 +211,7 @@ public class TutorialSequence : MonoBehaviour
             
         }
         
-        UIManager.instance.ToggleBattleCanvas(true);
+        UIManager.instance.canvasAnim.SetTrigger("TutUnit");
         
         screenFade.SetTrigger("FadeOut");
         Vector3 prevPos = tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition;

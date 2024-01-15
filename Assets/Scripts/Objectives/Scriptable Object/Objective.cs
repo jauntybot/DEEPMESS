@@ -6,6 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Objective/Basic")]
 public class Objective : ScriptableObject {
 
+    public string objectiveTitleString;
     public string objectiveString;
     public int progress, goal;
     public enum Operator { OrMore, LessThan }

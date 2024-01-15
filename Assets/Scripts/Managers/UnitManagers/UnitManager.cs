@@ -76,7 +76,7 @@ public class UnitManager : MonoBehaviour {
         u.TargetElement(true);
         u.selected = true;
 
-        UIManager.instance.UpdatePortrait(u);
+        UIManager.instance.UpdatePortrait(u, true);
 
         currentGrid.UpdateSelectedCursor(true, u.coord);
     

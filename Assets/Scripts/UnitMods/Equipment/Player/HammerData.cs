@@ -15,7 +15,7 @@ public class HammerData : SlagEquipmentData {
     public Action action;
     GridElement.DamageType dmgType = GridElement.DamageType.Melee;
     [SerializeField] GameObject meleeVFX;
-    public SFX throwSFX, catchSFX, nailSFX, shieldSFX;
+    public SFX throwSFX, catchSFX, nailSFX, shieldSFX, meleeSFX;
    
     public void AssignHammer(GameObject h, Nail d) {
         hammer = h;
@@ -31,7 +31,7 @@ public class HammerData : SlagEquipmentData {
             pu.ui.UpdateEquipmentButtons();
 
         slag = (PlayerUnit)user;
-        if (upgrades[UpgradePath.Unit] >= 1) slag.moveMod++;
+        if (upgrades[UpgradePath.Sludge] >= 1) slag.moveMod++;
     }
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
@@ -39,7 +39,7 @@ public class HammerData : SlagEquipmentData {
             return TargetThrow((PlayerUnit)user, user.coord);
         } else {
 // POWER TIER I - Target an additional enemy before Slag
-//             if (upgrades[UpgradePath.Power] == 1 && secondTarget == null) {
+//             if (upgrades[UpgradePath.Shunt] == 1 && secondTarget == null) {
 //                 return TargetThrow((PlayerUnit)user, firstTarget.coord);
 // // Target Slags
 //             } else {
@@ -122,7 +122,7 @@ public class HammerData : SlagEquipmentData {
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         if (firstTarget != null) {
 // POWER TIER I - Target an additional enemy before Slag
-            // if (upgrades[UpgradePath.Power] == 1 && secondTarget == null) {
+            // if (upgrades[UpgradePath.Shunt] == 1 && secondTarget == null) {
             //     secondTarget = target;
             //     Unit unit = (Unit)user;
             //     unit.grid.DisableGridHighlight();
@@ -245,14 +245,15 @@ public class HammerData : SlagEquipmentData {
             Instantiate(vfx, user.grid.PosFromCoord(target.coord) + new Vector3(0, 1, 0), Quaternion.identity);
             int dmg = 1;
 // PWER TIER I -- Deal additional damage if adjacent
-            if (upgrades[UpgradePath.Power] == 1 && (user.coord - target.coord).magnitude <= 1) {
+            if (target is EnemyUnit && upgrades[UpgradePath.Shunt] == 1 && (user.coord - target.coord).magnitude <= 1) {
                 dmg ++;
                 Instantiate(meleeVFX, user.grid.PosFromCoord(target.coord), Quaternion.identity);
+                target.PlaySound(meleeSFX);
             }
 
             dmgCo(target.StartCoroutine(target.TakeDamage(dmg, dmgType, user, sourceEquip: this)));
 // SPECIAL TIER I -- Push element on hit
-            if (upgrades[UpgradePath.Special] == 1) {
+            if (upgrades[UpgradePath.Scab] == 1) {
                 pushCo(target.StartCoroutine(PushUnit(target, (target.coord - user.coord).normalized)));
             }
         }
@@ -299,7 +300,7 @@ public class HammerData : SlagEquipmentData {
 
                 sender.equipment.Remove(h);
 // UNIT TIER I - Remove movement boost from hammer carrier
-                if (h.upgrades[UpgradePath.Unit] >= 1) sender.moveMod--;
+                if (h.upgrades[UpgradePath.Sludge] >= 1) sender.moveMod--;
             }
         }
         for (int i = toAdd.Count - 1; i >= 0; i--) {
@@ -319,6 +320,6 @@ public class HammerData : SlagEquipmentData {
     public override void UpgradeEquipment(UpgradePath targetPath) {
         base.UpgradeEquipment(targetPath);
 // UNIT TIER I - Increase hammer carriers movement
-        if (upgrades[UpgradePath.Unit] >= 1) slag.moveMod++;
+        if (upgrades[UpgradePath.Sludge] >= 1) slag.moveMod++;
     }
 }

@@ -241,6 +241,7 @@ public class PlayerManager : UnitManager {
             GridElement contents = null;
             foreach (GridElement ge in currentGrid.CoordContents(tile.coord)) {
                 contents = ge;
+                if (ge is PlayerUnit && overrideEquipment) break;
             }
 // Square not empty, recurse this function with reference to square contents
             if (contents)
@@ -272,6 +273,12 @@ public class PlayerManager : UnitManager {
                     StartCoroutine(selectedUnit.ExecuteAction(input));
                 } else
                     DeselectUnit();
+            } else {
+                List<GridElement> list = currentGrid.CoordContents(input.coord);
+                if (list.Count > 1) {
+                    foreach(GridElement ge in list)
+                        if (ge is PlayerUnit && overrideEquipment) GridInput(ge);
+                }
             }
         }
     }

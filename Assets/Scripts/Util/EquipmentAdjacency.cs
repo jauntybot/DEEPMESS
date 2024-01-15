@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public static class EquipmentAdjacency {
@@ -64,7 +65,7 @@ public static class EquipmentAdjacency {
                                     }
                                 }
                             } 
-                            if (valid == false) break;
+                            if (valid == false) continue;
                         }
 // Check if Tile is valid
                         foreach (GridElement ge in filters) {
@@ -106,7 +107,7 @@ public static class EquipmentAdjacency {
                                     }
                                 }
                             }
-                            if (valid == false) break;
+                            if (valid == false) continue;
                         }
 // Check if Tile is valid
                         foreach (GridElement ge in filters) {
@@ -157,7 +158,7 @@ public static class EquipmentAdjacency {
                             if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord,current);
-                                break;
+                                continue;
                             }
                             if (Vector2.Equals(current, to)) break;
                         }
@@ -182,7 +183,7 @@ public static class EquipmentAdjacency {
                             if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord, current);
-                                break;
+                                continue;
                             }
                             if (Vector2.Equals(current, to)) break;
                         }
@@ -235,7 +236,7 @@ public static class EquipmentAdjacency {
                             if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord,current);
-                                break;
+                                continue;
                             }
                             if (Vector2.Equals(current, to)) break;
                         }
@@ -260,7 +261,7 @@ public static class EquipmentAdjacency {
                             if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord, current);
-                                break;
+                                continue;
                             }
                             if (Vector2.Equals(current, to)) break;
                         }
@@ -367,15 +368,11 @@ public static class EquipmentAdjacency {
     public static List<Vector2> BoxAdjacency(Vector2 from, int range, List<GridElement> targetLast = null) {
         List<Vector2> _coords = new();
 
-        for (int i = 1; i <= range; i++) {
-            _coords.Add(new Vector2(from.x + i, from.y));
-            _coords.Add(new Vector2(from.x - i, from.y));
-            _coords.Add(new Vector2(from.x, from.y + i));
-            _coords.Add(new Vector2(from.x, from.y - i));
-            _coords.Add(new Vector2(from.x + i, from.y + i));
-            _coords.Add(new Vector2(from.x - i, from.y + i));
-            _coords.Add(new Vector2(from.x + i, from.y - i));
-            _coords.Add(new Vector2(from.x - i, from.y - i));        
+        for (int x = -range; x <= range; x++) {
+            for (int y = -range; y <= range; y++) {
+                Vector3 coord = new Vector3(from.x+x, from.y+y);
+                _coords.Add(coord);                
+            }
         }
 
         return _coords;

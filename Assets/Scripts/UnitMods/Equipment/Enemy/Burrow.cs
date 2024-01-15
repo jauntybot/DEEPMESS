@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Equipment/Attack/Burrow")]
-public class Burrow : EquipmentData
-{
+public class Burrow : EquipmentData {
 
     public int dmg;
+    [SerializeField] GameObject thornsVFX, thornsInflictedVFX;
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this, targetTypes);
@@ -43,15 +43,36 @@ public class Burrow : EquipmentData
         sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
         List<Vector2> aoe = EquipmentAdjacency.GetAdjacent(user.coord, range, this, targetTypes);
         List<Coroutine> affectedCo = new();
+        List<Unit> affectedU = new();
+        List<Unit> thornSources = new();
+        int thornDmg = 0;
         foreach (Vector2 coord in aoe) {
             if (user.grid.CoordContents(coord).Count > 0) {
                 foreach (GridElement ge in user.grid.CoordContents(coord)) {
                     if (ge is Unit tu && ge != user) {
-                        affectedCo.Add(tu.StartCoroutine(tu.TakeDamage(dmg)));
+                        affectedU.Add(tu);
+                        if (tu is Nail) {
+                            thornDmg++;
+                            if (!thornSources.Contains(tu))
+                                thornSources.Add(tu);
+                        }
+                        if (tu.shield && tu.shield.thorns) {
+                            thornDmg++;
+                            if (!thornSources.Contains(tu))
+                                thornSources.Add(tu);
+                        }                                
                     }
                 }
             }
         }
+        if (thornDmg > 0) {
+            foreach (Unit u in thornSources) 
+                affectedCo.Add(user.StartCoroutine(user.TakeDamage(thornDmg/thornSources.Count, GridElement.DamageType.Melee, u, u.shield ? u.shield.data : null)));
+        }
+        
+        foreach (Unit u in affectedU) 
+            affectedCo.Add(u.StartCoroutine(u.TakeDamage(dmg)));
+        
         
         for (int i = affectedCo.Count - 1; i >= 0; i--) {
             if (affectedCo[i] != null) {

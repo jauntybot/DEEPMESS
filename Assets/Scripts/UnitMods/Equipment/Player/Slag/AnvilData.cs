@@ -21,7 +21,7 @@ public class AnvilData : SlagEquipmentData {
             }
         }
 // SPECIAL TIER II -- increase anvil limit
-        int anvilLimit = upgrades[UpgradePath.Special] >= 2 ? 1 : 0;
+        int anvilLimit = upgrades[UpgradePath.Scab] >= 2 ? 1 : 0;
 // Destroy active anvils over anvil limit
         if (activeAnvils > anvilLimit) {
             int destroyCount = activeAnvils - anvilLimit;
@@ -42,7 +42,7 @@ public class AnvilData : SlagEquipmentData {
     }
 
     public virtual IEnumerator MoveToCoord(Unit unit, Vector2 moveTo, bool undo = false) {  
-        if (upgrades[UpgradePath.Unit] < 2) {
+        if (upgrades[UpgradePath.Sludge] < 2) {
 // Build frontier dictionary for stepped lerp
             Dictionary<Vector2, Vector2> fromTo = new();
             fromTo = EquipmentAdjacency.SteppedCoordAdjacency(unit.coord, moveTo, this);
@@ -86,7 +86,7 @@ public class AnvilData : SlagEquipmentData {
 
     public override void UpgradeEquipment(UpgradePath targetPath) {
         base.UpgradeEquipment(targetPath);
-        if (targetPath ==  UpgradePath.Unit) {
+        if (targetPath ==  UpgradePath.Sludge) {
 // UNIT TIER I - Upgrade move distance after placing
             if (upgrades[targetPath] == 1)
                 range = 3;
@@ -101,7 +101,7 @@ public class AnvilData : SlagEquipmentData {
                 adjacency = AdjacencyType.Diamond;
                 contextDisplay = GridContextuals.ContextDisplay.Stepped;
             }
-        } else if (targetPath == UpgradePath.Special) {
+        } else if (targetPath == UpgradePath.Scab) {
 // SPECIAL TIER I - Upgrade unit HP
             if (upgrades[targetPath] == 1) {
                 slag.hpMax += 1;
@@ -110,7 +110,7 @@ public class AnvilData : SlagEquipmentData {
                 slag.elementCanvas.InstantiateMaxPips();
                 slag.ui.overview.hPPips.InstantiateMaxPips();
             }
-        } else if (targetPath == UpgradePath.Power) {
+        } else if (targetPath == UpgradePath.Shunt) {
 // POWER TIER II - Upgrade unit HP
             if (upgrades[targetPath] == 2) {
                 slag.hpMax += 1;

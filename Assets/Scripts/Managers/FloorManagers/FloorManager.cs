@@ -643,7 +643,7 @@ public class FloorManager : MonoBehaviour {
         
 // Lerp units into screen
         List<Unit> units = new() { scenario.player.units[0], scenario.player.units[1], scenario.player.units[2], scenario.player.units[3] };
-        List<Vector2> to = new() {new Vector2(-1.182819f, 0.5243183f), new Vector2(-2.862819f, 0.04704558f), new Vector2(-0.5108191f, -0.5781816f), new Vector2(1.841181f, -1.203409f) };
+        List<Vector2> to = new() {new Vector2(-1.182819f, 4.0243183f), new Vector2(-2.862819f, 3.54704558f), new Vector2(-0.5108191f, 2.9218184f), new Vector2(1.841181f, 2.296591f) };
         units[0].manager.transform.parent = transitionParent;
         units[3].transform.parent = transitionParent;
         scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
@@ -698,8 +698,8 @@ public class FloorManager : MonoBehaviour {
                     units[i].transform.position = Vector3.Lerp(to[i], to[i] + new Vector2(0, floorOffset*2), dropCurve.Evaluate(timer/unitDropDur));
                     fade.AlphaSelf = Mathf.Lerp(1, 0, (timer - (unitDropDur*2/3))/(unitDropDur/3));
                 }
-                yield return null;
                 timer += Time.deltaTime;
+                yield return null;
             }
             
             // units[0].manager.transform.parent = floors[currentFloor.index - 1].transform;
@@ -709,6 +709,7 @@ public class FloorManager : MonoBehaviour {
             while (timer <= 0.5f) {
                 parallax.ScrollParallax(-1);
                 timer += Time.deltaTime;
+                yield return null;
             }
             uiManager.ToggleBattleCanvas(true);
             

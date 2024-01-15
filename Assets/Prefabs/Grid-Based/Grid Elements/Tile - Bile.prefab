@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 536337883
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1157760266, guid: 372c95485c992df42a1673264ab15080, type: 3}
+  m_Sprite: {fileID: 830436265, guid: cee713913ef9d9745b0e73dc2b7a95c3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -493,6 +493,7 @@ MonoBehaviour:
   shield: {fileID: 0}
   energyCurrent: 0
   energyMax: 0
+  destroyed: 0
   gfx:
   - {fileID: 4548692920616438334}
   audioSource: {fileID: 0}
@@ -559,6 +560,7 @@ MonoBehaviour:
   apPipPrefab: {fileID: 0}
   dmgPipPrefab: {fileID: 0}
   emptyPipPrefab: {fileID: 0}
+  turnOrder: {fileID: 0}
   dmgPanel: {fileID: 0}
   dmgAnim: {fileID: 0}
   overview: {fileID: 0}

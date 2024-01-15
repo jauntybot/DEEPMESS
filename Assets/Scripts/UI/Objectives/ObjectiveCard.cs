@@ -7,21 +7,31 @@ using TMPro;
 public class ObjectiveCard : MonoBehaviour {
 
     public Objective objective;
-    [SerializeField] Image reward;
-    [SerializeField] TMP_Text objectiveText, progressText;
+    [SerializeField] protected Animator nuggetAnim;
+    [SerializeField] TMP_Text objectiveTitle, objectiveText, progressText;
 
 
-    public virtual void Init(Objective _objective, Sprite rewardSprite) {
+    public virtual void Init(Objective _objective) {
         objective = _objective;
         objective.ObjectiveUpdateCallback += UpdateCard;
-        if (reward)
-            reward.sprite = rewardSprite;
+        int c = 0;
+        switch (_objective.reward) {
+            default:
+            case SlagEquipmentData.UpgradePath.Shunt: break;
+            case SlagEquipmentData.UpgradePath.Scab: c = 1; break;
+            case SlagEquipmentData.UpgradePath.Sludge: c = 2; break;
+        }
+        if (nuggetAnim)
+            nuggetAnim.SetInteger("Color", c);
+        GetComponent<Animator>().SetInteger("Color", c);
+        GetComponent<Animator>().SetTrigger("SlideIn");
 
         UpdateCard(objective);
     } 
 
 
-    void UpdateCard(Objective ob) {
+    protected void UpdateCard(Objective ob) {
+        objectiveTitle.text = objective.objectiveTitleString;
         objectiveText.text = objective.objectiveString;
         progressText.text = "("+objective.progress+"/"+objective.goal+")";
         objectiveText.fontMaterial.color = Color.white;
@@ -30,16 +40,20 @@ public class ObjectiveCard : MonoBehaviour {
         TMPro.FontStyles style = TMPro.FontStyles.Normal;
         if (ob.resolved) 
             style = TMPro.FontStyles.Strikethrough;
-        Color color = Color.white;
+        Color color = Color.black;
+        Color title = Color.white;
         if (ob.resolved) {
             if (ob.succeeded) color = Color.green;
             else color = Color.red;
         }
+        if (color != Color.black) title = color;
 
-        objectiveText.fontStyle = style;
-        progressText.fontStyle = style;
-        objectiveText.color = color;
-        progressText.color = color;
+        //objectiveTitle.fontStyle = style;
+        //objectiveText.fontStyle = style;
+        //progressText.fontStyle = style;
+        //objectiveTitle.color = title;
+        //objectiveText.color = color;
+        //progressText.color = color;
     }
 
 

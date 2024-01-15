@@ -11,13 +11,14 @@ public class GameUnitUI : UnitUI {
     [SerializeField] GameObject equipmentParent, hammerParent, bulbParent, slagEquipmentButtonPrefab, hammerButtonPrefab, bulbButtonPrefab, gameUnitFramePrefab;
     [SerializeField] public SFX equipSelectSFX, hammerSelectSFX;
 
-    [SerializeField] Animator emptyPips, hpPips, bulbColor;
+    [SerializeField] Animator emptyPips, hpPips;
+    GameObject bulbColor;
     
     [Header("Overview")]
     [SerializeField] public UnitOverview overview;
     [SerializeField] protected GameObject overviewPrefab;
 
-    public UnitUI Initialize(Unit u, Transform overviewParent = null, Transform overviewLayoutParent = null) {
+    public virtual UnitUI Initialize(Unit u, Transform overviewParent = null, Transform overviewLayoutParent = null) {
         UnitUI unitUI = base.Initialize(u);
 // Hard-coded portrait sprite placement <<.<<
         if (u is PlayerUnit) {
@@ -70,6 +71,7 @@ public class GameUnitUI : UnitUI {
     }
 
     void UpdateBulb() {
+        //yield return new WaitForSecondsRealtime(0.25f);
         BulbEquipmentData b = (BulbEquipmentData)unit.equipment.Find(e => e is BulbEquipmentData);
         if (b) {
             int c = 0;
@@ -79,16 +81,8 @@ public class GameUnitUI : UnitUI {
                 else c = 1;
             } else c = 2;
 
-            bulbColor.SetInteger("Color", c);
+            bulbColor.GetComponent<Animator>().SetInteger("Color", c);
         }
-    }
-
-
-    public void ToggleEquipmentPanel(bool active) {
-        
-        equipmentParent.SetActive(active);
-        hammerParent.SetActive(active);
-        bulbParent.SetActive(active);
     }
 
     public void ToggleEquipmentButtons() {
@@ -127,7 +121,7 @@ public class GameUnitUI : UnitUI {
                         prefab = bulbButtonPrefab;
                         parent = bulbParent.transform;
                         index = 1;
-                        bulbColor = prefab.GetComponentInChildren<Animator>();
+                        bulbColor = prefab.GetComponent<EquipmentButton>().subAnim.gameObject;
                     }
                     EquipmentButton newButt = Instantiate(prefab, parent).GetComponent<EquipmentButton>();
                     newButt.transform.localScale = Vector3.one;

@@ -17,7 +17,7 @@ public class ShieldData : SlagEquipmentData {
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod) {
         List<Vector2> validCoords = new();
-        if (upgrades[UpgradePath.Power] == 3)
+        if (upgrades[UpgradePath.Shunt] == 3)
             validCoords = EquipmentAdjacency.OfTypeOnBoardAdjacency(targetTypes, user.grid);
         else 
             validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this, targetTypes, user.grid);
@@ -50,7 +50,7 @@ public class ShieldData : SlagEquipmentData {
 
         PlayerUnit pu = (PlayerUnit)user;
 // SPECIAL TIER I - Increase shield limit
-        int shieldLimit = upgrades[UpgradePath.Special] >= 1 ? 1 : 0;
+        int shieldLimit = upgrades[UpgradePath.Scab] >= 1 ? 1 : 0;
 // Destory instances exceeding shield limit
         if (activeShields.Count > shieldLimit) {
             int destroyCount = activeShields.Count - shieldLimit;
@@ -68,7 +68,7 @@ public class ShieldData : SlagEquipmentData {
 
     public override void UpgradeEquipment(UpgradePath targetPath) {
         base.UpgradeEquipment(targetPath);
-        if (targetPath == UpgradePath.Power) {
+        if (targetPath == UpgradePath.Shunt) {
             if (upgrades[targetPath] == 0) {
                 adjacency = AdjacencyType.Diamond;
                 range = 1;
@@ -80,7 +80,7 @@ public class ShieldData : SlagEquipmentData {
                 range = 3;
                 slag.moveMod += 1;
             }
-        } else if (targetPath ==  UpgradePath.Unit) {
+        } else if (targetPath ==  UpgradePath.Sludge) {
             if (upgrades[targetPath] == 1) {
                 slag.hpMax += 1;
                 slag.hpCurrent += 1;

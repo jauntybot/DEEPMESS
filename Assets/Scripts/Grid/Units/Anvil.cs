@@ -31,8 +31,8 @@ public class Anvil : Unit {
     public virtual void Init(AnvilData _data) {
         data = _data;
 // SPECIAL TIERS -- Increase anvil max HP
-        if (data.upgrades[SlagEquipmentData.UpgradePath.Special] == 1) hpMax = 2;
-        if (data.upgrades[SlagEquipmentData.UpgradePath.Special] >= 2) hpMax = 3;
+        if (data.upgrades[SlagEquipmentData.UpgradePath.Scab] == 1) hpMax = 2;
+        if (data.upgrades[SlagEquipmentData.UpgradePath.Scab] >= 2) hpMax = 3;
         hpCurrent = hpMax;
         if (elementCanvas == null)  {
             elementCanvas = GetComponentInChildren<ElementCanvas>();
@@ -50,8 +50,8 @@ public class Anvil : Unit {
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
         if (!destroyed) {
 // POWER TIER I - Detonate anvil
-            if (!(data.upgrades[SlagEquipmentData.UpgradePath.Power] == 0 || dmgType == DamageType.Unspecified))
-                yield return Detonate(data.upgrades[SlagEquipmentData.UpgradePath.Power] == 2 ? 2 : 1);
+            if (!(data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 0 || dmgType == DamageType.Unspecified))
+                yield return Detonate(data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 2 ? 2 : 1);
             yield return base.DestroySequence(dmgType, source, sourceEquip);
        }
     }
@@ -70,7 +70,7 @@ public class Anvil : Unit {
                     foreach (GridElement ge in grid.CoordContents(coord)) {
                         if (ge is Unit tu && ge != this) {
 // POWER TIER II - Remove friendly fire
-                            if (!(ge is PlayerUnit && data.upgrades[SlagEquipmentData.UpgradePath.Power] == 2))
+                            if (!(ge is PlayerUnit && data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 2))
                                 affectedCo.Add(tu.StartCoroutine(tu.TakeDamage(dmg, DamageType.Explosion, this, data)));                        
                         }
                     }

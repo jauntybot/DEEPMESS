@@ -12,13 +12,13 @@ public class GodParticleGE : GridElement {
     public void Init() {
         type = (SlagEquipmentData.UpgradePath)Random.Range(0, SlagEquipmentData.UpgradePath.GetNames(typeof(SlagEquipmentData.UpgradePath)).Length);
         switch (type) {
-            case SlagEquipmentData.UpgradePath.Power:
+            case SlagEquipmentData.UpgradePath.Shunt:
                 gfx[0].sprite = sprites[0];
             break;
-            case SlagEquipmentData.UpgradePath.Special:
+            case SlagEquipmentData.UpgradePath.Scab:
                 gfx[0].sprite = sprites[1];
             break;
-            case SlagEquipmentData.UpgradePath.Unit:
+            case SlagEquipmentData.UpgradePath.Sludge:
                 gfx[0].sprite = sprites[2];
             break;
         }

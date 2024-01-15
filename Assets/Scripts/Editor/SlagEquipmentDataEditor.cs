@@ -18,31 +18,31 @@ public class SlagEquipmentDataEditor : Editor {
 
         UpgradePanel = EditorGUILayout.Foldout(UpgradePanel, "UPGRADES");
         if (UpgradePanel) { 
-            GUILayout.Label("SPECIAL: " + arg.upgrades[SlagEquipmentData.UpgradePath.Special]);
+            GUILayout.Label("SPECIAL: " + arg.upgrades[SlagEquipmentData.UpgradePath.Scab]);
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Upgrade"))
-                arg.UpgradeEquipment(SlagEquipmentData.UpgradePath.Special);
+                arg.UpgradeEquipment(SlagEquipmentData.UpgradePath.Scab);
             if (GUILayout.Button("Reset")) {
-                arg.upgrades[SlagEquipmentData.UpgradePath.Special] = -1;
-                arg.UpgradeEquipment(SlagEquipmentData.UpgradePath.Special);
+                arg.upgrades[SlagEquipmentData.UpgradePath.Scab] = -1;
+                arg.UpgradeEquipment(SlagEquipmentData.UpgradePath.Scab);
             }
             GUILayout.EndHorizontal();
-            GUILayout.Label("POWER: " + arg.upgrades[SlagEquipmentData.UpgradePath.Power]);
+            GUILayout.Label("POWER: " + arg.upgrades[SlagEquipmentData.UpgradePath.Shunt]);
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Upgrade"))
-                arg.UpgradeEquipment( SlagEquipmentData.UpgradePath.Power);
+                arg.UpgradeEquipment( SlagEquipmentData.UpgradePath.Shunt);
             if (GUILayout.Button("Reset")) {
-                arg.upgrades[SlagEquipmentData.UpgradePath.Power] = -1;
-                arg.UpgradeEquipment(SlagEquipmentData.UpgradePath.Power);
+                arg.upgrades[SlagEquipmentData.UpgradePath.Shunt] = -1;
+                arg.UpgradeEquipment(SlagEquipmentData.UpgradePath.Shunt);
             }
             GUILayout.EndHorizontal();
-            GUILayout.Label("UNIT: " + arg.upgrades[SlagEquipmentData.UpgradePath.Unit]);
+            GUILayout.Label("UNIT: " + arg.upgrades[SlagEquipmentData.UpgradePath.Sludge]);
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Upgrade"))
-                arg.UpgradeEquipment(SlagEquipmentData.UpgradePath.Unit);
+                arg.UpgradeEquipment(SlagEquipmentData.UpgradePath.Sludge);
             if (GUILayout.Button("Reset")) {
-                arg.upgrades[SlagEquipmentData.UpgradePath.Unit] = -1;
-                arg.UpgradeEquipment(SlagEquipmentData.UpgradePath.Unit);
+                arg.upgrades[SlagEquipmentData.UpgradePath.Sludge] = -1;
+                arg.UpgradeEquipment(SlagEquipmentData.UpgradePath.Sludge);
             }
             GUILayout.EndHorizontal();
             

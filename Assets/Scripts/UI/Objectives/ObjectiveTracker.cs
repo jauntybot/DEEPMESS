@@ -16,7 +16,7 @@ public class ObjectiveTracker : MonoBehaviour {
         
         foreach(Objective ob in activeObjectives) {
             ObjectiveCard card = Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
-            card.Init(ob, rewardSprites[(int)ob.reward]);
+            card.Init(ob);
         }
     }
 }

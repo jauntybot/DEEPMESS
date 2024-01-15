@@ -61,7 +61,7 @@ public class BigGrabData : SlagEquipmentData {
             List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range, this);
 
 // SPECIAL TIER I -- Throw backwards
-            if (upgrades[UpgradePath.Special] == 0) {
+            if (upgrades[UpgradePath.Scab] == 0) {
                 if (dir.x != 0) {
                     int sign = (int)Mathf.Sign(dir.x);
                     for (int i = 1; i <= range; i++) {
@@ -79,7 +79,7 @@ public class BigGrabData : SlagEquipmentData {
                 }
             }
 // SPECIAL TIER II -- Throw sideways
-            if (upgrades[UpgradePath.Special] <= 1) {
+            if (upgrades[UpgradePath.Scab] <= 1) {
                 if (dir.x != 0) {
                     for (int i = -range; i <= range; i++) {
                         Vector2 adj = new Vector2(user.coord.x, user.coord.y + i);
@@ -98,7 +98,7 @@ public class BigGrabData : SlagEquipmentData {
             unit.inRangeCoords = validCoords;
 
 // UNIT TIER II -- Throw onto occupied spaces
-            if (upgrades[UpgradePath.Unit] < 2) {
+            if (upgrades[UpgradePath.Sludge] < 2) {
                 for (int i = validCoords.Count - 1; i >= 0; i--) {
                     bool remove = false;
                     foreach(GridElement ge in user.grid.CoordContents(validCoords[i])) {
@@ -174,21 +174,21 @@ public class BigGrabData : SlagEquipmentData {
         thrown.ApplyCondition(Unit.Status.Stunned);
         
 // UNIT TIER I - Deal damage on throw
-        if (upgrades[UpgradePath.Unit] >= 1) thrown.StartCoroutine(thrown.TakeDamage(1, GridElement.DamageType.Fall, thrower, this));
+        if (upgrades[UpgradePath.Sludge] >= 1) thrown.StartCoroutine(thrown.TakeDamage(1, GridElement.DamageType.Fall, thrower, this));
         
         thrown.UpdateElement(coord, thrower, this);
     }
 
     public override void UpgradeEquipment(UpgradePath targetPath) {
         base.UpgradeEquipment(targetPath);
-        if (targetPath ==  UpgradePath.Unit) {
+        if (targetPath ==  UpgradePath.Sludge) {
             if (upgrades[targetPath] == 1) {
                 slag.hpMax ++;
                 slag.hpCurrent ++;
                 slag.elementCanvas.InstantiateMaxPips();
                 slag.ui.overview.hPPips.InstantiateMaxPips();
             }
-        } else if (targetPath == UpgradePath.Power) {
+        } else if (targetPath == UpgradePath.Shunt) {
             if (upgrades[targetPath] == 0) {
                 foreach (GridElement ge in upgradeTargets) {
                     if (firstTargets.Contains(ge)) firstTargets.Remove(ge);

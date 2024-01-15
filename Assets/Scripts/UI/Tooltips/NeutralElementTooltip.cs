@@ -38,28 +38,32 @@ public class NeutralElementTooltip : Tooltip
         contentField.text = content;
     }
 
-    public void HoverOver(GridElement ge) {
-
-        if (ge is Wall) {
-            SetText("Blocks movement, damages if landed on.", "WALL");
-        } else if (ge is Tile t) {
-            if (ge is TileBulb) {
-                SetText("Contains a bulb.", "BULB", false, new List<RuntimeAnimatorController>{ bulbAnim });
-            } else {
-                switch(t.tileType) {
-                    case Tile.TileType.Bone:
-                        SetText("No special effect.", "BONE");
-                    break;
-                    case Tile.TileType.Bile:
-                        SetText("Destroys anything that lands in it.", "BILE", false, new List<RuntimeAnimatorController>{ bileAnim });
-                    break;
-                    case Tile.TileType.Blood:
-                        SetText("Prevents Slags from acting.", "BLOOD", false, new List<RuntimeAnimatorController>{ bloodAnim });
-                    break;
+    public void HoverOver(GridElement ge = null) {
+        if (ge == null) {
+            rectTransform.gameObject.SetActive(false);
+        } else {
+            rectTransform.gameObject.SetActive(true);
+            if (ge is Wall) {
+                SetText("Blocks movement, damages if landed on.", "WALL");
+            } else if (ge is Tile t) {
+                if (ge is TileBulb) {
+                    SetText("Contains a bulb.", "BULB", false, new List<RuntimeAnimatorController>{ bulbAnim });
+                } else {
+                    switch(t.tileType) {
+                        case Tile.TileType.Bone:
+                            SetText("No special effect.", "BONE");
+                        break;
+                        case Tile.TileType.Bile:
+                            SetText("Destroys anything that lands in it.", "BILE", false, new List<RuntimeAnimatorController>{ bileAnim });
+                        break;
+                        case Tile.TileType.Blood:
+                            SetText("Prevents Slags from acting.", "BLOOD", false, new List<RuntimeAnimatorController>{ bloodAnim });
+                        break;
+                    }
                 }
             }
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
+            Canvas.ForceUpdateCanvases();
         }
     }
-
-    protected override void Update() {}
 }

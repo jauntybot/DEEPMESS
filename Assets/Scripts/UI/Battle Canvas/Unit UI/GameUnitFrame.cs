@@ -5,18 +5,14 @@ using UnityEngine.UI;
 
 public class GameUnitFrame : MonoBehaviour {
 
-    [SerializeField] Image frame, miniBG, mini;
-    [SerializeField] Sprite enemyFrame, enemyMiniBG, slagFrame, slagMiniBG;
-    
+    [SerializeField] Image friendlyGear, enemyGear;
+    [SerializeField] GameObject friendlyFrame, enemyFrame;
     public void Init(GridElement ge) {
-        if (ge is EnemyUnit) {
-            frame.sprite = enemyFrame;
-            miniBG.sprite = enemyMiniBG;
-        } else {
-            frame.sprite = slagFrame;
-            miniBG.sprite = slagMiniBG;
-        }
-        mini.sprite = ge.gfx[0].sprite;
+        bool friendly = ge is not EnemyUnit;        
+        friendlyFrame.SetActive(friendly);
+        enemyFrame.SetActive(!friendly);
+        Image gear = friendly ? friendlyGear : enemyGear;
+        
     }
 
 }

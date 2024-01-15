@@ -9,19 +9,20 @@ public class UpgradeManager : MonoBehaviour {
 
     PlayerManager pManager;
     
-    [SerializeField] GameObject upgradeScreen, upgradePanel, unitUIContainer, particlePanel, particleContainer;
-    [SerializeField] GameObject godParticleUIPrefab;
-    List<SlagEquipmentData.UpgradePath> particles = new();
-    public UpgradeUIParticle selectedParticle;
+    [SerializeField] GameObject upgradeScreen, unitUIContainer, nuggetContainer;
+    [SerializeField] GameObject godNuggetPrefab;
+    [SerializeField] List<SlagEquipmentData.UpgradePath> nuggets = new();
+    public NuggetButton selectedParticle;
 
 
-    [SerializeField] GameObject unitUpgradeUIPrefab;
-    List<UnitUpgradeUI> unitUpgradeUIs = new();
+    [SerializeField] GameObject unitUpgradeUIPrefab, hammerUpgradeGO;
+    [SerializeField] List<UnitUpgradeUI> unitUpgradeUIs = new();
     
     bool upgrading;
 
 
     public void Init(List<Unit> _units, PlayerManager _pManager) {
+        unitUIContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
         for (int i = unitUIContainer.transform.childCount - 1; i >= 0; i--)
             Destroy(unitUIContainer.transform.GetChild(i).gameObject);
         foreach (Unit unit in _units) {
@@ -31,36 +32,63 @@ public class UpgradeManager : MonoBehaviour {
                 unitUpgradeUIs.Add(ui);
             }
         }
-        UnitUpgradeUI hammer = Instantiate(unitUpgradeUIPrefab, unitUIContainer.transform).GetComponent<UnitUpgradeUI>();
+
+
+        UnitUpgradeUI hammer = hammerUpgradeGO.GetComponent<UnitUpgradeUI>();
         hammer.Initialize(_pManager.hammerActions[0], this);
         unitUpgradeUIs.Add(hammer);
         pManager = _pManager;      
     }
 
-    public void CollectParticles(List<SlagEquipmentData.UpgradePath> _particles) {
-        foreach (SlagEquipmentData.UpgradePath part in _particles) 
-            particles.Add(part);
+    public void CollectNugget(SlagEquipmentData.UpgradePath nugget) {
+        nuggets.Add(nugget);
+        
+// Instantiate particle UI buttons from PlayerManager
+        nuggetContainer.SetActive(true);
+        for (int i = nuggetContainer.transform.childCount - 1; i >= 0; i--)
+            Destroy(nuggetContainer.transform.GetChild(i).gameObject);
+        for (int n = 0; n <= nuggets.Count - 1; n++) {
+            NuggetButton newPart = Instantiate(godNuggetPrefab, nuggetContainer.transform).GetComponent<NuggetButton>();
+            newPart.Init(nuggets[n]);
+        }
+        foreach (Transform part in nuggetContainer.transform) {
+            NuggetButton partUI = part.GetComponent<NuggetButton>();
+            Button butt = part.GetComponent<Button>();
+            butt.onClick.AddListener(delegate{SelectParticle(partUI);});
+        }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(nuggetContainer.GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
     }
 
     public IEnumerator UpgradeSequence() {
         upgrading = true;
         
         upgradeScreen.SetActive(true);
-        
-// Instantiate particle UI buttons from PlayerManager
-        for (int i = particleContainer.transform.childCount - 1; i >= 0; i--)
-            Destroy(particleContainer.transform.GetChild(i).gameObject);
-        for (int n = 0; n <= particles.Count - 1; n++) {
-            UpgradeUIParticle newPart = Instantiate(godParticleUIPrefab, particleContainer.transform).GetComponent<UpgradeUIParticle>();
-            newPart.Init(particles[n]);
-        }
-        foreach (Transform part in particleContainer.transform) {
-            UpgradeUIParticle partUI = part.GetComponent<UpgradeUIParticle>();
-            Button butt = part.GetComponent<Button>();
-            butt.onClick.AddListener(delegate{SelectParticle(partUI);});
-        }
-        LayoutRebuilder.ForceRebuildLayoutImmediate(upgradePanel.GetComponent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
+        yield return null;
+        
+        unitUIContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+        foreach(UnitUpgradeUI ui in unitUpgradeUIs) {
+            if (ui.hpPips) {
+                ui.hpPips.InstantiateMaxPips();
+                ui.hpPips.UpdatePips(ui.unit.hpCurrent);
+            }
+
+            Animator anim = ui.transform.GetComponent<Animator>();
+            anim.SetTrigger("SlideIn");
+            float t = 0;
+            while (t <= 0.3f) {
+                t += Time.deltaTime;
+                yield return null;
+            }
+        }
+        foreach (Transform child in nuggetContainer.transform) 
+            child.GetComponent<Button>().interactable = true;
+        
+
+        // LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
+        // Canvas.ForceUpdateCanvases();
 
         while (upgrading) {
 
@@ -68,16 +96,17 @@ public class UpgradeManager : MonoBehaviour {
         }
 
         upgradeScreen.SetActive(false); 
+        nuggetContainer.SetActive(false);
     }
 
-    public void SelectParticle(UpgradeUIParticle part) {
+    public void SelectParticle(NuggetButton part) {
         selectedParticle = part;
         SlagEquipmentData.UpgradePath path = (SlagEquipmentData.UpgradePath)(int)part.type;
         foreach (UnitUpgradeUI ui in unitUpgradeUIs) {
             ui.UpdateModifier(path);
         }
 
-        LayoutRebuilder.ForceRebuildLayoutImmediate(upgradePanel.GetComponent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
     }
 
@@ -86,12 +115,12 @@ public class UpgradeManager : MonoBehaviour {
     }
 
     public void ApplyParticle() {
-        particles.Remove(selectedParticle.type);
+        nuggets.Remove(selectedParticle.type);
         Destroy(selectedParticle.gameObject);
         foreach(UnitUpgradeUI ui in unitUpgradeUIs)
             ui.ClearModifier();
 
-        LayoutRebuilder.ForceRebuildLayoutImmediate(upgradePanel.GetComponent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
     }
 

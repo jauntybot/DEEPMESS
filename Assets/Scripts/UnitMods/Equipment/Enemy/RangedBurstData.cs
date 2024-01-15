@@ -7,7 +7,7 @@ using UnityEngine;
 public class RangedBurstData : EquipmentData {
     
     public int dmg;
-    [SerializeField] GameObject projectilePrefab;
+    [SerializeField] GameObject projectilePrefab, thornsVFX, thornsInflictedVFX;
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this, targetTypes);
@@ -108,18 +108,9 @@ public class RangedBurstData : EquipmentData {
 
         Vector3 startPos = user.grid.PosFromCoord(user.coord);        
         Vector3 endPos = user.grid.PosFromCoord(dest);
-
-        while (timer < dur) {
-            yield return null;
-            timer += Time.deltaTime;
-
-            projectile.transform.position = Vector3.Lerp(startPos, endPos, timer/dur);
-        }
-
-        projectile.transform.position = endPos;
-
+        
+        int thornDmg = 0;
         if (target) {
-            int thornDmg = 0;
             if (target is Nail n) {
                 if (n.manager.scenario.floorManager.tutorial != null && n.manager.scenario.floorManager.tutorial.isActiveAndEnabled && !n.manager.scenario.floorManager.tutorial.nailDamageEncountered && n.manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
                     n.manager.scenario.floorManager.tutorial.StartCoroutine(n.manager.scenario.floorManager.tutorial.NailDamage());
@@ -129,9 +120,27 @@ public class RangedBurstData : EquipmentData {
             }
             if (target.shield && target.shield.thorns) thornDmg++;
 
-            if (thornDmg > 0) cos.Add(user.StartCoroutine(user.TakeDamage(thornDmg, GridElement.DamageType.Melee, target)));
-            cos.Add(target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user, this)));
         }
+
+        while (timer < dur) {
+            yield return null;
+            timer += Time.deltaTime;
+
+            projectile.transform.position = Vector3.Lerp(startPos, endPos, timer/dur);
+        }
+
+        if (target) {
+            if (thornDmg > 0) {
+                GameObject go = Instantiate(thornsVFX, target.transform.position, Quaternion.identity);
+                go.GetComponent<SpriteRenderer>().sortingOrder = target.gfx[0].sortingOrder++;
+                go = Instantiate(thornsInflictedVFX, user.transform.position, Quaternion.identity);
+                go.GetComponent<SpriteRenderer>().sortingOrder = user.gfx[0].sortingOrder++;
+                cos.Add(user.StartCoroutine(user.TakeDamage(thornDmg, GridElement.DamageType.Melee, target, target.shield ? target.shield.data : null)));
+            }
+            cos.Add(target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user, this)));
+            projectile.transform.position = endPos;
+        }
+
 
         Destroy(projectile);
 
