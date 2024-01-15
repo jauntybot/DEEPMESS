@@ -90,7 +90,7 @@ public class ObjectiveManager : MonoBehaviour {
         reviewingObjectives = true;
         assignAwardPanel.SetActive(true);
         continueButton.gameObject.SetActive(true);
-        continueButton.GetComponentInChildren<TMPro.TMP_Text>().text = "ACCEPT OBJECTIVES";
+        //continueButton.GetComponentInChildren<TMPro.TMP_Text>().text = "ACCEPT OBJECTIVES";
         rerollButton.gameObject.SetActive(true);
 
         StartCoroutine(RerollObjectives());

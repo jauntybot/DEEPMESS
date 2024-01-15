@@ -47,6 +47,7 @@ public class UpgradeButtonHoldHandler : MonoBehaviour, IUpdateSelectedHandler, I
         isPressed = true;
         confirmProg = 0;
         radialProg = ui.CurrentSlot().radialFill;
+        radialProg.GetComponent<AudioSource>().enabled = true;
         if (ui.previewParticle) {
             Image image = ui.previewParticle.GetComponentInChildren<Image>();
             image.color = new Color(image.color.r, image.color.g, image.color.b, 1);
@@ -55,6 +56,7 @@ public class UpgradeButtonHoldHandler : MonoBehaviour, IUpdateSelectedHandler, I
 
     public void OnPointerUp(PointerEventData data) {
         isPressed = false;
+        radialProg.GetComponent<AudioSource>().enabled = false;
         if (confirmProg < holdDur) {
             confirmProg = 0;
             if (ui.previewParticle) {

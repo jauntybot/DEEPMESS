@@ -8,14 +8,14 @@ public class NuggetSlot : MonoBehaviour {
 
     public Image radialFill;
     public bool filled;
-    [SerializeField] GameObject sparks;
+    [SerializeField] GameObject sparks, filledSFX;
     [SerializeField] GameObject popUp;
     [SerializeField] TMP_Text titleTMP, modifierTMP;
 
     public void FillSlot() {
         filled = true;
         sparks.SetActive(true);
-
+        filledSFX.SetActive(true);
     }
 
     

@@ -160,7 +160,7 @@ public class EnemyManager : UnitManager {
             units[i].ElementDestroyed += CountDefeatedEnemy; 
             units[i].ElementDestroyed += StopActingUnit;
 
-            units[i].transform.parent = newGrid.enemy.transform;
+            units[i].transform.parent = newGrid.enemy.unitParent.transform;
             units[i].StoreInGrid(newGrid);
             units[i].UpdateElement(units[i].coord);
             units.RemoveAt(i);
@@ -171,6 +171,7 @@ public class EnemyManager : UnitManager {
 
         //eManager.DescentTriggerCheck();
         UIManager.instance.metaDisplay.UpdateEnemiesRemaining(newGrid.enemy.units.Count);
+        
         if (!toSelf)
            Destroy(this.gameObject);
     }
@@ -182,10 +183,11 @@ public class EnemyManager : UnitManager {
             int count = currentGrid.lvlDef.minEnemies - units.Count;
             for (int i = 0; i < count; i++) {
                 Unit reinforcement = Reinforcement();
-                if (reinforcement)
+                if (reinforcement) {
                     pendingUnits.Add(reinforcement);
+                    spawn = true;
+                }
             }
-            spawn = true;
         }
 
         pendingUnitUIs = new List<GameObject>();
@@ -219,6 +221,8 @@ public class EnemyManager : UnitManager {
             yield return StartCoroutine(floorManager.DescendUnits(pendingUnits, this));
             
         }
+        foreach (Unit u in pendingUnits)
+            units.Add(u);
         pendingUnits = new List<GridElement>();
 
         transform.parent = currentGrid.transform;
@@ -231,14 +235,18 @@ public class EnemyManager : UnitManager {
         ShuffleBag<Vector2> spawns = new ShuffleBag<Vector2>();
         for (int x = 1; x <= 6; x++) {
             for (int y = 1; y <= 6; y++) {
-                if (currentGrid.CoordContents(new Vector2(x,y)) == null) spawns.Add(new Vector2(x,y));
+                if (currentGrid.CoordContents(new Vector2(x,y)).Count == 0) {
+                    spawns.Add(new Vector2(x,y));
+                }    
             }
         }
         
+        Debug.Log("Spawns: " + spawns.Count);
         while (!validCoord && spawns.Count > 0) {
             validCoord = true;          
             
             spawn = spawns.Next();
+            Debug.Log(spawn);
             
             if (pendingUnits.Find(u => u.coord == spawn)) validCoord = false;
             if (currentGrid.tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false; 

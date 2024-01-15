@@ -9,6 +9,7 @@ public class EnemyUnit : Unit {
     public Pathfinding pathfinding;
     [SerializeField] protected Unit closestUnit;
     public GameObject splatterPrefab;
+    [SerializeField] SFX stunnedSFX;
 
     public virtual IEnumerator ScatterTurn() {
         UpdateAction(equipment[0], moveMod);
@@ -205,5 +206,15 @@ public class EnemyUnit : Unit {
         BloodSplatter splatter = obj.GetComponent<BloodSplatter>();
         splatter.Init(this, dir);
         
+    }
+
+    public override void ApplyCondition(Status s) {
+        base.ApplyCondition(s);
+        if (s == Status.Stunned) PlaySound(stunnedSFX);
+    }
+
+    public override void RemoveCondition(Status s) {
+        base.RemoveCondition(s);
+        if (s == Status.Stunned) PlaySound(stunnedSFX);
     }
 }

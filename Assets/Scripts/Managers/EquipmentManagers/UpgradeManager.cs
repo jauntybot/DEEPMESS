@@ -8,7 +8,8 @@ using System;
 public class UpgradeManager : MonoBehaviour {
 
     PlayerManager pManager;
-    
+    AudioSource audio;
+    [SerializeField] SFX selectSFX;
     [SerializeField] GameObject upgradeScreen, unitUIContainer, nuggetContainer;
     [SerializeField] GameObject godNuggetPrefab;
     [SerializeField] List<SlagEquipmentData.UpgradePath> nuggets = new();
@@ -22,6 +23,8 @@ public class UpgradeManager : MonoBehaviour {
 
 
     public void Init(List<Unit> _units, PlayerManager _pManager) {
+        audio = GetComponent<AudioSource>();
+
         unitUIContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
         for (int i = unitUIContainer.transform.childCount - 1; i >= 0; i--)
             Destroy(unitUIContainer.transform.GetChild(i).gameObject);
@@ -51,10 +54,10 @@ public class UpgradeManager : MonoBehaviour {
             NuggetButton newPart = Instantiate(godNuggetPrefab, nuggetContainer.transform).GetComponent<NuggetButton>();
             newPart.Init(nuggets[n]);
         }
-        foreach (Transform part in nuggetContainer.transform) {
-            NuggetButton partUI = part.GetComponent<NuggetButton>();
-            Button butt = part.GetComponent<Button>();
-            butt.onClick.AddListener(delegate{SelectParticle(partUI);});
+        foreach (Transform nug in nuggetContainer.transform) {
+            NuggetButton nugUI = nug.GetComponent<NuggetButton>();
+            Button butt = nug.GetComponent<Button>();
+            butt.onClick.AddListener(delegate{SelectParticle(nugUI);});
         }
         LayoutRebuilder.ForceRebuildLayoutImmediate(nuggetContainer.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
@@ -78,7 +81,7 @@ public class UpgradeManager : MonoBehaviour {
             Animator anim = ui.transform.GetComponent<Animator>();
             anim.SetTrigger("SlideIn");
             float t = 0;
-            while (t <= 0.3f) {
+            while (t <= 0.125f) {
                 t += Time.deltaTime;
                 yield return null;
             }
@@ -99,9 +102,14 @@ public class UpgradeManager : MonoBehaviour {
         nuggetContainer.SetActive(false);
     }
 
-    public void SelectParticle(NuggetButton part) {
-        selectedParticle = part;
-        SlagEquipmentData.UpgradePath path = (SlagEquipmentData.UpgradePath)(int)part.type;
+    public void SelectParticle(NuggetButton nug) {
+        audio.PlayOneShot(selectSFX.Get());
+        selectedParticle = nug;
+        foreach (Transform child in nuggetContainer.transform)
+            child.GetComponent<NuggetButton>().frame.SetActive(false);
+        nug.frame.SetActive(true);
+
+        SlagEquipmentData.UpgradePath path = (SlagEquipmentData.UpgradePath)(int)nug.type;
         foreach (UnitUpgradeUI ui in unitUpgradeUIs) {
             ui.UpdateModifier(path);
         }

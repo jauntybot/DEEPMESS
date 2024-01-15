@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class NuggetButton : MonoBehaviour {
 
     public SlagEquipmentData.UpgradePath type;
+    public GameObject frame;
     Animator anim;
     public void Init(SlagEquipmentData.UpgradePath _type) {
         anim = GetComponent<Animator>();
@@ -16,8 +17,8 @@ public class NuggetButton : MonoBehaviour {
             case SlagEquipmentData.UpgradePath.Sludge: i = 2; break;
         }
         anim.SetInteger("Color", i);
-        name = type.ToString() + "Nugget Button";
         type = _type;
+        name = type.ToString() + "Nugget Button";
     }
 
 }

@@ -790,6 +790,7 @@ GameObject:
   - component: {fileID: 7897704340221056193}
   - component: {fileID: 560774131765325896}
   - component: {fileID: 6107256372843360736}
+  - component: {fileID: 6468894428758053191}
   m_Layer: 5
   m_Name: Hammer UI - Upgrade
   m_TagString: Untagged
@@ -847,6 +848,7 @@ MonoBehaviour:
   portraitPanel: {fileID: 4043716474273401606}
   unitName: {fileID: 8159493334748790659}
   portrait: {fileID: 7103406429450665767}
+  gearIcon: {fileID: 0}
   upgrade: {fileID: 0}
   hpPips: {fileID: 0}
   upgradeButton: {fileID: 5259632629888117515}
@@ -880,6 +882,102 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+--- !u!82 &6468894428758053191
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2363563098306469829}
+  m_Enabled: 0
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 4883761454906510034, guid: 75584196adc61114f8db4c5e65a8e3cd, type: 2}
+  m_audioClip: {fileID: 8300000, guid: 6d4aab83c2d1c4769af05fbb8c840bda, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &2410325199766354456
 GameObject:
   m_ObjectHideFlags: 0
@@ -2604,7 +2702,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 193.535, y: 0}
+  m_AnchoredPosition: {x: 214.325, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6584989618345050663
@@ -2637,8 +2735,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: HAMMER
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 83b89baec51f52c448073245f27d7907, type: 2}
-  m_sharedMaterial: {fileID: -3771175280798569914, guid: 83b89baec51f52c448073245f27d7907, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 4658b7dfbefc86340b1279196af5183b, type: 2}
+  m_sharedMaterial: {fileID: -3901078251180137152, guid: 4658b7dfbefc86340b1279196af5183b, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2662,8 +2760,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 66
-  m_fontSizeBase: 66
+  m_fontSize: 68
+  m_fontSizeBase: 68
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2672,7 +2770,7 @@ MonoBehaviour:
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: -4.5
+  m_characterSpacing: -4
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -3837,7 +3935,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 628385878884311804, guid: d985f376b0335544abb55f2f7a469864, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 628385878884311804, guid: d985f376b0335544abb55f2f7a469864, type: 3}
       propertyPath: m_AnchorMin.x
@@ -3845,7 +3943,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 628385878884311804, guid: d985f376b0335544abb55f2f7a469864, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 628385878884311804, guid: d985f376b0335544abb55f2f7a469864, type: 3}
       propertyPath: m_SizeDelta.x
@@ -3885,11 +3983,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 628385878884311804, guid: d985f376b0335544abb55f2f7a469864, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 235
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 628385878884311804, guid: d985f376b0335544abb55f2f7a469864, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -1100.9805
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 628385878884311804, guid: d985f376b0335544abb55f2f7a469864, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3954,7 +4052,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 628385878884311804, guid: d985f376b0335544abb55f2f7a469864, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 628385878884311804, guid: d985f376b0335544abb55f2f7a469864, type: 3}
       propertyPath: m_AnchorMin.x
@@ -3962,7 +4060,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 628385878884311804, guid: d985f376b0335544abb55f2f7a469864, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 628385878884311804, guid: d985f376b0335544abb55f2f7a469864, type: 3}
       propertyPath: m_SizeDelta.x
@@ -4002,11 +4100,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 628385878884311804, guid: d985f376b0335544abb55f2f7a469864, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 235
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 628385878884311804, guid: d985f376b0335544abb55f2f7a469864, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -270.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 628385878884311804, guid: d985f376b0335544abb55f2f7a469864, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

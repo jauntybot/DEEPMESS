@@ -13,7 +13,7 @@ public class UnitManager : MonoBehaviour {
     [HideInInspector] public ScenarioManager scenario;
 
     [Header("UNIT MANAGER")]
-    [SerializeField] protected GameObject unitParent;
+    public GameObject unitParent;
     public List<Unit> units = new();    
     public Unit selectedUnit;
     public bool unitActing = false;

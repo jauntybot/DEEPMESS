@@ -6,7 +6,6 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Equipment/Slag/BigGrab")]
 [System.Serializable]
 public class BigGrabData : SlagEquipmentData {
- 
     List<GridElement> defaultFilters;
     [SerializeField] List<GridElement> firstTargets;
     [SerializeField] List<GridElement> upgradeTargets;
@@ -171,7 +170,9 @@ public class BigGrabData : SlagEquipmentData {
             }
             thrown.StartCoroutine(thrown.CollideFromAbove(subGE, 0, thrower, this));
         }
-        thrown.ApplyCondition(Unit.Status.Stunned);
+        if (thrown is EnemyUnit eu) {
+            eu.ApplyCondition(Unit.Status.Stunned);
+        }
         
 // UNIT TIER I - Deal damage on throw
         if (upgrades[UpgradePath.Sludge] >= 1) thrown.StartCoroutine(thrown.TakeDamage(1, GridElement.DamageType.Fall, thrower, this));

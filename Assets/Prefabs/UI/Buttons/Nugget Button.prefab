@@ -102,9 +102,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5155961757528123633}
   - component: {fileID: 3787874243905784647}
+  - component: {fileID: 357112701485892722}
   - component: {fileID: 3947332244923661769}
   - component: {fileID: 3702316968163734202}
-  - component: {fileID: 357112701485892722}
   - component: {fileID: 5167991737871722775}
   m_Layer: 0
   m_Name: Nugget Button
@@ -143,6 +143,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3196639678640864589}
   m_CullTransparentMesh: 1
+--- !u!114 &357112701485892722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3196639678640864589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0090cfee270d89b4186be87f9c108461, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 0
+  frame: {fileID: 4775601862920549514}
 --- !u!114 &3947332244923661769
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,19 +231,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &357112701485892722
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3196639678640864589}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0090cfee270d89b4186be87f9c108461, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 0
 --- !u!95 &5167991737871722775
 Animator:
   serializedVersion: 5

@@ -78,9 +78,9 @@ public class PlayerManager : UnitManager {
         };
 
         //yield return StartCoroutine(loadout.Initialize(initU));
-        upgradeManager.Init(initU, this);
         //yield return ScenarioManager.instance.StartCoroutine(ScenarioManager.instance.SwitchTurns(ScenarioManager.Turn.Descent));
         yield return null;
+        upgradeManager.Init(initU, this);
         SpawnHammer((PlayerUnit)units[0], hammerActions);
         
         nail = (Nail)SpawnUnit(nailPrefab.GetComponent<Nail>());

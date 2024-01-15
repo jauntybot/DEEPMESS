@@ -6,6 +6,7 @@ using TMPro;
 
 public class UnitUpgradeUI : UnitUI {
 
+    [SerializeField] Image gearIcon;
     public UpgradeManager upgrade;
     SlagEquipmentData equip;
     public HPPips hpPips;
@@ -25,12 +26,15 @@ public class UnitUpgradeUI : UnitUI {
         hpPips.Init(u);
 
         equip = (SlagEquipmentData)u.equipment.Find(e => e is SlagEquipmentData && e is not HammerData);
+        if (gearIcon)
+            gearIcon.sprite = equip.icon;
         upgradeButton.GetComponent<UpgradeButtonHoldHandler>().Init(this);
         upgrade = _upgrade;
         appliedUpgrades = 0;
 
         foreach (NuggetSlot slot in slots) {
             slot.radialFill.fillAmount = 0;
+            slot.radialFill.GetComponent<AudioSource>().enabled = false;
             slot.DisplayPopup(false);
         }
                 
@@ -49,6 +53,7 @@ public class UnitUpgradeUI : UnitUI {
         
         foreach (NuggetSlot slot in slots) {
             slot.radialFill.fillAmount = 0;
+            slot.radialFill.GetComponent<AudioSource>().enabled = false;
             slot.DisplayPopup(false);
         }
 
