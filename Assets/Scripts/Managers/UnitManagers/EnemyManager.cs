@@ -6,12 +6,11 @@ using UnityEngine.U2D;
 
 public class EnemyManager : UnitManager {
 
-
+    [SerializeField] GameObject reinforcementPrefab;
     [SerializeField] Unit defaultUnit;
-    [SerializeField] GameObject pendingUnitGFX;
     public List<Unit> unitsToAct = new();
     [SerializeField] List<GridElement> pendingUnits = new();
-    [HideInInspector] public List<GameObject> pendingUnitUIs = new();
+    public List<DescentPreview> pendingPreviews = new();
     protected Coroutine actingUnitCo;
 
     public override IEnumerator Initialize(Grid _currentGrid) {
@@ -23,6 +22,21 @@ public class EnemyManager : UnitManager {
     public override Unit SpawnUnit(Unit unit, Vector2 coord) {
         Unit u = base.SpawnUnit(unit, coord);
         //u.ElementDestroyed += DescentTriggerCheck;
+        u.ElementDestroyed += CountDefeatedEnemy; 
+        u.ElementDestroyed += StopActingUnit;
+        return u;
+    }
+
+    public virtual Unit SpawnUnit(Vector2 coord) {
+        Unit u = Instantiate(defaultUnit.gameObject, unitParent.transform).GetComponent<Unit>();
+        SubscribeElement(u);
+        u.manager = this;
+        UIManager.instance.UpdatePortrait(u, false);
+
+        u.StoreInGrid(currentGrid);
+        u.UpdateElement(coord);
+        u.grid.RemoveElement(u);
+
         u.ElementDestroyed += CountDefeatedEnemy; 
         u.ElementDestroyed += StopActingUnit;
         return u;
@@ -110,7 +124,10 @@ public class EnemyManager : UnitManager {
         Unit lastUnit = null;
         if (units.Count > 0) lastUnit = units[units.Count - 1];
         if (!lastUnit || lastUnit is not BossUnit || (lastUnit is BossUnit && lastUnit.energyCurrent != 0)) {
-            if (SpawnReinforcements()) yield return new WaitForSecondsRealtime(1.5f);
+            if (AddToReinforcements()) {
+                yield return StartCoroutine(SpawnReinforcements());
+                yield return new WaitForSecondsRealtime(1.5f);
+            }
             EndTurn();
         }
     }
@@ -176,7 +193,7 @@ public class EnemyManager : UnitManager {
            Destroy(this.gameObject);
     }
 
-    public virtual bool SpawnReinforcements() {
+    public virtual bool AddToReinforcements() {
         bool spawn = false;
 
         if (units.Count < currentGrid.lvlDef.minEnemies) {
@@ -189,34 +206,47 @@ public class EnemyManager : UnitManager {
                 }
             }
         }
-
-        pendingUnitUIs = new List<GameObject>();
-        foreach (Unit u in pendingUnits) {
-            GameObject obj = Instantiate(pendingUnitGFX, unitParent.transform);
-            obj.SetActive(true);
-            
-            obj.transform.localScale = Vector3.one * FloorManager.sqrSize;
-            obj.transform.position = currentGrid.PosFromCoord(u.coord);
-            int sort = currentGrid.SortOrderFromCoord(u.coord);
-            
-            SpriteShapeRenderer srr = obj.GetComponentInChildren<SpriteShapeRenderer>();
-            LineRenderer lr = obj.GetComponentInChildren<LineRenderer>();
-            srr.color = new Color(1, 0, 0, 0.25f);
-            srr.sortingOrder = sort;
-            lr.startColor = new Color(1, 0, 0, 0.75f); lr.endColor = new Color(1, 0, 0, 0.75f);
-            lr.sortingOrder = sort;
-
-            pendingUnitUIs.Add(obj);
-        }
-        
+      
         return spawn;
     }
 
-    public virtual IEnumerator DescendReinforcements() {
-        for (int i = pendingUnitUIs.Count - 1; i >= 0; i--) {
-            Destroy(pendingUnitUIs[i]);
+    IEnumerator SpawnReinforcements() {
+        if (scenario.floorManager.tutorial.isActiveAndEnabled && !scenario.floorManager.tutorial.enemySpawnEncountered) {
+            yield return scenario.floorManager.tutorial.StartCoroutine(scenario.floorManager.tutorial.EnemySpawn());
         }
-        pendingUnitUIs = new List<GameObject>();
+        yield return null;
+        pendingPreviews = new List<DescentPreview>();
+        foreach (Unit u in pendingUnits) {
+            DescentPreview dp = Instantiate(unitDescentPreview, unitParent.transform).GetComponent<DescentPreview>();
+            pendingPreviews.Add(dp);
+            dp.Initialize(u);
+            dp.UpdatePreview(u);
+            u.PlaySound(u.selectedSFX);
+            float t = 0;
+            while (t < 0.25f) { t += Time.deltaTime; yield return null; }
+            
+            // obj.SetActive(true);
+            
+            // obj.transform.localScale = Vector3.one * FloorManager.sqrSize;
+            // obj.transform.position = currentGrid.PosFromCoord(u.coord);
+            // int sort = currentGrid.SortOrderFromCoord(u.coord);
+            
+            // SpriteShapeRenderer srr = obj.GetComponentInChildren<SpriteShapeRenderer>();
+            // LineRenderer lr = obj.GetComponentInChildren<LineRenderer>();
+            // srr.color = new Color(1, 0, 0, 0.25f);
+            // srr.sortingOrder = sort;
+            // lr.startColor = new Color(1, 0, 0, 0.75f); lr.endColor = new Color(1, 0, 0, 0.75f);
+            // lr.sortingOrder = sort;
+
+            // pendingUnitUIs.Add(obj);
+        }
+    }
+
+    public virtual IEnumerator DescendReinforcements() {
+        for (int i = pendingPreviews.Count - 1; i >= 0; i--) {
+            Destroy(pendingPreviews[i].gameObject);
+        }
+        pendingPreviews = new List<DescentPreview>();
         if (pendingUnits.Count > 0) {
             yield return StartCoroutine(floorManager.DescendUnits(pendingUnits, this));
             
@@ -254,18 +284,17 @@ public class EnemyManager : UnitManager {
         }
 
         if (!validCoord) return null;
-        Unit reinforcement = SpawnUnit(defaultUnit, spawn);
-        RemoveUnit(reinforcement);
-        currentGrid.RemoveElement(reinforcement);
+        Unit reinforcement = SpawnUnit(spawn);
         reinforcement.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0f;
+
         return reinforcement;
     }
 
     public virtual void InterruptReinforcements() {
-        for (int i = pendingUnitUIs.Count - 1; i >= 0; i--) {
-            Destroy(pendingUnitUIs[i]);
+        for (int i = pendingPreviews.Count - 1; i >= 0; i--) {
+            Destroy(pendingPreviews[i].gameObject);
         }
-        pendingUnitUIs = new List<GameObject>();
+        pendingPreviews = new List<DescentPreview>();
 
         for (int i = pendingUnits.Count - 1; i >= 0; i--) {
             Destroy(pendingUnits[i].gameObject);

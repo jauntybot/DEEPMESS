@@ -93,6 +93,12 @@ public class PlayerUnit : Unit {
                 ge.TargetElement(false);
         }
 
+// Harvest bulb if standing on and used bulb
+        if (equip is BulbEquipmentData && grid.tiles.Find(t => t.coord == coord) is TileBulb tb) {
+            if (!tb.harvested && equipment.Find(e => e is BulbEquipmentData) == null)
+                tb.HarvestBulb(this);
+        }
+
         //manager.unitActing = false;
         //pManager.DeselectUnit();
     }
@@ -166,7 +172,7 @@ public class PlayerUnit : Unit {
     public override void ApplyCondition(Status s) {
         base.ApplyCondition(s);
         //ui.ToggleEquipmentButtons();
-        if (manager.scenario.floorManager.tutorial.isActiveAndEnabled && !manager.scenario.floorManager.tutorial.bloodEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
+        if (manager.scenario.floorManager.tutorial.isActiveAndEnabled)
             manager.scenario.floorManager.tutorial.StartCoroutine(manager.scenario.floorManager.tutorial.BloodTiles());
         
     }

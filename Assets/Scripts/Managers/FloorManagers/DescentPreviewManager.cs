@@ -66,12 +66,16 @@ public class DescentPreviewManager : MonoBehaviour {
         }
 
         if (scenario.currentEnemy) {
-            foreach (GameObject obj in scenario.currentEnemy.pendingUnitUIs)
-                    obj.SetActive(!state);
+            foreach (DescentPreview dp in scenario.currentEnemy.pendingPreviews)
+                dp.gameObject.SetActive(!state);
         }
     }
 
     public void PreviewButton() {
+        if (tut) {
+            StartCoroutine(PeekTutorial(previewing));
+        } else {
+
         int dir = previewing ? 1 : -1;
         previewing = !previewing;
         
@@ -79,9 +83,6 @@ public class DescentPreviewManager : MonoBehaviour {
         evt.down = dir != 1;
         ObjectiveEventManager.Broadcast(evt);
 
-        if (tut && floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
-            StartCoroutine(PeekTutorial(previewing));
-        } else {
             scenario.player.DeselectUnit();
             if (!floorManager.transitioning && floorManager.floors.Count - 1 >= floorManager.currentFloor.index - dir) {
                 StartCoroutine(PreviewFloor(previewing));
