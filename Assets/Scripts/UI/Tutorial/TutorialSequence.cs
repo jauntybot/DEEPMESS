@@ -72,6 +72,10 @@ public class TutorialSequence : MonoBehaviour
                 floorManager.currentFloor.RemoveElement(u);
         }
         //scenario.player.units[1].ui.overview.gameObject.SetActive(false); scenario.player.units[2].ui.overview.gameObject.SetActive(false);
+        scenario.player.units[1].EnableSelection(false);
+        scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().interactable = false;
+        scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().enabled = false;
+        scenario.player.units[2].EnableSelection(false);
         scenario.player.units.RemoveAt(1); scenario.player.units.RemoveAt(1);
 
         floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
