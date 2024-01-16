@@ -93,6 +93,12 @@ public class PlayerUnit : Unit {
                 ge.TargetElement(false);
         }
 
+// Harvest bulb if standing on and used bulb
+        if (equip is BulbEquipmentData && grid.tiles.Find(t => t.coord == coord) is TileBulb tb) {
+            if (!tb.harvested && equipment.Find(e => e is BulbEquipmentData) == null)
+                tb.HarvestBulb(this);
+        }
+
         //manager.unitActing = false;
         //pManager.DeselectUnit();
     }
