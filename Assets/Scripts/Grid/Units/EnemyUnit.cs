@@ -29,8 +29,6 @@ public class EnemyUnit : Unit {
     }
 
     public virtual IEnumerator CalculateAction() {
-        Debug.Log("Start Action");
-
         if (!conditions.Contains(Status.Stunned)) {
             yield return StartCoroutine(AttackScan());
             if (energyCurrent > 0) {

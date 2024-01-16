@@ -130,11 +130,14 @@ public class ObjectiveManager : MonoBehaviour {
             activeObjectives.Add(rndBag.Next());
         
 // Create UI cards
-        for (int i = objectiveCardParent.transform.childCount - 1; i >= 0; i--)
-            Destroy(objectiveCardParent.transform.GetChild(i).gameObject);
+        for (int i = objectiveCardParent.transform.childCount - 1; i >= 0; i--) 
+            objectiveCardParent.transform.GetChild(i).GetComponent<ObjectiveCard>().Unsub();
+        
         objectiveCardParent.GetComponent<HorizontalLayoutGroup>().enabled = true;
-        foreach(Objective ob in activeObjectives) 
-            Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
+        foreach(Objective ob in activeObjectives) {
+            ob.Init();
+            Instantiate(objectiveCardPrefab, objectiveCardParent.transform);
+        }
         
         tracker.AssignObjectives(activeObjectives, rewardSprites);
         
@@ -147,7 +150,6 @@ public class ObjectiveManager : MonoBehaviour {
 
 // Init UI card animations
         for (int o = 0; o <= activeObjectives.Count - 1; o++) {
-            activeObjectives[o].Init();
             objectiveCardParent.transform.GetChild(o).GetComponent<ObjectiveCard>().Init(activeObjectives[o]);
             float t = 0;
             while (t < 0.25f) {

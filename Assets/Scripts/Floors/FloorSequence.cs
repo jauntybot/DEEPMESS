@@ -61,16 +61,16 @@ public class FloorSequence : ScriptableObject {
         FloorPacket.PacketType prevThreshold = currentThreshold;
         switch(prevThreshold) {
             case FloorPacket.PacketType.Tutorial:
-                if (floorsGot > floorsTutorial) currentThreshold = FloorPacket.PacketType.I;
+                if (floorsGot >= floorsTutorial) currentThreshold = FloorPacket.PacketType.I;
             break;
             case FloorPacket.PacketType.I:
-                if (floorsGot > activePacket.packetLength) currentThreshold = FloorPacket.PacketType.II;
+                if (floorsGot >= activePacket.packetLength) currentThreshold = FloorPacket.PacketType.II;
             break;
             case FloorPacket.PacketType.II:
-                if (floorsGot > activePacket.packetLength) currentThreshold = FloorPacket.PacketType.III;
+                if (floorsGot >= activePacket.packetLength) currentThreshold = FloorPacket.PacketType.III;
             break;
             case FloorPacket.PacketType.III:
-                if (floorsGot > activePacket.packetLength) currentThreshold = FloorPacket.PacketType.BOSS;
+                if (floorsGot >= activePacket.packetLength) currentThreshold = FloorPacket.PacketType.BOSS;
             break;
             case FloorPacket.PacketType.BOSS:
                 if (FloorManager.instance.bossSpawn && !FloorManager.instance.currentFloor.gridElements.Find(u => u is BossUnit)) currentThreshold = FloorPacket.PacketType.BARRIER;

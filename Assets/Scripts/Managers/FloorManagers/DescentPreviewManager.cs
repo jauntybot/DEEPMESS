@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DescentPreviewManager : MonoBehaviour
-{
+public class DescentPreviewManager : MonoBehaviour {
     ScenarioManager scenario;
     FloorManager floorManager;
     public List<DescentPreview> descentPreviews;
     public Grid currentFloor, alignmentFloor;
-    [SerializeField] public Animator peekFrameAnim, peekEyeAnim;
+    [SerializeField] public Animator peekAnim;
     [SerializeField] bool previewing;
 
     [HideInInspector] public bool tut;
@@ -28,7 +27,7 @@ public class DescentPreviewManager : MonoBehaviour
         if (scenario.currentTurn == ScenarioManager.Turn.Player)
             UIManager.instance.endTurnButton.interactable = !down;
         if (down) {
-            peekFrameAnim.SetBool("Active", true); peekEyeAnim.SetBool("Active", true);
+            peekAnim.SetBool("Active", true);
             TogglePreivews(true);
             foreach(DescentPreview dp in descentPreviews) {
                 if (dp.unit.grid == floorManager.currentFloor)
@@ -38,7 +37,7 @@ public class DescentPreviewManager : MonoBehaviour
             yield return StartCoroutine(floorManager.TransitionFloors(down, true));
             floorManager.transitioning = false;
         } else {
-            peekFrameAnim.SetBool("Active", false); peekEyeAnim.SetBool("Active", false);
+            peekAnim.SetBool("Active", false); 
             TogglePreivews(false);
      
             yield return StartCoroutine(floorManager.TransitionFloors(down, true));

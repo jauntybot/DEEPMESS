@@ -172,8 +172,10 @@ public class Grid : MonoBehaviour {
             }
         }
         foreach (GridElement ge in gridElements) {
-            if (ge is Unit u)
-                u.gfxAnim.SetBool("Falling", true);
+            if (ge is Unit u) {
+                if (u.gfxAnim)
+                    u.gfxAnim.SetBool("Falling", true);
+            }
         }
         player.hammerActions[0].hammer.SetActive(true);
         player.hammerActions[0].hammer.GetComponentInChildren<Animator>().SetBool("Falling", true);

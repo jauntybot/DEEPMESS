@@ -34,6 +34,7 @@ public class FloorManager : MonoBehaviour {
     public float floorOffset, transitionDur, unitDropDur;
     public AnimationCurve dropCurve;
     public bool transitioning, peeking, descending;
+    int floorCount;
     bool cavityWait = false;
     [SerializeField] ParallaxImageScroll parallax;
     public DescentPreviewManager previewManager;
@@ -146,6 +147,8 @@ public class FloorManager : MonoBehaviour {
 // Orients the animation
         int dir = down? 1 : -1;
         Grid toFloor = null;
+        UpdateFloorCounter();
+        floorCount += dir;
 
         if (floors.Count - 1 >= currentFloor.index + dir) // Checks if there is a floor in the direction transitioning
             toFloor = floors[currentFloor.index + dir];
@@ -338,12 +341,12 @@ public class FloorManager : MonoBehaviour {
         descending = false;
     }
 
-    void UpdateFloorCounter() {
+    void UpdateFloorCounter(int max = -1) {
         int cavityOffset = -3;
         if (scenario.startCavity >= 1) cavityOffset += 3;
         if (scenario.startCavity >= 2) cavityOffset += 3;
         if (scenario.startCavity >= 3) cavityOffset += 4;
-        uiManager.metaDisplay.UpdateCurrentFloor(currentFloor.index + 1 + cavityOffset);
+        uiManager.metaDisplay.UpdateCurrentFloor(floorCount, max);
     }
 
     public IEnumerator DescendUnits(List<GridElement> units, EnemyManager enemy = null, bool hardLand = false) {
@@ -436,7 +439,8 @@ public class FloorManager : MonoBehaviour {
         float timer = 0;
         NestedFadeGroup.NestedFadeGroup fade = unit.GetComponent<NestedFadeGroup.NestedFadeGroup>();
         unit.airTraillVFX.SetActive(true);
-        unit.gfxAnim.SetBool("Falling", true);
+        if (unit.gfxAnim)
+            unit.gfxAnim.SetBool("Falling", true);
         // float slowLeft = 0;
         while (timer <= unitDropDur) {
             unit.transform.position = Vector3.Lerp(from, to, dropCurve.Evaluate(timer/unitDropDur));
@@ -461,7 +465,8 @@ public class FloorManager : MonoBehaviour {
         fade.AlphaSelf = 1;
 
         unit.PlaySound(unit.landingSFX);
-        unit.gfxAnim.SetBool("Falling", false);
+        if (unit.gfxAnim)
+            unit.gfxAnim.SetBool("Falling", false);
         if (unit is PlayerUnit pu && pu.equipment.Find(e => e is HammerData)) {
             scenario.player.hammerActions[0].hammer.SetActive(false);
             scenario.player.hammerActions[0].hammer.GetComponentInChildren<Animator>().SetBool("Falling", false);
@@ -720,11 +725,16 @@ public class FloorManager : MonoBehaviour {
                 timer += Time.deltaTime;
                 yield return null;
             }
+
             uiManager.ToggleBattleCanvas(true);
             
             GenerateFloor(null, true);
             scenario.player.transform.parent = currentFloor.transform;
             GenerateFloor();
+            
+            floorCount = 1;
+            UpdateFloorCounter(floorSequence.activePacket.packetLength);
+
             descending = false;
             yield return scenario.StartCoroutine(scenario.FirstTurn(lastFloorEnemey));
         } else {
