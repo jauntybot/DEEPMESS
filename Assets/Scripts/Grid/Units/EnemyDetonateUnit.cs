@@ -15,6 +15,7 @@ public class EnemyDetonateUnit : EnemyUnit {
     public IEnumerator Explode() {
         gfxAnim.SetTrigger("Explode");
         Grid grid = FloorManager.instance.currentFloor;
+// Explosion VFX
         GameObject go = Instantiate(explosionVFX, grid.PosFromCoord(coord), Quaternion.identity);
         go.GetComponentInChildren<SpriteRenderer>().sortingOrder = grid.SortOrderFromCoord(coord);
         float t = 0;
