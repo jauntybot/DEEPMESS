@@ -94,7 +94,7 @@ public class Anvil : Unit {
         GameObject go = Instantiate(explosionVFX, grid.PosFromCoord(coord), Quaternion.identity);
         go.GetComponentInChildren<SpriteRenderer>().sortingOrder = grid.SortOrderFromCoord(coord);
         float t = 0;
-        while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
         List<Vector2> secondWave = new();
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
@@ -109,7 +109,7 @@ public class Anvil : Unit {
             }
         }
         t = 0;
-        while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
         foreach (Vector2 c in secondWave) {
             GameObject g = Instantiate(explosionVFX, grid.PosFromCoord(c), Quaternion.identity);
             g.GetComponentInChildren<SpriteRenderer>().sortingOrder = grid.SortOrderFromCoord(c);

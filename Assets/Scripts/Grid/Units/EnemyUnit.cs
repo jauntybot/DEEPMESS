@@ -12,17 +12,25 @@ public class EnemyUnit : Unit {
     [SerializeField] SFX stunnedSFX;
 
     public virtual IEnumerator ScatterTurn() {
-        UpdateAction(equipment[0], moveMod);
-        Vector2 targetCoord = SelectOptimalCoord(EnemyUnit.Pathfinding.Random);
-        if (Mathf.Sign(targetCoord.x) == 1) {
-            //manager.SelectUnit(this);
-            manager.currentGrid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
-            yield return new WaitForSecondsRealtime(0.5f);
-            Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, manager.currentGrid.tiles.Find(sqr => sqr.coord == targetCoord)));
-            manager.currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
-            manager.currentGrid.DisableGridHighlight();
-            yield return co;
-            manager.DeselectUnit();
+        if (!conditions.Contains(Status.Stunned)) {
+            UpdateAction(equipment[0], moveMod);
+            Vector2 targetCoord = SelectOptimalCoord(EnemyUnit.Pathfinding.Random);
+            if (Mathf.Sign(targetCoord.x) == 1) {
+                //manager.SelectUnit(this);
+                manager.currentGrid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
+                yield return new WaitForSecondsRealtime(0.5f);
+                Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, manager.currentGrid.tiles.Find(sqr => sqr.coord == targetCoord)));
+                manager.currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
+                manager.currentGrid.DisableGridHighlight();
+                yield return co;
+                manager.DeselectUnit();
+            }
+        } else {
+            moved = true;
+            energyCurrent = 0;
+            yield return new WaitForSecondsRealtime(0.125f);
+            RemoveCondition(Status.Stunned);
+            yield return new WaitForSecondsRealtime(0.25f);
         }
 
         manager.unitActing = false;
