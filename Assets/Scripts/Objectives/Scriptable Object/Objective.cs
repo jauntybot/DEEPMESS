@@ -18,10 +18,14 @@ public class Objective : ScriptableObject {
 
 
     public virtual void Init() {
+        reward = (SlagEquipmentData.UpgradePath)Random.Range(0, 3);
+        Restart();
+    }
+
+    public virtual void Restart() {
         resolved = false;
         succeeded = false;
         progress = 0;
-        reward = (SlagEquipmentData.UpgradePath)Random.Range(0, 3);
     }
 
     public virtual void ProgressCheck(bool final = false) {

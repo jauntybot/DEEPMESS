@@ -40,6 +40,14 @@ public class NeutralElementTooltip : Tooltip
         StartCoroutine(Rebuild());
     }
 
+    protected override IEnumerator Rebuild() {
+        yield return base.Rebuild();
+        yield return null;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(transform.GetChild(0).GetComponent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(transform.parent.GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
+    }
+
     public void HoverOver(GridElement ge = null) {
         if (ge == null) {
             rectTransform.gameObject.SetActive(false);

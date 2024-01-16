@@ -12,11 +12,12 @@ public class ObjectiveTracker : MonoBehaviour {
         activeObjectives = _obs;
         
         for (int i = objectiveCardParent.transform.childCount - 1; i >= 0; i--)
-            Destroy(objectiveCardParent.transform.GetChild(i).gameObject);
+            objectiveCardParent.transform.GetChild(i).GetComponent<ObjectiveCard>().Unsub();
         
         foreach(Objective ob in activeObjectives) {
             ObjectiveCard card = Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
             card.Init(ob);
         }
     }
+
 }
