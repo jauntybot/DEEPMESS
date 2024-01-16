@@ -8,7 +8,7 @@ using System;
 public class UpgradeManager : MonoBehaviour {
 
     PlayerManager pManager;
-    AudioSource audioS;
+    AudioSource audio;
     [SerializeField] SFX selectSFX;
     [SerializeField] GameObject upgradeScreen, unitUIContainer, nuggetContainer;
     [SerializeField] GameObject godNuggetPrefab;
@@ -23,7 +23,7 @@ public class UpgradeManager : MonoBehaviour {
 
 
     public void Init(List<Unit> _units, PlayerManager _pManager) {
-        audioS = GetComponent<AudioSource>();
+        audio = GetComponent<AudioSource>();
 
         unitUIContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
         for (int i = unitUIContainer.transform.childCount - 1; i >= 0; i--)
@@ -103,7 +103,7 @@ public class UpgradeManager : MonoBehaviour {
     }
 
     public void SelectParticle(NuggetButton nug) {
-        audioS.PlayOneShot(selectSFX.Get());
+        audio.PlayOneShot(selectSFX.Get());
         selectedParticle = nug;
         foreach (Transform child in nuggetContainer.transform)
             child.GetComponent<NuggetButton>().frame.SetActive(false);

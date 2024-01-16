@@ -465,8 +465,7 @@ public class FloorManager : MonoBehaviour {
         fade.AlphaSelf = 1;
 
         unit.PlaySound(unit.landingSFX);
-        if (unit.gfxAnim)
-            unit.gfxAnim.SetBool("Falling", false);
+        unit.gfxAnim.SetBool("Falling", false);
         if (unit is PlayerUnit pu && pu.equipment.Find(e => e is HammerData)) {
             scenario.player.hammerActions[0].hammer.SetActive(false);
             scenario.player.hammerActions[0].hammer.GetComponentInChildren<Animator>().SetBool("Falling", false);
