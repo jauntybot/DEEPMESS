@@ -35,7 +35,7 @@ public class TutorialSequence : MonoBehaviour
 
     [Header("GIF Serialization")]
     [SerializeField] RuntimeAnimatorController hittingTheNailAnim;
-    [SerializeField] RuntimeAnimatorController hittingEnemiesAnim, shieldAnim;
+    [SerializeField] RuntimeAnimatorController hittingEnemiesAnim, shieldAnim, anvilAnim, bigGrabAnim;
 
     [Header("Button Highlights")]
     [SerializeField] GameObject buttonHighlight;
@@ -44,7 +44,8 @@ public class TutorialSequence : MonoBehaviour
 
     [Header("Gameplay Optional Tooltips")]
     bool enemyBehavior = false;
-    public bool hittingEnemies = false, undoEncountered = false, nailDamageEncountered = false, bloodEncountered = false, collisionEncountered = false, slotsEncountered = false;
+    public bool hittingEnemies = false, enemySpawnEncountered = false, undoEncountered = false, nailDamageEncountered = false, bloodEncountered = false, 
+        objectivesEncountered = false, collisionEncountered = false, slotsEncountered = false;
 
 
     public void Initialize(ScenarioManager manager) {
@@ -111,6 +112,9 @@ public class TutorialSequence : MonoBehaviour
 
         yield return new WaitForSecondsRealtime(1.25f);
         yield return StartCoroutine(NailPriming());
+        destroyHighlight = Instantiate(buttonHighlight, peekButton);
+        destroyHighlight.transform.SetSiblingIndex(0); destroyHighlight.transform.localPosition = Vector3.zero; destroyHighlight.GetComponent<Animator>().SetBool("Active", true);
+        destroyHighlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
 
         Coroutine co = StartCoroutine(AttackingEnemies());
 
@@ -214,15 +218,15 @@ public class TutorialSequence : MonoBehaviour
         UIManager.instance.canvasAnim.SetTrigger("TutUnit");
         
         screenFade.SetTrigger("FadeOut");
-        Vector3 prevPos = tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition;
+        Vector3 prevPos = tooltip.transform.GetComponent<RectTransform>().anchoredPosition;
         float timer = 0;
 
         while (timer < 0.25f) {
-            tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(prevPos, prevPos + new Vector3(680, 0), timer/0.25f);
+            tooltip.transform.GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(prevPos, prevPos + new Vector3(680, 0), timer/0.25f);
             timer += Time.deltaTime;
             yield return null;
         }
-        tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = prevPos + new Vector3(680, 0);
+        tooltip.transform.GetComponent<RectTransform>().anchoredPosition = prevPos + new Vector3(680, 0);
               
        
         GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.equipButtons[1].button.transform.GetChild(0).transform);
@@ -230,7 +234,7 @@ public class TutorialSequence : MonoBehaviour
         highlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
         PlayerUnit pu = (PlayerUnit)scenario.player.units[0];
         while (pu.hammerUses == 0) yield return new WaitForSecondsRealtime(1/Util.fps);
-        tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = prevPos;
+        tooltip.transform.GetComponent<RectTransform>().anchoredPosition = prevPos;
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
         Destroy(highlight);
 
@@ -298,17 +302,17 @@ public class TutorialSequence : MonoBehaviour
         }
 
         screenFade.SetTrigger("FadeOut");
-        Vector3 prevPos = tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition;
+        Vector3 prevPos = tooltip.transform.GetComponent<RectTransform>().anchoredPosition;
         float timer = 0;
 
         while (timer < 0.25f) {
-            tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(prevPos, prevPos + new Vector3(680, 0), timer/0.25f);
-            Debug.Log(prevPos + " " + tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition);
+            tooltip.transform.GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(prevPos, prevPos + new Vector3(680, 0), timer/0.25f);
+            Debug.Log(prevPos + " " + tooltip.transform.GetComponent<RectTransform>().anchoredPosition);
             timer += Time.deltaTime;
             yield return null;
         }
 
-        tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = prevPos + new Vector3(680, 0);
+        tooltip.transform.GetComponent<RectTransform>().anchoredPosition = prevPos + new Vector3(680, 0);
         GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[0].ui.equipButtons[1].button.transform.GetChild(0).transform);
         highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
         highlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
@@ -323,24 +327,41 @@ public class TutorialSequence : MonoBehaviour
 
         Destroy(highlight);
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
-        tooltip.transform.GetChild(0).GetComponent<RectTransform>().anchoredPosition = prevPos;
+        tooltip.transform.GetComponent<RectTransform>().anchoredPosition = prevPos;
         yield return new WaitForSecondsRealtime(1.5f);
         yield return StartCoroutine(OnTurnMoveAndAP());
 
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
 
     }
+    public IEnumerator ScatterTurn() {
+        screenFade.gameObject.SetActive(true);
+
+        header = "ENEMY SCATTER";
+        body = "When we land, <b>" + ColorToRichText("enemies scatter but don't attack", keyColor) + "</b>. A little dance before the real brawl." + '\n';
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }  
 
     public IEnumerator OnTurnMoveAndAP() {
         screenFade.gameObject.SetActive(true);
 
         header = "PLAYER TURN";
-        body = "Slags hustle, <b>" + ColorToRichText("moving and acting on their turn", keyColor) + "</b>. You're up when the enemies finish their turn. When you dive down to the next floor, <b>" + ColorToRichText("a fresh start", keyColor) + "</b>. Keep it flowing." + '\n';
+        body = "Slags hustle, <b>" + ColorToRichText("moving and acting on their turn", keyColor) + "</b>. Trade turns with the enemy, end yours in the bottom right. When you dive down to the next floor, <b>" + ColorToRichText("a fresh start", keyColor) + "</b>. Keep it flowing." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
+
+        UIManager.instance.canvasAnim.SetTrigger("TutEndTurn");
 
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
@@ -352,7 +373,15 @@ public class TutorialSequence : MonoBehaviour
 
         header = "EQUIPMENT";
         body = "<b>" + ColorToRichText("Slags pack gear", keyColor) + "</b>—special stuff. You can have them <b>" + ColorToRichText("use gear or Hammer each turn", keyColor) + "</b>. Eyes up, squish. Plan the play or end up short on actions." + '\n';
-        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ shieldAnim });
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+        }
+
+        header = "EQUIPMENT";
+        body = "Each piece of gear's <b>" + ColorToRichText("unique", keyColor) + "</b>. Check those buttons on the <b>" + ColorToRichText("bottom left", keyColor) + "</b> to get to know your arsenal." + '\n';
+        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ shieldAnim,  });
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -408,11 +437,12 @@ public class TutorialSequence : MonoBehaviour
 
 
 // Gameplay optional - tutorial specific - tooltips
-    public IEnumerator ScatterTurn() {
+    public IEnumerator Objectives() {
         screenFade.gameObject.SetActive(true);
+        objectivesEncountered = true;
 
-        header = "ENEMY SCATTER";
-        body = "When we land, <b>" + ColorToRichText("enemies scatter but don't attack", keyColor) + "</b>. A little dance before the real brawl." + '\n';
+        header = "OBJECTIVES";
+        body = "The big slime's got a to-do list. Check 'em off, <b>" + ColorToRichText("score tasty god nuggets", keyColor) + "</b>. Upgrade gear, get stronger. Fail? No biggie, just a hiccup. No whining, squish, just keep grinding." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -422,10 +452,8 @@ public class TutorialSequence : MonoBehaviour
 
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
-        destroyHighlight = Instantiate(buttonHighlight, peekButton);
-        destroyHighlight.transform.SetSiblingIndex(0); destroyHighlight.transform.localPosition = Vector3.zero; destroyHighlight.GetComponent<Animator>().SetBool("Active", true);
-        destroyHighlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
-    }  
+    }
+
 
     public IEnumerator NailDamage() {
         nailDamageEncountered = true;
@@ -463,7 +491,41 @@ public class TutorialSequence : MonoBehaviour
 
         brTooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
+    public IEnumerator UndoTutorial() {
+        
+        header = "UNDO BUTTON";
+        body = "Slags got an <b>" + ColorToRichText("Undo button", keyColor) + "</b>. Move around and reset, but once you take an action, no backtracking. Think ahead, squish." + '\n';
+        brTooltip.SetText(body, header, true);
 
+        while (!brTooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        undoEncountered = true;
+        brTooltip.transform.GetChild(0).gameObject.SetActive(false);
+        yield return new WaitForSecondsRealtime(0.15f);
+        scenario.player.UndoMove();
+        CheckAllDone();
+    }
+
+    public IEnumerator EnemySpawn() {
+        screenFade.gameObject.SetActive(true);
+        enemySpawnEncountered = true;
+
+        header = "ENEMY SPAWNING";
+        body = "Enemies won't give up. Clear too many, <b>" + ColorToRichText("more will drop in", keyColor) + "</b>. Better dive deeper when you can to avoid an ambush. Watch your back, squish." + '\n';
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        CheckAllDone();
+    }
     public IEnumerator BloodTiles() {
         screenFade.gameObject.SetActive(true);
         bloodEncountered = true;
@@ -482,23 +544,6 @@ public class TutorialSequence : MonoBehaviour
         CheckAllDone();
     }
     
-    public IEnumerator UndoTutorial() {
-        
-        header = "UNDO BUTTON";
-        body = "Slags got an <b>" + ColorToRichText("Undo button", keyColor) + "</b>. Move around and reset, but once you take an action, no backtracking. Think ahead, squish." + '\n';
-        brTooltip.SetText(body, header, true);
-
-        while (!brTooltip.skip) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-            
-        }
-
-        undoEncountered = true;
-        brTooltip.transform.GetChild(0).gameObject.SetActive(false);
-        yield return new WaitForSecondsRealtime(0.15f);
-        scenario.player.UndoMove();
-        CheckAllDone();
-    }
 
     public IEnumerator DescentDamage() {
         collisionEncountered = true;
@@ -547,8 +592,7 @@ public class TutorialSequence : MonoBehaviour
             break;
             case 1:
                 EnemyManager prevEnemy = scenario.currentEnemy;
-                
-                floorManager.GenerateFloor(floorManager.floorSequence.GetFloor());
+            
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
                 yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
@@ -634,6 +678,8 @@ public class TutorialSequence : MonoBehaviour
         if (enemyBehavior && 
             nailDamageEncountered &&
             undoEncountered && 
+            enemySpawnEncountered &&
+            objectivesEncountered &&
             bloodEncountered &&
             slotsEncountered)
             Debug.Log("Tutorial finished");

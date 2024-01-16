@@ -31,12 +31,13 @@ public class Tooltip : MonoBehaviour
         else {
             gifContainer.SetActive(true);
             gifAnims[0].runtimeAnimatorController = gif[0];
+            gifAnims[0].transform.parent.gameObject.SetActive(true);
             for (int i = 1; i <= gifAnims.Count - 1; i++) {
                 if (gif.Count - 1 < i)
-                    gifAnims[i].gameObject.SetActive(false);
+                    gifAnims[i].transform.parent.gameObject.SetActive(false);
                 else {
                     gifAnims[i].runtimeAnimatorController = gif[i];
-                    gifAnims[i].gameObject.SetActive(true);
+                    gifAnims[i].transform.parent.gameObject.SetActive(true);
                 }
             }
         }

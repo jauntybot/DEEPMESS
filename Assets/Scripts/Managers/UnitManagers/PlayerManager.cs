@@ -457,7 +457,7 @@ public class PlayerManager : UnitManager {
 
     public void UndoMove() {
         if (undoableMoves.Count > 0 && undoOrder.Count > 0) {
-            if (scenario.floorManager.tutorial.isActiveAndEnabled && !scenario.floorManager.tutorial.undoEncountered && floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
+            if (scenario.floorManager.tutorial.isActiveAndEnabled && !scenario.floorManager.tutorial.undoEncountered) {
                 scenario.floorManager.tutorial.StartCoroutine(scenario.floorManager.tutorial.UndoTutorial());
                 return;
             }
