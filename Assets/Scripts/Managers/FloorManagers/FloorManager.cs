@@ -76,7 +76,7 @@ public class FloorManager : MonoBehaviour {
         } else {
             tutorial.gameObject.SetActive(false);
         }
-        floorSequence.StartPacket(floorSequence.currentThreshold);
+        //floorSequence.StartPacket(floorSequence.currentThreshold);
         
         yield return null;
     }
