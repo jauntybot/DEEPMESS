@@ -72,9 +72,10 @@ public class TutorialSequence : MonoBehaviour
                 floorManager.currentFloor.RemoveElement(u);
         }
         //scenario.player.units[1].ui.overview.gameObject.SetActive(false); scenario.player.units[2].ui.overview.gameObject.SetActive(false);
+        scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().interactable = false;
+        scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().enabled = false;
+        
         scenario.player.units[1].EnableSelection(false);
-        scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().interactable = false;
-        scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().enabled = false;
         scenario.player.units[2].EnableSelection(false);
         scenario.player.units.RemoveAt(1); scenario.player.units.RemoveAt(1);
 
@@ -100,14 +101,17 @@ public class TutorialSequence : MonoBehaviour
             yield return null;
             if (scenario.player.units[0].coord.x == scenario.player.nail.coord.x || scenario.player.units[0].coord.y == scenario.player.nail.coord.y)
                 break;
+                else if (scenario.player.units[0].moved && !undoEncountered) {
+                    yield return StartCoroutine(Oopsies(1));
+                }
         }
 
         yield return new WaitForSecondsRealtime(0.5f);
         yield return StartCoroutine(HittingTheNail());
-        cont = false;
+        
         
 
-        while (!cont) yield return null;
+        while (descents < 1) yield return null;
 // Descent 1
         yield return StartCoroutine(DiggingDown());
         yield return StartCoroutine(scenario.messagePanel.PlayMessage(MessagePanel.Message.Antibody));
@@ -495,6 +499,21 @@ public class TutorialSequence : MonoBehaviour
 
         brTooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
+
+    IEnumerator Oopsies(int trigger) {
+        if (trigger == 1) {
+            header = "OOPSIES";
+            body = "Come on, squish, use your noggin! Move your slag so it lines up with the nail--up, down, left, right. We have a button for oopsies in the bottom right." + '\n';    
+        } else if (trigger == 2) {
+
+        }
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+        }
+    }
+
     public IEnumerator UndoTutorial() {
         
         header = "UNDO BUTTON";
