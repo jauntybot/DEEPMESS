@@ -112,7 +112,7 @@ public class RangedBurstData : EquipmentData {
         int thornDmg = 0;
         if (target) {
             if (target is Nail n) {
-                if (n.manager.scenario.floorManager.tutorial != null && n.manager.scenario.floorManager.tutorial.isActiveAndEnabled && !n.manager.scenario.floorManager.tutorial.nailDamageEncountered && n.manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
+                if (n.manager.scenario.floorManager.tutorial != null && n.manager.scenario.floorManager.tutorial.isActiveAndEnabled && !n.manager.scenario.floorManager.tutorial.nailDamageEncountered) {
                     n.manager.scenario.floorManager.tutorial.StartCoroutine(n.manager.scenario.floorManager.tutorial.NailDamage());
                 }
                 CameraController.instance.StartCoroutine(CameraController.instance.ScreenShake(0.125f, 0.5f));

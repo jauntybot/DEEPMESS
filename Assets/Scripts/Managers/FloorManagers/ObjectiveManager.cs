@@ -88,6 +88,8 @@ public class ObjectiveManager : MonoBehaviour {
 
     public IEnumerator AssignSequence() {
         reviewingObjectives = true;
+        if (FloorManager.instance.tutorial.isActiveAndEnabled && !FloorManager.instance.tutorial.objectivesEncountered)
+            yield return FloorManager.instance.tutorial.StartCoroutine(FloorManager.instance.tutorial.Objectives());
         assignAwardPanel.SetActive(true);
         continueButton.gameObject.SetActive(true);
         //continueButton.GetComponentInChildren<TMPro.TMP_Text>().text = "ACCEPT OBJECTIVES";

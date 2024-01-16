@@ -231,10 +231,8 @@ public class FloorManager : MonoBehaviour {
                 }
             }
         } else {
-            foreach (Unit u in scenario.player.units) 
-                u.elementCanvas.ToggleStatsDisplay(targetedDict[u]);
-            foreach (Unit u in scenario.currentEnemy.units) 
-                u.elementCanvas.ToggleStatsDisplay(targetedDict[u]);
+            foreach (KeyValuePair<Unit, bool> entry in targetedDict)
+                entry.Key.elementCanvas.ToggleStatsDisplay(entry.Value);
         }
     }
 
