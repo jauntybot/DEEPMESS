@@ -25,7 +25,6 @@ public class TutorialSequence : MonoBehaviour {
     public Animator screenFade;
     [HideInInspector] public string header, body;
     public bool blinking = false;
-    bool cont = false;
     List<Unit> playerUnits = new();
 
     [SerializeField] Color keyColor;
@@ -73,8 +72,13 @@ public class TutorialSequence : MonoBehaviour {
         //scenario.player.units[1].ui.overview.gameObject.SetActive(false); scenario.player.units[2].ui.overview.gameObject.SetActive(false);
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().interactable = false;
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().enabled = false;
+        scenario.player.units[0].ui.equipButtons[0].GetComponent<Animator>().SetBool("Tut", true);
         
         scenario.player.units[1].EnableSelection(false);
+        scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().interactable = false;
+        scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().enabled = false;
+        scenario.player.units[1].ui.equipButtons[0].GetComponent<Animator>().SetBool("Tut", true);
+        
         scenario.player.units[2].EnableSelection(false);
         scenario.player.units.RemoveAt(1); scenario.player.units.RemoveAt(1);
 
@@ -125,10 +129,8 @@ public class TutorialSequence : MonoBehaviour {
 
         Coroutine co = StartCoroutine(AttackingEnemies());
 
-        cont = false;
-        while (!cont) yield return null;
+        while (descents < 2) yield return null;
 // Descent 2
-
         StopCoroutine(co);
         
         yield return StartCoroutine(scenario.messagePanel.PlayMessage(MessagePanel.Message.Antibody));
@@ -136,8 +138,7 @@ public class TutorialSequence : MonoBehaviour {
         yield return new WaitForSecondsRealtime(0.75f);
 
         yield return StartCoroutine(Equipment());
-        
-        yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
+        //yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
     }
 
     public IEnumerator BlinkTile(Vector2 coord, bool move = true) {
@@ -407,24 +408,26 @@ public class TutorialSequence : MonoBehaviour {
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
 
-        scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().enabled = false;
-        scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().enabled = false;
-        scenario.player.units[2].ui.equipButtons[0].GetComponent<Button>().enabled = false;
+        scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().enabled = true;
+        scenario.player.units[0].ui.equipButtons[0].GetComponent<Animator>().SetBool("Tut", false);
+        scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().enabled = true;
+        scenario.player.units[1].ui.equipButtons[0].GetComponent<Animator>().SetBool("Tut", false);
+        
 
-        GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.equipButtons[0].button.transform);
-        highlight.transform.parent.transform.parent.transform.parent.transform.parent.gameObject.SetActive(true);
-        highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
-        highlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
-        highlight.transform.parent.transform.parent.transform.parent.transform.parent.gameObject.SetActive(false);
-        StartCoroutine(OnShieldUse(highlight));
+        // GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.equipButtons[0].button.transform);
+        // highlight.transform.parent.transform.parent.transform.parent.transform.parent.gameObject.SetActive(true);
+        // highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
+        // highlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
+        // highlight.transform.parent.transform.parent.transform.parent.transform.parent.gameObject.SetActive(false);
+        // StartCoroutine(OnShieldUse(highlight));
     }
 
-    public IEnumerator OnShieldUse(GameObject highlight) {
-        Debug.Log(floorManager.currentFloor);
-        while (scenario.player.units[2].energyCurrent > 0 && floorManager.currentFloor.index == 2) yield return null;
-        Destroy(highlight);
+    // public IEnumerator OnShieldUse(GameObject highlight) {
+    //     Debug.Log(floorManager.currentFloor);
+    //     while (scenario.player.units[2].energyCurrent > 0 && floorManager.currentFloor.index == 2) yield return null;
+    //     Destroy(highlight);
 
-    }
+    // }
     public IEnumerator EnemyBehavior() {
         screenFade.gameObject.SetActive(true);
 
@@ -591,6 +594,9 @@ public class TutorialSequence : MonoBehaviour {
         CheckAllDone();
     }
     public IEnumerator BloodTiles() {
+        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
+            yield return null;
+        }
         screenFade.gameObject.SetActive(true);
         bloodEncountered = true;
 
@@ -637,9 +643,9 @@ public class TutorialSequence : MonoBehaviour {
         switch(descents) {
             case 0:
                 floorManager.GenerateFloor(floorManager.floorSequence.GetFloor());
+                scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
                 yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
-                scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
                 
                 for (int i = scenario.player.units.Count - 1; i >= 0; i--) 
@@ -656,10 +662,11 @@ public class TutorialSequence : MonoBehaviour {
             break;
             case 1:
                 EnemyManager prevEnemy = scenario.currentEnemy;
-            
+                floorManager.floorSequence.ThresholdCheck();
+
+                scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
                 yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Combat));
-                scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return new WaitForSecondsRealtime(0.25f);
                 
                 scenario.player.units[2].coord = new Vector2(2,4);
@@ -692,27 +699,10 @@ public class TutorialSequence : MonoBehaviour {
             break;
             default:
                 EnemyManager enemy = (EnemyManager)floorManager.currentFloor.enemy;
-                if (floorManager.floors.Count - 1 > floorManager.currentFloor.index) {
-                    if (!floorManager.floorSequence.ThresholdCheck()) {
-                        floorManager.GenerateFloor();       
-                    }
-
-                    scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
-                    yield return StartCoroutine(floorManager.TransitionFloors(true, false));
-                    
-                    yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, ScenarioManager.Scenario.Null));
-                    yield return new WaitForSecondsRealtime(0.25f);
-                    
-    // Descend units from previous floor
-                    yield return StartCoroutine(floorManager.DescendUnits(floorManager.floors[floorManager.currentFloor.index -1].gridElements, enemy));
-                    
-                    StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
-                } else 
-                    yield return StartCoroutine(floorManager.TransitionPackets(enemy));
+                yield return StartCoroutine(floorManager.TransitionPackets(enemy));
             break;
         }
         descents++;
-        cont = true;
     }
 
     public IEnumerator EnemyTurn() {

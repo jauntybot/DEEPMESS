@@ -122,16 +122,13 @@ public class ScenarioManager : MonoBehaviour
                 floorManager.currentFloor.RemoveElement(ge);
         }
         yield return StartCoroutine(floorManager.ChooseLandingPositions());
-        yield return new WaitForSecondsRealtime(1.25f);
-        
-        //yield return StartCoroutine(SwitchTurns(Turn.Descent, Scenario.Combat));
     }
 
 #endregion
 
 // Overload allows you to specify which turn to switch to, otherwise inverts the binary
     public IEnumerator SwitchTurns(Turn toTurn = default, Scenario toScenario = default) {
-
+        
         foreach(GridElement ge in floorManager.currentFloor.gridElements) 
                 ge.TargetElement(false);
         if (toTurn == default) {
