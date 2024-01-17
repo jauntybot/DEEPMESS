@@ -13,7 +13,8 @@ public class GameplayOptionalTooltips : MonoBehaviour
     public DialogueTooltip tooltip;
     public Animator screenFade;
     [SerializeField] RuntimeAnimatorController anvilAnim, bigThrowAnim, basophicAnim, reviveAnim, bulbAnim;
-    public bool bulbEncountered = false, deathReviveEncountered = false, basophicEncountered = false, prebossEncountered = false, bossEncountered = false;
+    public bool bulbEncountered = false, deathReviveEncountered = false, basophicEncountered = false, prebossEncountered = false, bossEncountered = false,
+        vacuoleEncountered = true, objectivesEncountered = false, rewardsEncountered = false;
 
     void Awake() {
         if (GameplayOptionalTooltips.instance) {
@@ -31,6 +32,35 @@ public class GameplayOptionalTooltips : MonoBehaviour
             }
         }
     }
+
+    public IEnumerator SplashMessage() {
+        header = "";
+        body = "Listen up, squish! We're on a big brain mission. Gotta feast on <b>" + ColorToRichText("tasty thoughts", keyColor) + "</b>, yeah? Scavenge, gobble, we'll make this place our own." + '\n';
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+
+    public IEnumerator Objectives() {
+        objectivesEncountered = true;
+
+        header = "OBJECTIVES";
+        body = "The big slime's got a to-do list. Check 'em off, <b>" + ColorToRichText("score tasty god nuggets", keyColor) + "</b>. Upgrade gear, get stronger. Fail? No biggie, just a hiccup. No whining, squish, just keep grinding." + '\n';
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
     public IEnumerator TileBulb() {
         Debug.Log("Tile bulb");
         bulbEncountered = true;
@@ -50,6 +80,21 @@ public class GameplayOptionalTooltips : MonoBehaviour
         }
 
         screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    public IEnumerator Rewards() {
+        rewardsEncountered = true;
+
+        header = "OBJECTIVES";
+        body = "Hope you <b>" + ColorToRichText("nailed those objectives", keyColor) + "</b>. Use any nuggets you bagged to power up, squish. Apply 'em to <b>" + ColorToRichText("Slags", keyColor) + "</b> or even the <b>" + ColorToRichText("Hammer", keyColor) + "</b>. Make those Slags sing.";
+        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ bulbAnim });
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 
@@ -97,6 +142,27 @@ public class GameplayOptionalTooltips : MonoBehaviour
 
         header = "NEW DANGERS";
         body = "This <b>" + ColorToRichText("baddie's a bomb", keyColor) + "</b>. After readying up, it will damage <b>" + ColorToRichText("all the tiles around it", keyColor) + "</b> when it pops. Handle with care or deal with the damage." + '\n';
+        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ basophicAnim });
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    public IEnumerator Vacuole() {
+        vacuoleEncountered = true;
+        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
+            yield return null;
+        }
+        yield return new WaitForSecondsRealtime(0.25f);
+        screenFade.gameObject.SetActive(true);
+
+        header = "NEW DANGERS";
+        body = "Stuck in place, this one. <b>" + ColorToRichText("Shoots thorns in every direction", keyColor) + "</b>. No retreat, just a barrage of pain. Stay clear or become a pincushion, squish." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ basophicAnim });
 
         while (!tooltip.skip) {

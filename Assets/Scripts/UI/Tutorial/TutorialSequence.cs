@@ -73,11 +73,13 @@ public class TutorialSequence : MonoBehaviour {
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().interactable = false;
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().enabled = false;
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Animator>().SetBool("Tut", true);
+        scenario.player.units[0].ui.equipButtons[0].GetComponent<TooltipEquipmentTrigger>().enabled = false;
         
         scenario.player.units[1].EnableSelection(false);
         scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().interactable = false;
         scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().enabled = false;
         scenario.player.units[1].ui.equipButtons[0].GetComponent<Animator>().SetBool("Tut", true);
+        scenario.player.units[1].ui.equipButtons[0].GetComponent<TooltipEquipmentTrigger>().enabled = false;
         
         scenario.player.units[2].EnableSelection(false);
         scenario.player.units.RemoveAt(1); scenario.player.units.RemoveAt(1);
@@ -363,7 +365,7 @@ public class TutorialSequence : MonoBehaviour {
         screenFade.gameObject.SetActive(true);
 
         header = "PLAYER TURN";
-        body = "Slags hustle, <b>" + ColorToRichText("moving and acting on their turn", keyColor) + "</b>. Trade turns with the enemy, end yours in the bottom right. When you dive down to the next floor, <b>" + ColorToRichText("a fresh start", keyColor) + "</b>. Keep it flowing." + '\n';
+        body = "Slags hustle, <b>" + ColorToRichText("moving and acting on their turn", keyColor) + "</b>. When you're all set, <b>" + ColorToRichText("end your turn", keyColor) + "</b> in the bottom right. Descending to the next floor, <b>" + ColorToRichText("a fresh start", keyColor) + "</b>. Keep it flowing." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -410,8 +412,10 @@ public class TutorialSequence : MonoBehaviour {
 
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().enabled = true;
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Animator>().SetBool("Tut", false);
+        scenario.player.units[0].ui.equipButtons[0].GetComponent<TooltipEquipmentTrigger>().enabled = false;
         scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().enabled = true;
         scenario.player.units[1].ui.equipButtons[0].GetComponent<Animator>().SetBool("Tut", false);
+        scenario.player.units[1].ui.equipButtons[0].GetComponent<TooltipEquipmentTrigger>().enabled = true;
         
 
         // GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.equipButtons[0].button.transform);
@@ -461,24 +465,6 @@ public class TutorialSequence : MonoBehaviour {
 
 
 // Gameplay optional - tutorial specific - tooltips
-    public IEnumerator Objectives() {
-        screenFade.gameObject.SetActive(true);
-        objectivesEncountered = true;
-
-        header = "OBJECTIVES";
-        body = "The big slime's got a to-do list. Check 'em off, <b>" + ColorToRichText("score tasty god nuggets", keyColor) + "</b>. Upgrade gear, get stronger. Fail? No biggie, just a hiccup. No whining, squish, just keep grinding." + '\n';
-        tooltip.SetText(body, header, true);
-
-        while (!tooltip.skip) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-            
-        }
-
-        screenFade.SetTrigger("FadeOut");
-        tooltip.transform.GetChild(0).gameObject.SetActive(false);
-    }
-
-
     public IEnumerator NailDamage() {
         nailDamageEncountered = true;
         while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
@@ -522,10 +508,10 @@ public class TutorialSequence : MonoBehaviour {
         screenFade.gameObject.SetActive(true);
         if (trigger == 1) {
             header = "OOPSIES";
-            body = "Come on, squish, use your noggin! Move your slag so it lines up with the nail--up, down, left, right. We have a button for oopsies in the bottom right." + '\n';    
+            body = "Come on squish, use your noggin! <b>" + ColorToRichText("Slide your Slag in line with the nail", keyColor) + "</b>—up, down, left, right. Got a problem? <b>" + ColorToRichText("Fix it in the bottom right", keyColor) + "</b>. No excuses." + '\n';    
         } else if (trigger == 2) {
             header = "OOPSIES";
-            body = "Come on, squish, use your noggin! Move your slag so it lines up with the enemy--up, down, left, right. We have a button for oopsies in the bottom right." + '\n';    
+            body = "Come on squish, use your noggin! <b>" + ColorToRichText("Slide your Slag in line with the enemy", keyColor) + "</b>—up, down, left, right. Got a problem? <b>" + ColorToRichText("Fix it in the bottom right", keyColor) + "</b>. No excuses." + '\n';    
         }
         tooltip.SetText(body, header, true);
 

@@ -313,6 +313,8 @@ public class FloorManager : MonoBehaviour {
                         scenario.gpOptional.StartCoroutine(scenario.gpOptional.TileBulb());
                     if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is EnemyDetonateUnit) != null && !scenario.gpOptional.basophicEncountered)
                         scenario.gpOptional.StartCoroutine(scenario.gpOptional.Basophic());
+                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is EnemyStaticUnit) != null && !scenario.gpOptional.vacuoleEncountered)
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Vacuole());
                     // if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS && !scenario.gpOptional.prebossEncountered) { 
                     //     scenario.gpOptional.StartCoroutine(scenario.gpOptional.Preboss());
                     // }
@@ -680,10 +682,12 @@ public class FloorManager : MonoBehaviour {
         if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BOSS) {
             uiManager.ToggleBattleCanvas(false);
             if (floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial && currentFloor != null) {
+                if (!scenario.gpOptional.bulbEncountered) scenario.gpOptional.StartCoroutine(scenario.gpOptional.Rewards());
                 yield return scenario.objectiveManager.RewardSequence();
                 yield return scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
             }
 
+            if (!scenario.gpOptional.bulbEncountered) scenario.gpOptional.StartCoroutine(scenario.gpOptional.Rewards());
             yield return scenario.objectiveManager.AssignSequence();
         }
         

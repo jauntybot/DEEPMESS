@@ -54,7 +54,7 @@ public class NeutralElementTooltip : Tooltip
         } else {
             rectTransform.gameObject.SetActive(true);
             if (ge is Wall) {
-                SetText("Blocks movement, damages if landed on.", "WALL");
+                SetText("Blocks movement, damages if landed on. Can be destroyed.", "WALL");
             } else if (ge is Tile t) {
                 if (ge is TileBulb) {
                     SetText("Contains a bulb.", "BULB", false, new List<RuntimeAnimatorController>{ bulbAnim });
@@ -67,7 +67,7 @@ public class NeutralElementTooltip : Tooltip
                             SetText("Destroys anything that lands in it.", "BILE", false, new List<RuntimeAnimatorController>{ bileAnim });
                         break;
                         case Tile.TileType.Blood:
-                            SetText("Prevents Slags from acting.", "BLOOD", false, new List<RuntimeAnimatorController>{ bloodAnim });
+                            SetText("Prevents Slag action while stopped in.", "BLOOD", false, new List<RuntimeAnimatorController>{ bloodAnim });
                         break;
                     }
                 }
