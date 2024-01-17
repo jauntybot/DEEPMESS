@@ -228,9 +228,11 @@ public class PlayerManager : UnitManager {
                     if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
                         StartCoroutine(selectedUnit.ExecuteAction(u));
                     } else {
+                        Debug.Log("select invalid");
                         SelectUnit(u);
                     }
                 } else {
+                    Debug.Log("select off");
                     SelectUnit(u);
                 }
             }

@@ -35,6 +35,8 @@ public class EquipmentButton : MonoBehaviour {
         tooltip = GetComponentInChildren<TooltipEquipmentTrigger>();
         if (tooltip)
             tooltip.Initialize(d.name);
+
+        button.animator.keepAnimatorStateOnDisable = true;
             
         UpdateMod();
     }

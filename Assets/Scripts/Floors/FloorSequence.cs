@@ -61,7 +61,7 @@ public class FloorSequence : ScriptableObject {
         FloorPacket.PacketType prevThreshold = currentThreshold;
         switch(prevThreshold) {
             case FloorPacket.PacketType.Tutorial:
-                if (floorsGot >= floorsTutorial) currentThreshold = FloorPacket.PacketType.I;
+                if (floorsGot >= activePacket.packetLength) currentThreshold = FloorPacket.PacketType.I;
             break;
             case FloorPacket.PacketType.I:
                 if (floorsGot >= activePacket.packetLength) currentThreshold = FloorPacket.PacketType.II;

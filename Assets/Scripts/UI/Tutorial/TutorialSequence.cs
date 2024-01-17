@@ -39,7 +39,7 @@ public class TutorialSequence : MonoBehaviour {
     [Header("Button Highlights")]
     [SerializeField] GameObject buttonHighlight;
     [SerializeField] Transform peekButton, undoButton;
-    GameObject destroyHighlight;
+    GameObject peekHighlight, undoHighlight;
 
     [Header("Gameplay Optional Tooltips")]
     bool enemyBehavior = false;
@@ -80,6 +80,8 @@ public class TutorialSequence : MonoBehaviour {
 
         floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
         yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ scenario.player.units[1] }));
+
+        scenario.player.units[0].ui.equipButtons[0].GetComponent<Animator>().SetTrigger("Disabled");
         //foreach (Unit unit in scenario.player.units) unit.gameObject.SetActive(false);
         yield return new WaitForSecondsRealtime(0.5f);
         scenario.player.nail.ToggleNailState(Nail.NailState.Primed);
@@ -367,13 +369,16 @@ public class TutorialSequence : MonoBehaviour {
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
 
+        UIManager.instance.endTurnButton.GetComponent<Animator>().SetBool("Tut", false);
         UIManager.instance.endTurnButton.enabled = true;
         UIManager.instance.canvasAnim.SetTrigger("TutEndTurn");
+        UIManager.instance.canvasAnim.SetBool("Active", true);
 
+        UIManager.instance.peekButton.GetComponent<Animator>().SetBool("Tut", false);
         UIManager.instance.peekButton.enabled = true;
-        destroyHighlight = Instantiate(buttonHighlight, peekButton);
-        destroyHighlight.transform.SetSiblingIndex(0); destroyHighlight.transform.localPosition = Vector3.zero; destroyHighlight.GetComponent<Animator>().SetBool("Active", true);
-        destroyHighlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
+        peekHighlight = Instantiate(buttonHighlight, peekButton);
+        peekHighlight.transform.SetSiblingIndex(0); peekHighlight.transform.localPosition = Vector3.zero; peekHighlight.GetComponent<Animator>().SetBool("Active", true);
+        peekHighlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
 
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
@@ -393,7 +398,7 @@ public class TutorialSequence : MonoBehaviour {
 
         header = "EQUIPMENT";
         body = "Each piece of gear's <b>" + ColorToRichText("unique", keyColor) + "</b>. Check those buttons on the <b>" + ColorToRichText("bottom left", keyColor) + "</b> to get to know your arsenal." + '\n';
-        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ shieldAnim,  });
+        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ shieldAnim, anvilAnim, bigGrabAnim });
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -403,8 +408,8 @@ public class TutorialSequence : MonoBehaviour {
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
 
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().enabled = false;
-        scenario.player.units[1].ui.equipButtons[1].GetComponent<Button>().enabled = false;
-        scenario.player.units[2].ui.equipButtons[2].GetComponent<Button>().enabled = false;
+        scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().enabled = false;
+        scenario.player.units[2].ui.equipButtons[0].GetComponent<Button>().enabled = false;
 
         GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.equipButtons[0].button.transform);
         highlight.transform.parent.transform.parent.transform.parent.transform.parent.gameObject.SetActive(true);
@@ -494,8 +499,8 @@ public class TutorialSequence : MonoBehaviour {
     }
 
     public IEnumerator PeekButton() {
-        if (destroyHighlight)
-            Destroy(destroyHighlight);
+        if (peekHighlight)
+            Destroy(peekHighlight);
         header = "PEEK AHEAD";
         body = "<b>" + ColorToRichText("Peek button", keyColor) + "</b>, big ol' eye in the <b>" + ColorToRichText("bottom right", keyColor) + "</b>. Use it. <b>" + ColorToRichText("Preview the next floor", keyColor) + "</b>—enemies, hazards, the works. It helps to know what's comin'." + '\n';
         brTooltip.SetText(body, header, true);
@@ -533,16 +538,16 @@ public class TutorialSequence : MonoBehaviour {
         if (trigger == 2) {
             UIManager.instance.canvasAnim.SetTrigger("TutEndTurn");
         }
-        UIManager.instance.peekButton.interactable = false;
+        //UIManager.instance.peekButton.interactable = false;
         UIManager.instance.peekButton.enabled = false;
-        UIManager.instance.endTurnButton.interactable = false;
+        //UIManager.instance.endTurnButton.interactable = false;
         UIManager.instance.endTurnButton.enabled = false;
-        UIManager.instance.endTurnButton.GetComponent<Animator>().SetTrigger("Disabled");
-        UIManager.instance.peekButton.animator.GetComponent<Animator>().SetTrigger("Disabled");
+        UIManager.instance.endTurnButton.GetComponent<Animator>().SetBool("Tut", true);
+        UIManager.instance.peekButton.animator.GetComponent<Animator>().SetBool("Tut", true);
 
-        destroyHighlight = Instantiate(buttonHighlight, undoButton);
-        destroyHighlight.transform.SetSiblingIndex(0); destroyHighlight.transform.localPosition = Vector3.zero; destroyHighlight.GetComponent<Animator>().SetBool("Active", true);
-        destroyHighlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
+        undoHighlight = Instantiate(buttonHighlight, undoButton);
+        undoHighlight.transform.SetSiblingIndex(0); undoHighlight.transform.localPosition = Vector3.zero; undoHighlight.GetComponent<Animator>().SetBool("Active", true);
+        undoHighlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
 
         yield return null;
 
@@ -550,8 +555,8 @@ public class TutorialSequence : MonoBehaviour {
     }
 
     public IEnumerator UndoTutorial() {
-        if (destroyHighlight)
-            Destroy(destroyHighlight);
+        if (undoHighlight)
+            Destroy(undoHighlight);
         header = "UNDO BUTTON";
         body = "Slags got an <b>" + ColorToRichText("Undo button", keyColor) + "</b>. Move around and reset, but once you take an action, no backtracking. Think ahead, squish." + '\n';
         brTooltip.SetText(body, header, true);
