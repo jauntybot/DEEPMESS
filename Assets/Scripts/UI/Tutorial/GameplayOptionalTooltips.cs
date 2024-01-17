@@ -175,16 +175,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
     }
 
 
-    public IEnumerator Preboss() {
-        prebossEncountered = true;
-        Debug.Log("Wait for player turn preboss");
-        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
-            yield return null;
-        }
-        Debug.Log("Player turn preboss");
-        yield return new WaitForSecondsRealtime(0.25f);
-        screenFade.gameObject.SetActive(true);
-
+    public IEnumerator Preboss() {        
         header = "DANGER AHEAD";
         body = "Sounds like trouble's knocking, <b>" + ColorToRichText("big time", keyColor) + "</b>. Nail stays put till the dust settles. <b>" + ColorToRichText("Your dance, squish", keyColor) + "</b>. We'll be chillin' up here." + '\n';
         tooltip.SetText(body, header, true);
@@ -193,7 +184,6 @@ public class GameplayOptionalTooltips : MonoBehaviour
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
 
-        screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 
@@ -214,6 +204,31 @@ public class GameplayOptionalTooltips : MonoBehaviour
         }
 
         screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    public IEnumerator BossSlain() {        
+        header = "NAIL INCOMING";
+        body = "Cracked the big guy! <b>" + ColorToRichText("Brace yourself", keyColor) + "</b>, massive impact incoming!" + '\n';
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+        }
+
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    public IEnumerator WhatsAhead() {        
+        header = "WHAT'S AHEAD";
+        body = "Look below us! I can see the real juice coming up. I can't wait for you to see it too! Until next time..." + '\n';
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+        }
+
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 

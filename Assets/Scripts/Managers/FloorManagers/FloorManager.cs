@@ -76,7 +76,6 @@ public class FloorManager : MonoBehaviour {
         } else {
             tutorial.gameObject.SetActive(false);
         }
-        //floorSequence.StartPacket(floorSequence.currentThreshold);
         
         yield return null;
     }
@@ -284,7 +283,6 @@ public class FloorManager : MonoBehaviour {
         DescendingFloors?.Invoke();
 
         ScenarioManager.Scenario scen = ScenarioManager.Scenario.Null;
-        if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) scen = ScenarioManager.Scenario.Boss;
         if (tut) {
             yield return StartCoroutine(TutorialSequence.instance.TutorialDescend());
         } else {
@@ -301,6 +299,7 @@ public class FloorManager : MonoBehaviour {
                 if (!floorSequence.ThresholdCheck()) { //|| floorSequence.currentThreshold == FloorPacket.PacketType.BOSS
                     GenerateFloor();       
                 }
+                if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) scen = ScenarioManager.Scenario.Boss;
 
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return StartCoroutine(TransitionFloors(true, false));
@@ -678,6 +677,10 @@ public class FloorManager : MonoBehaviour {
         Coroutine floating = StartCoroutine(FloatingUnits());
 
 
+        if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) {
+            if (!scenario.gpOptional.prebossEncountered)
+                yield return StartCoroutine(scenario.gpOptional.Preboss());
+        }
 // Objective award + Upgrade sequence
         if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BOSS) {
             uiManager.ToggleBattleCanvas(false);
@@ -691,8 +694,8 @@ public class FloorManager : MonoBehaviour {
             yield return scenario.objectiveManager.AssignSequence();
         }
         
-
-        if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BARRIER) {
+        //floorSequence.ThresholdCheck();
+        if (floorSequence.currentThreshold != FloorPacket.PacketType.BARRIER) {
             StopCoroutine(floating);
             timer = 0;
             Vector3 startPos = transitionParent.transform.position;
@@ -740,7 +743,7 @@ public class FloorManager : MonoBehaviour {
             descending = false;
             yield return scenario.StartCoroutine(scenario.FirstTurn(lastFloorEnemey));
         } else {
-            yield return StartCoroutine(scenario.Win());
+            StartCoroutine(scenario.Win());
             while (scenario.scenario == ScenarioManager.Scenario.EndState) {
                 if (parallax)
                     parallax.ScrollParallax(-1);
@@ -761,6 +764,8 @@ public class FloorManager : MonoBehaviour {
     }
 
     public IEnumerator FinalDescent() {
+        scenario.player.StartEndTurn(false);
+        yield return StartCoroutine(scenario.gpOptional.BossSlain());
         descending = true;
         currentFloor.DisableGridHighlight();
         currentFloor.LockGrid(true);

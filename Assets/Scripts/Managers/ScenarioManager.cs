@@ -128,7 +128,7 @@ public class ScenarioManager : MonoBehaviour
 
 // Overload allows you to specify which turn to switch to, otherwise inverts the binary
     public IEnumerator SwitchTurns(Turn toTurn = default, Scenario toScenario = default) {
-        
+        uiManager.ToggleEndTurnText(true);
         foreach(GridElement ge in floorManager.currentFloor.gridElements) 
                 ge.TargetElement(false);
         if (toTurn == default) {
@@ -263,11 +263,12 @@ public class ScenarioManager : MonoBehaviour
 
     public IEnumerator Win() {
         scenario = Scenario.EndState;
+        yield return StartCoroutine(gpOptional.WhatsAhead());
         if (uiManager.gameObject.activeSelf) {
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Win));
             uiManager.ToggleBattleCanvas(false);
         }
-        yield return new WaitForSecondsRealtime(1.5f);
+        yield return new WaitForSecondsRealtime(1.25f);
         runDataTracker.UpdateAndDisplay(true, floorManager.currentFloor.index + 1, player.defeatedEnemies);
     }
 

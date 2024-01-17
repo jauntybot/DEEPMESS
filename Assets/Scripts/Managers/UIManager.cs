@@ -99,6 +99,18 @@ public class UIManager : MonoBehaviour {
         turnOrder.EnableHover(!state);
     }
 
+    public void ToggleEndTurnText(bool endTurn) {
+        string phrase = "";
+        if (endTurn) {
+            phrase = "End Turn";
+        } else {
+            phrase = "Drop In";
+        }
+        TMP_Text[] tmp = endTurnButton.GetComponentsInChildren<TMP_Text>();
+        foreach (TMP_Text t in tmp)
+            t.text = phrase;
+    }
+
     public void ToggleUndoButton(bool state) {
         if (state)
             state = scenario.player.undoableMoves.Count > 0;
