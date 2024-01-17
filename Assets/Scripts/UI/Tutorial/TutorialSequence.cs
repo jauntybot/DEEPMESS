@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TutorialSequence : MonoBehaviour
-{
+public class TutorialSequence : MonoBehaviour {
 
     #region SINGLETON (and Awake)
     public static TutorialSequence instance;
@@ -39,7 +38,7 @@ public class TutorialSequence : MonoBehaviour
 
     [Header("Button Highlights")]
     [SerializeField] GameObject buttonHighlight;
-    [SerializeField] Transform peekButton;
+    [SerializeField] Transform peekButton, undoButton;
     GameObject destroyHighlight;
 
     [Header("Gameplay Optional Tooltips")]
@@ -72,9 +71,10 @@ public class TutorialSequence : MonoBehaviour
                 floorManager.currentFloor.RemoveElement(u);
         }
         //scenario.player.units[1].ui.overview.gameObject.SetActive(false); scenario.player.units[2].ui.overview.gameObject.SetActive(false);
+        scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().interactable = false;
+        scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().enabled = false;
+        
         scenario.player.units[1].EnableSelection(false);
-        scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().interactable = false;
-        scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().enabled = false;
         scenario.player.units[2].EnableSelection(false);
         scenario.player.units.RemoveAt(1); scenario.player.units.RemoveAt(1);
 
@@ -100,25 +100,26 @@ public class TutorialSequence : MonoBehaviour
             yield return null;
             if (scenario.player.units[0].coord.x == scenario.player.nail.coord.x || scenario.player.units[0].coord.y == scenario.player.nail.coord.y)
                 break;
+            else if (scenario.player.units[0].moved && !oopsies) {
+                yield return StartCoroutine(Oopsies(1));
+            }
         }
 
         yield return new WaitForSecondsRealtime(0.5f);
         yield return StartCoroutine(HittingTheNail());
-        cont = false;
+        
         
 
-        while (!cont) yield return null;
-// Descent 1
+        while (descents < 1) yield return null;
+// yield Descent 1
         yield return StartCoroutine(DiggingDown());
         yield return StartCoroutine(scenario.messagePanel.PlayMessage(MessagePanel.Message.Antibody));
+// yield first enemy turn
         yield return StartCoroutine(ScatterTurn());
         yield return StartCoroutine(EnemyTurn());
 
         yield return new WaitForSecondsRealtime(1.25f);
         yield return StartCoroutine(NailPriming());
-        destroyHighlight = Instantiate(buttonHighlight, peekButton);
-        destroyHighlight.transform.SetSiblingIndex(0); destroyHighlight.transform.localPosition = Vector3.zero; destroyHighlight.GetComponent<Animator>().SetBool("Active", true);
-        destroyHighlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
 
         Coroutine co = StartCoroutine(AttackingEnemies());
 
@@ -133,8 +134,6 @@ public class TutorialSequence : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.75f);
 
         yield return StartCoroutine(Equipment());
-        if (!hittingEnemies)
-            StartCoroutine(AttackingEnemies());
         
         yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
     }
@@ -164,7 +163,7 @@ public class TutorialSequence : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "";
-        body = "Listen up, squish! We're on a big brain mission. Gottat feast on <b>" + ColorToRichText("tasty thoughts", keyColor) + "</b>, yeah? Scavenge, gobble, we'll make it this place our own." + '\n';
+        body = "Listen up, squish! We're on a big brain mission. Gotta feast on <b>" + ColorToRichText("tasty thoughts", keyColor) + "</b>, yeah? Scavenge, gobble, we'll make this place our own." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -173,7 +172,7 @@ public class TutorialSequence : MonoBehaviour
         }
 
         header = "";
-        body = "Gotta dive deeper into the noggin. Down, down, where the <b>" + ColorToRichText("juice gets jucier", keyColor) + "</b>. We're after the prime cuts, not the stale scraps." + '\n';
+        body = "Gotta dive deeper into the noggin. Down, down, where the <b>" + ColorToRichText("juice gets juicier", keyColor) + "</b>. We're after the prime cuts, not the stale scraps." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -287,6 +286,9 @@ public class TutorialSequence : MonoBehaviour
                 }
             }
             if (aligned) break;
+            else if (scenario.player.units[0].moved && !oopsies) {
+                yield return StartCoroutine(Oopsies(2));
+            }
         }
         yield return new WaitForSecondsRealtime(0.25f);
         yield return StartCoroutine(HittingAnEnemy());
@@ -365,7 +367,13 @@ public class TutorialSequence : MonoBehaviour
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
 
+        UIManager.instance.endTurnButton.enabled = true;
         UIManager.instance.canvasAnim.SetTrigger("TutEndTurn");
+
+        UIManager.instance.peekButton.enabled = true;
+        destroyHighlight = Instantiate(buttonHighlight, peekButton);
+        destroyHighlight.transform.SetSiblingIndex(0); destroyHighlight.transform.localPosition = Vector3.zero; destroyHighlight.GetComponent<Animator>().SetBool("Active", true);
+        destroyHighlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
 
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
@@ -393,6 +401,10 @@ public class TutorialSequence : MonoBehaviour
 
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
+
+        scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().enabled = false;
+        scenario.player.units[1].ui.equipButtons[1].GetComponent<Button>().enabled = false;
+        scenario.player.units[2].ui.equipButtons[2].GetComponent<Button>().enabled = false;
 
         GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.equipButtons[0].button.transform);
         highlight.transform.parent.transform.parent.transform.parent.transform.parent.gameObject.SetActive(true);
@@ -482,8 +494,8 @@ public class TutorialSequence : MonoBehaviour
     }
 
     public IEnumerator PeekButton() {
-        
-        Destroy(destroyHighlight);
+        if (destroyHighlight)
+            Destroy(destroyHighlight);
         header = "PEEK AHEAD";
         body = "<b>" + ColorToRichText("Peek button", keyColor) + "</b>, big ol' eye in the <b>" + ColorToRichText("bottom right", keyColor) + "</b>. Use it. <b>" + ColorToRichText("Preview the next floor", keyColor) + "</b>—enemies, hazards, the works. It helps to know what's comin'." + '\n';
         brTooltip.SetText(body, header, true);
@@ -495,8 +507,51 @@ public class TutorialSequence : MonoBehaviour
 
         brTooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
+
+    bool oopsies;
+    IEnumerator Oopsies(int trigger) {
+        oopsies = true;
+        screenFade.gameObject.SetActive(true);
+        if (trigger == 1) {
+            header = "OOPSIES";
+            body = "Come on, squish, use your noggin! Move your slag so it lines up with the nail--up, down, left, right. We have a button for oopsies in the bottom right." + '\n';    
+        } else if (trigger == 2) {
+            header = "OOPSIES";
+            body = "Come on, squish, use your noggin! Move your slag so it lines up with the enemy--up, down, left, right. We have a button for oopsies in the bottom right." + '\n';    
+        }
+        tooltip.SetText(body, header, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+        }
+
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+
+        if (trigger == 1)
+            UIManager.instance.canvasAnim.SetTrigger("TutUndoFirst");
+        if (trigger == 2) {
+            UIManager.instance.canvasAnim.SetTrigger("TutEndTurn");
+        }
+        UIManager.instance.peekButton.interactable = false;
+        UIManager.instance.peekButton.enabled = false;
+        UIManager.instance.endTurnButton.interactable = false;
+        UIManager.instance.endTurnButton.enabled = false;
+        UIManager.instance.endTurnButton.GetComponent<Animator>().SetTrigger("Disabled");
+        UIManager.instance.peekButton.animator.GetComponent<Animator>().SetTrigger("Disabled");
+
+        destroyHighlight = Instantiate(buttonHighlight, undoButton);
+        destroyHighlight.transform.SetSiblingIndex(0); destroyHighlight.transform.localPosition = Vector3.zero; destroyHighlight.GetComponent<Animator>().SetBool("Active", true);
+        destroyHighlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
+
+        yield return null;
+
+        UIManager.instance.canvasAnim.SetBool("Active", true);
+    }
+
     public IEnumerator UndoTutorial() {
-        
+        if (destroyHighlight)
+            Destroy(destroyHighlight);
         header = "UNDO BUTTON";
         body = "Slags got an <b>" + ColorToRichText("Undo button", keyColor) + "</b>. Move around and reset, but once you take an action, no backtracking. Think ahead, squish." + '\n';
         brTooltip.SetText(body, header, true);

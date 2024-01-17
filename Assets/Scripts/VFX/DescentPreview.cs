@@ -71,10 +71,10 @@ public class DescentPreview : MonoBehaviour {
             portraitSR.sortingOrder = mgmt.alignmentFloor.SortOrderFromCoord(ge.coord);
             bgSR.sortingOrder = mgmt.alignmentFloor.SortOrderFromCoord(ge.coord) - 1;
         } else {
-            transform.localPosition = unit.grid.PosFromCoord(ge.coord);
-            anim.gameObject.GetComponent<SpriteRenderer>().sortingOrder = unit.grid.SortOrderFromCoord(ge.coord) - 1;
-            portraitSR.sortingOrder = unit.grid.SortOrderFromCoord(ge.coord);
-            bgSR.sortingOrder = unit.grid.SortOrderFromCoord(ge.coord) - 1;
+            transform.localPosition = unit.transform.localPosition;
+            anim.gameObject.GetComponent<SpriteRenderer>().sortingOrder = unit.gfx[0].sortingOrder - 1;
+            portraitSR.sortingOrder = unit.gfx[0].sortingOrder;
+            bgSR.sortingOrder = unit.gfx[0].sortingOrder - 1;
         }
     }
 
