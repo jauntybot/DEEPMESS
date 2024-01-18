@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -203,6 +202,7 @@ public class GridElement : MonoBehaviour{
             if (sfx.outputMixerGroup) 
                 audioSource.outputAudioMixerGroup = sfx.outputMixerGroup;   
 
+            audioSource.pitch = Random.Range(0.8f, 1f);
             audioSource.PlayOneShot(sfx.Get());
         }
     }

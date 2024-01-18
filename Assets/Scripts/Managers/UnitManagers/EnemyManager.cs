@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 using UnityEngine.U2D;
 
@@ -10,7 +11,7 @@ public class EnemyManager : UnitManager {
     [SerializeField] Unit defaultUnit;
     public List<Unit> unitsToAct = new();
     [SerializeField] List<GridElement> pendingUnits = new();
-    public List<DescentPreview> pendingPreviews = new();
+    public List<GameObject> pendingPreviews = new();
     protected Coroutine actingUnitCo;
 
     public override IEnumerator Initialize(Grid _currentGrid) {
@@ -123,7 +124,6 @@ public class EnemyManager : UnitManager {
         
         Unit lastUnit = null;
         if (units.Count > 0) lastUnit = units[0];
-        Debug.Log(lastUnit.name);
         Debug.Log(lastUnit is BossUnit);
         if (!lastUnit || lastUnit is not BossUnit || (lastUnit is BossUnit && lastUnit.energyCurrent != 0)) {
             if (AddToReinforcements()) {
@@ -217,28 +217,30 @@ public class EnemyManager : UnitManager {
             yield return scenario.floorManager.tutorial.StartCoroutine(scenario.floorManager.tutorial.EnemySpawn());
         }
         yield return null;
-        pendingPreviews = new List<DescentPreview>();
+        pendingPreviews = new List<GameObject>();
         foreach (Unit u in pendingUnits) {
-            DescentPreview dp = Instantiate(unitDescentPreview, unitParent.transform).GetComponent<DescentPreview>();
-            pendingPreviews.Add(dp);
-            dp.Initialize(u);
-            dp.UpdatePreview(u);
+            GameObject obj = Instantiate(reinforcementPrefab, unitParent.transform);
+            pendingPreviews.Add(obj);
+            int sort = currentGrid.SortOrderFromCoord(u.coord);
+            obj.transform.position = currentGrid.PosFromCoord(u.coord);
+            LineRenderer lr = obj.GetComponentInChildren<LineRenderer>();
+            lr.sortingOrder = sort;
+            lr.startColor = new Color(1, 0, 0, 0.75f); lr.endColor = new Color(1, 0, 0, 0.75f);
+            SpriteRenderer sr = obj.GetComponentInChildren<SpriteRenderer>();
+            sr.sortingOrder = sort;
+
+
             u.PlaySound(u.selectedSFX);
             float t = 0;
             while (t < 0.25f) { t += Time.deltaTime; yield return null; }
             
-            // obj.SetActive(true);
+            
             
             // obj.transform.localScale = Vector3.one * FloorManager.sqrSize;
-            // obj.transform.position = currentGrid.PosFromCoord(u.coord);
-            // int sort = currentGrid.SortOrderFromCoord(u.coord);
             
             // SpriteShapeRenderer srr = obj.GetComponentInChildren<SpriteShapeRenderer>();
-            // LineRenderer lr = obj.GetComponentInChildren<LineRenderer>();
             // srr.color = new Color(1, 0, 0, 0.25f);
             // srr.sortingOrder = sort;
-            // lr.startColor = new Color(1, 0, 0, 0.75f); lr.endColor = new Color(1, 0, 0, 0.75f);
-            // lr.sortingOrder = sort;
 
             // pendingUnitUIs.Add(obj);
         }
@@ -248,7 +250,7 @@ public class EnemyManager : UnitManager {
         for (int i = pendingPreviews.Count - 1; i >= 0; i--) {
             Destroy(pendingPreviews[i].gameObject);
         }
-        pendingPreviews = new List<DescentPreview>();
+        pendingPreviews = new();
         if (pendingUnits.Count > 0) {
             yield return StartCoroutine(floorManager.DescendUnits(pendingUnits, this));
             
@@ -296,7 +298,7 @@ public class EnemyManager : UnitManager {
         for (int i = pendingPreviews.Count - 1; i >= 0; i--) {
             Destroy(pendingPreviews[i].gameObject);
         }
-        pendingPreviews = new List<DescentPreview>();
+        pendingPreviews = new();
 
         for (int i = pendingUnits.Count - 1; i >= 0; i--) {
             Destroy(pendingUnits[i].gameObject);

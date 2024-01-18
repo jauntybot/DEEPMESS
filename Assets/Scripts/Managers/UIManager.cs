@@ -102,9 +102,9 @@ public class UIManager : MonoBehaviour {
     public void ToggleEndTurnText(bool endTurn) {
         string phrase = "";
         if (endTurn) {
-            phrase = "End Turn";
+            phrase = "END TURN";
         } else {
-            phrase = "Drop In";
+            phrase = "DROP IN";
         }
         TMP_Text[] tmp = endTurnButton.GetComponentsInChildren<TMP_Text>();
         foreach (TMP_Text t in tmp)

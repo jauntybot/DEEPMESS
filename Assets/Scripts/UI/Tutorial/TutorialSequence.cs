@@ -295,7 +295,8 @@ public class TutorialSequence : MonoBehaviour {
                 yield return StartCoroutine(Oopsies(2));
             }
         }
-        yield return new WaitForSecondsRealtime(0.25f);
+        while (scenario.player.unitActing) yield return null;
+        yield return new WaitForSecondsRealtime(0.125f);
         yield return StartCoroutine(HittingAnEnemy());
         
     }
@@ -333,7 +334,9 @@ public class TutorialSequence : MonoBehaviour {
             if (scenario.player.units[0].energyCurrent == 0 || scenario.player.units[1].energyCurrent == 0) {
                 Debug.Log("AP trigger");
                 break;
-            }
+            } else if (scenario.player.units[0].moved && (scenario.player.units[0].coord.x != scenario.currentEnemy.units[0].coord.x || scenario.player.units[0].coord.y != scenario.currentEnemy.units[0].coord.y) && !oopsies)
+                yield return StartCoroutine(Oopsies(2));
+
         }
 
         Destroy(highlight);

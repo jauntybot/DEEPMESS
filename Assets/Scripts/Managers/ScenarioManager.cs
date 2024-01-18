@@ -109,6 +109,7 @@ public class ScenarioManager : MonoBehaviour
 
     IEnumerator PlayerEnter() {
         uiManager.LockPeekButton(true);
+        uiManager.ToggleEndTurnText(false);
         currentEnemy = (EnemyManager)floorManager.currentFloor.enemy;
 
         yield return StartCoroutine(SwitchTurns(Turn.Cascade));
@@ -122,13 +123,13 @@ public class ScenarioManager : MonoBehaviour
                 floorManager.currentFloor.RemoveElement(ge);
         }
         yield return StartCoroutine(floorManager.ChooseLandingPositions());
+        yield return new WaitForSecondsRealtime(1.25f);
     }
 
 #endregion
 
 // Overload allows you to specify which turn to switch to, otherwise inverts the binary
     public IEnumerator SwitchTurns(Turn toTurn = default, Scenario toScenario = default) {
-        uiManager.ToggleEndTurnText(true);
         foreach(GridElement ge in floorManager.currentFloor.gridElements) 
                 ge.TargetElement(false);
         if (toTurn == default) {
@@ -140,6 +141,8 @@ public class ScenarioManager : MonoBehaviour
                 case Turn.Cascade: toTurn = Turn.Descent; break;
             }
         }
+        if (toTurn != Turn.Cascade)
+            uiManager.ToggleEndTurnText(true);
         prevTurn = currentTurn;
         uiManager.LockHUDButtons(true);
 // Scenario state machine (more optional)        

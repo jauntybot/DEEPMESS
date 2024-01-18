@@ -102,7 +102,6 @@ public class MusicController : MonoBehaviour
 
     void UpdateTrack(int index = 0) {
         musicAudioSource.Stop();
-        playing = false;
         musicAudioSource.clip = stateTracks[index].trackAudioClip;
         Debug.Log("Playing: " + stateTracks[index]);
         //trackTextUI.text = audioTracks[index].name;

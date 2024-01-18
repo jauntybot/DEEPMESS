@@ -39,6 +39,12 @@ public class PersistentMenu : MonoBehaviour
         musicController = GetComponentInChildren<MusicController>();
         musicSlider.onValueChanged.AddListener(SetMusicVolume);
         sfxSlider.onValueChanged.AddListener(SetSFXVolume);
+
+        // float init;
+        // mixer.GetFloat(MIXER_MUSIC, out init); 
+        // musicSlider.value = Mathf.Log(init)/20;
+        // mixer.GetFloat(MIXER_SFX, out init); 
+        // sfxSlider.value = Mathf.Log(init)/20;
         
         Time.timeScale = 1;
 
@@ -89,13 +95,12 @@ public class PersistentMenu : MonoBehaviour
         pauseMenu.gameObject.SetActive(true);
     }
 
-    void SetMusicVolume(float vol) {
+    void SetMusicVolume(System.Single vol) {
         mixer.SetFloat(MIXER_MUSIC, Mathf.Log10(vol) * 20);
 
     }
-
     
-    void SetSFXVolume(float vol) {
+    void SetSFXVolume(System.Single vol) {
         mixer.SetFloat(MIXER_SFX, Mathf.Log10(vol) * 20);
         
     }

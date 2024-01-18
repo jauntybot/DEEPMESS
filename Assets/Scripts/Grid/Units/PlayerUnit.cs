@@ -165,6 +165,13 @@ public class PlayerUnit : Unit {
         }
     }
 
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+        if (!destroyed) {
+            yield return base.TakeDamage(dmg, dmgType, source, sourceEquip);
+            if (Mathf.Sign(dmg) == -1 && conditions.Contains(Status.Disabled)) Stabilize();
+        }
+    }
+
     public override IEnumerator CollideFromBelow(GridElement above) {
         yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
     }
