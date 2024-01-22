@@ -10,9 +10,9 @@ public class DamageObjective : Objective {
     [SerializeField] ObjectiveType objectiveType;
 
 
-    public override void Init() {
-        base.Init();
+    public override Objective Init(SlagEquipmentData.UpgradePath path) {
         ObjectiveEventManager.AddListener<GridElementDamagedEvent>(OnDamage);
+        return base.Init(path);
     }
 
     protected virtual void OnDamage(GridElementDamagedEvent evt) {

@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class MusicController : MonoBehaviour
-{
+public class MusicController : MonoBehaviour {
     
     public enum MusicState { MainMenu, Tutorial, Game, Null };
     public MusicState currentState;
@@ -60,18 +59,9 @@ public class MusicController : MonoBehaviour
 
 
     public void PlayAudio() {
-        musicAudioSource.Play();
-        playingCo = StartCoroutine(EndOfTrack());
+ 
     }
 
-    IEnumerator EndOfTrack() {
-        playing = true;
-        while (musicAudioSource.time < musicAudioSource.clip.length && playing) {
-            yield return null;
-        }
-        if (playing)
-            SkipForward();
-    }
 
     public IEnumerator StopAudio(bool fade) {      
         playing = false;
@@ -106,7 +96,8 @@ public class MusicController : MonoBehaviour
         Debug.Log("Playing: " + stateTracks[index]);
         //trackTextUI.text = audioTracks[index].name;
         
-        PlayAudio();
+        musicAudioSource.Play();
+        Invoke("SkipForward", musicAudioSource.clip.length);
     }
 
     // public void SkipBack()

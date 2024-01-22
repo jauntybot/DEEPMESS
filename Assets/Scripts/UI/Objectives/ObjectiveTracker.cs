@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ObjectiveTracker : MonoBehaviour {
 
     List<Objective> activeObjectives;
-    [SerializeField] GameObject objectiveCardPrefab, objectiveCardParent;
+    [SerializeField] public GameObject objectiveCardPrefab, objectiveCardParent;
 
     public void AssignObjectives(List<Objective> _obs, List<Sprite> rewardSprites) {
         activeObjectives = _obs;

@@ -8,7 +8,7 @@ public class Objective : ScriptableObject {
     public string objectiveTitleString;
     public string objectiveString;
     public int progress, goal;
-    public enum Operator { OrMore, LessThan }
+    public enum Operator { OrMore, LessThanOrEqual }
     public Operator operation;
     public SlagEquipmentData.UpgradePath reward;
     public bool resolved, succeeded;
@@ -16,9 +16,10 @@ public class Objective : ScriptableObject {
     public event OnObjectiveCondition ObjectiveUpdateCallback;
 
 
-    public virtual void Init() {
-        reward = (SlagEquipmentData.UpgradePath)Random.Range(0, 3);
+    public virtual Objective Init(SlagEquipmentData.UpgradePath path) {
+        reward = path;
         Restart();
+        return this;
     }
 
     public virtual void Restart() {
@@ -36,21 +37,22 @@ public class Objective : ScriptableObject {
                         succeeded = true;
                     } 
                 break;
-                case Operator.LessThan:
-                    if (progress >= goal) {
+                case Operator.LessThanOrEqual:
+                    if (progress > goal) {
                         resolved = true;
+                        succeeded = false;
                     }
                 break;
             }
-            if (final) {
+            if (final && !resolved) {
                 resolved = true;
                 switch (operation) {
                     case Operator.OrMore:
                         if (progress >= goal) 
                             succeeded = true;
                     break;
-                    case Operator.LessThan:
-                        if (progress < goal) 
+                    case Operator.LessThanOrEqual:
+                        if (progress <= goal) 
                             succeeded = true;
                     break;
                 };

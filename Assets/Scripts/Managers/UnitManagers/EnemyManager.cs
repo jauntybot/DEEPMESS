@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 using UnityEngine.U2D;
 
@@ -255,8 +253,11 @@ public class EnemyManager : UnitManager {
             yield return StartCoroutine(floorManager.DescendUnits(pendingUnits, this));
             
         }
-        foreach (Unit u in pendingUnits)
+        foreach (Unit u in pendingUnits) {
             units.Add(u);
+            DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
+            dp.Initialize(u, floorManager.previewManager);
+        }
         pendingUnits = new List<GridElement>();
 
         transform.parent = currentGrid.transform;
@@ -274,8 +275,7 @@ public class EnemyManager : UnitManager {
                 }    
             }
         }
-        
-        Debug.Log("Spawns: " + spawns.Count);
+
         while (!validCoord && spawns.Count > 0) {
             validCoord = true;          
             

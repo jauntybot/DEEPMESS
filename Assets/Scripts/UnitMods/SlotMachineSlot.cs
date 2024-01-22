@@ -57,7 +57,7 @@ public class SlotMachineSlot : MonoBehaviour
         index = finalIndex;
         slotSpin1.sprite = equipmentTable[index].icon;
         GetComponent<Button>().interactable = true;
-        tooltip.enabled = true; tooltip.Initialize(equipmentTable[index].name);
+        tooltip.enabled = true; tooltip.Initialize(equipmentTable[index]);
     }
 
     public void SelectSlot() {

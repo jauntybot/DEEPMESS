@@ -179,7 +179,7 @@ public class PlayerUnit : Unit {
     public override void ApplyCondition(Status s) {
         base.ApplyCondition(s);
         //ui.ToggleEquipmentButtons();
-        if (manager.scenario.floorManager.tutorial.isActiveAndEnabled)
+        if (s == Status.Restricted && !manager.scenario.floorManager.tutorial.bloodEncountered && manager.scenario.floorManager.tutorial.isActiveAndEnabled)
             manager.scenario.floorManager.tutorial.StartCoroutine(manager.scenario.floorManager.tutorial.BloodTiles());
         
     }

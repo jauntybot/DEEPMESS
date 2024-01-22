@@ -187,7 +187,6 @@ public class PlayerManager : UnitManager {
             foreach (Unit u in units) {
                 u.grid = currentGrid;
             }
-            contextuals.grid = currentGrid;
             //contextuals.DisplayGridContextuals(selectedUnit, null, GridContextuals.ContextDisplay.IconOnly, 0);
         } else
             overrideEquipment = null;
@@ -227,12 +226,8 @@ public class PlayerManager : UnitManager {
 // Unit is a target of valid action adjacency
                     if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
                         StartCoroutine(selectedUnit.ExecuteAction(u));
-                    } else {
-                        Debug.Log("select invalid");
-                        SelectUnit(u);
-                    }
+                    } 
                 } else {
-                    Debug.Log("select off");
                     SelectUnit(u);
                 }
             }
@@ -252,9 +247,7 @@ public class PlayerManager : UnitManager {
             else {
                 if (overrideEquipment && !selectedUnit) {
                     foreach(Unit _u in units) {
-                        Debug.Log(_u.coord + ", " + tile.coord);
                         if (tile.coord == _u.coord) {
-                            Debug.Log("tile clicked w/ unit");
                             SelectUnit(_u);
                         }
                     }
@@ -263,8 +256,7 @@ public class PlayerManager : UnitManager {
                     if (selectedUnit.ValidCommand(tile.coord, selectedUnit.selectedEquipment)) {
                         currentGrid.DisableGridHighlight();
                         StartCoroutine(selectedUnit.ExecuteAction(tile));
-                    } else 
-                        DeselectUnit();
+                    }
                 }
             }            
         }
@@ -273,8 +265,7 @@ public class PlayerManager : UnitManager {
                 if (selectedUnit.ValidCommand(input.coord, selectedUnit.selectedEquipment)) {
                     currentGrid.DisableGridHighlight();
                     StartCoroutine(selectedUnit.ExecuteAction(input));
-                } else
-                    DeselectUnit();
+                } 
             } else {
                 List<GridElement> list = currentGrid.CoordContents(input.coord);
                 if (list.Count > 1) {
@@ -320,7 +311,7 @@ public class PlayerManager : UnitManager {
 // No unit selected
         else if (scenario.currentTurn == ScenarioManager.Turn.Player) {
             bool hovering = false;
-            foreach (GridElement ge in currentGrid.CoordContents(pos)) {
+            foreach (GridElement ge in floorManager.currentFloor.CoordContents(pos)) {
                 if (ge is Unit u) {
                     hovering = true;
                     if (u == prevCursorTarget) break;
@@ -359,7 +350,7 @@ public class PlayerManager : UnitManager {
         if (prevCursorTarget) {
             if (pos != prevCursorTarget.coord) {
                 prevCursorTarget.TargetElement(prevCursorTargetState);
-                foreach (GridElement ge in currentGrid.CoordContents(pos)) {
+                foreach (GridElement ge in floorManager.currentFloor.CoordContents(pos)) {
                     if (!ge.targeted) {
                         prevCursorTargetState = ge.targeted;
                         ge.TargetElement(true);
@@ -374,7 +365,7 @@ public class PlayerManager : UnitManager {
             }
 // first grid mouseOver if cursor not on grid
         } else if (!hoveredUnit) {
-            foreach(GridElement ge in currentGrid.CoordContents(pos)) {
+            foreach(GridElement ge in floorManager.currentFloor.CoordContents(pos)) {
                 if (!ge.targeted) {
                     prevCursorTargetState = ge.targeted;
                     ge.TargetElement(true);
@@ -537,7 +528,6 @@ public class PlayerManager : UnitManager {
                 units[i].RemoveCondition(Unit.Status.Immobilized);
         }
         currentGrid = newGrid;
-        contextuals.grid = newGrid;
         transform.parent = newGrid.transform;
         transform.SetSiblingIndex(3);
     }

@@ -319,7 +319,6 @@ public static class EquipmentAdjacency {
                     occupied = true;
 // Valid coord if element is not filtered
                     if (filters == null || !filters.Find(f => f.GetType() == ge.GetType())) {
-                        Debug.Log("valid, " + filters.Count + ge.GetType());
                         _coords.Add(coord);
 // Valid coord if element is target, but stops frontier
                     } else if (targetLast != null) {

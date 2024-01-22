@@ -12,7 +12,12 @@ public class GameUnitFrame : MonoBehaviour {
         friendlyFrame.SetActive(friendly);
         enemyFrame.SetActive(!friendly);
         Image gear = friendly ? friendlyGear : enemyGear;
-        
+        if (!friendly) {
+            EnemyUnit e = (EnemyUnit)ge;
+            EquipmentData data = e.equipment[1];
+            GetComponentInChildren<TooltipEquipmentTrigger>().Initialize(data);
+            gear.sprite = data.icon;
+        }
     }
 
 }

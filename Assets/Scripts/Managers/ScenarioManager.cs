@@ -90,13 +90,21 @@ public class ScenarioManager : MonoBehaviour
                 List<GridElement> unitsToDrop = new();
                 for (int i = prevEnemy.units.Count - 1; i >= 0; i--)
                     unitsToDrop.Add(prevEnemy.units[i]);
+                foreach (Unit u in player.units) {
+                    if (u is not PlayerUnit && u is not Nail)
+                        unitsToDrop.Add(u);
+                }
                 yield return StartCoroutine(floorManager.DescendUnits(unitsToDrop, prevEnemy, true));
             }
             player.units[3].grid = floorManager.currentFloor;
             yield return StartCoroutine(PlayerEnter());
-            List<GridElement> units = new List<GridElement>{ player.units[0], player.units[1], player.units[2], player.units[3] };
+            List<GridElement> units = new();
+            foreach (Unit u in player.units) {
+                if (u is PlayerUnit || u is Nail)
+                    units.Add(u);
+            }
             if (floorManager.floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && !floorManager.bossSpawn)
-                units.RemoveAt(3);
+                units.Remove(player.nail);
             
             yield return StartCoroutine(floorManager.DescendUnits(units));
             if (floorManager.floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && !floorManager.bossSpawn) {
@@ -219,8 +227,12 @@ public class ScenarioManager : MonoBehaviour
                 }
                 currentTurn = Turn.Descent;
                 player.StartEndTurn(false);
-                if (uiManager.gameObject.activeSelf)
-                    yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Descent));
+                if (uiManager.gameObject.activeSelf) {
+                    if (floorManager.floorCount == floorManager.floorSequence.activePacket.packetLength)
+                        yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.FinalDescent));
+                    else
+                        yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Descent));
+                }
             break;
             case Turn.Cascade:
                 currentTurn = Turn.Cascade;
@@ -228,7 +240,7 @@ public class ScenarioManager : MonoBehaviour
                 floorManager.previewManager.alignmentFloor = floorManager.currentFloor;
                 player.StartEndTurn(true, true);
                 foreach (Unit u in player.units) {
-                    if (u is not Nail) {
+                    if (u is PlayerUnit) {
                         u.energyCurrent = 0;
                         u.elementCanvas.UpdateStatsDisplay();
                         u.ui.UpdateEquipmentButtons();
@@ -259,8 +271,7 @@ public class ScenarioManager : MonoBehaviour
     }
 
     public IEnumerator FinalDrop() {
-        yield return new WaitForSecondsRealtime(1.5f);
-        yield return StartCoroutine(floorManager.DropNail(player.nail));
+        yield return new WaitForSecondsRealtime(1f);
         yield return StartCoroutine(floorManager.FinalDescent());
     }
 
@@ -268,9 +279,10 @@ public class ScenarioManager : MonoBehaviour
         scenario = Scenario.EndState;
         yield return StartCoroutine(gpOptional.WhatsAhead());
         if (uiManager.gameObject.activeSelf) {
-            yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Win));
             uiManager.ToggleBattleCanvas(false);
+            yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Win));
         }
+        objectiveManager.ClearObjectives();
         yield return new WaitForSecondsRealtime(1.25f);
         runDataTracker.UpdateAndDisplay(true, floorManager.currentFloor.index + 1, player.defeatedEnemies);
     }
@@ -286,7 +298,7 @@ public class ScenarioManager : MonoBehaviour
             uiManager.ToggleBattleCanvas(false);
         }
         yield return StartCoroutine(player.RetrieveNailAnimation());
-
+        objectiveManager.ClearObjectives();
         runDataTracker.UpdateAndDisplay(false, floorManager.currentFloor.index + 1, player.defeatedEnemies);
     }
 }

@@ -88,7 +88,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
 
         header = "OBJECTIVES";
         body = "Hope you <b>" + ColorToRichText("nailed those objectives", keyColor) + "</b>. Use any nuggets you bagged to power up, squish. Apply 'em to <b>" + ColorToRichText("Slags", keyColor) + "</b> or even the <b>" + ColorToRichText("Hammer", keyColor) + "</b>. Make those Slags sing.";
-        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ bulbAnim });
+        tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);

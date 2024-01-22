@@ -34,7 +34,7 @@ public class EquipmentButton : MonoBehaviour {
             icon.sprite = data.icon;
         tooltip = GetComponentInChildren<TooltipEquipmentTrigger>();
         if (tooltip)
-            tooltip.Initialize(d.name);
+            tooltip.Initialize(d);
 
         button.animator.keepAnimatorStateOnDisable = true;
             

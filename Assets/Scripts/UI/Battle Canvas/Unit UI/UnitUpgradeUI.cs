@@ -8,7 +8,7 @@ public class UnitUpgradeUI : UnitUI {
 
     [SerializeField] Image gearIcon;
     public UpgradeManager upgrade;
-    SlagEquipmentData equip;
+    public SlagEquipmentData equip;
     public HPPips hpPips;
     [SerializeField] Button upgradeButton;
     [SerializeField] GameObject nuggetPrefab;
@@ -67,7 +67,7 @@ public class UnitUpgradeUI : UnitUI {
 
         activeParticle = path;
         string mod = "";
-        if (equip.totalUpgrades < 3 || equip.upgrades[path] < 2) {
+        if (equip.orderedUpgrades.Count < 3 || equip.upgrades[path] < 2) {
             previewParticle = Instantiate(nuggetPrefab, CurrentSlot().transform);
             Image nugget = previewParticle.GetComponentInChildren<Image>();
             nugget.color = new Color(nugget.color.r, nugget.color.g, nugget.color.b, 0.6f);
@@ -86,6 +86,7 @@ public class UnitUpgradeUI : UnitUI {
                     anim.SetInteger("Color", 2);
                 break;
             }
+            anim.keepAnimatorStateOnDisable = true;
         } else mod = "MAX UPGRADES";
 
         string no = "I";

@@ -18,8 +18,7 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public RuntimeAnimatorController anim;
 
-    public virtual void OnPointerEnter(PointerEventData eventData)
-    {
+    public virtual void OnPointerEnter(PointerEventData eventData) {
         if (location == Location.BottomLeft)
             TooltipSystem.ShowBL(this);
         else

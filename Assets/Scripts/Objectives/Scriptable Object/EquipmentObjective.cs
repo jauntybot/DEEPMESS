@@ -10,9 +10,9 @@ public class EquipmentObjective : Objective {
     [SerializeField] ObjectiveType objectiveType;
 
 
-    public override void Init() {
-        base.Init();
+    public override Objective Init(SlagEquipmentData.UpgradePath path) {
         ObjectiveEventManager.AddListener<OnEquipmentUse>(OnEquipmentUse);
+        return base.Init(path);
     }
 
 

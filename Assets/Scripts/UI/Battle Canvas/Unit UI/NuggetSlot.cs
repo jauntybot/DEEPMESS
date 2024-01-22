@@ -16,6 +16,7 @@ public class NuggetSlot : MonoBehaviour {
         filled = true;
         sparks.SetActive(true);
         filledSFX.SetActive(true);
+        filledSFX.GetComponent<AudioSource>().playOnAwake = false;
     }
 
     

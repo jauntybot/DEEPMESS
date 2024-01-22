@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class MessagePanel : MonoBehaviour
 {
  
-    public enum Message { Slag, Antibody, Descent, Cascade, Position, Win, Lose } ;
+    public enum Message { Slag, Antibody, Descent, FinalDescent, Cascade, Position, Win, Lose } ;
 
     public Animator anim;
     [Header("Old Anim")]
@@ -36,6 +36,9 @@ public class MessagePanel : MonoBehaviour
             break;
             case Message.Descent:
                 trigger = "Descent";
+            break;
+            case Message.FinalDescent:
+                trigger = "FinalDescent";
             break;
             case Message.Cascade:
                 trigger = "Cascade";

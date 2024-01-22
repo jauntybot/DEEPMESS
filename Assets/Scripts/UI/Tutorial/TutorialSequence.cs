@@ -84,11 +84,16 @@ public class TutorialSequence : MonoBehaviour {
         scenario.player.units[2].EnableSelection(false);
         scenario.player.units.RemoveAt(1); scenario.player.units.RemoveAt(1);
 
+        UIManager.instance.peekButton.enabled = false;
+        UIManager.instance.peekButton.animator.GetComponent<Animator>().SetBool("Tut", true);
+        UIManager.instance.endTurnButton.enabled = false;
+        UIManager.instance.endTurnButton.GetComponent<Animator>().SetBool("Tut", true);
+
+
         floorManager.currentFloor.RemoveElement(scenario.player.units[1]);
         yield return StartCoroutine(floorManager.DescendUnits(new List<GridElement>{ scenario.player.units[1] }));
 
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Animator>().SetTrigger("Disabled");
-        //foreach (Unit unit in scenario.player.units) unit.gameObject.SetActive(false);
         yield return new WaitForSecondsRealtime(0.5f);
         scenario.player.nail.ToggleNailState(Nail.NailState.Primed);
         yield return new WaitForSecondsRealtime(1.25f);
@@ -116,8 +121,6 @@ public class TutorialSequence : MonoBehaviour {
         yield return new WaitForSecondsRealtime(0.5f);
         yield return StartCoroutine(HittingTheNail());
         
-        
-
         while (descents < 1) yield return null;
 // yield Descent 1
         yield return StartCoroutine(DiggingDown());
@@ -129,15 +132,17 @@ public class TutorialSequence : MonoBehaviour {
         yield return new WaitForSecondsRealtime(1.25f);
         yield return StartCoroutine(NailPriming());
 
-        Coroutine co = StartCoroutine(AttackingEnemies());
+        StartCoroutine(AttackingEnemies());
+        while (scenario.currentTurn != ScenarioManager.Turn.Enemy) yield return null;
+        while (scenario.currentTurn != ScenarioManager.Turn.Player) yield return null;
+        yield return StartCoroutine(PeekHeadsUp());
 
         while (descents < 2) yield return null;
 // Descent 2
-        StopCoroutine(co);
         
         yield return StartCoroutine(scenario.messagePanel.PlayMessage(MessagePanel.Message.Antibody));
         yield return StartCoroutine(EnemyTurn());
-        yield return new WaitForSecondsRealtime(0.75f);
+        yield return new WaitForSecondsRealtime(1.25f);
 
         yield return StartCoroutine(Equipment());
         //yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
@@ -332,9 +337,8 @@ public class TutorialSequence : MonoBehaviour {
         while (true) {
             yield return null;
             if (scenario.player.units[0].energyCurrent == 0 || scenario.player.units[1].energyCurrent == 0) {
-                Debug.Log("AP trigger");
                 break;
-            } else if (scenario.player.units[0].moved && (scenario.player.units[0].coord.x != scenario.currentEnemy.units[0].coord.x || scenario.player.units[0].coord.y != scenario.currentEnemy.units[0].coord.y) && !oopsies)
+            } else if (scenario.player.units[0].moved && scenario.player.units[0].coord.x != scenario.currentEnemy.units[0].coord.x && scenario.player.units[0].coord.y != scenario.currentEnemy.units[0].coord.y && !oopsies)
                 yield return StartCoroutine(Oopsies(2));
 
         }
@@ -380,12 +384,6 @@ public class TutorialSequence : MonoBehaviour {
         UIManager.instance.canvasAnim.SetTrigger("TutEndTurn");
         UIManager.instance.canvasAnim.SetBool("Active", true);
 
-        UIManager.instance.peekButton.GetComponent<Animator>().SetBool("Tut", false);
-        UIManager.instance.peekButton.enabled = true;
-        peekHighlight = Instantiate(buttonHighlight, peekButton);
-        peekHighlight.transform.SetSiblingIndex(0); peekHighlight.transform.localPosition = Vector3.zero; peekHighlight.GetComponent<Animator>().SetBool("Active", true);
-        peekHighlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
-
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
@@ -415,26 +413,12 @@ public class TutorialSequence : MonoBehaviour {
 
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().enabled = true;
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Animator>().SetBool("Tut", false);
-        scenario.player.units[0].ui.equipButtons[0].GetComponent<TooltipEquipmentTrigger>().enabled = false;
+        scenario.player.units[0].ui.equipButtons[0].GetComponent<TooltipEquipmentTrigger>().enabled = true;
         scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().enabled = true;
         scenario.player.units[1].ui.equipButtons[0].GetComponent<Animator>().SetBool("Tut", false);
         scenario.player.units[1].ui.equipButtons[0].GetComponent<TooltipEquipmentTrigger>().enabled = true;
-        
-
-        // GameObject highlight = Instantiate(buttonHighlight, scenario.player.units[2].ui.equipButtons[0].button.transform);
-        // highlight.transform.parent.transform.parent.transform.parent.transform.parent.gameObject.SetActive(true);
-        // highlight.transform.SetSiblingIndex(0); highlight.transform.localPosition = Vector3.zero; highlight.GetComponent<Animator>().SetBool("Active", true);
-        // highlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
-        // highlight.transform.parent.transform.parent.transform.parent.transform.parent.gameObject.SetActive(false);
-        // StartCoroutine(OnShieldUse(highlight));
     }
 
-    // public IEnumerator OnShieldUse(GameObject highlight) {
-    //     Debug.Log(floorManager.currentFloor);
-    //     while (scenario.player.units[2].energyCurrent > 0 && floorManager.currentFloor.index == 2) yield return null;
-    //     Destroy(highlight);
-
-    // }
     public IEnumerator EnemyBehavior() {
         screenFade.gameObject.SetActive(true);
 
@@ -490,11 +474,33 @@ public class TutorialSequence : MonoBehaviour {
         CheckAllDone();
     }
 
+    IEnumerator PeekHeadsUp() {
+        UIManager.instance.peekButton.enabled = true;
+        UIManager.instance.peekButton.animator.GetComponent<Animator>().SetBool("Tut", false);
+
+        screenFade.gameObject.SetActive(true);
+        header = "PEEK AHEAD";
+        body = "Listen up, squish, this is <b>" + ColorToRichText("important", keyColor) + "</b>. Now that the nail's primed, use the <b>" + ColorToRichText("peek button", keyColor) + "</b>. Big ol' eye in the <b>" + ColorToRichText("bottom right", keyColor) + "</b>.";
+        brTooltip.SetText(body, header, true);
+
+        while (!brTooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+        }
+
+        peekHighlight = Instantiate(buttonHighlight, peekButton);
+        peekHighlight.transform.SetSiblingIndex(0); peekHighlight.transform.localPosition = Vector3.zero; peekHighlight.GetComponent<Animator>().SetBool("Active", true);
+        peekHighlight.GetComponent<Animator>().keepAnimatorStateOnDisable = true;
+
+        screenFade.SetTrigger("FadeOut");
+        brTooltip.transform.GetChild(0).gameObject.SetActive(false);
+    
+    }
+
     public IEnumerator PeekButton() {
         if (peekHighlight)
             Destroy(peekHighlight);
-        header = "PEEK AHEAD";
-        body = "<b>" + ColorToRichText("Peek button", keyColor) + "</b>, big ol' eye in the <b>" + ColorToRichText("bottom right", keyColor) + "</b>. Use it. <b>" + ColorToRichText("Preview the next floor", keyColor) + "</b>—enemies, hazards, the works. It helps to know what's comin'." + '\n';
+        header = "PEEK BUTTON";
+        body = "This let's you <b>" + ColorToRichText("preview the next floor", keyColor) + "</b>—enemies, hazards, the works. Most importantly, where units on the current floor will <b>" + ColorToRichText("fall below", keyColor) + "</b>. Look before you leap, squish." + '\n';
         brTooltip.SetText(body, header, true);
 
         while (!brTooltip.skip) {
@@ -530,12 +536,6 @@ public class TutorialSequence : MonoBehaviour {
         if (trigger == 2) {
             UIManager.instance.canvasAnim.SetTrigger("TutEndTurn");
         }
-        //UIManager.instance.peekButton.interactable = false;
-        UIManager.instance.peekButton.enabled = false;
-        //UIManager.instance.endTurnButton.interactable = false;
-        UIManager.instance.endTurnButton.enabled = false;
-        UIManager.instance.endTurnButton.GetComponent<Animator>().SetBool("Tut", true);
-        UIManager.instance.peekButton.animator.GetComponent<Animator>().SetBool("Tut", true);
 
         undoHighlight = Instantiate(buttonHighlight, undoButton);
         undoHighlight.transform.SetSiblingIndex(0); undoHighlight.transform.localPosition = Vector3.zero; undoHighlight.GetComponent<Animator>().SetBool("Active", true);
@@ -547,15 +547,16 @@ public class TutorialSequence : MonoBehaviour {
     }
 
     public IEnumerator UndoTutorial() {
-        if (undoHighlight)
-            Destroy(undoHighlight);
-        header = "UNDO BUTTON";
-        body = "Slags got an <b>" + ColorToRichText("Undo button", keyColor) + "</b>. Move around and reset, but once you take an action, no backtracking. Think ahead, squish." + '\n';
-        brTooltip.SetText(body, header, true);
+        if (header != "UNDO BUTTON") {
+            if (undoHighlight)
+                Destroy(undoHighlight);
+            header = "UNDO BUTTON";
+            body = "Slags got an <b>" + ColorToRichText("Undo button", keyColor) + "</b>. Move around and reset, but once you take an action, no backtracking. Think ahead, squish." + '\n';
+            brTooltip.SetText(body, header, true);
 
-        while (!brTooltip.skip) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-            
+            while (!brTooltip.skip) {
+                yield return new WaitForSecondsRealtime(1/Util.fps);
+            }
         }
 
         undoEncountered = true;
@@ -688,6 +689,7 @@ public class TutorialSequence : MonoBehaviour {
             break;
             default:
                 EnemyManager enemy = (EnemyManager)floorManager.currentFloor.enemy;
+                PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
                 yield return StartCoroutine(floorManager.TransitionPackets(enemy));
             break;
         }
