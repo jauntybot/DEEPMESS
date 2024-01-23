@@ -10,6 +10,8 @@ public class PersistentMenu : MonoBehaviour
     ScenarioManager scenario;
     public MusicController musicController;
     public PauseMenu pauseMenu;
+    public int targetFPS;
+    [SerializeField] int fps;
     TooltipSystem toolTips;
     private bool tooltipToggle = true;
     [SerializeField] AudioMixer mixer;
@@ -40,6 +42,10 @@ public class PersistentMenu : MonoBehaviour
         musicSlider.onValueChanged.AddListener(SetMusicVolume);
         sfxSlider.onValueChanged.AddListener(SetSFXVolume);
 
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = targetFPS;
+        InvokeRepeating("GetFPS", 1, 1);
+
         // float init;
         // mixer.GetFloat(MIXER_MUSIC, out init); 
         // musicSlider.value = Mathf.Log(init)/20;
@@ -49,6 +55,10 @@ public class PersistentMenu : MonoBehaviour
         Time.timeScale = 1;
 
         SceneManager.sceneLoaded += UpdateRefs;
+    }
+
+    void GetFPS() {
+        fps = (int) (1f / Time.unscaledDeltaTime);
     }
 
     void UpdateRefs(Scene scene = default, LoadSceneMode mode = default) {
@@ -81,6 +91,7 @@ public class PersistentMenu : MonoBehaviour
             else
                 musicController.SwitchMusicState(MusicController.MusicState.Game, false);
         }
+        Debug.Log("Scene loaded, music init");
         if (TooltipSystem.instance)
             toolTips = TooltipSystem.instance;
         

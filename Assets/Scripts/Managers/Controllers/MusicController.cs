@@ -19,15 +19,16 @@ public class MusicController : MonoBehaviour {
     // [Header("Text UI")]
     // [SerializeField] private TMP_Text trackTextUI;
     
-    AudioSource musicAudioSource;
-    Coroutine playingCo = null;
-
-    void Awake() {
-        musicAudioSource = GetComponent<AudioSource>();
-    }
+    [SerializeField] AudioSource[] audioSources;
+    [SerializeField] int sourceIndex = 0;
+    double trackDur;
+    double loopPt;
+    bool loop = false;
 
     public void SwitchMusicState(MusicState state, bool fade) {
+        loop = false;
         StartCoroutine(UpdateTracklist(state, fade));
+        Debug.Log("Switch music state");
     }
 
     public IEnumerator UpdateTracklist(MusicState targetState, bool fade) {
@@ -40,7 +41,7 @@ public class MusicController : MonoBehaviour {
         if (targetState == MusicState.Tutorial) {
             playing = false;
             delay = recordScratch.Get().length;
-            musicAudioSource.PlayOneShot(recordScratch.Get());
+            audioSources[sourceIndex].PlayOneShot(recordScratch.Get());
         }
         yield return new WaitForSecondsRealtime(delay);
 
@@ -54,67 +55,47 @@ public class MusicController : MonoBehaviour {
         stateTracks = new();
         stateTracks = _stateTracks;
 
-        UpdateTrack(0);
-    }
-
-
-    public void PlayAudio() {
- 
-    }
-
-
-    public IEnumerator StopAudio(bool fade) {      
-        playing = false;
-        float prevVol = musicAudioSource.volume;
-        if (fade) {
-            Debug.Log("Fade start");
-            float timer = 0;
-            while (timer < 1.5f) {
-                musicAudioSource.volume = prevVol - fadeOut.Evaluate(timer / 1.5f);
-                yield return new WaitForSecondsRealtime(1/Util.fps);
-                timer += Time.deltaTime;
-            }
-            Debug.Log("Fade done");
+        loopPt = AudioSettings.dspTime;
+        yield return StartCoroutine(QueueTrack());
+        loop = true;
+        while (loop) {
+            if (AudioSettings.dspTime > loopPt - 1)
+                yield return StartCoroutine(QueueTrack());
+            yield return null;
         }
-        musicAudioSource.volume = prevVol;
-        musicAudioSource.Stop();
     }
-    
 
-    public void SkipForward() {    
+    IEnumerator QueueTrack() {
         if (stateTrackIndex < stateTracks.Count - 1)     
             stateTrackIndex++;      
         else 
             stateTrackIndex = 0;
         
-        UpdateTrack(stateTrackIndex);
+        audioSources[sourceIndex].clip = stateTracks[stateTrackIndex].trackAudioClip;
+        audioSources[sourceIndex].PlayScheduled(loopPt);
+        Debug.Log("Playing: " + stateTracks[stateTrackIndex]);
+
+        trackDur = (double)stateTracks[stateTrackIndex].trackAudioClip.samples / stateTracks[stateTrackIndex].trackAudioClip.frequency;
+        loopPt = loopPt + trackDur;
+
+        sourceIndex = 1 - sourceIndex;
+        yield return null;
+    }    
+
+    public IEnumerator StopAudio(bool fade) {      
+        playing = false;
+        float prevVol = audioSources[sourceIndex].volume;
+        if (fade) {
+            Debug.Log("Fade start");
+            float timer = 0;
+            while (timer < 1.5f) {
+                audioSources[sourceIndex].volume = prevVol - fadeOut.Evaluate(timer / 1.5f);
+                yield return new WaitForSecondsRealtime(1/Util.fps);
+                timer += Time.deltaTime;
+            }
+            Debug.Log("Fade done");
+        }
+        audioSources[sourceIndex].volume = prevVol;
+        audioSources[sourceIndex].Stop();
     }
-
-    void UpdateTrack(int index = 0) {
-        musicAudioSource.Stop();
-        musicAudioSource.clip = stateTracks[index].trackAudioClip;
-        Debug.Log("Playing: " + stateTracks[index]);
-        //trackTextUI.text = audioTracks[index].name;
-        
-        musicAudioSource.Play();
-        Invoke("SkipForward", musicAudioSource.clip.length);
-    }
-
-    // public void SkipBack()
-    // {
-    //     StopAllCoroutines();
-    //     if (trackIndex >= 1)
-    //     {
-    //         trackIndex--;  
-    //     } else {
-    //         trackIndex = audioTracks.Length - 1;
-    //     }
-    
-    //     UpdateTrack(trackIndex);
-    // }
-
-    // public void AudioVolume(float musicVolume)
-    // {
-    //     musicAudioSource.volume = musicVolume;
-    // }
 }

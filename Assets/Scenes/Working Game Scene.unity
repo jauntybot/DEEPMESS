@@ -269,7 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d64f48789156914a84bdb0ab37b0e01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollSpeed: {x: 0, y: 0.001}
+  scrollSpeed: {x: 0, y: 0.005}
 --- !u!212 &148836118
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -10367,5 +10367,7 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1420855195885405652, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+    - {fileID: 456712697897799139, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
