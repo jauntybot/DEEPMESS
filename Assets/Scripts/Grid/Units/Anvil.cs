@@ -70,10 +70,10 @@ public class Anvil : Unit {
             foreach (Vector2 coord in aoe) {
                 if (grid.CoordContents(coord).Count > 0) {
                     foreach (GridElement ge in grid.CoordContents(coord)) {
-                        if (ge is Unit tu && ge != this) {
+                        if ((ge is Unit || ge is Wall) && ge != this) {
 // POWER TIER II - Remove friendly fire
-                            if (!(ge is PlayerUnit && data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 2))
-                                affectedCo.Add(tu.StartCoroutine(tu.TakeDamage(dmg, DamageType.Explosion, this, data)));                        
+                            if (!((ge is PlayerUnit || ge is Nail) && data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 2))
+                                affectedCo.Add(ge.StartCoroutine(ge.TakeDamage(dmg, DamageType.Explosion, this, data)));                        
                         }
                     }
                 }

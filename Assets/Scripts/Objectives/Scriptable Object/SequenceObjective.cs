@@ -70,7 +70,10 @@ public class SequenceObjective : Objective {
 
 // Floors no damage
     protected virtual void NoDamageDescentCheck(GridElementDamagedEvent evt) {
-        if (evt.element is PlayerUnit || evt.element is Nail) floorFailed = true;
+        if (evt.element is PlayerUnit || evt.element is Nail) {
+            floorFailed = true;
+            progress = 0;
+        }
     }
 
     protected virtual void NoDamageDescentCheck(FloorDescentEvent evt) {

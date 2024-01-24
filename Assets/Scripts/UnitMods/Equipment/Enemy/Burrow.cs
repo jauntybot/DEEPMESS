@@ -43,35 +43,35 @@ public class Burrow : EquipmentData {
         sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
         List<Vector2> aoe = EquipmentAdjacency.GetAdjacent(user.coord, range, this, targetTypes);
         List<Coroutine> affectedCo = new();
-        List<Unit> affectedU = new();
-        List<Unit> thornSources = new();
+        List<GridElement> affected = new();
+        List<GridElement> thornSources = new();
         int thornDmg = 0;
         foreach (Vector2 coord in aoe) {
             if (user.grid.CoordContents(coord).Count > 0) {
                 foreach (GridElement ge in user.grid.CoordContents(coord)) {
-                    if (ge is Unit tu && ge != user) {
-                        affectedU.Add(tu);
-                        if (tu is Nail) {
+                    if ((ge is Unit || ge is Wall) && ge != user) {
+                        affected.Add(ge);
+                        if (ge is Nail) {
                             thornDmg++;
-                            if (!thornSources.Contains(tu))
-                                thornSources.Add(tu);
+                            if (!thornSources.Contains(ge))
+                                thornSources.Add(ge);
                         }
-                        if (tu.shield && tu.shield.thorns) {
+                        if (ge.shield && ge.shield.thorns) {
                             thornDmg++;
-                            if (!thornSources.Contains(tu))
-                                thornSources.Add(tu);
+                            if (!thornSources.Contains(ge))
+                                thornSources.Add(ge);
                         }                                
                     }
                 }
             }
         }
         if (thornDmg > 0) {
-            foreach (Unit u in thornSources) 
-                affectedCo.Add(user.StartCoroutine(user.TakeDamage(thornDmg/thornSources.Count, GridElement.DamageType.Melee, u, u.shield ? u.shield.data : null)));
+            foreach (GridElement ge in thornSources) 
+                affectedCo.Add(user.StartCoroutine(user.TakeDamage(thornDmg/thornSources.Count, GridElement.DamageType.Melee, ge, ge.shield ? ge.shield.data : null)));
         }
         
-        foreach (Unit u in affectedU) 
-            affectedCo.Add(u.StartCoroutine(u.TakeDamage(dmg)));
+        foreach (GridElement ge in affected) 
+            affectedCo.Add(ge.StartCoroutine(ge.TakeDamage(dmg)));
         
         
         for (int i = affectedCo.Count - 1; i >= 0; i--) {

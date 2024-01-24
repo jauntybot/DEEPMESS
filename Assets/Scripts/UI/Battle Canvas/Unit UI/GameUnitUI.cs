@@ -67,6 +67,8 @@ public class GameUnitUI : UnitUI {
     void UpdatePips() {
         emptyPips.SetInteger("Count", unit.hpMax);
         hpPips.SetInteger("Count", unit.hpCurrent);
+        if (overview)   
+            overview.UpdateOverview(unit.hpCurrent);
     }
 
     void UpdateBulb() {

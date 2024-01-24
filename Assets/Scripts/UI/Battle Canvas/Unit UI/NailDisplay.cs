@@ -23,6 +23,7 @@ public class NailDisplay : UnitOverview
     }
 
     public override void UpdateOverview(int value) {
+        Debug.Log("nail pips: " + value);
         Nail n = (Nail)unit;
         switch (n.nailState) {
             default: break;
@@ -39,12 +40,12 @@ public class NailDisplay : UnitOverview
             break;
         }
 
-        UpdatePips();    
+        UpdatePips(value);    
     }
 
-    void UpdatePips() {
+    void UpdatePips(int value) {
         emptyPips.SetInteger("Count", unit.hpMax);
-        hpPips.SetInteger("Count", unit.hpCurrent);
+        hpPips.SetInteger("Count", value);
     }
 
 }
