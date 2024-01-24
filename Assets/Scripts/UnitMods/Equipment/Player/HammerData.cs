@@ -183,7 +183,7 @@ public class HammerData : SlagEquipmentData {
 
 // Throw hammer at first target
         if (target != null) 
-            yield return user.StartCoroutine(ThrowHammer(user, target, result => hammerPos = result, co1 => targetCo = co1, Color32 => pushCo = Color32));
+            yield return user.StartCoroutine(ThrowHammer(user, passTo, target, result => hammerPos = result, co1 => targetCo = co1, Color32 => pushCo = Color32));
 
         if (throwSFX)
             user.PlaySound(throwSFX);
@@ -225,7 +225,7 @@ public class HammerData : SlagEquipmentData {
             yield return targetCo;
     }
 
-    IEnumerator ThrowHammer(Unit user, GridElement target, Action<Vector2> hammerPos, Action<Coroutine> dmgCo, Action<Coroutine> pushCo) {
+    IEnumerator ThrowHammer(Unit user, Unit passTo, GridElement target, Action<Vector2> hammerPos, Action<Coroutine> dmgCo, Action<Coroutine> pushCo) {
         Vector2 prevCoord = user.coord;
         if (target.gfx[0].sortingOrder > user.gfx[0].sortingOrder)
                 hammer.GetComponentInChildren<SpriteRenderer>().sortingOrder = target.gfx[0].sortingOrder;
@@ -249,7 +249,7 @@ public class HammerData : SlagEquipmentData {
             Instantiate(vfx, user.grid.PosFromCoord(target.coord) + new Vector3(0, 1, 0), Quaternion.identity);
             int dmg = 1;
 // PWER TIER I -- Deal additional damage if adjacent
-            if (target is EnemyUnit && upgrades[UpgradePath.Shunt] == 1 && (user.coord - target.coord).magnitude <= 1) {
+            if (target is EnemyUnit && upgrades[UpgradePath.Shunt] == 1 && user == passTo) {
                 dmg ++;
                 Instantiate(meleeVFX, user.grid.PosFromCoord(target.coord), Quaternion.identity);
                 target.PlaySound(meleeSFX);

@@ -40,7 +40,7 @@ public class FloorManager : MonoBehaviour {
     public Coroutine floating;
     [SerializeField] ParallaxImageScroll parallax;
     public DescentPreviewManager previewManager;
-    [SerializeField] Animator cavityText;
+    [SerializeField] SFX cavityTransition;
 
     public delegate void OnFloorAction();
     public virtual event OnFloorAction DescendingUnits;
@@ -715,6 +715,7 @@ public class FloorManager : MonoBehaviour {
         }
 
 // Lerp units offscreen
+        scenario.player.nail.PlaySound(cavityTransition);
         if (floorSequence.currentThreshold != FloorPacket.PacketType.BARRIER) {
             StopCoroutine(floating);
             timer = 0;
@@ -746,25 +747,30 @@ public class FloorManager : MonoBehaviour {
                 fade.AlphaSelf = 0;
             }
             
-            // units[0].manager.transform.parent = floors[currentFloor.index - 1].transform;
-            // units[3].transform.parent = currentFloor.transform;
-
-            timer = 0;
-            while (timer <= 0.5f) {
-                parallax.ScrollParallax(Time.deltaTime * -1);
-                timer += Time.deltaTime;
-                yield return null;
-            }
-
 // Enter new cavity
-            uiManager.ToggleBattleCanvas(true);
-            
+            timer = 0;
+            float scroll;
+            startPos = new Vector3(0, -15, 0);
+            Vector3 endPos = floorParent.transform.position;
+            floorParent.transform.position = startPos;
+
             GenerateFloor(null, true);
             scenario.player.transform.parent = currentFloor.transform;
             GenerateFloor();
-            
             floorCount = 1;
             UpdateFloorCounter(floorSequence.activePacket.packetLength);
+
+            while (timer <= 0.5f) {
+                scroll = Mathf.Lerp(-1, 0, dropCurve.Evaluate(timer/0.5f));
+                floorParent.transform.position = Vector3.Lerp(startPos, endPos, dropCurve.Evaluate(timer/0.5f));
+                parallax.ScrollParallax(Time.deltaTime * scroll);
+                timer += Time.deltaTime;
+                yield return null;
+            }
+            floorParent.transform.position = Vector3.zero;
+            
+            uiManager.ToggleBattleCanvas(true);
+
 
             descending = false;
             yield return scenario.StartCoroutine(scenario.FirstTurn(lastFloorEnemey));

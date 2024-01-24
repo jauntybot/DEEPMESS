@@ -185,9 +185,9 @@ public class BigGrabData : SlagEquipmentData {
         if (targetPath ==  UpgradePath.Sludge) {
             if (upgrades[targetPath] == 1) {
                 slag.hpMax ++;
-                slag.hpCurrent ++;
                 slag.elementCanvas.InstantiateMaxPips();
                 slag.ui.overview.hPPips.InstantiateMaxPips();
+                slag.TakeDamage(-1, GridElement.DamageType.Heal);
             }
         } else if (targetPath == UpgradePath.Shunt) {
             if (upgrades[targetPath] == 0) {
@@ -197,9 +197,9 @@ public class BigGrabData : SlagEquipmentData {
                 range = 3;
             } else if (upgrades[targetPath] == 1) {
                 slag.hpMax ++;
-                slag.hpCurrent ++;
                 slag.elementCanvas.InstantiateMaxPips();
                 slag.ui.overview.hPPips.InstantiateMaxPips();
+                slag.TakeDamage(-1, GridElement.DamageType.Heal);
 
                 range += 2;
             } else if (upgrades[targetPath] == 2) {
