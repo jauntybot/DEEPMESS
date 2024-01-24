@@ -11,17 +11,12 @@ public class DebuffBulbData : BulbEquipmentData
     public DebuffType debuffType;
 
 
-    public override List<Vector2> TargetEquipment(GridElement user, int mod = 0)
-    {
-
-
+    public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         return base.TargetEquipment(user, mod);
-
 
     }
 
-    public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
-    {
+    public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         yield return base.UseEquipment(user, target);
 
         switch (debuffType) {
@@ -37,10 +32,8 @@ public class DebuffBulbData : BulbEquipmentData
                     }
                     if (user.grid.CoordContents(coord).Count > 0) {
                         foreach (GridElement ge in user.grid.CoordContents(coord)) {
-                            if (ge is Unit u && ge is not Anvil) {
-                                u.ApplyCondition(Unit.Status.Weakened);
-                                if (ge != target) {
-                                }
+                            if (ge is Unit u && ge is not Anvil && ge is not Nail) {
+                                u.ApplyCondition(Unit.Status.Stunned);
                             }
                         }
                     }

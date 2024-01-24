@@ -9,8 +9,7 @@ public class BulbEquipmentData : EquipmentData
     [SerializeField] protected GameObject bulbPrefab;
     [SerializeField] SFX bulbExplodeSFX, bulbThrowSFX;
 
-    public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
-    {
+    public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         GameObject bulb = Instantiate(bulbPrefab, user.transform.position, Quaternion.identity, user.transform);
         bulb.GetComponent<SpriteRenderer>().sortingOrder = user.grid.SortOrderFromCoord(target.coord);
         
