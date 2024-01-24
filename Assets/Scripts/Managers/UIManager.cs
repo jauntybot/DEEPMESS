@@ -89,7 +89,7 @@ public class UIManager : MonoBehaviour {
     }
 
     public void LockPeekButton(bool state) {
-        peekButton.GetComponent<Button>().interactable = state ? false : scenario.floorManager.floors.Count - 1 > scenario.floorManager.currentFloor.index;
+        peekButton.GetComponent<Button>().interactable = !state && scenario.floorManager.floors.Count - 1 > scenario.floorManager.currentFloor.index;
     }
 
     public void LockHUDButtons(bool state) {

@@ -294,11 +294,17 @@ public class ScenarioManager : MonoBehaviour
         else if (currentTurn == Turn.Player)
             player.StartEndTurn(false);
         if (uiManager.gameObject.activeSelf) {
-            yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Lose));
             uiManager.ToggleBattleCanvas(false);
+            objectiveManager.gameObject.SetActive(false);
+            player.upgradeManager.gameObject.SetActive(false);
+            gpOptional.gameObject.SetActive(false);
+            if (floorManager.tutorial)
+                floorManager.tutorial.gameObject.SetActive(false);
+
+            yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Lose));
         }
         yield return StartCoroutine(player.RetrieveNailAnimation());
         objectiveManager.ClearObjectives();
-        runDataTracker.UpdateAndDisplay(false, floorManager.currentFloor.index + 1, player.defeatedEnemies);
+        runDataTracker.UpdateAndDisplay(false, floorManager.currentFloor ? floorManager.currentFloor.index + 1 : 0, player.defeatedEnemies);
     }
 }

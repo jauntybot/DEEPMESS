@@ -37,6 +37,7 @@ public class FloorManager : MonoBehaviour {
     public bool transitioning, peeking, descending;
     public int floorCount;
     bool cavityWait = false;
+    public Coroutine floating;
     [SerializeField] ParallaxImageScroll parallax;
     public DescentPreviewManager previewManager;
     [SerializeField] Animator cavityText;
@@ -693,7 +694,7 @@ public class FloorManager : MonoBehaviour {
         
 // Endlessly falling
         cavityWait = true;
-        Coroutine floating = StartCoroutine(FloatingUnits());
+        floating = StartCoroutine(FloatingUnits());
 
 
         uiManager.ToggleBattleCanvas(false);
@@ -806,32 +807,39 @@ public class FloorManager : MonoBehaviour {
     }
 
     public IEnumerator EndSequenceAnimation(GameObject arm) {
-
-        // Local params for animation
+// Local params for animation
+        float timer = 0;
         Vector3 from = floorParent.transform.position;
         Vector3 to = new(from.x, from.y - floorOffset * 5, from.z);
-        Vector3 fromScale = currentFloor.transform.localScale;
+        Vector3 fromScale = new();
+        if (currentFloor)
+            fromScale = currentFloor.transform.localScale;
         Vector3 toScale = Vector3.one * 0.75f;
+        if (!currentFloor)
+            scenario.player.transform.parent = floorParent;
 
-        float timer = 0;
         while (timer < transitionDur) {
             floorParent.transform.position = Vector3.Lerp(from, from - new Vector3(0, floorOffset), timer/transitionDur);
-            currentFloor.transform.localScale = Vector3.Lerp(fromScale, toScale, timer/transitionDur);
+            if (currentFloor) 
+                currentFloor.transform.localScale = Vector3.Lerp(fromScale, toScale, timer/transitionDur);
 
             parallax.ScrollParallax(1);
             yield return null;
             timer += Time.deltaTime;
         }
-        currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
+        if (currentFloor)
+            currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
         while (timer < transitionDur * 5) {
             floorParent.transform.position = Vector3.Lerp(from, to, timer/(transitionDur*5));
-            currentFloor.transform.localScale = Vector3.Lerp(fromScale, toScale, timer/(transitionDur*5));
+            if (currentFloor)
+                currentFloor.transform.localScale = Vector3.Lerp(fromScale, toScale, timer/(transitionDur*5));
 
             parallax.ScrollParallax(1);
             yield return null;
             timer += Time.deltaTime;
         }
-        
+        if (floating != null)
+            StopCoroutine(floating);
         timer = 0;
         Vector3 prevPos = scenario.player.nail.transform.position;
         while (timer < transitionDur * 10) {
@@ -846,7 +854,6 @@ public class FloorManager : MonoBehaviour {
         }
         scenario.player.nail.transform.localPosition = Vector3.zero;
         arm.transform.localPosition = Vector3.zero;
-        
         while (scenario.scenario == ScenarioManager.Scenario.EndState) {
             if (parallax)
                 parallax.ScrollParallax(1);

@@ -79,11 +79,12 @@ public class PlayerUnit : Unit {
             pManager.DeselectUnit();
             pManager.StartCoroutine(pManager.UnitIsActing());
         }
-        UIManager.instance.peekButton.GetComponent<Button>().interactable = false;
 // Run base coroutine
+        UIManager.instance.LockHUDButtons(true);
+
         yield return co;
 
-        UIManager.instance.peekButton.GetComponent<Button>().interactable = true;
+        UIManager.instance.LockHUDButtons(false);
         if (equip is MoveData && energyCurrent > 0) {
             grid.UpdateSelectedCursor(true, coord);
             ui.ToggleEquipmentButtons();

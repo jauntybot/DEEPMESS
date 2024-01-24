@@ -10,7 +10,7 @@ public class NuggetSlot : MonoBehaviour {
     public bool filled;
     [SerializeField] GameObject sparks, filledSFX;
     [SerializeField] GameObject popUp;
-    [SerializeField] TMP_Text titleTMP, modifierTMP;
+    public TMP_Text titleTMP, modifierTMP;
 
     public void FillSlot() {
         filled = true;

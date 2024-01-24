@@ -63,48 +63,58 @@ public class UnitUpgradeUI : UnitUI {
     }
 
     public void UpdateModifier(SlagEquipmentData.UpgradePath path) {
-        ClearModifier();
+        if (CurrentSlot()) {
+            ClearModifier();
 
-        activeParticle = path;
-        string mod = "";
-        if (equip.orderedUpgrades.Count < 3 || equip.upgrades[path] < 2) {
-            previewParticle = Instantiate(nuggetPrefab, CurrentSlot().transform);
-            Image nugget = previewParticle.GetComponentInChildren<Image>();
-            nugget.color = new Color(nugget.color.r, nugget.color.g, nugget.color.b, 0.6f);
-            Animator anim = previewParticle.GetComponentInChildren<Animator>();
-            switch (path) {
-                case SlagEquipmentData.UpgradePath.Shunt:
-                    mod = equip.upgradeStrings.powerStrings[equip.upgrades[path]];
-                    anim.SetInteger("Color", 0);
-                break;
-                case SlagEquipmentData.UpgradePath.Scab:
-                    mod = equip.upgradeStrings.specialStrings[equip.upgrades[path]];
-                    anim.SetInteger("Color", 1);
-                break;
-                case SlagEquipmentData.UpgradePath.Sludge:
-                    mod = equip.upgradeStrings.unitStrings[equip.upgrades[path]];
-                    anim.SetInteger("Color", 2);
-                break;
+            activeParticle = path;
+            string mod = "MAXED OUT";
+            if (equip.orderedUpgrades.Count < 3 || equip.upgrades[path] < 2) {
+                previewParticle = Instantiate(nuggetPrefab, CurrentSlot().transform);
+                Image nugget = previewParticle.GetComponentInChildren<Image>();
+                nugget.color = new Color(nugget.color.r, nugget.color.g, nugget.color.b, 0.6f);
+                Animator anim = previewParticle.GetComponentInChildren<Animator>();
+                switch (path) {
+                    case SlagEquipmentData.UpgradePath.Shunt:
+                        if ((equip is not HammerData && equip.upgrades[path] < 2) || (equip is HammerData && equip.upgrades[path] < 1))
+                            mod = equip.upgradeStrings.powerStrings[equip.upgrades[path]];
+                        anim.SetInteger("Color", 0);
+                    break;
+                    case SlagEquipmentData.UpgradePath.Scab:
+                        if ((equip is not HammerData && equip.upgrades[path] < 2) || (equip is HammerData && equip.upgrades[path] < 1))
+                            mod = equip.upgradeStrings.specialStrings[equip.upgrades[path]];
+                        anim.SetInteger("Color", 1);
+                    break;
+                    case SlagEquipmentData.UpgradePath.Sludge:
+                        if ((equip is not HammerData && equip.upgrades[path] < 2) || (equip is HammerData && equip.upgrades[path] < 1))
+                            mod = equip.upgradeStrings.unitStrings[equip.upgrades[path]];
+                        anim.SetInteger("Color", 2);
+                    break;
+                }
+                anim.keepAnimatorStateOnDisable = true;
             }
-            anim.keepAnimatorStateOnDisable = true;
-        } else mod = "MAX UPGRADES";
 
-        string no = "I";
-        switch(equip.upgrades[path]) {
-            default:
-            case 0: break;
-            case 1: no = "II"; break;
-            case 2: no = ""; break;
+            string no = "";
+            if (mod != "MAXED OUT") {
+                switch(equip.upgrades[path]) {
+                    default:
+                    case 0: no = "I"; break;
+                    case 1: no = "II"; break;
+                    case 2: no = ""; break;
+                }
+            }
+
+            
+            CurrentSlot().UpdateModifier(path.ToString().ToUpper() + " " + no, mod);
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+            Canvas.ForceUpdateCanvases();
         }
-
-        CurrentSlot().UpdateModifier(path.ToString().ToUpper() + " " + no, mod);
-
-        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
-        Canvas.ForceUpdateCanvases();
     }
 
     public NuggetSlot CurrentSlot() {
-        return slots[appliedUpgrades];
+        if ((equip is not HammerData && appliedUpgrades < 3) || (equip is HammerData && appliedUpgrades < 2))
+            return slots[appliedUpgrades];
+        return null;
     }
 
     public void ClearModifier(bool apply = false) {
@@ -116,9 +126,9 @@ public class UnitUpgradeUI : UnitUI {
             previewParticle = null;
         }
 
-        if (!apply) 
+        if (!apply && CurrentSlot()) 
             CurrentSlot().UpdateModifier("", "");
-        else {
+        else if (CurrentSlot()) {
             CurrentSlot().FillSlot();
             if (hpPips) {
                 hpPips.InstantiateMaxPips();

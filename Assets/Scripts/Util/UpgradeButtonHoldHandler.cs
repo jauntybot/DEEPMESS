@@ -24,7 +24,7 @@ public class UpgradeButtonHoldHandler : MonoBehaviour, IUpdateSelectedHandler, I
             if (slot.filled)
                 slot.DisplayPopup(true);
         }
-        if (ui.upgrade.selectedParticle)
+        if (ui.upgrade.selectedParticle && ui.CurrentSlot())
             ui.CurrentSlot().DisplayPopup(true);
     }
 
@@ -35,7 +35,7 @@ public class UpgradeButtonHoldHandler : MonoBehaviour, IUpdateSelectedHandler, I
     }
 
     public void OnUpdateSelected(BaseEventData data) {
-        if (ui.previewParticle) {
+        if (ui.previewParticle && ui.CurrentSlot() && ui.CurrentSlot().modifierTMP.text != "MAXED OUT") {
             if (isPressed) {
                 ProgressConfirm();
             }
@@ -44,7 +44,7 @@ public class UpgradeButtonHoldHandler : MonoBehaviour, IUpdateSelectedHandler, I
     }
 
     public void OnPointerDown(PointerEventData data) {
-        if (ui.upgrade.selectedParticle) {
+        if (ui.upgrade.selectedParticle && ui.CurrentSlot() && ui.CurrentSlot().modifierTMP.text != "MAXED OUT") {
             isPressed = true;
             confirmProg = 0;
             radialProg = ui.CurrentSlot().radialFill;

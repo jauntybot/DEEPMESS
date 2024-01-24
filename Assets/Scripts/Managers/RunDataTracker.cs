@@ -73,9 +73,9 @@ public class RunDataTracker : MonoBehaviour
     public IEnumerator FadeToScene(int index) {
         yield return new WaitForSecondsRealtime(0.25f);
         PersistentMenu.instance.FadeToBlack(true);
-        // if (index == 0) {
-        //     PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.MainMenu, true);
-        // }
+        if (index == 0) {
+            PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.MainMenu, true);
+        }
         yield return new WaitForSecondsRealtime(1f);
         SceneManager.LoadScene(index, LoadSceneMode.Single);
     }

@@ -16,5 +16,7 @@ public class ParallaxImageScroll : MonoBehaviour
 
     public void ScrollParallax(int pos) {
         _image.material.mainTextureOffset += scrollSpeed * pos;
+        if (_image.material.mainTextureOffset.y > 1 || _image.material.mainTextureOffset.y < -1 ) 
+            _image.material.mainTextureOffset = Vector2.zero;
     }
 }

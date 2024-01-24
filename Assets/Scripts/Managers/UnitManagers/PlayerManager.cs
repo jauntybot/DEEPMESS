@@ -537,13 +537,14 @@ public class PlayerManager : UnitManager {
         nail.transform.parent = floorManager.transitionParent;
         Animator anim = arm.GetComponentInChildren<Animator>();
 
-        arm.transform.position = currentGrid.PosFromCoord(nail.coord);
+        arm.transform.position = nail.transform.position;
         SpriteRenderer sr = anim.GetComponent<SpriteRenderer>();
-        sr.sortingOrder = nail.gfx[0].sortingOrder;
+        sr.sortingOrder = nail.gfx[0].sortingOrder-1;
 
         yield return new WaitForSecondsRealtime(1.5f);
 
         nail.ToggleNailState(Nail.NailState.Falling);
         StartCoroutine(floorManager.EndSequenceAnimation(arm));
+        yield return new WaitForSecondsRealtime(1.5f);
     }
 }

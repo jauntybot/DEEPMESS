@@ -91,7 +91,6 @@ public class PersistentMenu : MonoBehaviour
             else
                 musicController.SwitchMusicState(MusicController.MusicState.Game, false);
         }
-        Debug.Log("Scene loaded, music init");
         if (TooltipSystem.instance)
             toolTips = TooltipSystem.instance;
         

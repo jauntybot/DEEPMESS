@@ -172,10 +172,11 @@ public class EnemyManager : UnitManager {
 // Update subscriptions
             newGrid.enemy.SubscribeElement(units[i]);
             units[i].manager = eManager;
-            //units[i].ElementDestroyed += eManager.DescentTriggerCheck;
-            //units[i].ElementDestroyed -= DescentTriggerCheck;
-            units[i].ElementDestroyed += CountDefeatedEnemy; 
-            units[i].ElementDestroyed += StopActingUnit;
+    
+            units[i].ElementDestroyed -= CountDefeatedEnemy;
+            units[i].ElementDestroyed -= StopActingUnit;
+            units[i].ElementDestroyed += eManager.CountDefeatedEnemy; 
+            units[i].ElementDestroyed += eManager.StopActingUnit;
 
             units[i].transform.parent = newGrid.enemy.unitParent.transform;
             units[i].StoreInGrid(newGrid);
