@@ -677,7 +677,7 @@ public class FloorManager : MonoBehaviour {
         scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
         float timer = 0;
         while (timer <= unitDropDur) {
-            parallax.ScrollParallax(-1);
+            parallax.ScrollParallax(Time.deltaTime * -1);
             for (int i = 0; i <= units.Count - 1; i++) {
                 units[i].transform.position = Vector3.Lerp(to[i] + new Vector2(0, floorOffset*2), to[i], dropCurve.Evaluate(timer/unitDropDur));
                 NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
@@ -720,7 +720,7 @@ public class FloorManager : MonoBehaviour {
             timer = 0;
             Vector3 startPos = transitionParent.transform.position;
             while (timer <= unitDropDur*2) {
-                parallax.ScrollParallax(-1);
+                parallax.ScrollParallax(Time.deltaTime * -1);
                 transitionParent.transform.position = Vector3.Lerp(startPos, Vector3.zero, timer/unitDropDur);
                 timer += Time.deltaTime;
                 yield return null;
@@ -731,7 +731,7 @@ public class FloorManager : MonoBehaviour {
 
             timer = 0;
             while (timer <= unitDropDur) {
-                parallax.ScrollParallax(-1);
+                parallax.ScrollParallax(Time.deltaTime * -1);
                 for (int i = 0; i <= units.Count - 1; i++) {
                     NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
                     units[i].transform.position = Vector3.Lerp(to[i], to[i] + new Vector2(0, floorOffset*2), dropCurve.Evaluate(timer/unitDropDur));
@@ -751,7 +751,7 @@ public class FloorManager : MonoBehaviour {
 
             timer = 0;
             while (timer <= 0.5f) {
-                parallax.ScrollParallax(-1);
+                parallax.ScrollParallax(Time.deltaTime * -1);
                 timer += Time.deltaTime;
                 yield return null;
             }
@@ -772,7 +772,7 @@ public class FloorManager : MonoBehaviour {
             StartCoroutine(scenario.Win());
             while (scenario.scenario == ScenarioManager.Scenario.EndState) {
                 if (parallax)
-                    parallax.ScrollParallax(-1);
+                    parallax.ScrollParallax(Time.deltaTime * -1);
                 yield return null;
             }
         }
@@ -782,7 +782,7 @@ public class FloorManager : MonoBehaviour {
         float timer = 0;
         while(cavityWait) {
             yield return null;
-            parallax.ScrollParallax(-1);
+            parallax.ScrollParallax(Time.deltaTime * -1);
             transitionParent.transform.position = new Vector3(0, Mathf.Sin(timer), 0);
 
             timer += Time.deltaTime;
@@ -823,7 +823,7 @@ public class FloorManager : MonoBehaviour {
             if (currentFloor) 
                 currentFloor.transform.localScale = Vector3.Lerp(fromScale, toScale, timer/transitionDur);
 
-            parallax.ScrollParallax(1);
+            parallax.ScrollParallax(Time.deltaTime * 1);
             yield return null;
             timer += Time.deltaTime;
         }
@@ -834,7 +834,7 @@ public class FloorManager : MonoBehaviour {
             if (currentFloor)
                 currentFloor.transform.localScale = Vector3.Lerp(fromScale, toScale, timer/(transitionDur*5));
 
-            parallax.ScrollParallax(1);
+            parallax.ScrollParallax(Time.deltaTime * 1);
             yield return null;
             timer += Time.deltaTime;
         }
@@ -847,7 +847,7 @@ public class FloorManager : MonoBehaviour {
             arm.transform.localPosition = Vector3.Lerp(prevPos, Vector3.zero, timer/(transitionDur*10));
             
             transitionParent.transform.position = Vector3.Lerp(Vector3.zero, new Vector3(6, 0, 0), timer/(transitionDur*10));
-            parallax.ScrollParallax(1);
+            parallax.ScrollParallax(Time.deltaTime * 1);
 
             yield return null;
             timer += Time.deltaTime;
@@ -856,7 +856,7 @@ public class FloorManager : MonoBehaviour {
         arm.transform.localPosition = Vector3.zero;
         while (scenario.scenario == ScenarioManager.Scenario.EndState) {
             if (parallax)
-                parallax.ScrollParallax(1);
+                parallax.ScrollParallax(Time.deltaTime * 1);
             yield return null;
         }
 

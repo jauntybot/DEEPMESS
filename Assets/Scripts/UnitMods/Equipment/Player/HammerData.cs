@@ -217,6 +217,7 @@ public class HammerData : SlagEquipmentData {
                  
             hammer.SetActive(false);
         }
+        hammer.transform.localPosition = new();
         
         if (targetCo != null)
             yield return targetCo;
