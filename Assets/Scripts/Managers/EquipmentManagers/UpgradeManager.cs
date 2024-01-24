@@ -10,7 +10,7 @@ public class UpgradeManager : MonoBehaviour {
     PlayerManager pManager;
     AudioSource audioS;
     [SerializeField] SFX selectSFX;
-    [SerializeField] GameObject upgradeScreen, unitUIContainer, nuggetContainer;
+    [SerializeField] GameObject upgradeScreen, confirmButton, unitUIContainer, nuggetContainer;
     [SerializeField] GameObject godNuggetPrefab;
     [SerializeField] List<SlagEquipmentData.UpgradePath> nuggets = new();
     public NuggetButton selectedParticle;
@@ -67,6 +67,7 @@ public class UpgradeManager : MonoBehaviour {
         upgrading = true;
         
         upgradeScreen.SetActive(true);
+        ConfirmCheck();
         LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
         yield return null;
@@ -118,10 +119,6 @@ public class UpgradeManager : MonoBehaviour {
         Canvas.ForceUpdateCanvases();
     }
 
-    public void DeselectParticle() {
-
-    }
-
     public void ApplyParticle() {
         nuggets.Remove(selectedParticle.type);
         Destroy(selectedParticle.gameObject);
@@ -130,6 +127,14 @@ public class UpgradeManager : MonoBehaviour {
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
+        ConfirmCheck();
+    }
+
+    void ConfirmCheck() {
+        if (nuggets.Count <= 0)
+            confirmButton.SetActive(true);
+        else
+            confirmButton.SetActive(false);
     }
 
     public void EndUpgradeSequence() {

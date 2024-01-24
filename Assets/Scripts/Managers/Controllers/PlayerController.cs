@@ -14,7 +14,6 @@ public class PlayerController : MonoBehaviour {
     public CursorState cursorState;
     [SerializeField] Vector2 pointerAnchor;
     [SerializeField] Texture2D defaultCursor, clickableCursor, moveCursor, nullMoveCursor, targetCursor, nullTargetCursor;
-    [SerializeField] bool clickable;
     int layerMask = 5;
 
     void Start() 
@@ -55,8 +54,7 @@ public class PlayerController : MonoBehaviour {
 // Coroutine that runs while the player is allowed to select elements on the grid
     public IEnumerator GridInput() {
         while (manager.scenario.currentTurn == ScenarioManager.Turn.Player || manager.scenario.currentTurn == ScenarioManager.Turn.Cascade) {
-            if (!FloorManager.instance.peeking && !FloorManager.instance.descending && !manager.unitActing) {
-                clickable = true;
+            if (!FloorManager.instance.descending && !manager.unitActing) {
                 yield return new WaitForSecondsRealtime(1/Util.fps);
                 RaycastHit2D hit = ClickInput();
 // On mouseover
@@ -93,17 +91,23 @@ public class PlayerController : MonoBehaviour {
             
             OnTurnHotkeyInput();
         }
-        clickable = false;
     }
 
     public void OnTurnHotkeyInput() {
         if (!manager.unitActing) {
             if (Input.GetKeyDown(KeyCode.Escape)) {
-                PersistentMenu.instance.pauseMenu.gameObject.SetActive(!PersistentMenu.instance.pauseMenu.isActiveAndEnabled);
+                if (!PersistentMenu.instance.pauseMenu.isActiveAndEnabled)
+                    PersistentMenu.instance.pauseMenu.gameObject.SetActive(true);
+                else
+                    PersistentMenu.instance.pauseMenu.ResumeButton();
+                
             }
 
             if (manager && manager.scenario && !FloorManager.instance.peeking && !PersistentMenu.instance.pauseMenu.isActiveAndEnabled) {
                 
+                if (Input.GetKeyDown(KeyCode.F11) && ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Descent) {
+                    PersistentMenu.instance.TriggerCascade();
+                }
                 if (Input.GetKeyDown(KeyCode.A)) {
                     manager.SelectUnit(manager.units[0]);
                 }

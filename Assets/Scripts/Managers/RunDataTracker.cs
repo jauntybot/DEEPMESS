@@ -60,6 +60,7 @@ public class RunDataTracker : MonoBehaviour
 
     public void RestartRun() {
         scenario.scenario = ScenarioManager.Scenario.Null;
+        if (ScenarioManager.instance.startCavity == 0) ScenarioManager.instance.startCavity = 1;
         StartCoroutine(FadeToScene(1));
     }
 

@@ -88,6 +88,8 @@ public class ObjectiveManager : MonoBehaviour {
 
     public IEnumerator AssignSequence() {
         reviewingObjectives = true;
+        rerollButton.interactable = true;
+        rerollButton.GetComponentInChildren<TMPro.TMP_Text>().text = "REROLL (1)";
         if (!ScenarioManager.instance.gpOptional.objectivesEncountered)
             yield return ScenarioManager.instance.gpOptional.StartCoroutine(ScenarioManager.instance.gpOptional.Objectives());
         assignAwardPanel.SetActive(true);
@@ -105,6 +107,8 @@ public class ObjectiveManager : MonoBehaviour {
 
     public void Reroll() {
         StartCoroutine(RerollObjectives());
+        rerollButton.interactable = false;
+        rerollButton.GetComponentInChildren<TMPro.TMP_Text>().text = "REROLL (0)";
     }
 
     IEnumerator RerollObjectives() {
@@ -126,18 +130,31 @@ public class ObjectiveManager : MonoBehaviour {
 
 // Randomly assign objectives
         ShuffleBag<Objective> rndBag = new();
+        List<Objective> rolledObjectives = new();
         for (int i = packetObjectives.Count - 1; i >= 0; i--)
             rndBag.Add(packetObjectives[i]);
-        for (int u = 0; u <= 2; u++)
-            activeObjectives.Add(rndBag.Next());
+        for (int u = 0; u <= 2; u++){ 
+            rolledObjectives.Add(rndBag.Next());
+        }
+
+// Randomly assign rewards
+        ShuffleBag<SlagEquipmentData.UpgradePath> rndBag2 = new();
+        List<SlagEquipmentData.UpgradePath> rewards = new();
+        for (int i = 0; i <= 1; i++) {
+            rndBag2.Add(SlagEquipmentData.UpgradePath.Shunt);
+            rndBag2.Add(SlagEquipmentData.UpgradePath.Scab);
+            rndBag2.Add(SlagEquipmentData.UpgradePath.Sludge);
+        }
+        for (int i = 0; i <= 2; i++)
+            rewards.Add(rndBag2.Next());
         
 // Create UI cards
         for (int i = objectiveCardParent.transform.childCount - 1; i >= 0; i--) 
             objectiveCardParent.transform.GetChild(i).GetComponent<ObjectiveCard>().Unsub();
         
         objectiveCardParent.GetComponent<HorizontalLayoutGroup>().enabled = true;
-        foreach(Objective ob in activeObjectives) {
-            ob.Init();
+        for (int i = 0; i <= 2; i++) {
+            activeObjectives.Add(rolledObjectives[i].Init(rewards[i]));
             Instantiate(objectiveCardPrefab, objectiveCardParent.transform);
         }
         
@@ -159,8 +176,13 @@ public class ObjectiveManager : MonoBehaviour {
                 yield return null;
             }
         }
+    }
 
-
+    public void ClearObjectives() {
+        for (int i = objectiveCardParent.transform.childCount - 1; i >= 0; i--) 
+            objectiveCardParent.transform.GetChild(i).GetComponent<ObjectiveCard>().Unsub();
+         for (int i = tracker.objectiveCardParent.transform.childCount - 1; i >= 0; i--)
+            tracker.objectiveCardParent.transform.GetChild(i).GetComponent<ObjectiveCard>().Unsub();
     }
 
     public IEnumerator CollectRewards() {

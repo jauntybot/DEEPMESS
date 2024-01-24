@@ -4,12 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class MusicController : MonoBehaviour
-{
+public class MusicController : MonoBehaviour {
     
     public enum MusicState { MainMenu, Tutorial, Game, Null };
     public MusicState currentState;
-    public bool playing;
     [SerializeField] List<Track> musicTracks;
     [SerializeField] List<Track> stateTracks = new();
     [SerializeField] SFX recordScratch;
@@ -20,28 +18,27 @@ public class MusicController : MonoBehaviour
     // [Header("Text UI")]
     // [SerializeField] private TMP_Text trackTextUI;
     
-    AudioSource musicAudioSource;
-    Coroutine playingCo = null;
-
-    void Awake() {
-        musicAudioSource = GetComponent<AudioSource>();
-    }
+    [SerializeField] AudioSource[] audioSources;
+    [SerializeField] int sourceIndex = 0;
+    double trackDur;
+    double loopPt;
+    bool loop = false;
 
     public void SwitchMusicState(MusicState state, bool fade) {
+        loop = false;
         StartCoroutine(UpdateTracklist(state, fade));
+        Debug.Log("Switch music state");
     }
 
-    public IEnumerator UpdateTracklist(MusicState targetState, bool fade) {
-        
+    public IEnumerator UpdateTracklist(MusicState targetState, bool fade) { 
         currentState = targetState;
         yield return StartCoroutine(StopAudio(fade));
 
 // Add delay for record scratch - Tutorial 
         float delay = 0;
         if (targetState == MusicState.Tutorial) {
-            playing = false;
             delay = recordScratch.Get().length;
-            musicAudioSource.PlayOneShot(recordScratch.Get());
+            audioSources[sourceIndex].PlayOneShot(recordScratch.Get());
         }
         yield return new WaitForSecondsRealtime(delay);
 
@@ -55,76 +52,48 @@ public class MusicController : MonoBehaviour
         stateTracks = new();
         stateTracks = _stateTracks;
 
-        UpdateTrack(0);
-    }
-
-
-    public void PlayAudio() {
-        musicAudioSource.Play();
-        playingCo = StartCoroutine(EndOfTrack());
-    }
-
-    IEnumerator EndOfTrack() {
-        playing = true;
-        while (musicAudioSource.time < musicAudioSource.clip.length && playing) {
+        loopPt = AudioSettings.dspTime;
+        yield return StartCoroutine(QueueTrack());
+        loop = true;
+        while (loop) {
+            if (AudioSettings.dspTime > loopPt - 1)
+                yield return StartCoroutine(QueueTrack());
             yield return null;
         }
-        if (playing)
-            SkipForward();
     }
 
-    public IEnumerator StopAudio(bool fade) {      
-        playing = false;
-        float prevVol = musicAudioSource.volume;
+    IEnumerator QueueTrack() {        
+        if (stateTrackIndex < stateTracks.Count - 1)     
+            stateTrackIndex++;      
+        else 
+            stateTrackIndex = 0;
+        sourceIndex = 1 - sourceIndex;
+
+        audioSources[sourceIndex].clip = stateTracks[stateTrackIndex].trackAudioClip;
+        audioSources[sourceIndex].PlayScheduled(loopPt);
+        Debug.Log("Playing: " + stateTracks[stateTrackIndex]);
+
+        trackDur = (double)stateTracks[stateTrackIndex].trackAudioClip.samples / stateTracks[stateTrackIndex].trackAudioClip.frequency;
+        loopPt = loopPt + trackDur;
+
+        yield return null;
+    }    
+
+    public IEnumerator StopAudio(bool fade) { 
+        AudioSource prevSource = audioSources[sourceIndex];
+        float prevVol = prevSource.volume;
         if (fade) {
             Debug.Log("Fade start");
             float timer = 0;
             while (timer < 1.5f) {
-                musicAudioSource.volume = prevVol - fadeOut.Evaluate(timer / 1.5f);
+                Debug.Log(prevSource.name + ", " + prevSource.volume); 
+                prevSource.volume = prevVol - fadeOut.Evaluate(timer / 1.5f);
                 yield return new WaitForSecondsRealtime(1/Util.fps);
                 timer += Time.deltaTime;
             }
             Debug.Log("Fade done");
         }
-        musicAudioSource.volume = prevVol;
-        musicAudioSource.Stop();
+        prevSource.Stop();
+        prevSource.volume = prevVol;
     }
-    
-
-    public void SkipForward() {    
-        if (stateTrackIndex < stateTracks.Count - 1)     
-            stateTrackIndex++;      
-        else 
-            stateTrackIndex = 0;
-        
-        UpdateTrack(stateTrackIndex);
-    }
-
-    void UpdateTrack(int index = 0) {
-        musicAudioSource.Stop();
-        playing = false;
-        musicAudioSource.clip = stateTracks[index].trackAudioClip;
-        Debug.Log("Playing: " + stateTracks[index]);
-        //trackTextUI.text = audioTracks[index].name;
-        
-        PlayAudio();
-    }
-
-    // public void SkipBack()
-    // {
-    //     StopAllCoroutines();
-    //     if (trackIndex >= 1)
-    //     {
-    //         trackIndex--;  
-    //     } else {
-    //         trackIndex = audioTracks.Length - 1;
-    //     }
-    
-    //     UpdateTrack(trackIndex);
-    // }
-
-    // public void AudioVolume(float musicVolume)
-    // {
-    //     musicAudioSource.volume = musicVolume;
-    // }
 }

@@ -79,11 +79,12 @@ public class PlayerUnit : Unit {
             pManager.DeselectUnit();
             pManager.StartCoroutine(pManager.UnitIsActing());
         }
-        UIManager.instance.peekButton.GetComponent<Button>().interactable = false;
 // Run base coroutine
+        UIManager.instance.LockHUDButtons(true);
+
         yield return co;
 
-        UIManager.instance.peekButton.GetComponent<Button>().interactable = true;
+        UIManager.instance.LockHUDButtons(false);
         if (equip is MoveData && energyCurrent > 0) {
             grid.UpdateSelectedCursor(true, coord);
             ui.ToggleEquipmentButtons();
@@ -165,6 +166,13 @@ public class PlayerUnit : Unit {
         }
     }
 
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+        if (!destroyed) {
+            yield return base.TakeDamage(dmg, dmgType, source, sourceEquip);
+            if (Mathf.Sign(dmg) == -1 && conditions.Contains(Status.Disabled)) Stabilize();
+        }
+    }
+
     public override IEnumerator CollideFromBelow(GridElement above) {
         yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
     }
@@ -172,7 +180,7 @@ public class PlayerUnit : Unit {
     public override void ApplyCondition(Status s) {
         base.ApplyCondition(s);
         //ui.ToggleEquipmentButtons();
-        if (manager.scenario.floorManager.tutorial.isActiveAndEnabled)
+        if (s == Status.Restricted && !manager.scenario.floorManager.tutorial.bloodEncountered && manager.scenario.floorManager.tutorial.isActiveAndEnabled)
             manager.scenario.floorManager.tutorial.StartCoroutine(manager.scenario.floorManager.tutorial.BloodTiles());
         
     }

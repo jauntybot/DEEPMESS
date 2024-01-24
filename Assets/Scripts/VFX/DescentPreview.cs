@@ -19,7 +19,12 @@ public class DescentPreview : MonoBehaviour {
         portrait = u.portrait;
         portraitSR.sprite = portrait;
         if (u is EnemyUnit) {
-            portraitSR.transform.localPosition = new Vector3(-0.031f, -1,0);
+            if (u is EnemyStaticUnit)
+                portraitSR.transform.localPosition = new Vector3(0.05f, -0.93f ,0);
+            else
+                portraitSR.transform.localPosition = new Vector3(-0.031f, -1,0);
+
+            
             anim.SetInteger("Element", 1);
         } else if (u is PlayerUnit) {
             portraitSR.transform.localPosition = new Vector3(0.028f,-0.25f,0);

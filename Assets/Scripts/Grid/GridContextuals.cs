@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
 
-public class GridContextuals : MonoBehaviour
-{
+public class GridContextuals : MonoBehaviour {
 
     PlayerManager manager;
+    FloorManager floorManager;
     [HideInInspector] public bool toggled = true;
-    public Grid grid;
 
     public enum ContextDisplay { None, IconOnly, Linear, Stepped, Parabolic };
     [SerializeField] private ContextDisplay currentContext = ContextDisplay.None;
@@ -30,7 +29,7 @@ public class GridContextuals : MonoBehaviour
 
     public void Initialize(PlayerManager m) {
         manager = m;
-        grid = manager.currentGrid;
+        floorManager = FloorManager.instance;
         cursorAnimator = contextCursor.GetComponentInChildren<Animator>();
     
         ToggleValid(false);
@@ -49,18 +48,20 @@ public class GridContextuals : MonoBehaviour
 
     public void UpdateGridCursor(bool state, Vector2 coord, bool fill = false, bool _valid = true) {
         gridCursor.SetActive(state);
-        gridCursor.transform.position = grid.PosFromCoord(coord);
-        
+        gridCursor.transform.position = floorManager.currentFloor.PosFromCoord(coord);
+        gridCursor.transform.parent = floorManager.currentFloor.transform;
+        gridCursor.transform.localScale = new Vector3(FloorManager.sqrSize, FloorManager.sqrSize, FloorManager.sqrSize);
+
         if (state) {
             bool occupied = false;
-            foreach (GridElement ge in grid.CoordContents(coord)) {
+            foreach (GridElement ge in floorManager.currentFloor.CoordContents(coord)) {
                 if (ge is not Unit) {
                     occupied = true;
                     neutralTooltip.HoverOver(ge);
                 }
             }
             if (!occupied) {
-                Tile tile = grid.tiles.Find(t => t.coord == coord);
+                Tile tile = floorManager.currentFloor.tiles.Find(t => t.coord == coord);
                 if (tile != null)
                     neutralTooltip.HoverOver(tile);
             } 
@@ -74,12 +75,12 @@ public class GridContextuals : MonoBehaviour
                 SpriteShapeRenderer ssr = cursor.GetComponentInChildren<SpriteShapeRenderer>();
                 if (ssr) {
                     ssr.color = new Color(c.r, c.g, c.b, fill ? 0.25f : 0);
-                    ssr.sortingOrder = grid.SortOrderFromCoord(coord);
+                    ssr.sortingOrder = floorManager.currentFloor.SortOrderFromCoord(coord);
                 }
                 LineRenderer lr = cursor.GetComponentInChildren<LineRenderer>();
                 if (lr) {
                     lr.startColor = new Color(c.r, c.g, c.b, 0.75f); lr.endColor = new Color(c.r, c.g, c.b, 0.75f);
-                    lr.sortingOrder = grid.SortOrderFromCoord(coord);
+                    lr.sortingOrder = floorManager.currentFloor.SortOrderFromCoord(coord);
                 }
             }
         } else 
@@ -151,13 +152,13 @@ public class GridContextuals : MonoBehaviour
             if (fromOverride != null)
                 fromCoord = fromOverride.coord;
 
-            contextCursor.transform.position = grid.PosFromCoord(to);
+            contextCursor.transform.position = floorManager.currentFloor.PosFromCoord(to);
             UpdateSortOrder(to);
 
             lr.positionCount = lrI + 3;
-            lr.SetPosition(lrI, grid.PosFromCoord(fromCoord));
-            lr.SetPosition(lrI + 1, grid.PosFromCoord(fromCoord));
-            lr.SetPosition(lrI + 2, grid.PosFromCoord(fromCoord));
+            lr.SetPosition(lrI, floorManager.currentFloor.PosFromCoord(fromCoord));
+            lr.SetPosition(lrI + 1, floorManager.currentFloor.PosFromCoord(fromCoord));
+            lr.SetPosition(lrI + 2, floorManager.currentFloor.PosFromCoord(fromCoord));
             switch(currentContext) {
                 default:
                 case ContextDisplay.None:
@@ -166,16 +167,16 @@ public class GridContextuals : MonoBehaviour
                 break;
                 case ContextDisplay.Linear:
                     lr.positionCount = lrI + 6;
-                    lr.SetPosition(lrI + 3, grid.PosFromCoord(to));
-                    lr.SetPosition( lrI + 4, grid.PosFromCoord(to));
-                    lr.SetPosition(lrI + 5, grid.PosFromCoord(to));
+                    lr.SetPosition(lrI + 3, floorManager.currentFloor.PosFromCoord(to));
+                    lr.SetPosition( lrI + 4, floorManager.currentFloor.PosFromCoord(to));
+                    lr.SetPosition(lrI + 5, floorManager.currentFloor.PosFromCoord(to));
                 break;
                 case ContextDisplay.Stepped:
                     Dictionary<Vector2, Vector2> fromTo = EquipmentAdjacency.SteppedCoordAdjacency(fromCoord, to, from.selectedEquipment);
                     Vector2 prev = fromCoord;
                     lr.positionCount = lrI + (fromTo.Count + 1) * 3;
                     for (int i = 1; i <= fromTo.Count; i++) {
-                        Vector3 linePos = grid.PosFromCoord(fromTo[prev]);
+                        Vector3 linePos = floorManager.currentFloor.PosFromCoord(fromTo[prev]);
                         lr.SetPosition(lrI + 3*i, linePos); lr.SetPosition(lrI + 3*i + 1, linePos); lr.SetPosition(lrI + 3*i + 2, linePos);
                         prev = fromTo[prev];
                     }
@@ -183,7 +184,7 @@ public class GridContextuals : MonoBehaviour
                 break;
                 case ContextDisplay.Parabolic:
                     float h = 0.25f + Vector2.Distance(fromCoord, to) / 2;
-                    List<Vector3> points = Util.SampledParabola(grid.PosFromCoord(fromCoord), grid.PosFromCoord(to), h, 24);
+                    List<Vector3> points = Util.SampledParabola(floorManager.currentFloor.PosFromCoord(fromCoord), floorManager.currentFloor.PosFromCoord(to), h, 24);
                     lr.positionCount = lrI + points.Count * 3;
                     for (int i = 1; i < points.Count; i++) {
                         lr.SetPosition(lrI + 3*i, points[i]); lr.SetPosition(lrI + 3*i + 1, points[i]); lr.SetPosition(lrI + 3*i + 2, points[i]);
@@ -213,10 +214,10 @@ public class GridContextuals : MonoBehaviour
             Destroy(del);
         }
         if (data.aoeRange > 0) {
-            List<Vector2> aoeCoords = EquipmentAdjacency.GetAdjacent(manager.lastHoveredCoord, data.aoeRange, data, null, grid, true);
+            List<Vector2> aoeCoords = EquipmentAdjacency.GetAdjacent(manager.lastHoveredCoord, data.aoeRange, data, null, floorManager.currentFloor, true);
             for (int i = aoeCoords.Count - 1; i >= 0; i--) {
                 GameObject cursor = Instantiate(gridCursorPrefab);
-                cursor.transform.position = grid.PosFromCoord(aoeCoords[i]);
+                cursor.transform.position = floorManager.currentFloor.PosFromCoord(aoeCoords[i]);
                 cursor.transform.parent = gridCursor.transform;
                 cursor.transform.localScale = Vector3.one;
                 cursor.SetActive(true);
@@ -255,7 +256,7 @@ public class GridContextuals : MonoBehaviour
     }
 
     public virtual void UpdateSortOrder(Vector2 c) {
-        int sort = grid.SortOrderFromCoord(c);
+        int sort = floorManager.currentFloor.SortOrderFromCoord(c);
         
         cursorAnimator.GetComponent<SpriteRenderer>().sortingOrder = sort;
     }

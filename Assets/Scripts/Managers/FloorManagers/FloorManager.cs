@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using System;
 using System.Linq;
+using UnityEngine.Experimental.Rendering.RenderGraphModule;
 
 // This class generates and sequences Floor prefabs (Grid class), as well as manages the descending of units
 
@@ -34,8 +35,9 @@ public class FloorManager : MonoBehaviour {
     public float floorOffset, transitionDur, unitDropDur;
     public AnimationCurve dropCurve;
     public bool transitioning, peeking, descending;
-    int floorCount;
+    public int floorCount;
     bool cavityWait = false;
+    public Coroutine floating;
     [SerializeField] ParallaxImageScroll parallax;
     public DescentPreviewManager previewManager;
     [SerializeField] Animator cavityText;
@@ -76,7 +78,6 @@ public class FloorManager : MonoBehaviour {
         } else {
             tutorial.gameObject.SetActive(false);
         }
-        //floorSequence.StartPacket(floorSequence.currentThreshold);
         
         yield return null;
     }
@@ -147,8 +148,8 @@ public class FloorManager : MonoBehaviour {
 // Orients the animation
         int dir = down? 1 : -1;
         Grid toFloor = null;
-        UpdateFloorCounter();
         floorCount += dir;
+        UpdateFloorCounter();
 
         if (floors.Count - 1 >= currentFloor.index + dir) // Checks if there is a floor in the direction transitioning
             toFloor = floors[currentFloor.index + dir];
@@ -210,7 +211,11 @@ public class FloorManager : MonoBehaviour {
         }
 // Update floor manager current floor... preview next floor untis stats?
         if (down && currentFloor.index-1 >= 0) floors[currentFloor.index-1].gameObject.SetActive(false);
-        if (toFloor) currentFloor = toFloor;           
+        if (toFloor) {
+            toFloor.LockGrid(false);
+            currentFloor.LockGrid(true);
+            currentFloor = toFloor;
+        }           
     }
     
 
@@ -284,7 +289,6 @@ public class FloorManager : MonoBehaviour {
         DescendingFloors?.Invoke();
 
         ScenarioManager.Scenario scen = ScenarioManager.Scenario.Null;
-        if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) scen = ScenarioManager.Scenario.Boss;
         if (tut) {
             yield return StartCoroutine(TutorialSequence.instance.TutorialDescend());
         } else {
@@ -301,6 +305,7 @@ public class FloorManager : MonoBehaviour {
                 if (!floorSequence.ThresholdCheck()) { //|| floorSequence.currentThreshold == FloorPacket.PacketType.BOSS
                     GenerateFloor();       
                 }
+                if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) scen = ScenarioManager.Scenario.Boss;
 
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return StartCoroutine(TransitionFloors(true, false));
@@ -428,7 +433,7 @@ public class FloorManager : MonoBehaviour {
         }
         yield return new WaitForSecondsRealtime(0.75f);
         
-        if (nail && floorSequence.currentThreshold != FloorPacket.PacketType.BOSS) {
+        if (nail && floorSequence.activePacket.packetType != FloorPacket.PacketType.BOSS) {
             yield return StartCoroutine(DropNail(nail));
             //yield return StartCoroutine(DropParticle());
         }
@@ -472,13 +477,22 @@ public class FloorManager : MonoBehaviour {
             scenario.player.hammerActions[0].hammer.GetComponentInChildren<Animator>().SetBool("Falling", false);
         }
 
+        List<Coroutine> cos = new();
+
         if (subElement) {
-            StartCoroutine(subElement.CollideFromBelow(unit));
-            yield return StartCoroutine(unit.CollideFromAbove(subElement, hardLand?1:0));
+            cos.Add(StartCoroutine(subElement.CollideFromBelow(unit)));
+            cos.Add(StartCoroutine(unit.CollideFromAbove(subElement, hardLand?1:0)));
         } else if (hardLand && currentFloor.tiles.Find(t => t.coord == unit.coord).tileType != Tile.TileType.Bile) {
             yield return StartCoroutine(unit.TakeDamage(1, GridElement.DamageType.Fall));
         }
-
+        if (cos.Count > 0) {
+             for (int i = cos.Count - 1; i >= 0; i--) {
+                if (cos[i] != null) 
+                    yield return cos[i];
+                else
+                    cos.RemoveAt(i);
+            }
+        }
     }
 
 // Coroutine for descending the nail at a regulated random position
@@ -663,41 +677,50 @@ public class FloorManager : MonoBehaviour {
         scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
         float timer = 0;
         while (timer <= unitDropDur) {
-            parallax.ScrollParallax(-1);
+            parallax.ScrollParallax(Time.deltaTime * -1);
             for (int i = 0; i <= units.Count - 1; i++) {
-                NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
                 units[i].transform.position = Vector3.Lerp(to[i] + new Vector2(0, floorOffset*2), to[i], dropCurve.Evaluate(timer/unitDropDur));
+                NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
                 fade.AlphaSelf = Mathf.Lerp(0, 1, timer/(unitDropDur/3));
             }
             yield return null;
             timer += Time.deltaTime;
         }
+        for (int i = 0; i <= units.Count - 1; i++) {
+            units[i].transform.position = to[i];
+            NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
+            fade.AlphaSelf = 1;
+        }
         
 // Endlessly falling
         cavityWait = true;
-        Coroutine floating = StartCoroutine(FloatingUnits());
+        floating = StartCoroutine(FloatingUnits());
 
+
+        uiManager.ToggleBattleCanvas(false);
 
 // Objective award + Upgrade sequence
-        if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BOSS) {
-            uiManager.ToggleBattleCanvas(false);
-            if (floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial && currentFloor != null) {
-                if (!scenario.gpOptional.bulbEncountered) scenario.gpOptional.StartCoroutine(scenario.gpOptional.Rewards());
+        if (floorSequence.currentThreshold != FloorPacket.PacketType.Tutorial) {
+            if (currentFloor != null && floorSequence.currentThreshold != FloorPacket.PacketType.I && floorSequence.currentThreshold != FloorPacket.PacketType.BARRIER) {
+                if (!scenario.gpOptional.rewardsEncountered) yield return scenario.gpOptional.StartCoroutine(scenario.gpOptional.Rewards());
                 yield return scenario.objectiveManager.RewardSequence();
                 yield return scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
             }
-
-            if (!scenario.gpOptional.bulbEncountered) scenario.gpOptional.StartCoroutine(scenario.gpOptional.Rewards());
-            yield return scenario.objectiveManager.AssignSequence();
+            if (floorSequence.currentThreshold != FloorPacket.PacketType.BOSS && floorSequence.currentThreshold != FloorPacket.PacketType.BARRIER)
+                yield return scenario.objectiveManager.AssignSequence();
         }
-        
+        if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) {
+            if (!scenario.gpOptional.prebossEncountered)
+                yield return StartCoroutine(scenario.gpOptional.Preboss());
+        }
 
-        if (floorSequence.activePacket.packetType != FloorPacket.PacketType.BARRIER) {
+// Lerp units offscreen
+        if (floorSequence.currentThreshold != FloorPacket.PacketType.BARRIER) {
             StopCoroutine(floating);
             timer = 0;
             Vector3 startPos = transitionParent.transform.position;
             while (timer <= unitDropDur*2) {
-                parallax.ScrollParallax(-1);
+                parallax.ScrollParallax(Time.deltaTime * -1);
                 transitionParent.transform.position = Vector3.Lerp(startPos, Vector3.zero, timer/unitDropDur);
                 timer += Time.deltaTime;
                 yield return null;
@@ -708,7 +731,7 @@ public class FloorManager : MonoBehaviour {
 
             timer = 0;
             while (timer <= unitDropDur) {
-                parallax.ScrollParallax(-1);
+                parallax.ScrollParallax(Time.deltaTime * -1);
                 for (int i = 0; i <= units.Count - 1; i++) {
                     NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
                     units[i].transform.position = Vector3.Lerp(to[i], to[i] + new Vector2(0, floorOffset*2), dropCurve.Evaluate(timer/unitDropDur));
@@ -717,17 +740,23 @@ public class FloorManager : MonoBehaviour {
                 timer += Time.deltaTime;
                 yield return null;
             }
+            for (int i = 0; i <= units.Count - 1; i++) {
+                NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
+                units[i].transform.position = to[i] + new Vector2(0, floorOffset*2);
+                fade.AlphaSelf = 0;
+            }
             
             // units[0].manager.transform.parent = floors[currentFloor.index - 1].transform;
             // units[3].transform.parent = currentFloor.transform;
 
             timer = 0;
             while (timer <= 0.5f) {
-                parallax.ScrollParallax(-1);
+                parallax.ScrollParallax(Time.deltaTime * -1);
                 timer += Time.deltaTime;
                 yield return null;
             }
 
+// Enter new cavity
             uiManager.ToggleBattleCanvas(true);
             
             GenerateFloor(null, true);
@@ -740,10 +769,10 @@ public class FloorManager : MonoBehaviour {
             descending = false;
             yield return scenario.StartCoroutine(scenario.FirstTurn(lastFloorEnemey));
         } else {
-            yield return StartCoroutine(scenario.Win());
+            StartCoroutine(scenario.Win());
             while (scenario.scenario == ScenarioManager.Scenario.EndState) {
                 if (parallax)
-                    parallax.ScrollParallax(-1);
+                    parallax.ScrollParallax(Time.deltaTime * -1);
                 yield return null;
             }
         }
@@ -753,7 +782,7 @@ public class FloorManager : MonoBehaviour {
         float timer = 0;
         while(cavityWait) {
             yield return null;
-            parallax.ScrollParallax(-1);
+            parallax.ScrollParallax(Time.deltaTime * -1);
             transitionParent.transform.position = new Vector3(0, Mathf.Sin(timer), 0);
 
             timer += Time.deltaTime;
@@ -761,6 +790,9 @@ public class FloorManager : MonoBehaviour {
     }
 
     public IEnumerator FinalDescent() {
+        scenario.player.StartEndTurn(false);
+        yield return StartCoroutine(scenario.gpOptional.BossSlain());
+        yield return StartCoroutine(DropNail(scenario.player.nail));
         descending = true;
         currentFloor.DisableGridHighlight();
         currentFloor.LockGrid(true);
@@ -775,32 +807,39 @@ public class FloorManager : MonoBehaviour {
     }
 
     public IEnumerator EndSequenceAnimation(GameObject arm) {
-
-        // Local params for animation
+// Local params for animation
+        float timer = 0;
         Vector3 from = floorParent.transform.position;
         Vector3 to = new(from.x, from.y - floorOffset * 5, from.z);
-        Vector3 fromScale = currentFloor.transform.localScale;
+        Vector3 fromScale = new();
+        if (currentFloor)
+            fromScale = currentFloor.transform.localScale;
         Vector3 toScale = Vector3.one * 0.75f;
+        if (!currentFloor)
+            scenario.player.transform.parent = floorParent;
 
-        float timer = 0;
         while (timer < transitionDur) {
             floorParent.transform.position = Vector3.Lerp(from, from - new Vector3(0, floorOffset), timer/transitionDur);
-            currentFloor.transform.localScale = Vector3.Lerp(fromScale, toScale, timer/transitionDur);
+            if (currentFloor) 
+                currentFloor.transform.localScale = Vector3.Lerp(fromScale, toScale, timer/transitionDur);
 
-            parallax.ScrollParallax(1);
+            parallax.ScrollParallax(Time.deltaTime * 1);
             yield return null;
             timer += Time.deltaTime;
         }
-        currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
+        if (currentFloor)
+            currentFloor.GetComponent<SortingGroup>().sortingOrder = -1;
         while (timer < transitionDur * 5) {
             floorParent.transform.position = Vector3.Lerp(from, to, timer/(transitionDur*5));
-            currentFloor.transform.localScale = Vector3.Lerp(fromScale, toScale, timer/(transitionDur*5));
+            if (currentFloor)
+                currentFloor.transform.localScale = Vector3.Lerp(fromScale, toScale, timer/(transitionDur*5));
 
-            parallax.ScrollParallax(1);
+            parallax.ScrollParallax(Time.deltaTime * 1);
             yield return null;
             timer += Time.deltaTime;
         }
-        
+        if (floating != null)
+            StopCoroutine(floating);
         timer = 0;
         Vector3 prevPos = scenario.player.nail.transform.position;
         while (timer < transitionDur * 10) {
@@ -808,17 +847,16 @@ public class FloorManager : MonoBehaviour {
             arm.transform.localPosition = Vector3.Lerp(prevPos, Vector3.zero, timer/(transitionDur*10));
             
             transitionParent.transform.position = Vector3.Lerp(Vector3.zero, new Vector3(6, 0, 0), timer/(transitionDur*10));
-            parallax.ScrollParallax(1);
+            parallax.ScrollParallax(Time.deltaTime * 1);
 
             yield return null;
             timer += Time.deltaTime;
         }
         scenario.player.nail.transform.localPosition = Vector3.zero;
         arm.transform.localPosition = Vector3.zero;
-        
         while (scenario.scenario == ScenarioManager.Scenario.EndState) {
             if (parallax)
-                parallax.ScrollParallax(1);
+                parallax.ScrollParallax(Time.deltaTime * 1);
             yield return null;
         }
 

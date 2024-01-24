@@ -12,7 +12,6 @@ public class GameUnitUI : UnitUI {
     [SerializeField] public SFX equipSelectSFX, hammerSelectSFX;
 
     [SerializeField] Animator emptyPips, hpPips;
-    GameObject bulbColor;
     
     [Header("Overview")]
     [SerializeField] public UnitOverview overview;
@@ -81,7 +80,7 @@ public class GameUnitUI : UnitUI {
                 else c = 1;
             } else c = 2;
 
-            bulbColor.GetComponent<Animator>().SetInteger("Color", c);
+            equipButtons.Find(e => e.data is BulbEquipmentData).subAnim.SetInteger("Color", c);
         }
     }
 
@@ -121,13 +120,15 @@ public class GameUnitUI : UnitUI {
                         prefab = bulbButtonPrefab;
                         parent = bulbParent.transform;
                         index = 1;
-                        bulbColor = prefab.GetComponent<EquipmentButton>().subAnim.gameObject;
                     }
                     EquipmentButton newButt = Instantiate(prefab, parent).GetComponent<EquipmentButton>();
                     newButt.transform.localScale = Vector3.one;
                     newButt.Initialize(this, unit.equipment[i], unit);
                     equipButtons.Add(newButt);
                     newButt.transform.SetSiblingIndex(index);
+
+                    if (unit.equipment[i] is BulbEquipmentData bulb) 
+                        UpdateBulb();
                 } else if (b.selected && b.data != unit.selectedEquipment)
                     b.DeselectEquipment();
             }

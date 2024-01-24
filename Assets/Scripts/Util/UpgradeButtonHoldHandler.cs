@@ -24,7 +24,7 @@ public class UpgradeButtonHoldHandler : MonoBehaviour, IUpdateSelectedHandler, I
             if (slot.filled)
                 slot.DisplayPopup(true);
         }
-        if (ui.upgrade.selectedParticle)
+        if (ui.upgrade.selectedParticle && ui.CurrentSlot())
             ui.CurrentSlot().DisplayPopup(true);
     }
 
@@ -35,7 +35,7 @@ public class UpgradeButtonHoldHandler : MonoBehaviour, IUpdateSelectedHandler, I
     }
 
     public void OnUpdateSelected(BaseEventData data) {
-        if (ui.previewParticle) {
+        if (ui.previewParticle && ui.CurrentSlot() && ui.CurrentSlot().modifierTMP.text != "MAXED OUT") {
             if (isPressed) {
                 ProgressConfirm();
             }
@@ -44,19 +44,23 @@ public class UpgradeButtonHoldHandler : MonoBehaviour, IUpdateSelectedHandler, I
     }
 
     public void OnPointerDown(PointerEventData data) {
-        isPressed = true;
-        confirmProg = 0;
-        radialProg = ui.CurrentSlot().radialFill;
-        radialProg.GetComponent<AudioSource>().enabled = true;
-        if (ui.previewParticle) {
-            Image image = ui.previewParticle.GetComponentInChildren<Image>();
-            image.color = new Color(image.color.r, image.color.g, image.color.b, 1);
+        if (ui.upgrade.selectedParticle && ui.CurrentSlot() && ui.CurrentSlot().modifierTMP.text != "MAXED OUT") {
+            isPressed = true;
+            confirmProg = 0;
+            radialProg = ui.CurrentSlot().radialFill;
+            radialProg.GetComponent<AudioSource>().enabled = true;
+            if (ui.previewParticle) {
+                Image image = ui.previewParticle.GetComponentInChildren<Image>();
+                image.color = new Color(image.color.r, image.color.g, image.color.b, 1);
+            }
+            
         }
     }
 
     public void OnPointerUp(PointerEventData data) {
         isPressed = false;
-        radialProg.GetComponent<AudioSource>().enabled = false;
+        if (radialProg)
+            radialProg.GetComponent<AudioSource>().enabled = false;
         if (confirmProg < holdDur) {
             confirmProg = 0;
             if (ui.previewParticle) {

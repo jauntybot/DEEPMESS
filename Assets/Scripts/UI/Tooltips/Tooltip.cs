@@ -11,7 +11,7 @@ public class Tooltip : MonoBehaviour
 
     public TextMeshProUGUI headerField;
     public TextMeshProUGUI contentField;
-    [SerializeField] GameObject gifContainer;
+    public GameObject gifContainer;
     [SerializeField] List<Animator> gifAnims;
     
     public int textWrapLimit;

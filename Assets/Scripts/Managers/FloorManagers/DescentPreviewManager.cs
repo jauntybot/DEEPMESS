@@ -41,7 +41,8 @@ public class DescentPreviewManager : MonoBehaviour {
             TogglePreivews(false);
      
             yield return StartCoroutine(floorManager.TransitionFloors(down, true));
-            
+            yield return new WaitForSecondsRealtime(0.05f);
+
             floorManager.transitioning = false;
         }
     }
@@ -66,31 +67,32 @@ public class DescentPreviewManager : MonoBehaviour {
         }
 
         if (scenario.currentEnemy) {
-            foreach (DescentPreview dp in scenario.currentEnemy.pendingPreviews)
-                dp.gameObject.SetActive(!state);
+            foreach (GameObject obj in scenario.currentEnemy.pendingPreviews)
+                obj.SetActive(!state);
         }
     }
 
     public void PreviewButton() {
-        if (tut) {
-            StartCoroutine(PeekTutorial(previewing));
-        } else {
+        if (UIManager.instance.peekButton.interactable == true && !FloorManager.instance.transitioning) {
+            if (tut) {
+                StartCoroutine(PeekTutorial(previewing));
+            } else {
 
-        int dir = previewing ? 1 : -1;
-        previewing = !previewing;
-        
-        FloorPeekEvent evt = ObjectiveEvents.FloorPeekEvent;
-        evt.down = dir != 1;
-        ObjectiveEventManager.Broadcast(evt);
+            int dir = previewing ? 1 : -1;
+            previewing = !previewing;
+            
+            FloorPeekEvent evt = ObjectiveEvents.FloorPeekEvent;
+            evt.down = dir != 1;
+            ObjectiveEventManager.Broadcast(evt);
 
-            scenario.player.DeselectUnit();
-            if (!floorManager.transitioning && floorManager.floors.Count - 1 >= floorManager.currentFloor.index - dir) {
-                StartCoroutine(PreviewFloor(previewing));
-                if (UIManager.instance.gameObject.activeSelf)
-                    UIManager.instance.PlaySound(previewing ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
+                scenario.player.DeselectUnit();
+                if (!floorManager.transitioning && floorManager.floors.Count - 1 >= floorManager.currentFloor.index - dir) {
+                    StartCoroutine(PreviewFloor(previewing));
+                    if (UIManager.instance.gameObject.activeSelf)
+                        UIManager.instance.PlaySound(previewing ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
+                }
             }
         }
-
     }
 
     IEnumerator PeekTutorial(bool down) {

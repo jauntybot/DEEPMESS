@@ -89,7 +89,7 @@ public class UIManager : MonoBehaviour {
     }
 
     public void LockPeekButton(bool state) {
-        peekButton.GetComponent<Button>().interactable = state ? false : scenario.floorManager.floors.Count - 1 > scenario.floorManager.currentFloor.index;
+        peekButton.GetComponent<Button>().interactable = !state && scenario.floorManager.floors.Count - 1 > scenario.floorManager.currentFloor.index;
     }
 
     public void LockHUDButtons(bool state) {
@@ -97,6 +97,18 @@ public class UIManager : MonoBehaviour {
         endTurnButton.interactable = !state;
         undoButton.interactable = state ? false : scenario.player.undoOrder.Count > 0;
         turnOrder.EnableHover(!state);
+    }
+
+    public void ToggleEndTurnText(bool endTurn) {
+        string phrase = "";
+        if (endTurn) {
+            phrase = "END TURN";
+        } else {
+            phrase = "DROP IN";
+        }
+        TMP_Text[] tmp = endTurnButton.GetComponentsInChildren<TMP_Text>();
+        foreach (TMP_Text t in tmp)
+            t.text = phrase;
     }
 
     public void ToggleUndoButton(bool state) {

@@ -71,7 +71,9 @@ public class HammerData : SlagEquipmentData {
         hammer.SetActive(true);
         pu.ui.ToggleEquipmentButtons();
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(origin, range, this, targetTypes);
-        pu.inRangeCoords = validCoords;
+        pu.inRangeCoords = EquipmentAdjacency.GetAdjacent(origin, range, this);
+        foreach (Vector2 coord in validCoords)
+            pu.inRangeCoords.Add(coord);
         pu.grid.DisplayValidCoords(validCoords, gridColor);
         for (int i = validCoords.Count - 1; i >= 0; i--) {
             bool occupied = false;
@@ -215,6 +217,7 @@ public class HammerData : SlagEquipmentData {
                  
             hammer.SetActive(false);
         }
+        hammer.transform.localPosition = new();
         
         if (targetCo != null)
             yield return targetCo;
@@ -281,7 +284,7 @@ public class HammerData : SlagEquipmentData {
     IEnumerator PushUnit(GridElement pushed, Vector2 dir) {
         Vector3 startPos = pushed.transform.position;
         Vector2 toCoord = pushed.coord + dir;
-        if (toCoord.x > 0 && toCoord.x < 7 && toCoord.y > 0 && toCoord.y < 7 && pushed.grid.CoordContents(toCoord).Count == 0) {
+        if (toCoord.x >= 0 && toCoord.x <= 7 && toCoord.y >= 0 && toCoord.y <= 7 && pushed.grid.CoordContents(toCoord).Count == 0) {
             float timer = 0;
             while (timer < animDur) {
                 pushed.transform.position = Vector3.Lerp(startPos, pushed.grid.PosFromCoord(toCoord), timer/animDur);

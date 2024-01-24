@@ -223,4 +223,9 @@ public class EnemyUnit : Unit {
         base.RemoveCondition(s);
         if (s == Status.Stunned) PlaySound(stunnedSFX);
     }
+
+    public override void PlaySound(SFX sfx = null) {
+        audioSource.pitch = Random.Range(0.8f, 1f);
+        base.PlaySound(sfx);
+    }
 }

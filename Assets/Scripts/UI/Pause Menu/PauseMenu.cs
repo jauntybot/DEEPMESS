@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class PauseMenu : MonoBehaviour
-{
+public class PauseMenu : MonoBehaviour {
     [SerializeField] MusicController music;
     private float prevVol;
     string restartString;
@@ -17,14 +16,12 @@ public class PauseMenu : MonoBehaviour
         restartString = SceneManager.GetActiveScene().name;
     }
 
-    public void ResumeButton()
-    {   
+    public void ResumeButton() {   
         Time.timeScale = 1;
         gameObject.SetActive(false);        
     }
 
-    public void RestartButton()
-    {
+    public void RestartButton() {
         Time.timeScale = 1;
         ScenarioManager.instance.StartCoroutine(ScenarioManager.instance.Lose());
         gameObject.SetActive(false);   

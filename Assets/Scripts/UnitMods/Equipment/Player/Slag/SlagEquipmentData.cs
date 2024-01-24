@@ -8,13 +8,13 @@ public class SlagEquipmentData : EquipmentData {
     public PlayerUnit slag;
     public enum UpgradePath { Shunt, Scab, Sludge };
     public Dictionary<UpgradePath, int> upgrades = new() { {UpgradePath.Shunt, 0}, {UpgradePath.Scab, 0}, {UpgradePath.Sludge, 0}};
-    public int totalUpgrades;
+    [HideInInspector] public List <UpgradePath> orderedUpgrades;
     public EquipmentUpgrades upgradeStrings;
 
     public virtual void UpgradeEquipment(UpgradePath targetPath) {
         if (upgrades[targetPath] <= 2) {
             upgrades[targetPath]++;
-            totalUpgrades++;
+            orderedUpgrades.Add(targetPath);
         }
         else
             Debug.LogWarning("Upgrade path maxed out!");
@@ -24,10 +24,10 @@ public class SlagEquipmentData : EquipmentData {
         base.EquipEquipment(user);
         slag = (PlayerUnit)user;
         upgrades = new Dictionary<UpgradePath, int>{{UpgradePath.Shunt, -1}, {UpgradePath.Scab, -1}, {UpgradePath.Sludge, -1}};
-        totalUpgrades = 0;
         UpgradeEquipment(UpgradePath.Scab);
         UpgradeEquipment(UpgradePath.Shunt);
         UpgradeEquipment(UpgradePath.Sludge);
+        orderedUpgrades = new();
     }
 
 }
