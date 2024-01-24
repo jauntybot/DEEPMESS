@@ -767,7 +767,7 @@ public class FloorManager : MonoBehaviour {
                 timer += Time.deltaTime;
                 yield return null;
             }
-            floorParent.transform.position = Vector3.zero;
+            floorParent.transform.position = endPos;
             
             uiManager.ToggleBattleCanvas(true);
 
