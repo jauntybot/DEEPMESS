@@ -55,8 +55,8 @@ public class SelfDetonate : EquipmentData
             foreach (Vector2 coord in aoe) {
                 if (user.grid.CoordContents(coord).Count > 0) {
                     foreach (GridElement ge in user.grid.CoordContents(coord)) {
-                        if (ge is Unit tu && ge != user) {
-                            affectedCo.Add(tu.StartCoroutine(tu.TakeDamage(2, GridElement.DamageType.Explosion, user, this)));
+                        if ((ge is Unit || ge is Wall) && ge != user ) {
+                            affectedCo.Add(ge.StartCoroutine(ge.TakeDamage(1, GridElement.DamageType.Explosion, user, this)));
                         }
                     }
                 }
