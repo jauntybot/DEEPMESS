@@ -105,19 +105,17 @@ public class AnvilData : SlagEquipmentData {
 // SPECIAL TIER I - Upgrade unit HP
             if (upgrades[targetPath] == 1) {
                 slag.hpMax += 1;
-                slag.hpCurrent += 1;
-                if (slag.hpCurrent > slag.hpMax) slag.hpCurrent = slag.hpMax;
                 slag.elementCanvas.InstantiateMaxPips();
                 slag.ui.overview.hPPips.InstantiateMaxPips();
+                slag.TakeDamage(-1, GridElement.DamageType.Heal);
             }
         } else if (targetPath == UpgradePath.Shunt) {
 // POWER TIER II - Upgrade unit HP
             if (upgrades[targetPath] == 2) {
                 slag.hpMax += 1;
-                slag.hpCurrent += 1;
-                if (slag.hpCurrent > slag.hpMax) slag.hpCurrent = slag.hpMax;
                 slag.elementCanvas.InstantiateMaxPips();
                 slag.ui.overview.hPPips.InstantiateMaxPips();
+                slag.TakeDamage(-1, GridElement.DamageType.Heal);
             }
         }
     }

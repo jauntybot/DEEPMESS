@@ -83,10 +83,9 @@ public class ShieldData : SlagEquipmentData {
         } else if (targetPath ==  UpgradePath.Sludge) {
             if (upgrades[targetPath] == 1) {
                 slag.hpMax += 1;
-                slag.hpCurrent += 1;
-                if (slag.hpCurrent > slag.hpMax) slag.hpCurrent = slag.hpMax;
                 slag.elementCanvas.InstantiateMaxPips();
                 slag.ui.overview.hPPips.InstantiateMaxPips();
+                slag.TakeDamage(-1, GridElement.DamageType.Heal);
             }
         }
     }

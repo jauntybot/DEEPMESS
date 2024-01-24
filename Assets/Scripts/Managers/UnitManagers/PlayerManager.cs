@@ -536,6 +536,7 @@ public class PlayerManager : UnitManager {
         GameObject arm = Instantiate(slimeArmAnim, floorManager.transitionParent);
         nail.transform.parent = floorManager.transitionParent;
         Animator anim = arm.GetComponentInChildren<Animator>();
+        nail.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
 
         arm.transform.position = nail.transform.position;
         SpriteRenderer sr = anim.GetComponent<SpriteRenderer>();
