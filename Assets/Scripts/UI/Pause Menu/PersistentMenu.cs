@@ -41,6 +41,8 @@ public class PersistentMenu : MonoBehaviour
         musicController = GetComponentInChildren<MusicController>();
         musicSlider.onValueChanged.AddListener(SetMusicVolume);
         sfxSlider.onValueChanged.AddListener(SetSFXVolume);
+        musicSlider.value = 5f;
+        sfxSlider.value = 5f;
 
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = targetFPS;
@@ -106,12 +108,14 @@ public class PersistentMenu : MonoBehaviour
     }
 
     void SetMusicVolume(System.Single vol) {
-        mixer.SetFloat(MIXER_MUSIC, Mathf.Log10(vol) * 20);
+        System.Single map = Util.Remap(vol, 0, 9, .0001f, .5f);
+        mixer.SetFloat(MIXER_MUSIC, Mathf.Log10(map) * 30);
 
     }
     
     void SetSFXVolume(System.Single vol) {
-        mixer.SetFloat(MIXER_SFX, Mathf.Log10(vol) * 20);
+        System.Single map = Util.Remap(vol, 0, 9, .0001f, .6f);
+        mixer.SetFloat(MIXER_SFX, Mathf.Log10(map) * 30);
         
     }
 
