@@ -275,11 +275,17 @@ public class Unit : GridElement {
                 case Status.Disabled:
                     energyCurrent = 0;
                     moved = true;
-                    ui.UpdateEquipmentButtons();
+                    if (this is PlayerUnit)
+                        ui.UpdateEquipmentButtons();
                     elementCanvas.UpdateStatsDisplay();
                 break;
                 case Status.Weakened:
                     //elementCanvas.UpdateStatsDisplay();
+                break;
+                case Status.Stunned:
+                    moved = true; energyCurrent = 0;
+                    if (this is PlayerUnit)
+                        ui.UpdateEquipmentButtons();
                 break;
             }
         }

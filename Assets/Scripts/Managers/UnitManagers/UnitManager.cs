@@ -108,8 +108,8 @@ public class UnitManager : MonoBehaviour {
             if (u.conditions.Count > 0) {
                 for (int i = u.conditions.Count - 1; i >= 0; i--) {
                     if (u.conditions[i] is Unit.Status.Weakened) u.RemoveCondition(u.conditions[i]);
+                    if (u.conditions[i] is Unit.Status.Stunned && u is PlayerUnit) u.RemoveCondition(u.conditions[i]);
                 }
-                
             }
         }
     }

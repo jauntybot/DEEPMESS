@@ -201,6 +201,7 @@ public class PlayerManager : UnitManager {
 #region Player Controller interface
 // Get grid input from player controller, translate it to functionality
     public void GridInput(GridElement input) {
+        Debug.Log(input);
 // Player clicks on unit
         if (input is Unit u) {
 // Player clicks on their own unit
@@ -222,6 +223,13 @@ public class PlayerManager : UnitManager {
             }
 // Player clicks on enemy unit
             else if (u.manager is EnemyManager) {
+                if (overrideEquipment && !selectedUnit) {
+                    foreach(Unit _u in units) {
+                        if (u.coord == _u.coord) {
+                            SelectUnit(_u);
+                        }
+                    }
+                }
                 if (selectedUnit) {
 // Unit is a target of valid action adjacency
                     if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
@@ -239,6 +247,13 @@ public class PlayerManager : UnitManager {
             foreach (GridElement ge in currentGrid.CoordContents(tile.coord)) {
                 contents = ge;
                 if (ge is PlayerUnit && overrideEquipment) break;
+            }
+            if (overrideEquipment && !selectedUnit) {
+                foreach(Unit _u in units) {
+                    if (tile.coord == _u.coord) {
+                        SelectUnit(_u);
+                    }
+                }
             }
 // Square not empty, recurse this function with reference to square contents
             if (contents)
