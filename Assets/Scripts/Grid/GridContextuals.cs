@@ -213,13 +213,15 @@ public class GridContextuals : MonoBehaviour {
             aoeCursors.Remove(del);
             Destroy(del);
         }
+        Debug.Log(data.name);
         if (data.aoeRange > 0) {
-            List<Vector2> aoeCoords = EquipmentAdjacency.GetAdjacent(manager.lastHoveredCoord, data.aoeRange, data, null, floorManager.currentFloor, false);
+            List<Vector2> aoeCoords = EquipmentAdjacency.GetAdjacent(new Vector2(3,3), data.aoeRange, data, null, floorManager.currentFloor, true);
             Debug.Log("AOE coords: " + aoeCoords.Count);
             for (int i = aoeCoords.Count - 1; i >= 0; i--) {
                 GameObject cursor = Instantiate(gridCursorPrefab);
-                cursor.transform.position = floorManager.currentFloor.PosFromCoord(aoeCoords[i]);
+                gridCursor.transform.position = floorManager.currentFloor.PosFromCoord(new Vector2(3,3));
                 cursor.transform.parent = gridCursor.transform;
+                cursor.transform.position = floorManager.currentFloor.PosFromCoord(aoeCoords[i]);
                 cursor.transform.localScale = Vector3.one;
                 cursor.SetActive(true);
                 aoeCursors.Add(cursor);

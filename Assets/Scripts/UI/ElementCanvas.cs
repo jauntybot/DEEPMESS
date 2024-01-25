@@ -131,7 +131,6 @@ public class ElementCanvas : MonoBehaviour
     }
 
     public void UpdateTurnOrder(int order) {
-        Debug.Log("Update to " + order);
         turnOrder.text = order.ToString();
     }
 

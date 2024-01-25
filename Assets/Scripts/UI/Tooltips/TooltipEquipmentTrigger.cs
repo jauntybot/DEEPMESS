@@ -31,7 +31,7 @@ public class TooltipEquipmentTrigger : TooltipTrigger {
             case "BIG GRAB": BigGrab(); break;
             case "HAMMER": Hammer(); break;
             case "HEAL BULB": HealBulb(); break;
-            case "WEAKEN BULB": WeakenBulb(); break;
+            case "STUN BULB": StunBulb(); break;
             case "SURGE BULB": SurgeBulb(); break;
             case "STRIKE": Strike(); break;
             case "PIN COUSHIN": PinCoushin(); break;
@@ -81,18 +81,18 @@ public class TooltipEquipmentTrigger : TooltipTrigger {
 
     void HealBulb() {
         header = "HEAL BULB";
-        content = "Restores 2HP. Can be thrown.";
+        content = "Restores 2HP.";
         anim = bulbAnim;
     }
 
-    void WeakenBulb() {
-        header = "WEAKEN BULB";
-        content = "Throw for area of effect explosion. Causes anything in radius to take double damage for that turn.";
+    void StunBulb() {
+        header = "STUN BULB";
+        content = "Explodes in area of effect, stunning anything inside.";
         anim = bulbAnim;
     }
     void SurgeBulb() {
         header = "SURGE BULB";
-        content = "Refreshes action and move. Can be thrown.";
+        content = "Refreshes Slag action and move.";
         anim = bulbAnim;
     }
 

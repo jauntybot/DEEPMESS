@@ -10,10 +10,17 @@ public class EnemyStaticUnit : EnemyUnit {
     }
 
     public override IEnumerator CalculateAction() {
-
-        yield return StartCoroutine(AttackScan());
-        yield return null;
-        manager.unitActing = false;
+        if (!conditions.Contains(Status.Stunned)) {
+            yield return StartCoroutine(AttackScan());
+            yield return null;
+            manager.unitActing = false;
+        } else {
+            moved = true;
+            energyCurrent = 0;
+            yield return new WaitForSecondsRealtime(0.125f);
+            RemoveCondition(Status.Stunned);
+            yield return new WaitForSecondsRealtime(0.25f);
+        }
     }
 
     protected override IEnumerator AttackScan() {

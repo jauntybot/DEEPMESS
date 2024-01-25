@@ -89,7 +89,9 @@ public class GameUnitUI : UnitUI {
     public void ToggleEquipmentButtons() {
         PlayerManager pManager = (PlayerManager)unit.manager;
         foreach (EquipmentButton b in equipButtons) {
-            b.gameObject.GetComponentInChildren<Button>().interactable = (unit.energyCurrent >= b.data.energyCost && !unit.conditions.Contains(Unit.Status.Restricted) && !unit.conditions.Contains(Unit.Status.Disabled) && !pManager.unitActing);
+            b.gameObject.GetComponentInChildren<Button>().interactable = unit.energyCurrent >= b.data.energyCost && 
+                !unit.conditions.Contains(Unit.Status.Restricted) && !unit.conditions.Contains(Unit.Status.Disabled) && 
+                !unit.conditions.Contains(Unit.Status.Stunned) && !pManager.unitActing;
         }      
         if (overview != null )
             overview.UpdateOverview(unit.hpCurrent);

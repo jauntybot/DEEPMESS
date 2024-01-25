@@ -257,7 +257,7 @@ public class HammerData : SlagEquipmentData {
 
             dmgCo(target.StartCoroutine(target.TakeDamage(dmg, dmgType, user, sourceEquip: this)));
 // SPECIAL TIER I -- Push element on hit
-            if (upgrades[UpgradePath.Scab] == 1) {
+            if (upgrades[UpgradePath.Scab] == 1 && (target is not BossUnit || target is not EnemyStaticUnit)) {
                 pushCo(target.StartCoroutine(PushUnit(target, (target.coord - user.coord).normalized)));
             }
         }
