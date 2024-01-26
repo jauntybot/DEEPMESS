@@ -112,7 +112,7 @@ public class Unit : GridElement {
             } else if (targetSqr.tileType == Tile.TileType.Bile && hpCurrent > 0) {
 // SHIELD UNIT TIER II -- Bile bouyancy
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
-                if (!(shield && shield.buoyant)) {
+                if (!(shield && shield.buoyant) && this is not BossUnit) {
                     RemoveShield();
                     StartCoroutine(TakeDamage(hpMax, DamageType.Bile));
                 }
@@ -175,7 +175,11 @@ public class Unit : GridElement {
             ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
             
             PlaySound(destroyedSFX);
-            yield return new WaitForSecondsRealtime(0.5f);
+            float timer = 0f;
+            while (timer < 0.5f) {
+                yield return null;
+                timer += Time.deltaTime;
+            }
 
             if (manager.selectedUnit == this) manager.DeselectUnit();
 

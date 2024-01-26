@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour {
 
     [Header("Top UIs")]
     public MetaDisplay metaDisplay;
+    [SerializeField] ObjectiveTracker tracker;
     [SerializeField] TurnOrderHover turnOrder;
 
     [Header("Floor Buttons")]
@@ -135,6 +136,10 @@ public class UIManager : MonoBehaviour {
     void ToggleEnemyTurnOrder(bool state) {
         foreach(Unit u in scenario.currentEnemy.units)
             u.elementCanvas.DisplayTurnOrder(state);
+    }
+
+    public void ToggleObjectiveTracker(bool state) {
+        tracker.gameObject.SetActive(state);
     }
 
 
