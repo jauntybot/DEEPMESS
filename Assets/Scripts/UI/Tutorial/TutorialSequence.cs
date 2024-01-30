@@ -54,6 +54,7 @@ public class TutorialSequence : MonoBehaviour {
         floorManager.floorSequence.currentThreshold = FloorPacket.PacketType.Tutorial;    
         floorManager.floorSequence.floorsTutorial = 3;
         floorManager.floorSequence.localPackets.Add(tutorialPacket);
+        floorManager.floorCount = 1;
         
         descents = 0;
 
@@ -690,6 +691,10 @@ public class TutorialSequence : MonoBehaviour {
             default:
                 EnemyManager enemy = (EnemyManager)floorManager.currentFloor.enemy;
                 PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
+                floorManager.floorSequence.ThresholdCheck();
+                foreach (Unit u in playerUnits) {
+                    u.StartCoroutine(u.TakeDamage(u.hpCurrent - u.hpMax, GridElement.DamageType.Heal));
+                }
                 yield return StartCoroutine(floorManager.TransitionPackets(enemy));
             break;
         }

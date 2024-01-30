@@ -69,8 +69,6 @@ public class ElementCanvas : MonoBehaviour
     public virtual void UpdateStatsDisplay(int pre = -32) {
         if (!disable) {
             int cap = (pre == -32) ? element.hpCurrent - 1 : pre - 1;
-            if (overview)
-                overview.UpdateOverview(cap + 1);
 
             hpContainer.SetActive(true);
             for (int i = 0; i <= element.hpMax - 1; i++) {
@@ -98,7 +96,7 @@ public class ElementCanvas : MonoBehaviour
         int r = element.hpCurrent - dmg;
 // Element is damaged
         if (dmg > 0) {   
-            UpdateStatsDisplay(r);        
+            UpdateStatsDisplay(r);
             for (int i = 0; i <= element.hpMax - 1; i++) {
                 GameObject pip = Instantiate(dmgPipPrefab, dmgPanel.transform);
                 pip.GetComponent<Image>().enabled = i >= r;
@@ -114,11 +112,11 @@ public class ElementCanvas : MonoBehaviour
             }
             dmgAnim.SetBool("dmg", false);
         }
+        UpdateStatsDisplay(r);
         
         while (dmgAnim.gameObject.activeSelf) {
             yield return null;
         }
-        UpdateStatsDisplay(r);
     }
 
     public void ToggleStatsDisplay(bool state) {

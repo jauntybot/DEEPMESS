@@ -52,7 +52,8 @@ public class Grid : MonoBehaviour {
                 altTiles.Add(spawn.coord);
             }
         }
-        for (int y = 0; y < FloorManager.gridSize; y++) {
+        bool bloodFallsL = false, bloodFallsR = false;
+        for (int y = FloorManager.gridSize - 1; y >= 0; y--) {
             for (int x = 0; x < FloorManager.gridSize; x++) {
                 Tile tile = null;
                 if (altTiles.Contains(new Vector2(x,y)))
@@ -63,7 +64,23 @@ public class Grid : MonoBehaviour {
                 tile.white=false;
                 if (x%2==0) { if (y%2==0) tile.white=true; } 
                 else { if (y%2!=0) tile.white=true; }
-
+// Enable blood falls
+                // if (tile.tileType is Tile.TileType.Blood && (x == 7 || y == 0)) {
+                //     if (y == 0 && !bloodFallsL) {
+                //         bloodFallsL = true;
+                //         tile.gfx[1].gameObject.SetActive(true);
+                //         Animator a = tile.gfx[1].GetComponent<Animator>();
+                //         string name = a.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+                //         a.Play(name, 0, Util.Remap(8 + x - y, 1, 15, 1, 18));
+                //     }
+                //     if (x == 7 && !bloodFallsR) {
+                //         bloodFallsR = true;
+                //         tile.gfx[2].gameObject.SetActive(true);
+                //         Animator a = tile.gfx[2].GetComponent<Animator>();
+                //         string name = a.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+                //         a.Play(name, 0, Util.Remap(8 + x - y, 1, 15, 1, 18));
+                //     }
+                // }
                 tile.StoreInGrid(this);
                 tile.UpdateElement(new Vector2(x,y));
 

@@ -84,6 +84,9 @@ public class PlayerUnit : Unit {
 
         yield return co;
 
+        if (ui.overview)
+            ui.overview.UpdateOverview();
+
         UIManager.instance.LockHUDButtons(false);
         if (equip is MoveData && energyCurrent > 0) {
             grid.UpdateSelectedCursor(true, coord);
@@ -112,6 +115,8 @@ public class PlayerUnit : Unit {
 
     public override void TargetElement(bool state) {
         base.TargetElement(state);
+        if (ui.overview)
+            ui.overview.UpdateOverview();
         // if (state && manager.scenario.currentTurn == ScenarioManager.Turn.Player)
         //     ui.ToggleEquipmentPanel(state);
         // else
@@ -169,6 +174,8 @@ public class PlayerUnit : Unit {
     public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
         if (!destroyed) {
             yield return base.TakeDamage(dmg, dmgType, source, sourceEquip);
+            if (ui.overview)
+                ui.overview.UpdateOverview();
             if (Mathf.Sign(dmg) == -1 && conditions.Contains(Status.Disabled)) Stabilize();
         }
     }

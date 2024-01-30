@@ -130,11 +130,9 @@ public class UnitUpgradeUI : UnitUI {
             CurrentSlot().UpdateModifier("", "");
         else if (CurrentSlot()) {
             CurrentSlot().FillSlot();
-            if (hpPips) {
-                hpPips.InstantiateMaxPips();
-                hpPips.UpdatePips(unit.hpCurrent);
-            }
         }
+        if (hpPips) 
+            //hpPips.UpdatePips();
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();

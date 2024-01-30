@@ -10,34 +10,49 @@ public class HPPips : MonoBehaviour {
 
     public void Init(Unit u) {
         unit = u;
-        InstantiateMaxPips();
+        unit.ElementDamaged += UpdatePips;
+        unit.ElementDestroyed += Unsub;
+        UpdatePips();
     }
 
-    public virtual void InstantiateMaxPips() {
-        for (int i = emptyHpPips.transform.childCount - 1; i >= 0; i--)
-            Destroy(emptyHpPips.transform.GetChild(i).gameObject);
-        for (int i = hpPips.transform.childCount - 1; i >= 0; i--)
-            Destroy(hpPips.transform.GetChild(i).gameObject);
+    public virtual void UpdatePips(GridElement ge = null) {
+        Debug.Log(unit.name + " Max Pips: " + unit.hpMax);
+// Instiantate correct amount of hp pips
+        if (emptyHpPips.childCount != unit.hpMax || hpPips.childCount != unit.hpMax) {
+            for (int i = emptyHpPips.transform.childCount - 1; i >= 0; i--)
+                DestroyImmediate(emptyHpPips.transform.GetChild(i).gameObject);
+            for (int i = hpPips.transform.childCount - 1; i >= 0; i--)
+                DestroyImmediate(hpPips.transform.GetChild(i).gameObject);
 
-        SizePipContainer(hpPips.transform.GetComponent<RectTransform>());
-        for (int i = unit.hpMax - 1; i >= 0; i--) {
-            Instantiate(emptyPipPrefab, emptyHpPips.transform);
-            Instantiate(hpPipPrefab, hpPips.transform);
+            for (int i = unit.hpMax - 1; i >= 0; i--) {
+                Instantiate(emptyPipPrefab, emptyHpPips.transform);
+                Instantiate(hpPipPrefab, hpPips.transform);
+            }
             RectTransform rect = hpPips.GetComponent<RectTransform>();
+            SizePipContainer(rect);
         }
-        hpPips.gameObject.SetActive(true);
+// Set active pips
+        SetToCurrentHP();
     }
 
     protected virtual void SizePipContainer(RectTransform rect) {
         rect.anchorMin = new Vector2(0.5f, 0.5f); rect.anchorMax = new Vector2(0.5f, 0.5f);
         rect.anchoredPosition = Vector2.zero;
         Vector3 delta = new Vector2((float)(14 * unit.hpMax + 2 * (unit.hpMax - 1)), 21);
-        rect.sizeDelta = (delta);
+        rect.sizeDelta = delta;
     }
 
-    public virtual void UpdatePips(int value) {
-        for (int i = 0; i <= unit.hpMax - 1; i++) 
-            hpPips.transform.GetChild(i).gameObject.SetActive(i < value);
+    public virtual void SetToCurrentHP() {
+        Debug.Log(unit.name + " " + unit.hpCurrent);
+        for (int i = 0; i <= hpPips.childCount - 1; i++) {
+            Debug.Log(hpPips.transform.GetChild(i).name + " HP PIP " + i + " active: " + (i < unit.hpCurrent));
+            hpPips.transform.GetChild(i).gameObject.SetActive(i < unit.hpCurrent);
+        }
+    }
+
+    void Unsub(GridElement ge) {
+        ge.ElementDamaged -= UpdatePips;
+        ge.ElementDestroyed -= Unsub;
     }
 
 }

@@ -29,6 +29,7 @@ public class GridElement : MonoBehaviour{
 
     public delegate void OnElementUpdate(GridElement ge);
     public virtual event OnElementUpdate ElementUpdated;
+    public virtual event OnElementUpdate ElementDamaged;
     public virtual event OnElementUpdate ElementDestroyed;
 
     
@@ -92,9 +93,9 @@ public class GridElement : MonoBehaviour{
                 if (Mathf.Sign(dmg) == 1) 
                     PlaySound(dmgdSFX);
                             
-                if (elementCanvas) {
+                if (elementCanvas) 
                     yield return StartCoroutine(elementCanvas.DisplayDamageNumber(dmg));
-                }
+
 
                 hpCurrent -= dmg;
                 
@@ -105,7 +106,8 @@ public class GridElement : MonoBehaviour{
             } else {
                 RemoveShield();
             }
-            //yield return new WaitForSecondsRealtime(.4f);
+            
+            ElementDamaged?.Invoke(this);
             TargetElement(false);
             if (hpCurrent <= 0) {
                 yield return StartCoroutine(DestroySequence(dmgType, source, sourceEquip));
@@ -174,10 +176,6 @@ public class GridElement : MonoBehaviour{
 
     public virtual void OnSharedSpace(GridElement sharedWith) {
         
-    }
-
-    public virtual IEnumerator OnDamaged() {
-        yield return null;
     }
 
     public virtual void ApplyShield(Shield _shield) {

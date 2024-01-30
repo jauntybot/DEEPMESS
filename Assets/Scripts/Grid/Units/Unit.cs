@@ -57,8 +57,6 @@ public class Unit : GridElement {
         }
         if (conditionDisplay) conditionDisplay.Init(this);
 
-        if (ui.overview)
-            ui.overview.UpdateOverview(hpCurrent);
 
 // Initialize equipment from prefab
         foreach(EquipmentData e in equipment) {

@@ -124,11 +124,14 @@ public class ScenarioManager : MonoBehaviour
         player.units[0].UpdateElement(new Vector2(3,3));
         player.units[1].UpdateElement(new Vector2(3,4));
         player.units[2].UpdateElement(new Vector2(3,5));
+        player.nail.selectable = false;
+        player.nail.grid.RemoveElement(player.nail);
         floorManager.previewManager.InitialPreview();
         
         foreach (GridElement ge in player.units) {
             if (floorManager.currentFloor.gridElements.Contains(ge))
                 floorManager.currentFloor.RemoveElement(ge);
+            
         }
         yield return StartCoroutine(floorManager.ChooseLandingPositions());
         yield return new WaitForSecondsRealtime(1.25f);
@@ -244,6 +247,7 @@ public class ScenarioManager : MonoBehaviour
                         u.energyCurrent = 0;
                         u.elementCanvas.UpdateStatsDisplay();
                         u.ui.UpdateEquipmentButtons();
+                        u.ui.overview.UpdateOverview();
                         u.StoreInGrid(player.currentGrid);
                     }
                 }

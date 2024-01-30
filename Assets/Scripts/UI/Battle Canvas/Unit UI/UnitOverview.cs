@@ -27,12 +27,12 @@ public class UnitOverview : MonoBehaviour {
         mini.sprite = u.gfx[0].sprite;
 
         hPPips.Init(u);
-        UpdateOverview(u.hpCurrent);
+        UpdateOverview();
 
         return this;
     }
 
-    public virtual void UpdateOverview(int value) {
+    public virtual void UpdateOverview() {
 
         mini.color = unit.conditions.Contains(Unit.Status.Disabled) ? new Color(0.5f, 0.5f, 0.5f) : Color.white;
         hammerPossession.SetActive(unit.equipment.Find(e => e is HammerData) != null);
@@ -55,7 +55,7 @@ public class UnitOverview : MonoBehaviour {
         //if (unit.ui) equipment.sprite = unit.ui.equipButtons[0].data.icon;
         //equipmentDisable.SetActive(unit.usedEquip);
 
-        hPPips.UpdatePips(value);
+        //hPPips.UpdatePips();
     }
 
 
