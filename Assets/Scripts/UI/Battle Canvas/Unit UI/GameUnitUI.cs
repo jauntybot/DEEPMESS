@@ -67,8 +67,6 @@ public class GameUnitUI : UnitUI {
     void UpdatePips() {
         emptyPips.SetInteger("Count", unit.hpMax);
         hpPips.SetInteger("Count", unit.hpCurrent);
-        if (overview)   
-            overview.UpdateOverview(unit.hpCurrent);
     }
 
     void UpdateBulb() {
@@ -93,8 +91,7 @@ public class GameUnitUI : UnitUI {
                 !unit.conditions.Contains(Unit.Status.Restricted) && !unit.conditions.Contains(Unit.Status.Disabled) && 
                 !unit.conditions.Contains(Unit.Status.Stunned) && !pManager.unitActing;
         }      
-        if (overview != null )
-            overview.UpdateOverview(unit.hpCurrent);
+
     }
 
     public void UpdateEquipmentButtons() {
@@ -175,9 +172,6 @@ public class GameUnitUI : UnitUI {
 
         UpdateEquipmentButtons(); 
         foreach (EquipmentButton button in equipButtons) button.gameObject.GetComponentInChildren<Button>().interactable = true;
-
-        if (overview != null )  
-            overview.UpdateOverview(unit.hpCurrent);
     }
 
 }

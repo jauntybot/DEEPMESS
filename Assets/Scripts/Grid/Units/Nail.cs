@@ -46,7 +46,7 @@ public class Nail : Unit {
             break;
         }
         nailState = toState;
-        ui.overview.UpdateOverview(hpCurrent);
+        ui.overview.UpdateOverview();
     }
 
     public override void UpdateElement(Vector2 c) {

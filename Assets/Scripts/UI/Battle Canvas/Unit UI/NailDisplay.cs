@@ -16,14 +16,14 @@ public class NailDisplay : UnitOverview
 
         mini.sprite = u.gfx[0].sprite;
 
-        UpdateOverview(u.hpCurrent);
+        UpdateOverview();
 
         return this;
 
     }
 
-    public override void UpdateOverview(int value) {
-        Debug.Log("nail pips: " + value);
+    public override void UpdateOverview() {
+        Debug.Log("nail pips: " );
         Nail n = (Nail)unit;
         switch (n.nailState) {
             default: break;
@@ -40,12 +40,12 @@ public class NailDisplay : UnitOverview
             break;
         }
 
-        UpdatePips(value);    
+        UpdatePips();    
     }
 
-    void UpdatePips(int value) {
+    void UpdatePips() {
         emptyPips.SetInteger("Count", unit.hpMax);
-        hpPips.SetInteger("Count", value);
+        hpPips.SetInteger("Count", unit.hpCurrent);
     }
 
 }

@@ -101,7 +101,7 @@ public class EnemyManager : UnitManager {
                 break;
 
 // Yield to selected acting EnemyUnit coroutine
-            if (unitsToAct[0] is EnemyUnit enemy) {
+            if (unitsToAct[0] is EnemyUnit enemy && unitsToAct[0] is not EnemyStaticUnit) {
                 SelectUnit(enemy);
                 StartCoroutine(scatter ? enemy.ScatterTurn() : enemy.CalculateAction());
                 unitActing = true;
@@ -114,15 +114,12 @@ public class EnemyManager : UnitManager {
                 yield return new WaitForSecondsRealtime(0.125f);
                 
                 unitsToAct.Remove(enemy);
-            } else {
-
-            }
+            } else unitsToAct.RemoveAt(0);
         }
 
         
         Unit lastUnit = null;
         if (units.Count > 0) lastUnit = units[0];
-        Debug.Log(lastUnit is BossUnit);
         if (!lastUnit || lastUnit is not BossUnit || (lastUnit is BossUnit && lastUnit.energyCurrent != 0)) {
             if (AddToReinforcements()) {
                 yield return StartCoroutine(SpawnReinforcements());

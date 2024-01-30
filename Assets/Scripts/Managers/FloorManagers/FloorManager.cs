@@ -20,7 +20,6 @@ public class FloorManager : MonoBehaviour {
     public TutorialSequence tutorial;
     public bool gridHightlightOverride;
     public Grid currentFloor;
-    int currentGridIndex;
     public List<Grid> floors;
     [HideInInspector] public bool bossSpawn = false;
 
@@ -712,6 +711,7 @@ public class FloorManager : MonoBehaviour {
         if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) {
             if (!scenario.gpOptional.prebossEncountered)
                 yield return StartCoroutine(scenario.gpOptional.Preboss());
+            uiManager.ToggleObjectiveTracker(false);
         }
 
 // Lerp units offscreen

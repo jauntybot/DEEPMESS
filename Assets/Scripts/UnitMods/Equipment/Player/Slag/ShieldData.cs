@@ -84,8 +84,8 @@ public class ShieldData : SlagEquipmentData {
             if (upgrades[targetPath] == 1) {
                 slag.hpMax += 1;
                 slag.elementCanvas.InstantiateMaxPips();
-                slag.ui.overview.hPPips.InstantiateMaxPips();
-                slag.TakeDamage(-1, GridElement.DamageType.Heal);
+                //slag.ui.overview.hPPips.UpdatePips();
+                slag.StartCoroutine(slag.TakeDamage(-1, GridElement.DamageType.Heal));
             }
         }
     }

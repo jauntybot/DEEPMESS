@@ -71,16 +71,16 @@ public class UpgradeManager : MonoBehaviour {
         LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
         yield return null;
-        
         unitUIContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+        
         foreach(UnitUpgradeUI ui in unitUpgradeUIs) {
-            if (ui.hpPips) {
-                ui.hpPips.InstantiateMaxPips();
-                ui.hpPips.UpdatePips(ui.unit.hpCurrent);
-            }
 
             Animator anim = ui.transform.GetComponent<Animator>();
             anim.SetTrigger("SlideIn");
+            yield return null;
+            if (ui.hpPips)
+                ui.hpPips.UpdatePips();
+
             float t = 0;
             while (t <= 0.125f) {
                 t += Time.deltaTime;
