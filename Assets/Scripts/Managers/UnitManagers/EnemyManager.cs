@@ -101,7 +101,7 @@ public class EnemyManager : UnitManager {
                 break;
 
 // Yield to selected acting EnemyUnit coroutine
-            if (unitsToAct[0] is EnemyUnit enemy && unitsToAct[0] is not EnemyStaticUnit) {
+            if (unitsToAct[0] is EnemyUnit enemy && !(unitsToAct[0] is EnemyStaticUnit && scatter)) {
                 SelectUnit(enemy);
                 StartCoroutine(scatter ? enemy.ScatterTurn() : enemy.CalculateAction());
                 unitActing = true;

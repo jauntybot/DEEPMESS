@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System.Linq;
 
 public class FloorEditor : EditorWindow {
 
@@ -32,12 +33,13 @@ public class FloorEditor : EditorWindow {
     static bool previewing;
     static bool pNotation;
     static DirectoryInfo rootFolder;
+    static Dictionary<DirectoryInfo, DirectoryInfo[]> folders;
+    static Dictionary<DirectoryInfo, bool> folderStates;
     static DirectoryInfo[] subFolders;
     static List<FloorDefinition> previewList = new();
 
     public static void Init(FloorDefinition _lvl) {
     
-        UpdatePreviewFolder();    
 
 // Create Editor window
         window = (FloorEditor)
@@ -53,6 +55,8 @@ public class FloorEditor : EditorWindow {
         activeCoord = Vector2.zero;
         assetDropdown = AssetLayer.Environment;
         activeAsset = lvl.atlas.environmentAssets[0];
+        
+        UpdatePreviewFolder();    
         ReloadAssetsFromAtlas();
         LayoutInit();
     }
@@ -120,7 +124,9 @@ public class FloorEditor : EditorWindow {
                 activeList = units;
                 spawn = activeList.Find(s => s.coord == activeCoord);
             }
-            if (spawn != null) {
+            if (spawn != null && 
+                ((assetDropdown == AssetLayer.Environment && lvl.atlas.environmentAssets.Contains(spawn.asset)) || 
+                (assetDropdown == AssetLayer.Unit && lvl.atlas.unitAssets.Contains(spawn.asset)))) {
                 activeList.Remove(spawn);
                 window.hasUnsavedChanges = true;
             }
@@ -369,39 +375,77 @@ public class FloorEditor : EditorWindow {
         GUILayout.Label("Floors/", GUILayout.Width(w));
         GUI.changed = false;
         activePath = GUILayout.TextField(activePath);
-        if (GUI.changed) UpdatePreviewFolder();
+        //if (GUI.changed) UpdatePreviewFolder();
         GUILayout.EndHorizontal();
-        GUILayout.FlexibleSpace();
+        GUILayout.Box("", GUILayout.Height(5));
+       
         previewScroll = GUILayout.BeginScrollView(previewScroll, false, true, GUILayout.Width(container.width));
-        
-        for (int i = 0; i <= previewList.Count - 1; i++) {
-            if (GUILayout.Button(previewList[i].name, GUILayout.Width(container.width - 30))) {
-                previewLvl = previewList[i];
-            }
-        }
+        Folder(rootFolder, 0);
         if (previewList.Count == 0)
-            GUILayout.Label("Invalid file path");
+            EditorGUILayout.HelpBox("Invalid file path", MessageType.Warning);
         GUILayout.EndScrollView();
     }
 
     static void UpdatePreviewFolder() {
         rootFolder = new DirectoryInfo(dataPath);
-        subFolders = rootFolder.GetDirectories();
-        foreach (DirectoryInfo f in subFolders) {
 
-        }
+        folders = new();
+        folderStates = new();
+        RegisterFolder(rootFolder);
 
-        previewList = LoadAssetsFromFolder<FloorDefinition>(dataPath+activePath);
+        Debug.Log(AssetDatabase.GetAssetPath(lvl.GetInstanceID()));
+        activePath = AssetDatabase.GetAssetPath(lvl.GetInstanceID()).TrimEnd((lvl.name+".asset").ToCharArray());
+        Debug.Log(dataPath+activePath);
+        previewList = LoadAssetsFromFolder<FloorDefinition>(activePath);
     }
 
-    void Folder(KeyValuePair<DirectoryInfo, bool> entry) {
-        bool v = entry.Value;
-        v = EditorGUILayout.Foldout(v, entry.Key.Name);
-        if (v) {
-            DirectoryInfo[] subFolders = entry.Key.GetDirectories();
-            if (subFolders.Length > 0) {
-                foreach (DirectoryInfo f in subFolders) {
-                    Folder(new KeyValuePair<DirectoryInfo, bool>(f, false));
+    static void RegisterFolder(DirectoryInfo folder) {
+        if (!folderStates.ContainsKey(folder))
+            folderStates.Add(folder, false);
+        DirectoryInfo[] subFolders = folder.GetDirectories();
+        foreach (DirectoryInfo f in subFolders) {
+            if (!folderStates.ContainsKey(f))
+                folderStates.Add(f, false);   
+        }
+        if (!folders.ContainsKey(folder))
+            folders.Add(folder, subFolders);
+    }
+
+    static void Folder(DirectoryInfo folder, int subIndex) {
+        if (folderStates.ContainsKey(folder)) {
+            GUILayout.BeginHorizontal();
+            GUILayout.Box("", GUIStyle.none, GUILayout.Width(subIndex*12));
+            folderStates[folder] = EditorGUILayout.Foldout(folderStates[folder], folder.Name);
+            GUILayout.EndHorizontal();
+            if (folderStates[folder]) {
+                if (!folders.ContainsKey(folder)) {
+                    RegisterFolder(folder);
+                }
+                
+// Draw nesteed folders
+                for (int i = 0; i <= folders[folder].Length - 1; i++) 
+                    Folder(folders[folder][i], subIndex+1);
+
+// Draw floor definition preview buttons
+                string path = "";
+                DirectoryInfo index = folder;
+                for (int i = 0; i <= subIndex - 1; i++) {
+                    path = index.Name + "/" + path;
+                    index = index.Parent;
+                }
+                
+                List<FloorDefinition> floors = LoadAssetsFromFolder<FloorDefinition>(dataPath + path);
+                for (int i = 0; i <= floors.Count - 1; i++) {
+                    GUILayout.BeginHorizontal();
+                    GUIStyle style = GUIStyle.none;
+                    style.normal.textColor = new Color(0.9f, 0.9f, 0.9f);;
+                    style.onHover.textColor = new Color(0.6f, 0.6f, 0.6f);
+                    
+                    GUILayout.Box("", GUIStyle.none, GUILayout.Width((subIndex+2)*12));
+                    if (GUILayout.Button(floors[i].name, style)) {
+                        previewLvl = floors[i];
+                    }
+                    GUILayout.EndHorizontal();
                 }
             }
         }
@@ -415,12 +459,10 @@ public class FloorEditor : EditorWindow {
                 FloorAsset reload = lvl.atlas.environmentAssets.Find(a => a == grid[i].asset);
                 if (reload != null) {
                     grid[i].asset = reload;
-                    Debug.Log("Reloaded");
-                } else
-                    Debug.Log("Reloaded failed");
+                }
             }
         }
-        window.SaveChanges();
+        //window.SaveChanges();
     }
 
     public static void DrawUILine(Color color, int thickness = 2, int padding = 10) {
@@ -471,13 +513,16 @@ public class FloorEditor : EditorWindow {
         List<T> loadedAssets = new List<T>();
         string searchString = $"t:{typeof(T)}";
         string[] assetGUIDs = AssetDatabase.FindAssets(searchString, new[] { folderPath });
-        Debug.Log(assetGUIDs.Length);
+
         foreach (var assetGUID in assetGUIDs) {
             string assetPath = AssetDatabase.GUIDToAssetPath(assetGUID);
             T loadedAsset = AssetDatabase.LoadAssetAtPath(assetPath, typeof(T)) as T;
-            loadedAssets.Add(loadedAsset);
+            
+            if (assetPath.TrimEnd((loadedAsset.ToString() +".asset").ToCharArray()) == folderPath) {
+                loadedAssets.Add(loadedAsset);
+            }
         }
-        Debug.Log(loadedAssets.Count);
+
         return loadedAssets;
     }
     
