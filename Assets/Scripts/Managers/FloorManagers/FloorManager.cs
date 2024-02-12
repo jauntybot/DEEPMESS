@@ -5,6 +5,7 @@ using UnityEngine.Rendering;
 using System;
 using System.Linq;
 using UnityEngine.Experimental.Rendering.RenderGraphModule;
+using UnityEditor;
 
 // This class generates and sequences Floor prefabs (Grid class), as well as manages the descending of units
 
@@ -376,11 +377,11 @@ public class FloorManager : MonoBehaviour {
     public IEnumerator DropUnits(List<GridElement> units, bool hardLand) {
 
         scenario.player.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
-        scenario.player.transform.parent = transitionParent;
-        scenario.player.nail.transform.parent = currentFloor.transform;
+        scenario.player.transform.parent = currentFloor.transform;
+        
         if (scenario.currentEnemy) {
             scenario.currentEnemy.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
-            scenario.currentEnemy.transform.parent = transitionParent;
+            scenario.currentEnemy.transform.parent = currentFloor.transform;    
         }
 
         DescendingUnits?.Invoke();
@@ -388,6 +389,7 @@ public class FloorManager : MonoBehaviour {
         foreach (GridElement ge in units) {
             if (ge is Unit u) {
                 u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
+                u.transform.parent = transitionParent;
             }
         }
 
@@ -492,6 +494,7 @@ public class FloorManager : MonoBehaviour {
                     cos.RemoveAt(i);
             }
         }
+        unit.transform.parent = unit.manager.transform;
     }
 
 // Coroutine for descending the nail at a regulated random position
@@ -552,6 +555,7 @@ public class FloorManager : MonoBehaviour {
 
         if (subElement) 
             StartCoroutine(subElement.CollideFromBelow(nail));
+        nail.transform.parent = nail.manager.transform;
     }
 
     public IEnumerator DropParticle() {
@@ -671,8 +675,9 @@ public class FloorManager : MonoBehaviour {
         foreach (Unit u in units) u.gfxAnim.SetBool("Falling", true);
         scenario.player.hammerActions[0].hammer.SetActive(true);
         scenario.player.hammerActions[0].hammer.GetComponentInChildren<Animator>().SetBool("Falling", true);
-        units[0].manager.transform.parent = transitionParent;
-        units[3].transform.parent = transitionParent;
+        foreach (Unit u in units) 
+            u.transform.parent = transitionParent;
+        
         scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
         float timer = 0;
         while (timer <= unitDropDur) {
@@ -756,6 +761,8 @@ public class FloorManager : MonoBehaviour {
 
             GenerateFloor(null, true);
             scenario.player.transform.parent = currentFloor.transform;
+            foreach (Unit u in scenario.player.units)
+                u.transform.parent = currentFloor.transform;
             GenerateFloor();
             floorCount = 1;
             UpdateFloorCounter(floorSequence.activePacket.packetLength);

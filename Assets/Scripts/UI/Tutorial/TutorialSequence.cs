@@ -145,7 +145,7 @@ public class TutorialSequence : MonoBehaviour {
         yield return StartCoroutine(EnemyTurn());
         yield return new WaitForSecondsRealtime(1.25f);
 
-        yield return StartCoroutine(Equipment());
+        yield return StartCoroutine(Gear());
         //yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
     }
 
@@ -390,10 +390,10 @@ public class TutorialSequence : MonoBehaviour {
     }
 
 
-    public IEnumerator Equipment() {
+    public IEnumerator Gear() {
         screenFade.gameObject.SetActive(true);
 
-        header = "EQUIPMENT";
+        header = "GEAR";
         body = "<b>" + ColorToRichText("Slags pack gear", keyColor) + "</b>—special stuff. You can have them <b>" + ColorToRichText("use gear or Hammer each turn", keyColor) + "</b>. Eyes up, squish. Plan the play or end up short on actions." + '\n';
         tooltip.SetText(body, header, true);
 
@@ -401,7 +401,7 @@ public class TutorialSequence : MonoBehaviour {
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
 
-        header = "EQUIPMENT";
+        header = "GEAR";
         body = "Each piece of gear's <b>" + ColorToRichText("unique", keyColor) + "</b>. Check those buttons on the <b>" + ColorToRichText("bottom left", keyColor) + "</b> to get to know your arsenal." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ shieldAnim, anvilAnim, bigGrabAnim });
 
@@ -498,17 +498,19 @@ public class TutorialSequence : MonoBehaviour {
     }
 
     public IEnumerator PeekButton() {
-        if (peekHighlight)
-            Destroy(peekHighlight);
-        header = "PEEK BUTTON";
-        body = "This let's you <b>" + ColorToRichText("preview the next floor", keyColor) + "</b>—enemies, hazards, the works. Most importantly, where units on the current floor will <b>" + ColorToRichText("fall below", keyColor) + "</b>. Look before you leap, squish." + '\n';
-        brTooltip.SetText(body, header, true);
+        if (header != "PEEK BUTTON") {
+            if (peekHighlight)
+                Destroy(peekHighlight);
+            header = "PEEK BUTTON";
+            body = "This let's you <b>" + ColorToRichText("preview the next floor", keyColor) + "</b>—enemies, hazards, the works. Most importantly, where units on the current floor will <b>" + ColorToRichText("fall below", keyColor) + "</b>. Look before you leap, squish." + '\n';
+            brTooltip.SetText(body, header, true);
 
-        while (!brTooltip.skip) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-            
+            while (!brTooltip.skip) {
+                yield return new WaitForSecondsRealtime(1/Util.fps);   
+            }
         }
 
+        brTooltip.skip = true;
         brTooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 
@@ -560,6 +562,7 @@ public class TutorialSequence : MonoBehaviour {
             }
         }
 
+        brTooltip.skip = true;
         undoEncountered = true;
         brTooltip.transform.GetChild(0).gameObject.SetActive(false);
         yield return new WaitForSecondsRealtime(0.15f);
