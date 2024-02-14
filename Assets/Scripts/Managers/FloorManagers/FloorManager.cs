@@ -494,7 +494,8 @@ public class FloorManager : MonoBehaviour {
                     cos.RemoveAt(i);
             }
         }
-        unit.transform.parent = unit.manager.transform;
+        if (unit != null && !unit.destroyed)
+            unit.transform.parent = unit.manager.transform;
     }
 
 // Coroutine for descending the nail at a regulated random position
