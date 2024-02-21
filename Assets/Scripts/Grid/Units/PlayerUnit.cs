@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.UI;
 
 // Inherited Unit; unit functionality dependent on player input
@@ -47,8 +48,11 @@ public class PlayerUnit : Unit {
 // single target equipment, not movement
         if (equip) {
 // Tally for end of run scoring
-            if (equip is SlagEquipmentData && equip is not HammerData) equipUses++;
-            else if (equip is HammerData) hammerUses++; 
+            if (equip is SlagEquipmentData && equip is not HammerData) {
+                if (equip is not BigGrabData || equip.firstTarget != null) 
+                    equipUses++;
+            }
+            else if (equip is HammerData && equip.firstTarget != null) hammerUses++; 
 // Base equipment, no multitarget
             if (!equip.multiselect) {
                 co = StartCoroutine(base.ExecuteAction(target));

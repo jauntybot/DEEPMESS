@@ -105,6 +105,7 @@ public class PersistentMenu : MonoBehaviour
 
     void MainMenuPause() {
         pauseMenu.gameObject.SetActive(true);
+        pauseMenu.Anbandonable(false);
     }
 
     void SetMusicVolume(System.Single vol) {

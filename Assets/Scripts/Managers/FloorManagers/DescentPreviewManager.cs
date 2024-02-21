@@ -10,6 +10,7 @@ public class DescentPreviewManager : MonoBehaviour {
     public Grid currentFloor, alignmentFloor;
     [SerializeField] public Animator peekAnim;
     [SerializeField] bool previewing;
+    [SerializeField] bool hidePreviews;
 
     [HideInInspector] public bool tut;
 
@@ -28,7 +29,8 @@ public class DescentPreviewManager : MonoBehaviour {
             UIManager.instance.endTurnButton.interactable = !down;
         if (down) {
             peekAnim.SetBool("Active", true);
-            TogglePreivews(true);
+            if (!hidePreviews)
+                TogglePreivews(true);
             foreach(DescentPreview dp in descentPreviews) {
                 if (dp.unit.grid == floorManager.currentFloor)
                     dp.UpdatePreview(dp.unit);

@@ -22,8 +22,11 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] Animator creditsAnim, playButtonsAnim, nailAnim;
 
     public void ToggleCredits(bool state) {
-        for (int i = buttonColumn.transform.childCount - 1; i >= 0; i--) 
-            buttonColumn.transform.GetChild(i).GetComponent<Button>().interactable = !state;
+        for (int i = buttonColumn.transform.childCount - 1; i >= 0; i--) {
+            Button b = buttonColumn.transform.GetChild(i).GetComponent<Button>();
+            if (b != null)
+                buttonColumn.transform.GetChild(i).GetComponent<Button>().interactable = !state;
+        }
         if (state) {
             creditsAnim.gameObject.SetActive(state);
             creditsAnim.SetBool("Active", true);
@@ -32,8 +35,11 @@ public class MainMenuManager : MonoBehaviour
     }
 
     public void TogglePlayButtons(bool state) {
-        for (int i = buttonColumn.transform.childCount - 1; i >= 0; i--) 
-            buttonColumn.transform.GetChild(i).GetComponent<Button>().interactable = !state;
+        for (int i = buttonColumn.transform.childCount - 1; i >= 0; i--) {
+            Button b = buttonColumn.transform.GetChild(i).GetComponent<Button>();
+            if (b != null)
+                buttonColumn.transform.GetChild(i).GetComponent<Button>().interactable = !state;
+        }
 
         if (state) {
             playButtonsAnim.gameObject.SetActive(true);

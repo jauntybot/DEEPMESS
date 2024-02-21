@@ -17,8 +17,7 @@ public class Nail : Unit {
     public override event OnElementUpdate ElementDestroyed;
     public virtual event OnElementUpdate ElementDisabled;
 
-    protected override void Start()
-    {
+    protected override void Start() {
         base.Start();
         selectedEquipment = equipment[0];
         gfxAnim = gfx[0].GetComponent<Animator>();
@@ -67,6 +66,14 @@ public class Nail : Unit {
             } else {
                 RemoveCondition(Status.Restricted);
             }
+        }
+    }
+
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+        if (!destroyed) {
+            yield return base.TakeDamage(dmg, dmgType, source, sourceEquip);
+            if (ui.overview)
+                ui.overview.UpdateOverview();
         }
     }
 
