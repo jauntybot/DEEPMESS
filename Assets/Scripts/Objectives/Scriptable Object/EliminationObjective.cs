@@ -9,9 +9,9 @@ public class EliminationObjective : Objective {
     [Header("Elimination Conditions")]
     [SerializeField] ObjectiveType objectiveType;
 
-    public override Objective Init(SlagEquipmentData.UpgradePath path) {
+    public override Objective Init() {
         ObjectiveEventManager.AddListener<GridElementDestroyedEvent>(OnElimination);
-        return base.Init(path);
+        return base.Init();
     }
 
     protected virtual void OnElimination(GridElementDestroyedEvent evt) {

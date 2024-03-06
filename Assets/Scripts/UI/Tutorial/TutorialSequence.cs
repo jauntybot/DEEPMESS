@@ -58,7 +58,8 @@ public class TutorialSequence : MonoBehaviour {
         
         descents = 0;
 
-        floorManager.GenerateFloor(floorManager.floorSequence.GetFloor(), true);
+        floorManager.floorSequence.StartPacket(tutorialPacket);
+        floorManager.GenerateFloor(floorManager.floorSequence.GetFloor(true), true);
         floorManager.GenerateFloor(floorManager.floorSequence.GetFloor());
     }
     

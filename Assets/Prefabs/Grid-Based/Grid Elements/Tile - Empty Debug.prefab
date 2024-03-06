@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2590438898875856828}
   - component: {fileID: 4548692920616438334}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: GFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7118462445594639878}
   - component: {fileID: 224115988417383449}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: LR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -229,7 +229,7 @@ GameObject:
   - component: {fileID: 856786801984704868}
   - component: {fileID: 8753860629612811029}
   - component: {fileID: 8373213760341453385}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: highlightv2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -408,7 +408,7 @@ GameObject:
   - component: {fileID: 8517864744566959261}
   - component: {fileID: 6347572499611998251}
   - component: {fileID: 4725770806878504000}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Tile - Empty Debug
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -445,20 +445,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
+  name: 
   coord: {x: 0, y: 0}
   selectable: 0
   targeted: 0
   hitbox: {fileID: 0}
   elementCanvas: {fileID: 0}
-  gfx:
-  - {fileID: 4548692920616438334}
   hpMax: 0
   hpCurrent: 0
-  defense: 0
-  shell: 0
-  shellGFX: {fileID: 0}
+  shield: {fileID: 0}
   energyCurrent: 0
   energyMax: 0
+  destroyed: 0
+  gfx:
+  - {fileID: 4548692920616438334}
   audioSource: {fileID: 0}
   selectedSFX: {fileID: 0}
   dmgdSFX: {fileID: 0}
@@ -525,6 +525,9 @@ MonoBehaviour:
   apPipPrefab: {fileID: 0}
   dmgPipPrefab: {fileID: 0}
   emptyPipPrefab: {fileID: 0}
+  barkBox: {fileID: 0}
+  barkBoxText: {fileID: 0}
+  turnOrder: {fileID: 0}
   dmgPanel: {fileID: 0}
   dmgAnim: {fileID: 0}
   overview: {fileID: 0}

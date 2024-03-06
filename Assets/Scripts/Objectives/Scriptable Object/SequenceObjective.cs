@@ -14,7 +14,7 @@ public class SequenceObjective : Objective {
     bool floorFailed = false;
 
 
-    public override Objective Init(SlagEquipmentData.UpgradePath path) {
+    public override Objective Init() {
         switch(objectiveType) {
             default: break;
             case ObjectiveType.TwoKillDescend:
@@ -36,7 +36,7 @@ public class SequenceObjective : Objective {
                 ObjectiveEventManager.AddListener<FloorDescentEvent>(DescendWithEnemies);
             break;
         }
-        return base.Init(path);
+        return base.Init();
     }
 
 // Two kill descend

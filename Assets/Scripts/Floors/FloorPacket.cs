@@ -14,5 +14,13 @@ public class FloorPacket : ScriptableObject {
     public List<FloorDefinition> firstFloors;
     public List<FloorDefinition> floors;
 
+    public enum PacketMods { Extreme, Elite };
+    public List<PacketMods> packetMods;
+
+    public int bonusObjectives;
+    //[HideInInspector]
+    public List<Objective> objectives;
+    public int nuggets;
+    public int relics;
 
 }

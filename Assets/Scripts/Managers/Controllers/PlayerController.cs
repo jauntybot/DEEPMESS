@@ -10,10 +10,10 @@ public class PlayerController : MonoBehaviour {
 
     PlayerManager manager;
 
-    public enum CursorState { Default, Move, Target, };
+    public enum CursorState { Default, Button, Move, Target, };
     public CursorState cursorState;
     [SerializeField] Vector2 pointerAnchor;
-    [SerializeField] Texture2D defaultCursor, clickableCursor, moveCursor, nullMoveCursor, targetCursor, nullTargetCursor;
+    [SerializeField] Texture2D defaultCursor, clickableCursor, moveCursor, nullMoveCursor, targetCursor, nullTargetCursor, buttonHoverCursor;
     int layerMask = 5;
 
     void Start() 
@@ -38,6 +38,9 @@ public class PlayerController : MonoBehaviour {
         switch(cursorState) {
             case CursorState.Default:
                 targetTexture = state ? clickableCursor : defaultCursor;
+            break;
+            case CursorState.Button:
+                targetTexture = buttonHoverCursor;
             break;
             case CursorState.Move:
                 targetTexture = state ? moveCursor : nullMoveCursor;
@@ -73,8 +76,9 @@ public class PlayerController : MonoBehaviour {
                     }    
                     else
                         manager.GridMouseOver(new Vector2(-32, -32), false);
-                } else
-                    manager.GridMouseOver(new Vector2(-32, -32), false);
+                } else     
+                    UpdateCursor(PlayerController.CursorState.Default);  
+                
 
                 if (Input.GetMouseButtonDown(1)) {
                     manager.DeselectUnit();
@@ -167,7 +171,7 @@ public class PlayerController : MonoBehaviour {
         EventSystem.current.RaycastAll(ped, rays);
 
         for (int i = rays.Count - 1; i >= 0; i--) {
-            if (rays[i].gameObject.layer != 5)
+            if (rays[i].gameObject.layer != 5 && rays[i].gameObject.layer != 6)
                 rays.Remove(rays[i]);
         }   
 

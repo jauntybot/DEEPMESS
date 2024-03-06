@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.XR;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [CreateAssetMenu(menuName = "Floors/Floor Sequence")]
 [System.Serializable]
@@ -32,28 +33,37 @@ public class FloorSequence : ScriptableObject {
         activePacket.packetType = currentThreshold;
     }
 
-    public void StartPacket(FloorPacket.PacketType type) {
+    public List<FloorPacket> RandomNodes(int count) {
         List<FloorPacket> options = new();
         for (int i = localPackets.Count - 1; i >= 0; i--) 
-            if (localPackets[i].packetType == type) options.Add(localPackets[i]);
+            if (localPackets[i].packetType == currentThreshold) options.Add(localPackets[i]);
 
-        int index = Random.Range(0, options.Count-1);
+        List<FloorPacket> rnd = new();
+        for (int c = 0; c < count; c++) {
+            int index = Random.Range(0, options.Count-1);
+            rnd.Add(options[index]);
+            options.RemoveAt(index);
+        }
 
+        return rnd;
+    }
+
+    public void StartPacket(FloorPacket packet) {
 // Replace active packet params manually
-        activePacket.packetType = options[index].packetType;
-        activePacket.inOrder = options[index].inOrder;
-        activePacket.packetLength = options[index].packetLength;
+        activePacket.packetType = packet.packetType;
+        activePacket.inOrder = packet.inOrder;
+        activePacket.packetLength = packet.packetLength;
+        activePacket.nuggets = packet.nuggets;
+        activePacket.relics = packet.relics;
 
-        activePacket.firstFloors = new();
-        for (int i = 0; i <= options[index].firstFloors.Count - 1; i++) 
-            activePacket.firstFloors.Add(options[index].firstFloors[i]);
-        activePacket.floors = new();
-        for (int i = 0; i <= options[index].floors.Count - 1; i++)
-            activePacket.floors.Add(options[index].floors[i]);
+        activePacket.packetMods = new(packet.packetMods);
+        activePacket.objectives = new(packet.objectives);
+        activePacket.firstFloors = new(packet.firstFloors);
+        activePacket.floors = new(packet.floors);
 
 
-        if (options[index].packetType != FloorPacket.PacketType.BOSS)
-            localPackets.Remove(options[index]);
+        if (packet.packetType != FloorPacket.PacketType.BOSS)
+            localPackets.Remove(packet);
     }
 
 // Returns true if threshold is passed
@@ -84,24 +94,23 @@ public class FloorSequence : ScriptableObject {
         return false;
     }
 
-    public FloorDefinition GetFloor() {
+    public FloorDefinition GetFloor(bool first = false) {
 // First floor of packet
-        if (activePacket.packetType != currentThreshold || activePacket.floors.Count == 0) {
-            StartPacket(currentThreshold);
+        if (first) {
+            FloorDefinition floor;
 // Boss override
             if (currentThreshold == FloorPacket.PacketType.BOSS) {
-                int index = activePacket.inOrder ? 0 : Random.Range(0, activePacket.firstFloors.Count-1);
-                FloorDefinition floor = activePacket.floors[index];
-                activePacket.floors.Remove(floor);
-                floorsGot += 1;
-                return floor;
+                int index = activePacket.inOrder ? 0 : Random.Range(0, activePacket.firstFloors.Count);
+                floor = activePacket.floors[index];
+                activePacket.floors.Remove(floor);    
             } else {
-                int index = activePacket.inOrder ? 0 : Random.Range(0, activePacket.firstFloors.Count-1);
-                FloorDefinition firstFloor = activePacket.firstFloors[index];
-                activePacket.firstFloors.Remove(firstFloor);
-                floorsGot += 1;
-                return firstFloor;
+                int index = activePacket.inOrder ? 0 : Random.Range(0, activePacket.firstFloors.Count);
+                floor = activePacket.firstFloors[index];
+                activePacket.firstFloors.Remove(floor);
             }
+
+            floorsGot += 1;
+            return floor;
 // Middle of packet
         } else {
             int index = activePacket.inOrder ? 0 : Random.Range(0, activePacket.floors.Count-1);

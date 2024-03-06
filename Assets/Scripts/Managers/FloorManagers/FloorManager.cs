@@ -92,7 +92,7 @@ public class FloorManager : MonoBehaviour {
         if (definitionOverride)
             floorDef = definitionOverride;
         else 
-            floorDef = floorSequence.GetFloor();
+            floorDef = floorSequence.GetFloor(first);
 
         newFloor.lvlDef = floorDef;
 
@@ -704,15 +704,18 @@ public class FloorManager : MonoBehaviour {
 
         uiManager.ToggleBattleCanvas(false);
 
-// Objective award + Upgrade sequence
         if (floorSequence.currentThreshold != FloorPacket.PacketType.Tutorial) {
+// Path reward + Upgrade sequence
             if (currentFloor != null && floorSequence.currentThreshold != FloorPacket.PacketType.I && floorSequence.currentThreshold != FloorPacket.PacketType.BARRIER) {
                 if (!scenario.gpOptional.rewardsEncountered) yield return scenario.gpOptional.StartCoroutine(scenario.gpOptional.Rewards());
-                yield return scenario.objectiveManager.RewardSequence();
+                yield return scenario.pathManager.PathRewardSequence();
                 yield return scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
             }
-            if (floorSequence.currentThreshold != FloorPacket.PacketType.BOSS && floorSequence.currentThreshold != FloorPacket.PacketType.BARRIER)
-                yield return scenario.objectiveManager.AssignSequence();
+// Objective assign sequence
+            if (floorSequence.currentThreshold != FloorPacket.PacketType.BOSS && floorSequence.currentThreshold != FloorPacket.PacketType.BARRIER) {
+                yield return scenario.pathManager.PathSequence();
+                //yield return scenario.objectiveManager.AssignSequence();
+            }
         }
         if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) {
             if (!scenario.gpOptional.prebossEncountered)

@@ -16,8 +16,7 @@ public class Objective : ScriptableObject {
     public event OnObjectiveCondition ObjectiveUpdateCallback;
 
 
-    public virtual Objective Init(SlagEquipmentData.UpgradePath path) {
-        reward = path;
+    public virtual Objective Init() {
         Restart();
         return this;
     }
