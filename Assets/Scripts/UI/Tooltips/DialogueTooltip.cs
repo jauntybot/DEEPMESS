@@ -8,7 +8,7 @@ public class DialogueTooltip : Tooltip {
     public bool skip = true;
     [SerializeField] DialogueTypewriter tw;
     [SerializeField] Button clickToSkip;
-    Animator clickToSkipAnim;
+    [SerializeField] Animator clickToSkipAnim;
     [SerializeField] SFX nailSpeak;
     
     Animator anim;
@@ -17,7 +17,6 @@ public class DialogueTooltip : Tooltip {
     void Start() {
         audioSource = GetComponent<AudioSource>();
         anim = GetComponent<Animator>();
-        clickToSkipAnim = clickToSkip.GetComponent<Animator>();
         tw = contentField.GetComponent<DialogueTypewriter>();
 
         RectTransform anchor = transform.GetChild(0).GetComponent<RectTransform>();
@@ -43,13 +42,18 @@ public class DialogueTooltip : Tooltip {
 
     public IEnumerator WaitForClick() {
         skip = false;
-        transform.GetChild(0).gameObject.SetActive(true);
+        clickToSkipAnim.gameObject.SetActive(true);
         clickToSkip.enabled = true;
+        clickToSkipAnim.SetBool("Blink", false);
+        bool skippable = false;
         while (!skip) {
+            if (!skippable) {
+                if (tw && !tw.writing) { skippable = true; clickToSkipAnim.SetBool("Blink", true); }
+                else if (!tw) { skippable = true; clickToSkipAnim.SetBool("Blink", true); }
+            }
             yield return new WaitForSecondsRealtime(1/Util.fps);
-            
         }
-        transform.GetChild(0).gameObject.SetActive(false);
+        clickToSkipAnim.gameObject.SetActive(false);
         clickToSkip.enabled = false;
     }
 
