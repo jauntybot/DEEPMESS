@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5229436391274566889}
   - component: {fileID: 5210113042264811685}
   - component: {fileID: 5989308762871891365}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Cross GFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 6894364682257787711}
   - component: {fileID: 8078042196885495466}
   - component: {fileID: 1639799356683015431}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 7117725034590869692}
   - component: {fileID: 1576469978384538653}
   - component: {fileID: 3629541629250875723}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Disarm Overlay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -255,7 +255,7 @@ GameObject:
   - component: {fileID: 190774627520420200}
   - component: {fileID: 1874319435782214928}
   - component: {fileID: 2648990880555212199}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Hammer GFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -333,7 +333,7 @@ GameObject:
   - component: {fileID: 3226764280667923564}
   - component: {fileID: 1389846610338340759}
   - component: {fileID: 3945564451371655397}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hammer Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -375,6 +375,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 0}
+  subAnim: {fileID: 0}
   equipType: 0
   unit: {fileID: 0}
   button: {fileID: 3226764280667923564}
@@ -472,6 +473,7 @@ MonoBehaviour:
   header: 
   content: 
   anim: {fileID: 0}
+  equip: {fileID: 0}
   initSelf: 0
   hammerAnim: {fileID: 9100000, guid: 157099bd39027ab40b567b4c0ab0e0e1, type: 2}
   anvilAnim: {fileID: 9100000, guid: eddd93494180fdb4196f6a754b467505, type: 2}

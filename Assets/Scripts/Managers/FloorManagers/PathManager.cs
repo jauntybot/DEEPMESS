@@ -112,14 +112,12 @@ public class PathManager : MonoBehaviour {
         }
 
 // Collect nugget rewards sequentially
-        for (int i = 0; i < nuggets; i++) {
-            upgradeManager.CollectNugget(rewards[i]);
-            t = 0;
-            while (t < 0.5f) {
-                t += Time.deltaTime;
-                yield return null;
-            }
+        for (int i = nuggets - 1; i >= 0; i--) {
             Destroy(card.rewardContainer.GetChild(i).gameObject);
+            t = 0; while (t < 0.25f) { t += Time.deltaTime; yield return null; }
+             
+            upgradeManager.CollectNugget(rewards[i]);
+            t = 0; while (t < 0.25f) { t += Time.deltaTime; yield return null; }
         }
 
 // Delay for anim out
