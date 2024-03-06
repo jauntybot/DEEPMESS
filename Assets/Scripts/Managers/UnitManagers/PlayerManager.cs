@@ -174,6 +174,7 @@ public class PlayerManager : UnitManager {
             harvestedByMove = new Dictionary<Unit, GridElement>();
             UndoClearCallback?.Invoke(this);
             ResolveConditions();
+            if (nail.nailState == Nail.NailState.Primed) nail.elementCanvas.Bark("Hit me! Hit me!");
 // End Turn
         } else {
             DeselectUnit();

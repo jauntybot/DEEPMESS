@@ -13,6 +13,8 @@ public class ElementCanvas : MonoBehaviour
     int trackedHP;
     public GameObject statDisplay, hpContainer, hpPips, emptyHPPips, statusPips;
     [SerializeField] GameObject hpPipPrefab, apPipPrefab, dmgPipPrefab, emptyPipPrefab;
+    [SerializeField] GameObject barkBox;
+    [SerializeField] TMP_Text barkBoxText;
     [SerializeField] TMP_Text turnOrder;
     //[SerializeField] GameObject badgePrefab;
     //[SerializeField] Sprite weakenedSprite, stunnedSprite;
@@ -117,6 +119,14 @@ public class ElementCanvas : MonoBehaviour
         while (dmgAnim.gameObject.activeSelf) {
             yield return null;
         }
+    }
+
+    public void Bark(string bark) {
+
+        barkBoxText.text = bark;
+        barkBox.SetActive(true);
+
+
     }
 
     public void ToggleStatsDisplay(bool state) {
