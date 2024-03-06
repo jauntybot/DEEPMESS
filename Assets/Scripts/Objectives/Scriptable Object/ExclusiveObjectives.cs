@@ -9,9 +9,9 @@ public class ExclusiveObjectives : Objective {
     Objective rolledObjective;
     [SerializeField] List<Objective> exclusiveObjectives;
 
-    public override Objective Init(SlagEquipmentData.UpgradePath path) {
+    public override Objective Init() {
         rolledObjective = exclusiveObjectives[Random.Range(0, exclusiveObjectives.Count)];
-        return rolledObjective.Init(path);
+        return rolledObjective.Init();
     }
 
 

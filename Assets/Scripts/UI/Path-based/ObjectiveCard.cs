@@ -37,11 +37,14 @@ public class ObjectiveCard : MonoBehaviour {
 
 
     protected virtual void UpdateCard(Objective ob) {
-        objectiveTitle.text = objective.objectiveTitleString;
+        if (objectiveTitle)
+            objectiveTitle.text = objective.objectiveTitleString;
         objectiveText.text = objective.objectiveString;
-        progressText.text = "("+objective.progress+"/"+objective.goal+")";
+        if (progressText) {
+            progressText.text = "("+objective.progress+"/"+objective.goal+")";
+            progressText.fontMaterial.color = Color.white;
+        }
         objectiveText.fontMaterial.color = Color.white;
-        progressText.fontMaterial.color = Color.white;
         
     }
 

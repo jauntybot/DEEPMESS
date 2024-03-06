@@ -16,7 +16,7 @@ public class UpgradeManager : MonoBehaviour {
     public NuggetButton selectedParticle;
 
 
-    [SerializeField] GameObject unitUpgradeUIPrefab, hammerUpgradeGO;
+    [SerializeField] GameObject unitUpgradeUIPrefab;
     [SerializeField] List<UnitUpgradeUI> unitUpgradeUIs = new();
     
     bool upgrading;
@@ -36,10 +36,6 @@ public class UpgradeManager : MonoBehaviour {
             }
         }
 
-
-        UnitUpgradeUI hammer = hammerUpgradeGO.GetComponent<UnitUpgradeUI>();
-        hammer.Initialize(_pManager.hammerActions[0], this);
-        unitUpgradeUIs.Add(hammer);
         pManager = _pManager;      
     }
 
