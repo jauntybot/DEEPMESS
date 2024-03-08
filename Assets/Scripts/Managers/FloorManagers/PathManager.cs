@@ -7,18 +7,23 @@ using UnityEngine.UI;
 public class PathManager : MonoBehaviour {
 
     FloorSequence floorSequence;
-    ObjectiveManager objectiveManager;
     [SerializeField] UpgradeManager upgradeManager;
+    
+    [SerializeField] ObjectiveTracker tracker;
 
     List<PathCard> activeCards;
     [SerializeField] Transform pathCardContainer;
     [SerializeField] GameObject pathCardPrefab, pathChoiceContainer;
+    
+    [Header("Serialized Objective Pools")]
+    [SerializeField] List<Objective> packetIObjectives;
+    [SerializeField] List<Objective> packetIIObjectives, packetIIIObjectives;
+    [SerializeField] List<Sprite> rewardSprites;
 
     public bool choosingPath = false;
 
     void Start() {
         floorSequence = FloorManager.instance.floorSequence;
-        objectiveManager = ObjectiveManager.instance;
         ClearObjectives();
     }
 
@@ -45,7 +50,7 @@ public class PathManager : MonoBehaviour {
         }
 
 // Assign random objectives based on packet, prevents duplicates
-        List<Objective> objectives = objectiveManager.GetObjectives(totalObjectives);
+        List<Objective> objectives = GetObjectives(totalObjectives);
         for (int i = 0; i <= activeCards.Count - 1; i++) {
             List<Objective> packetObjs = new();
             for (int o = randomPackets[i].bonusObjectives - 1; o >= 0; o--) {
@@ -80,7 +85,7 @@ public class PathManager : MonoBehaviour {
         }
 // Assign selected path
         floorSequence.StartPacket(selected.floorPacket);
-        objectiveManager.SubscribeTracker(selected.floorPacket.objectives);
+        SubscribeTracker(selected.floorPacket.objectives);
         
         choosingPath = false;
     }
@@ -136,11 +141,41 @@ public class PathManager : MonoBehaviour {
             PathCard card = child.GetComponent<PathCard>();
             card.UnsubObjectives();
         }
-        objectiveManager.SubscribeTracker();
+        ObjectiveEventManager.Clear();
+        SubscribeTracker();
+    }
+    
+    void SubscribeTracker(List<Objective> objs = null) {
+        if (objs != null)
+            tracker.AssignObjectives(objs, rewardSprites);
+        else {
+            tracker.UnsubObjectives();
+        }
     }
 
     public void EndPathSequence() {
         choosingPath = false;
     }
 
+    int packetCount = 0;
+    List<Objective> GetObjectives(int count) {
+         List<Objective> packetObjectives;
+        switch(ScenarioManager.instance.startCavity + packetCount) {
+            default:
+            case 1: packetObjectives = packetIObjectives; break;
+            case 2: packetObjectives = packetIIObjectives; break;
+            case 3: packetObjectives = packetIIIObjectives; break;
+        }
+
+// Randomly assign objectives
+        ShuffleBag<Objective> rndBag = new();
+        List<Objective> rolledObjectives = new();
+        for (int i = packetObjectives.Count - 1; i >= 0; i--)
+            rndBag.Add(packetObjectives[i]);
+        for (int c = 0; c <= count; c++){ 
+            rolledObjectives.Add(rndBag.Next());
+        }
+        packetCount++;
+        return rolledObjectives;
+    }
 }

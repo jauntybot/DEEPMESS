@@ -8,6 +8,8 @@ using UnityEngine;
 [System.Serializable]
 public class HammerData : SlagEquipmentData {
     
+    public int dmg = 1;
+    public int dmgMod = 0;
     public GridElement secondTarget;
     public GameObject hammer;
     public Nail nail;
@@ -131,6 +133,11 @@ public class HammerData : SlagEquipmentData {
             }
             user.elementCanvas.UpdateStatsDisplay();
             yield return user.StartCoroutine(LaunchHammer((PlayerUnit)user, firstTarget, (PlayerUnit)target, secondTarget));    
+
+            OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
+            evt.data = this; evt.user = user; evt.target = firstTarget; evt.secondTarget = secondTarget;
+            ObjectiveEventManager.Broadcast(evt);
+
 // First input, setup for second input
         } else {
             firstTarget = target;
@@ -228,7 +235,7 @@ public class HammerData : SlagEquipmentData {
             target.PlaySound(useSFX);
             
             Instantiate(vfx, user.grid.PosFromCoord(target.coord) + new Vector3(0, 1, 0), Quaternion.identity);
-            int dmg = 1;
+
 
             dmgCo(target.StartCoroutine(target.TakeDamage(dmg, dmgType, user, sourceEquip: this)));
         }

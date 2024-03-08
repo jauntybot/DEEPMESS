@@ -5,12 +5,16 @@ using UnityEngine.UI;
 
 public class Relic : MonoBehaviour {
 
-    RelicData data;
+    Relics.RelicData data;
     Image relicSprite;
 
-    public void Init(RelicData _data) {
+    public void Init(Relics.RelicData _data) {
+        data = _data;
+
         relicSprite = GetComponent<Image>();
         relicSprite.sprite = data.sprite;
-    }
+        gameObject.name = data.name;
 
+        
+    }
 }

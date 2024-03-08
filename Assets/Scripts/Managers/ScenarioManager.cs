@@ -22,10 +22,10 @@ public class ScenarioManager : MonoBehaviour
 
 // Instanced refs
     [HideInInspector] public FloorManager floorManager;
-    [HideInInspector] public ObjectiveManager objectiveManager;
     [HideInInspector] public UIManager uiManager;
     [HideInInspector] public GameplayOptionalTooltips gpOptional;
     public PathManager pathManager;
+    public RelicManager relicManager;
     public int startCavity;
     public EnemyManager currentEnemy;
     public PlayerManager player;
@@ -48,10 +48,9 @@ public class ScenarioManager : MonoBehaviour
         }
 
         if (UIManager.instance)
-            uiManager = UIManager.instance;
-        if (ObjectiveManager.instance)
-            objectiveManager = ObjectiveManager.instance;
-        
+            uiManager = UIManager.instance;     
+        if (RelicManager.instance)
+            relicManager = RelicManager.instance;
 
         if (FloorManager.instance) {
             floorManager = FloorManager.instance;
@@ -300,7 +299,7 @@ public class ScenarioManager : MonoBehaviour
             player.StartEndTurn(false);
         if (uiManager.gameObject.activeSelf) {
             uiManager.ToggleBattleCanvas(false);
-            objectiveManager.gameObject.SetActive(false);
+            pathManager.gameObject.SetActive(false);
             player.upgradeManager.gameObject.SetActive(false);
             gpOptional.gameObject.SetActive(false);
             if (floorManager.tutorial)
