@@ -30,8 +30,10 @@ public class ObjectiveCard : MonoBehaviour {
     } 
 
     public virtual void Unsub() {
-        if (objective)
+        if (objective) {
+            objective.ClearObjective();
             objective.ObjectiveUpdateCallback -= UpdateCard;
+        }
         Destroy(gameObject);
     }
 
@@ -41,7 +43,7 @@ public class ObjectiveCard : MonoBehaviour {
             objectiveTitle.text = objective.objectiveTitleString;
         objectiveText.text = objective.objectiveString;
         if (progressText) {
-            progressText.text = "("+objective.progress+"/"+objective.goal+")";
+            progressText.text = "("+objective.progress+"/"+objective._goal+")";
             progressText.fontMaterial.color = Color.white;
         }
         objectiveText.fontMaterial.color = Color.white;

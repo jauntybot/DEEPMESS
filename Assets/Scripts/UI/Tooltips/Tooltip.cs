@@ -67,26 +67,28 @@ public class Tooltip : MonoBehaviour
     }
 
     protected virtual void Update() {
-        switch (align) {
-            case Alignment.CenterScreen:
-                RectTransform anchor = transform.GetChild(0).GetComponent<RectTransform>();
-                anchor.anchorMin = new Vector2(0.5f, 0.5f);
-                anchor.anchorMax = new Vector2(0.5f, 0.5f);
-                anchor.anchoredPosition = new Vector2(0, anchor.rect.height/2);
+        if (transform.GetChild(0).gameObject.activeSelf) {
+            switch (align) {
+                case Alignment.CenterScreen:
+                    RectTransform anchor = transform.GetChild(0).GetComponent<RectTransform>();
+                    anchor.anchorMin = new Vector2(0.5f, 0.5f);
+                    anchor.anchorMax = new Vector2(0.5f, 0.5f);
+                    anchor.anchoredPosition = new Vector2(0, anchor.rect.height/2);
 
-            break;
-            case Alignment.ToCursor:
-                Vector2 position = Input.mousePosition;
-                transform.position = position;
+                break;
+                case Alignment.ToCursor:
+                    Vector2 position = Input.mousePosition;
+                    transform.position = position;
 
-                Vector2 localAnchor = Vector2.zero;
-                localAnchor.x = position.x < Screen.width/2 ? 0 : 1;
-                localAnchor.y = position.y < Screen.height/2 ? 0 : 1;
+                    Vector2 localAnchor = Vector2.zero;
+                    localAnchor.x = position.x < Screen.width/2 ? 0 : 1;
+                    localAnchor.y = position.y < Screen.height/2 ? 0 : 1;
 
-                rectTransform.anchorMax = localAnchor; rectTransform.anchorMin = localAnchor; 
-                rectTransform.pivot = localAnchor;
-                rectTransform.anchoredPosition = new Vector2(25 - localAnchor.x * 50, 25 - localAnchor.y * 50);
-            break;
+                    rectTransform.anchorMax = localAnchor; rectTransform.anchorMin = localAnchor; 
+                    rectTransform.pivot = localAnchor;
+                    rectTransform.position = new Vector2(position.x - localAnchor.x * 50, position.y - localAnchor.y * 50);
+                break;
+            }
         }
     }
 }

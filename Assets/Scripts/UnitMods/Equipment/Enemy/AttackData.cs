@@ -4,8 +4,7 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName = "Equipment/Attack/Strike")]
 [System.Serializable]
-public class AttackData : EquipmentData {
-    public int dmg;
+public class AttackData : EnemyAttackData {
     [SerializeField] GameObject strikeVFX, thornsVFX, thornsInflictedVFX;
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
@@ -45,7 +44,7 @@ public class AttackData : EquipmentData {
         Vector2 dir = target.coord - user.coord;
         
         user.elementCanvas.UpdateStatsDisplay();
-        Debug.Log(dir);
+
         GameObject vfx = Instantiate(strikeVFX, FloorManager.instance.currentFloor.PosFromCoord(target.coord - dir/2), Quaternion.identity);
         vfx.GetComponent<SpriteRenderer>().sortingOrder = user.gfx[0].sortingOrder++;
         vfx.GetComponent<Animator>().SetInteger("X", (int)dir.x);
@@ -84,12 +83,10 @@ public class AttackData : EquipmentData {
         List<Coroutine> cos = new();
    
         if (thornDmg > 0) cos.Add(user.StartCoroutine(user.TakeDamage(thornDmg, GridElement.DamageType.Melee, target, target.shield ? target.shield.data : null)));
-        cos.Add(target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user, this)));
+        cos.Add(target.StartCoroutine(target.TakeDamage(dmg + dmgMod, GridElement.DamageType.Melee, user, this)));
         
         for (int i = cos.Count - 1; i >= 0; i--)
             yield return cos[i];
-
-        Debug.Log("Attack finished");
     }
 
 }

@@ -9,9 +9,9 @@ public class ExclusiveObjectives : Objective {
     Objective rolledObjective;
     [SerializeField] List<Objective> exclusiveObjectives;
 
-    public override Objective Init() {
+    public override Objective Init(int p) {
         rolledObjective = exclusiveObjectives[Random.Range(0, exclusiveObjectives.Count)];
-        return rolledObjective.Init();
+        return rolledObjective.Init(p);
     }
 
 

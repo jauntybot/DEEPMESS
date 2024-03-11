@@ -19,12 +19,16 @@ public class PathManager : MonoBehaviour {
     [SerializeField] List<Objective> packetIObjectives;
     [SerializeField] List<Objective> packetIIObjectives, packetIIIObjectives;
     [SerializeField] List<Sprite> rewardSprites;
-
     public bool choosingPath = false;
+
+// RELIC SYSTEM - DELETE
+    public int objectiveDiscount;
+
 
     void Start() {
         floorSequence = FloorManager.instance.floorSequence;
         ClearObjectives();
+        objectiveDiscount = 0;
     }
 
     public IEnumerator PathSequence() {
@@ -54,7 +58,7 @@ public class PathManager : MonoBehaviour {
         for (int i = 0; i <= activeCards.Count - 1; i++) {
             List<Objective> packetObjs = new();
             for (int o = randomPackets[i].bonusObjectives - 1; o >= 0; o--) {
-                packetObjs.Add(objectives[o].Init());
+                packetObjs.Add(objectives[o].Init(objectiveDiscount));
                 objectives.RemoveAt(o);
             }
             activeCards[i].AssignObjectives(packetObjs);

@@ -7,7 +7,7 @@ using UnityEngine;
 public class DebuffBulbData : BulbEquipmentData
 {
 
-    public enum DebuffType { Weaken };
+    public enum DebuffType { Stun };
     public DebuffType debuffType;
 
 
@@ -21,7 +21,7 @@ public class DebuffBulbData : BulbEquipmentData
 
         switch (debuffType) {
             default:
-            case DebuffType.Weaken:
+            case DebuffType.Stun:
                 List<Vector2> aoe = EquipmentAdjacency.OrthagonalAdjacency(target.coord, 1, null, null);
                 aoe.Add(target.coord);
                 foreach(Vector2 coord in aoe) {

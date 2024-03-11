@@ -25,7 +25,7 @@ public class ScenarioManager : MonoBehaviour
     [HideInInspector] public UIManager uiManager;
     [HideInInspector] public GameplayOptionalTooltips gpOptional;
     public PathManager pathManager;
-    public RelicManager relicManager;
+    public Relics.RelicManager relicManager;
     public int startCavity;
     public EnemyManager currentEnemy;
     public PlayerManager player;
@@ -39,6 +39,8 @@ public class ScenarioManager : MonoBehaviour
     public enum Turn { Null, Player, Enemy, Descent, Cascade, Loadout, Slots }
     public Turn currentTurn, prevTurn;
 
+// RELIC PARAMS - DELETE
+    [HideInInspector] public int tackleChance;
 
 
 #region Initialization
@@ -49,8 +51,8 @@ public class ScenarioManager : MonoBehaviour
 
         if (UIManager.instance)
             uiManager = UIManager.instance;     
-        if (RelicManager.instance)
-            relicManager = RelicManager.instance;
+        if (Relics.RelicManager.instance)
+            relicManager = Relics.RelicManager.instance;
 
         if (FloorManager.instance) {
             floorManager = FloorManager.instance;
@@ -65,6 +67,9 @@ public class ScenarioManager : MonoBehaviour
             gpOptional = GameplayOptionalTooltips.instance;
             gpOptional.Initialize();
         }
+        
+        tackleChance = 0;
+
         yield return null;
 
         if (startCavity != 0)
@@ -287,6 +292,7 @@ public class ScenarioManager : MonoBehaviour
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Win));
         }
         pathManager.ClearObjectives();
+        relicManager.ClearRelics();
         yield return new WaitForSecondsRealtime(1.25f);
         runDataTracker.UpdateAndDisplay(true, floorManager.currentFloor.index + 1, player.defeatedEnemies);
     }
@@ -309,6 +315,7 @@ public class ScenarioManager : MonoBehaviour
         }
         yield return StartCoroutine(player.RetrieveNailAnimation());
         pathManager.ClearObjectives();
+        relicManager.ClearRelics();
         runDataTracker.UpdateAndDisplay(false, floorManager.currentFloor ? floorManager.currentFloor.index + 1 : 0, player.defeatedEnemies);
     }
 }

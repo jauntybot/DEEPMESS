@@ -18,6 +18,7 @@ public class UnitManager : MonoBehaviour {
     public Unit selectedUnit;
     public bool unitActing = false;
     [SerializeField] protected GameObject unitDescentPreview;
+    public int reviveTo;
 
 
 // Called from scenario manager when game starts
@@ -26,6 +27,8 @@ public class UnitManager : MonoBehaviour {
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
         if (FloorManager.instance) floorManager = FloorManager.instance;
         currentGrid = _currentGrid;
+
+        reviveTo = 1;
 
         yield return null;
     }
@@ -107,7 +110,7 @@ public class UnitManager : MonoBehaviour {
         foreach(Unit u in units) {
             if (u.conditions.Count > 0) {
                 for (int i = u.conditions.Count - 1; i >= 0; i--) {
-                    if (u.conditions[i] is Unit.Status.Weakened) u.RemoveCondition(u.conditions[i]);
+                    //if (u.conditions[i] is Unit.Status.Weakened) u.RemoveCondition(u.conditions[i]);
                     if (u.conditions[i] is Unit.Status.Stunned && u is PlayerUnit) u.RemoveCondition(u.conditions[i]);
                 }
             }

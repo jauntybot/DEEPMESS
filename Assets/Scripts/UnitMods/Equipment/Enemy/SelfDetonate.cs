@@ -4,8 +4,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu(menuName = "Equipment/Attack/Detonate")]
-public class SelfDetonate : EquipmentData
-{
+public class SelfDetonate : EnemyAttackData {
     [SerializeField] private SFX selfDetonateSFX, chargeSFX;
 
 
@@ -41,6 +40,7 @@ public class SelfDetonate : EquipmentData
             u.PrimeSelf();
             user.PlaySound(chargeSFX);
         } else {
+// No target event for objectives
             OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
             evt.data = this; evt.user = user;
             ObjectiveEventManager.Broadcast(evt);
@@ -56,7 +56,10 @@ public class SelfDetonate : EquipmentData
                 if (user.grid.CoordContents(coord).Count > 0) {
                     foreach (GridElement ge in user.grid.CoordContents(coord)) {
                         if ((ge is Unit || ge is Wall) && ge != user ) {
-                            affectedCo.Add(ge.StartCoroutine(ge.TakeDamage(1, GridElement.DamageType.Explosion, user, this)));
+                            evt = ObjectiveEvents.OnEquipmentUse;
+                            evt.data = this; evt.user = user; evt.target = ge;
+                            ObjectiveEventManager.Broadcast(evt);
+                            affectedCo.Add(ge.StartCoroutine(ge.TakeDamage(dmg + dmgMod, GridElement.DamageType.Explosion, user, this)));
                         }
                     }
                 }

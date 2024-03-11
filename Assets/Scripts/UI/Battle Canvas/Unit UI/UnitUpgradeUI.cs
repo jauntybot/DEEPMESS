@@ -44,24 +44,6 @@ public class UnitUpgradeUI : UnitUI {
         return ui;
     }
 
-// Custom init function for hammer data with no persistent unit
-    public UnitUI Initialize(HammerData hammer, UpgradeManager _upgrade) {
-        gameObject.name = " HAMMER - Upgrade Unit UI";
-        unitName.text = "HAMMER";
-        equip = hammer;
-        upgradeButton.GetComponent<UpgradeButtonHoldHandler>().Init(this);
-        
-        foreach (NuggetSlot slot in slots) {
-            slot.radialFill.fillAmount = 0;
-            slot.radialFill.GetComponent<AudioSource>().enabled = false;
-            slot.DisplayPopup(false);
-        }
-
-        upgrade = _upgrade;
-        appliedUpgrades = 0;
-        return this;
-    }
-
     public void UpdateModifier(SlagEquipmentData.UpgradePath path) {
         if (CurrentSlot()) {
             ClearModifier();
@@ -75,17 +57,17 @@ public class UnitUpgradeUI : UnitUI {
                 Animator anim = previewParticle.GetComponentInChildren<Animator>();
                 switch (path) {
                     case SlagEquipmentData.UpgradePath.Shunt:
-                        if ((equip is not HammerData && equip.upgrades[path] < 2) || (equip is HammerData && equip.upgrades[path] < 1))
+                        if (equip.upgrades[path] < 2)
                             mod = equip.upgradeStrings.powerStrings[equip.upgrades[path]];
                         anim.SetInteger("Color", 0);
                     break;
                     case SlagEquipmentData.UpgradePath.Scab:
-                        if ((equip is not HammerData && equip.upgrades[path] < 2) || (equip is HammerData && equip.upgrades[path] < 1))
+                        if (equip.upgrades[path] < 2)
                             mod = equip.upgradeStrings.specialStrings[equip.upgrades[path]];
                         anim.SetInteger("Color", 1);
                     break;
                     case SlagEquipmentData.UpgradePath.Sludge:
-                        if ((equip is not HammerData && equip.upgrades[path] < 2) || (equip is HammerData && equip.upgrades[path] < 1))
+                        if (equip.upgrades[path] < 2)
                             mod = equip.upgradeStrings.unitStrings[equip.upgrades[path]];
                         anim.SetInteger("Color", 2);
                     break;
@@ -112,7 +94,7 @@ public class UnitUpgradeUI : UnitUI {
     }
 
     public NuggetSlot CurrentSlot() {
-        if ((equip is not HammerData && appliedUpgrades < 3) || (equip is HammerData && appliedUpgrades < 2))
+        if (appliedUpgrades < 3)
             return slots[appliedUpgrades];
         return null;
     }

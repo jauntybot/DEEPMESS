@@ -10,10 +10,7 @@ public class RelicReward : MonoBehaviour {
     [SerializeField] Image image;
     [SerializeField] TMP_Text nameTMP, descriptionTMP;
 
-    public delegate void OnRelicReward(Relics.RelicData relic);
-    public virtual event OnRelicReward OnCollectRelic;
-    public virtual event OnRelicReward OnScrapRelic;
-
+    public bool take;
     bool deciding;
     public IEnumerator RewardSequence(Relics.RelicData relic) {
         deciding = true;
@@ -31,12 +28,8 @@ public class RelicReward : MonoBehaviour {
         transform.GetChild(0).gameObject.SetActive(false);
     }
 
-    public void TakeScrapRelic(bool take) {
+    public void TakeScrapRelic(bool _take) {
         deciding = false;
-        if (take) {
-            OnCollectRelic?.Invoke(data);
-        } else {
-            OnScrapRelic?.Invoke(data);
-        }
+        take = _take;
     }
 }

@@ -5,13 +5,18 @@ using UnityEngine;
 public class TooltipSystem : MonoBehaviour {
 
     public static TooltipSystem instance;
-    public Tooltip tooltipBL;
+    public Tooltip tooltipBL, tooltipTR, tooltipHover;
     public Transform upgradeContainer;
-    public Tooltip tooltipTR;
     public static TooltipTrigger activeTrigger;
 
     public void Awake() {
         instance = this;
+    }
+
+    public static void ShowHover(TooltipTrigger trigger) {
+        activeTrigger = trigger;
+        instance.tooltipHover.SetText(trigger.content, trigger.header, false);
+        instance.tooltipHover.transform.GetChild(0).gameObject.SetActive(true);
     }
 
     public static void ShowTR(TooltipTrigger trigger) {
@@ -73,10 +78,10 @@ public class TooltipSystem : MonoBehaviour {
         }
     }
 
-    public static void Hide()
-    {
+    public static void Hide() {
         instance.tooltipBL.transform.GetChild(0).gameObject.SetActive(false);
         instance.tooltipTR.transform.GetChild(0).gameObject.SetActive(false);
+        instance.tooltipHover.transform.GetChild(0).gameObject.SetActive(false);
         instance.upgradeContainer.gameObject.SetActive(false);
         activeTrigger = null;
     }

@@ -79,6 +79,8 @@ public class FloorManager : MonoBehaviour {
             tutorial.gameObject.SetActive(false);
         }
         
+        nailTries = 0;
+
         yield return null;
     }
 
@@ -499,12 +501,17 @@ public class FloorManager : MonoBehaviour {
     }
 
 // Coroutine for descending the nail at a regulated random position
+         public int nailTries;
     public IEnumerator DropNail(Nail nail) {
         nail.ToggleNailState(Nail.NailState.Falling);
 
         bool validCoord = false;
         Vector2 spawn = Vector2.zero;
 
+        ShuffleBag<Vector2> spawns = new();
+        for (int x = 1; x <= 6; x++) { for (int y = 1; y <= 6; y++) { spawns.Add(new Vector2(x,y)); } }
+
+        int tries = nailTries;
 // Find a valid coord that a player unit is not in
         while (!validCoord) {
             validCoord = true;
@@ -514,7 +521,7 @@ public class FloorManager : MonoBehaviour {
                 currentFloor.nailSpawns.RemoveAt(i);
             }
             else
-                spawn = new Vector2(UnityEngine.Random.Range(1,6), UnityEngine.Random.Range(1,6));
+                spawn = spawns.Next();
                 
             foreach(Unit u in scenario.player.units) {
                 if (u.coord == spawn && u is not Nail) validCoord = false;
@@ -522,6 +529,10 @@ public class FloorManager : MonoBehaviour {
 
             if (currentFloor.tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false;
             if (currentFloor.tiles.Find(sqr => sqr.coord == spawn) is TileBulb) validCoord = false;
+            if (!currentFloor.enemy.units.Find(u => u.coord == spawn) && tries > 0) {
+                validCoord = false;
+                tries--;
+            } 
         }
         
         nail.transform.position = nail.grid.PosFromCoord(spawn);

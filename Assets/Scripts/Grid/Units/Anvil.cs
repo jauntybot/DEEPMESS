@@ -21,6 +21,9 @@ public class Anvil : Unit {
         hpCurrent = hpMax;
         energyCurrent = energyMax;
 
+        
+        elementCanvas = GetComponentInChildren<ElementCanvas>();
+        if (elementCanvas) elementCanvas.Initialize(this);
 // If first serialized GFX has an animator set Unit anim to it 
         if (gfx[0].GetComponent<Animator>()) {
             gfxAnim = gfx[0].GetComponent<Animator>();
@@ -51,7 +54,7 @@ public class Anvil : Unit {
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
         if (!destroyed) {
 // POWER TIER I - Detonate anvil
-            if (!(data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 0 || dmgType == DamageType.Unspecified))
+            if (data && !(data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 0 || dmgType == DamageType.Unspecified))
                 yield return Detonate(data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 2 ? 2 : 1);
             yield return base.DestroySequence(dmgType, source, sourceEquip);
        }

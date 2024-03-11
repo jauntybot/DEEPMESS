@@ -16,7 +16,6 @@ public class HPPips : MonoBehaviour {
     }
 
     public virtual void UpdatePips(GridElement ge = null) {
-        Debug.Log(unit.name + " Max Pips: " + unit.hpMax);
 // Instiantate correct amount of hp pips
         if (emptyHpPips.childCount != unit.hpMax || hpPips.childCount != unit.hpMax) {
             for (int i = emptyHpPips.transform.childCount - 1; i >= 0; i--)
@@ -43,9 +42,7 @@ public class HPPips : MonoBehaviour {
     }
 
     public virtual void SetToCurrentHP() {
-        Debug.Log(unit.name + " " + unit.hpCurrent);
         for (int i = 0; i <= hpPips.childCount - 1; i++) {
-            Debug.Log(hpPips.transform.GetChild(i).name + " HP PIP " + i + " active: " + (i < unit.hpCurrent));
             hpPips.transform.GetChild(i).gameObject.SetActive(i < unit.hpCurrent);
         }
     }

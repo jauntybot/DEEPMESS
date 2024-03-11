@@ -12,6 +12,9 @@ public class EnemyManager : UnitManager {
     public List<GameObject> pendingPreviews = new();
     protected Coroutine actingUnitCo;
 
+    [Header ("RELIC REFS - REMOVE")]
+    [SerializeField] Unit tacklePrefab;
+
     public override IEnumerator Initialize(Grid _currentGrid) {
         yield return base.Initialize(_currentGrid);
         for (int i = 0; i <= units.Count - 1; i++)
@@ -26,18 +29,24 @@ public class EnemyManager : UnitManager {
         return u;
     }
 
-    public virtual Unit SpawnUnit(Vector2 coord) {
-        Unit u = Instantiate(defaultUnit.gameObject, unitParent.transform).GetComponent<Unit>();
-        SubscribeElement(u);
-        u.manager = this;
+    public virtual Unit SpawnUnit(Vector2 coord, bool tackle) {
+        Unit u = Instantiate(tackle ? tacklePrefab.gameObject : defaultUnit.gameObject, unitParent.transform).GetComponent<Unit>();
+        if (tackle)
+            scenario.player.SubscribeElement(u);
+        else
+            SubscribeElement(u);
+        
+        u.manager = tackle ? scenario.player : this;
         UIManager.instance.UpdatePortrait(u, false);
 
         u.StoreInGrid(currentGrid);
         u.UpdateElement(coord);
         u.grid.RemoveElement(u);
 
+        
         u.ElementDestroyed += CountDefeatedEnemy; 
         u.ElementDestroyed += StopActingUnit;
+        
         return u;
     }
 
@@ -197,7 +206,7 @@ public class EnemyManager : UnitManager {
         if (units.Count < currentGrid.lvlDef.minEnemies) {
             int count = currentGrid.lvlDef.minEnemies - units.Count;
             for (int i = 0; i < count; i++) {
-                Unit reinforcement = Reinforcement();
+                Unit reinforcement = Reinforcement(scenario.tackleChance);
                 if (reinforcement) {
                     pendingUnits.Add(reinforcement);
                     spawn = true;
@@ -243,6 +252,14 @@ public class EnemyManager : UnitManager {
     }
 
     public virtual IEnumerator DescendReinforcements() {
+        foreach (Unit u in pendingUnits) {
+            if (u is EnemyUnit)
+                units.Add(u);
+            else
+                scenario.player.units.Add(u);
+            DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
+            dp.Initialize(u, floorManager.previewManager);
+        }
         for (int i = pendingPreviews.Count - 1; i >= 0; i--) {
             Destroy(pendingPreviews[i].gameObject);
         }
@@ -251,17 +268,12 @@ public class EnemyManager : UnitManager {
             yield return StartCoroutine(floorManager.DescendUnits(pendingUnits, this));
             
         }
-        foreach (Unit u in pendingUnits) {
-            units.Add(u);
-            DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
-            dp.Initialize(u, floorManager.previewManager);
-        }
         pendingUnits = new List<GridElement>();
 
         transform.parent = currentGrid.transform;
     }
 
-    public virtual Unit Reinforcement() {
+    public virtual Unit Reinforcement(int tackleChance = 0) {
         bool validCoord = false;
         Vector2 spawn = Vector2.zero;
         
@@ -286,7 +298,13 @@ public class EnemyManager : UnitManager {
         }
 
         if (!validCoord) return null;
-        Unit reinforcement = SpawnUnit(spawn);
+// Tacklebox Relic
+        bool tackle = false;
+        if (tackleChance > 0) {
+            int rnd = Random.Range(0, 101);
+            if (rnd <= tackleChance) tackle = true;
+        }
+        Unit reinforcement = SpawnUnit(spawn, tackle);
         reinforcement.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0f;
 
         return reinforcement;

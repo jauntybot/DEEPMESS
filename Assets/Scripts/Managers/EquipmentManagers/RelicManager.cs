@@ -2,41 +2,57 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RelicManager : MonoBehaviour {
-
-    public static RelicManager instance;
-    private void Awake() {
-        if (RelicManager.instance) {
-            Debug.LogWarning("Warning! More than one instance of RelicManager found.");
-            Destroy(gameObject);
-        } 
-        instance = this;
-    }
-
-    [SerializeField] RelicReward reward;
-    [SerializeField] Transform relicContainer;
-    [SerializeField] GameObject relicPrefab;
-    [SerializeField] List<Relics.RelicData> relicPool;
-    public List<Relic> collectedRelics;
-
-    void Start() {
-        reward.OnCollectRelic += CollectRelic;
-        reward.OnScrapRelic += ScrapRelic;
-    }
-
+namespace Relics {
     
-    public IEnumerator PresentRelic() {
-        yield return reward.StartCoroutine(reward.RewardSequence(relicPool[0]));
+    public class RelicManager : MonoBehaviour {
+
+        public static RelicManager instance;
+        private void Awake() {
+            if (RelicManager.instance) {
+                Debug.LogWarning("Warning! More than one instance of RelicManager found.");
+                Destroy(gameObject);
+            } 
+            instance = this;
+        }
+
+        [SerializeField] RelicReward reward;
+        [SerializeField] Transform relicContainer;
+        [SerializeField] GameObject relicPrefab;
+        [SerializeField] List<RelicData> relicPool;
+        public List<Relic> collectedRelics;
+
+        void Start() {
+            ClearRelics();
+        }
+
+        public IEnumerator PresentRelic() {
+            RelicData data = relicPool[0];
+            yield return reward.StartCoroutine(reward.RewardSequence(data));
+            if (reward.take)
+                CollectRelic(data);
+            else    
+                ScrapRelic(data);
+        }
+
+        public void CollectRelic(RelicData data) {
+            Debug.Log("Relic collected");
+            Relic relic = Instantiate(relicPrefab, relicContainer).GetComponent<Relic>();
+            relic.Init(data);
+            collectedRelics.Add(relic);
+
+        }
+
+        public void ScrapRelic(RelicData relic) {
+            
+        }
+
+        public void ClearRelics() {
+            for (int r = collectedRelics.Count - 1; r >= 0; r--) {
+                collectedRelics[r].ScrapRelic();
+                collectedRelics.RemoveAt(r);
+            }
+        }
     }
-
-    public void CollectRelic(Relics.RelicData data) {
-        Relic relic = Instantiate(relicPrefab, relicContainer).GetComponent<Relic>();
-        relic.Init(data);
-        collectedRelics.Add(relic);
-
-    }
-
-    public void ScrapRelic(Relics.RelicData relic) {
-
-    }
+    
 }
+

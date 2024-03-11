@@ -213,10 +213,8 @@ public class GridContextuals : MonoBehaviour {
             aoeCursors.Remove(del);
             Destroy(del);
         }
-        Debug.Log(data.name);
         if (data.aoeRange > 0) {
             List<Vector2> aoeCoords = EquipmentAdjacency.GetAdjacent(new Vector2(3,3), data.aoeRange, data, null, floorManager.currentFloor, true);
-            Debug.Log("AOE coords: " + aoeCoords.Count);
             for (int i = aoeCoords.Count - 1; i >= 0; i--) {
                 GameObject cursor = Instantiate(gridCursorPrefab);
                 gridCursor.transform.position = floorManager.currentFloor.PosFromCoord(new Vector2(3,3));
