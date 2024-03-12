@@ -24,8 +24,8 @@ public class ScenarioManager : MonoBehaviour
     [HideInInspector] public FloorManager floorManager;
     [HideInInspector] public UIManager uiManager;
     [HideInInspector] public GameplayOptionalTooltips gpOptional;
+    [HideInInspector] public Relics.RelicManager relicManager;
     public PathManager pathManager;
-    public Relics.RelicManager relicManager;
     public int startCavity;
     public EnemyManager currentEnemy;
     public PlayerManager player;

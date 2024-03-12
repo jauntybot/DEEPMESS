@@ -49,7 +49,14 @@ public class PathManager : MonoBehaviour {
         }
 
 // Draw packets from floor sequence for nodes
-        List<FloorPacket> randomPackets = floorSequence.RandomNodes(2);
+        int rnd = 2;
+        switch(floorSequence.currentThreshold) {
+            case FloorPacket.PacketType.I: rnd = 2; break;
+            case FloorPacket.PacketType.II: rnd = 3; break;
+            case FloorPacket.PacketType.III: rnd = 3; break;
+            case FloorPacket.PacketType.BOSS: rnd = 1; break;
+        }
+        List<FloorPacket> randomPackets = floorSequence.RandomNodes(rnd);
         
 // Initialize PathCards
         int totalObjectives = 0;
