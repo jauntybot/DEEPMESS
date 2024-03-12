@@ -10,9 +10,9 @@ public class EquipmentObjective : Objective {
     [SerializeField] ObjectiveType objectiveType;
 
 
-    public override Objective Init(int p) {
+    public override Objective Init(bool reward, int p) {
         ObjectiveEventManager.AddListener<OnEquipmentUse>(OnEquipmentUse);
-        return base.Init(p);
+        return base.Init(reward, p);
     }
 
 

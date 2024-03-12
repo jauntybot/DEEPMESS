@@ -9,6 +9,8 @@ namespace Relics {
         public new string name;
         public string description;
         public Sprite sprite;
+        public enum Rarity { Common, Uncommon, Rare };
+        public Rarity rarity;
         public int scrapValue;
 
         public virtual void Init() {}

@@ -18,15 +18,17 @@ namespace Relics {
         [SerializeField] RelicReward reward;
         [SerializeField] Transform relicContainer;
         [SerializeField] GameObject relicPrefab;
-        [SerializeField] List<RelicData> relicPool;
+        [SerializeField] List<RelicData> serializedRelics;
+        public ShuffleBag<RelicData> relicPool;
         public List<Relic> collectedRelics;
 
         void Start() {
             ClearRelics();
+            relicPool = new ShuffleBag<RelicData>(serializedRelics.ToArray());
         }
 
         public IEnumerator PresentRelic() {
-            RelicData data = relicPool[0];
+            RelicData data = relicPool.Next();
             yield return reward.StartCoroutine(reward.RewardSequence(data));
             if (reward.take)
                 CollectRelic(data);

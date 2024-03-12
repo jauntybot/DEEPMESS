@@ -10,9 +10,9 @@ public class DamageObjective : Objective {
     [SerializeField] ObjectiveType objectiveType;
 
 
-    public override Objective Init(int p) {
+    public override Objective Init(bool reward, int p) {
         ObjectiveEventManager.AddListener<GridElementDamagedEvent>(OnDamage);
-        return base.Init(p);
+        return base.Init(reward, p);
     }
 
     protected virtual void OnDamage(GridElementDamagedEvent evt) {

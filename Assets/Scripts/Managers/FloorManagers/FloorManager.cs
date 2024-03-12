@@ -724,7 +724,7 @@ public class FloorManager : MonoBehaviour {
             }
 // Objective assign sequence
             if (floorSequence.currentThreshold != FloorPacket.PacketType.BOSS && floorSequence.currentThreshold != FloorPacket.PacketType.BARRIER) {
-                yield return scenario.relicManager.PresentRelic();
+                //yield return scenario.relicManager.PresentRelic();
                 yield return scenario.pathManager.PathSequence(); 
             }
         }

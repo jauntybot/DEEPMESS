@@ -14,7 +14,7 @@ public class SequenceObjective : Objective {
     bool floorFailed = false;
 
 
-    public override Objective Init(int p) {
+    public override Objective Init(bool reward, int p) {
         switch(objectiveType) {
             default: break;
             case ObjectiveType.TwoKillDescend:
@@ -36,7 +36,7 @@ public class SequenceObjective : Objective {
                 ObjectiveEventManager.AddListener<FloorDescentEvent>(DescendWithEnemies);
             break;
         }
-        return base.Init(p);
+        return base.Init(reward, p);
     }
 
 // Two kill descend

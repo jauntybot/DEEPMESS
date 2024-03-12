@@ -17,7 +17,8 @@ public class FloorPacket : ScriptableObject {
     public enum PacketMods { Extreme, Elite };
     public List<PacketMods> packetMods;
 
-    public int bonusObjectives;
+    public int bonusNuggetObjectives;
+    public int bonusRelicObjectives;
     //[HideInInspector]
     public List<Objective> objectives;
     public int nuggets;
