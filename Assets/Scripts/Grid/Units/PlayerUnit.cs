@@ -16,10 +16,15 @@ public class PlayerUnit : Unit {
     public override event OnElementUpdate ElementDestroyed;
     public virtual event OnElementUpdate ElementDisabled;
 
-    public int hammerUses, equipUses, bulbPickups;
+    public int hammerUses, equipUses, bulbPickups, bulbMod;
+
+    protected override void Start() {
+        base.Start();
+        hammerUses = 0; equipUses = 0; bulbPickups = 0; bulbMod = 0;
+    }
 
 
-// Called when an action is applied to a unit or to clear it's actions
+    // Called when an action is applied to a unit or to clear it's actions
     public override void UpdateAction(EquipmentData equipment = null, int mod = 0) {
         if (pManager.overrideEquipment == null) {
             base.UpdateAction(equipment, mod);
@@ -197,11 +202,8 @@ public class PlayerUnit : Unit {
     }
 
     public virtual void Stabilize() {
-        
         SwitchAnim(AnimState.Idle);
         RemoveCondition(Status.Disabled);
-        PlayerManager m = (PlayerManager)pManager;
-        //StartCoroutine(m.nail.TakeDamage(1));
     }
 
 }

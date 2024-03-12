@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Equipment/Attack/Burrow")]
-public class Burrow : EquipmentData {
+public class Burrow : EnemyAttackData {
 
-    public int dmg;
     [SerializeField] GameObject thornsVFX, thornsInflictedVFX;
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
@@ -70,8 +69,12 @@ public class Burrow : EquipmentData {
                 affectedCo.Add(user.StartCoroutine(user.TakeDamage(thornDmg/thornSources.Count, GridElement.DamageType.Melee, ge, ge.shield ? ge.shield.data : null)));
         }
         
-        foreach (GridElement ge in affected) 
-            affectedCo.Add(ge.StartCoroutine(ge.TakeDamage(dmg)));
+        foreach (GridElement ge in affected)  {
+            OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
+            evt.data = this; evt.user = user; evt.target = ge;
+            ObjectiveEventManager.Broadcast(evt);
+            affectedCo.Add(ge.StartCoroutine(ge.TakeDamage(dmg + dmgMod)));
+        }
         
         
         for (int i = affectedCo.Count - 1; i >= 0; i--) {

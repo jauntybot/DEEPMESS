@@ -4,9 +4,8 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName = "Equipment/Attack/RangedBurst")]
 [System.Serializable]
-public class RangedBurstData : EquipmentData {
+public class RangedBurstData : EnemyAttackData {
     
-    public int dmg;
     [SerializeField] GameObject projectilePrefab, thornsVFX, thornsInflictedVFX;
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
@@ -101,7 +100,10 @@ public class RangedBurstData : EquipmentData {
     }
 
     IEnumerator LaunchProjectile(GameObject projectile, GridElement user, Vector2 dest, GridElement target = null) { 
-        
+        OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
+        evt.data = this; evt.user = user; evt.target = target;
+        ObjectiveEventManager.Broadcast(evt);
+
         List<Coroutine> cos = new();
         float dur = animDur * Mathf.Abs((user.coord - dest).magnitude);
         float timer = 0;
@@ -137,7 +139,10 @@ public class RangedBurstData : EquipmentData {
                 go.GetComponent<SpriteRenderer>().sortingOrder = user.gfx[0].sortingOrder++;
                 cos.Add(user.StartCoroutine(user.TakeDamage(thornDmg, GridElement.DamageType.Melee, target, target.shield ? target.shield.data : null)));
             }
-            cos.Add(target.StartCoroutine(target.TakeDamage(dmg, GridElement.DamageType.Melee, user, this)));
+            evt = ObjectiveEvents.OnEquipmentUse;
+            evt.data = this; evt.user = user; evt.target = target;
+            ObjectiveEventManager.Broadcast(evt);
+            cos.Add(target.StartCoroutine(target.TakeDamage(dmg + dmgMod, GridElement.DamageType.Melee, user, this)));
             projectile.transform.position = endPos;
         }
 

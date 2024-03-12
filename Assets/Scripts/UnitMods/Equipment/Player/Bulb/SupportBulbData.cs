@@ -9,10 +9,9 @@ public class SupportBulbData : BulbEquipmentData
     public enum SupportType { Heal, Surge };
     public SupportType supportType;
 
-    public override List<Vector2> TargetEquipment(GridElement user, int mod = 0)
-    {
-
-        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this);
+    public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
+        PlayerUnit pu = (PlayerUnit)user;
+        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + pu.bulbMod, this);
 
         if (user is PlayerUnit u) {
             u.ui.ToggleEquipmentButtons();
@@ -26,7 +25,7 @@ public class SupportBulbData : BulbEquipmentData
                     if (ge is not PlayerUnit && ge is not Nail)
                         validCoords.Remove(validCoords[i]);
                     if (supportType == SupportType.Surge) {
-                        if (ge is Nail || ge is PlayerUnit pu && (pu.conditions.Contains(Unit.Status.Disabled) || (!pu.moved && pu.energyCurrent >= pu.energyMax)))
+                        if (ge is Nail || ge is PlayerUnit tar && (tar.conditions.Contains(Unit.Status.Disabled) || (!tar.moved && tar.energyCurrent >= tar.energyMax)))
                             validCoords.Remove(validCoords[i]);
                     }
                 }
@@ -40,16 +39,19 @@ public class SupportBulbData : BulbEquipmentData
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
     {        
         yield return base.UseEquipment(user, target);
+        PlayerUnit tar = (PlayerUnit)target;
         
         switch (supportType) {
             default:
             case SupportType.Heal:
-                target.StartCoroutine(target.TakeDamage(-2, GridElement.DamageType.Heal, user));
+                if (!tar.conditions.Contains(Unit.Status.Disabled))
+                    target.StartCoroutine(target.TakeDamage(-2, GridElement.DamageType.Heal, user));
+                else
+                    tar.Stabilize();
 
             break;
             case SupportType.Surge:
-                PlayerUnit pu = (PlayerUnit)target;
-                pu.moved = false; pu.energyCurrent = pu.energyMax;
+                tar.moved = false; tar.energyCurrent = tar.energyMax;
             break;
         }
     }

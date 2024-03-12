@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
 
-    public enum Location { BottomLeft, TopRight };
+    public enum Location { BottomLeft, TopRight, ToCursor };
     public Location location;
 
     protected static LTDescr delay;
@@ -21,8 +21,10 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public virtual void OnPointerEnter(PointerEventData eventData) {
         if (location == Location.BottomLeft)
             TooltipSystem.ShowBL(this);
-        else
+        else if (location == Location.TopRight)
             TooltipSystem.ShowTR(this);
+        else
+            TooltipSystem.ShowHover(this);
     }
 
     protected virtual void OnDisable() {

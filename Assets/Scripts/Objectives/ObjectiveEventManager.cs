@@ -22,8 +22,7 @@ public static class ObjectiveEventManager {
         }
     }
 
-    public static void RemoveListener<T>(Action<T> evt) where T : ObjectiveEvent
-    {
+    public static void RemoveListener<T>(Action<T> evt) where T : ObjectiveEvent {
         if (s_EventLookups.TryGetValue(evt, out var action))
         {
             if (s_Events.TryGetValue(typeof(T), out var tempAction))
@@ -39,14 +38,12 @@ public static class ObjectiveEventManager {
         }
     }
 
-    public static void Broadcast(ObjectiveEvent evt)
-    {
+    public static void Broadcast(ObjectiveEvent evt) {
         if (s_Events.TryGetValue(evt.GetType(), out var action))
             action.Invoke(evt);
     }
 
-    public static void Clear()
-    {
+    public static void Clear() {
         s_Events.Clear();
         s_EventLookups.Clear();
     }

@@ -120,7 +120,7 @@ public class Unit : GridElement {
                     if (!tb.harvested && equipment.Find(e => e is BulbEquipmentData) == null)
                         tb.HarvestBulb(pu);
                 }
-            } else {
+            } else if (conditions.Contains(Status.Restricted)) {
                 RemoveCondition(Status.Restricted);
             }
         }
@@ -220,7 +220,7 @@ public class Unit : GridElement {
         if (subGE is PlayerUnit)
             yield return StartCoroutine(DestroySequence());
         else
-            yield return StartCoroutine(TakeDamage(1 + hardLand, DamageType.Fall));
+            yield return StartCoroutine(TakeDamage(1 + hardLand, DamageType.Fall, subGE));
     }
 
 // For when a Slag is acting on a Unit to move it, such as BigGrab or any push mechanics
@@ -293,7 +293,15 @@ public class Unit : GridElement {
         }
     }
 
+
+    
     public virtual void RemoveCondition(Status s) {
+        UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
+        evt.undo = true;
+        evt.condition = s;
+        evt.target = this;
+        ObjectiveEventManager.Broadcast(evt);
+
         if (conditions.Contains(s)) {
             if (conditionDisplay) conditionDisplay.RemoveCondition(s);
             conditions.Remove(s);
@@ -306,9 +314,13 @@ public class Unit : GridElement {
                 break;
                 case Status.Disabled:
                     hpCurrent = 0;
-                    StartCoroutine(TakeDamage(-1));
-                    moved = false;
-                    energyCurrent = 1;
+                    StartCoroutine(TakeDamage(-manager.reviveTo));
+                    if (manager.reviveTo == 1) {
+                        moved = false;
+                        energyCurrent = 1;
+                    } else {
+                        ApplyCondition(Status.Stunned);
+                    }
                 break;
                 case Status.Weakened:
                 break;

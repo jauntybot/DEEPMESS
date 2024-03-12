@@ -11,9 +11,10 @@ public class PathCard : MonoBehaviour {
 
     public FloorPacket floorPacket;
 
-    public Transform bonusObjContainer, rewardContainer;
-    [SerializeField] GameObject bonusObjPrefab, nuggetRewardPrefab;
+    public Transform rewardContainer, bonusObjContainer, hazardsContainer;
+    [SerializeField] GameObject bonusObjPrefab, nuggetRewardPrefab, relicRewardPrefab, extremeTagPrefab, eliteTagPrefab;
     [SerializeField] TMP_Text floorCount;
+    public Transform subcardContainer;
 
 
     public void Init(PathManager _manager, FloorPacket _packet) {
@@ -25,12 +26,30 @@ public class PathCard : MonoBehaviour {
 
         floorCount.text = floorPacket.packetLength.ToString();
 
-        for (int i = floorPacket.nuggets - 1; i >= 0; i--) {
+        for (int i = floorPacket.nuggets - 1; i >= 0; i--) 
             Instantiate(nuggetRewardPrefab, rewardContainer);
+        for (int i = floorPacket.relics - 1; i >= 0; i--) 
+            Instantiate(relicRewardPrefab, rewardContainer);
+        for (int i = floorPacket.packetMods.Count - 1; i >= 0; i--) {
+            GameObject prefab;
+            switch (floorPacket.packetMods[i]) {
+                default:
+                case FloorPacket.PacketMods.Extreme:
+                    prefab = extremeTagPrefab;
+                break;
+                case FloorPacket.PacketMods.Elite:
+                    prefab = eliteTagPrefab;
+                break;
+            }
+            Instantiate(prefab, hazardsContainer);
         }
-        for (int i = floorPacket.relics - 1; i >= 0; i--) {
-            
-        }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(rewardContainer.GetComponent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(hazardsContainer.GetComponent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
+        for (int i = 0; i < subcardContainer.childCount - 1; i++)
+            subcardContainer.GetChild(i).gameObject.SetActive(false);
+        subcardContainer.gameObject.GetComponent<VerticalLayoutGroup>().spacing = 0;
     }
 
     public void AssignObjectives(List<Objective> objs) {
@@ -40,6 +59,7 @@ public class PathCard : MonoBehaviour {
         }
         floorPacket.objectives = objs;
 
+        LayoutRebuilder.ForceRebuildLayoutImmediate(bonusObjContainer.GetComponent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
     }
@@ -50,6 +70,39 @@ public class PathCard : MonoBehaviour {
             if (card)
                 card.Unsub();
         }
+    }
+
+    public void SelectCard() {
+        manager.SelectCard(this);
+    }
+
+    public IEnumerator ExpandAnimation(bool state) {
+        VerticalLayoutGroup layout = subcardContainer.gameObject.GetComponent<VerticalLayoutGroup>();
+        if (state) {
+            if (hazardsContainer.childCount > 0) 
+                hazardsContainer.parent.gameObject.SetActive(true);
+            if (bonusObjContainer.childCount > 0) 
+                bonusObjContainer.parent.gameObject.SetActive(true);
+            subcardContainer.GetChild(0).gameObject.SetActive(true);
+        }
+        float from = state ? -150 : 0;
+        float space = state ? 0 : -150;
+        float t = 0;
+        while (t < 0.15f) {
+            layout.spacing = Mathf.Lerp(from, space, t/0.15f);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(subcardContainer.GetComponent<RectTransform>());
+            Canvas.ForceUpdateCanvases();
+            yield return null;
+            t += Time.deltaTime; 
+        }
+        yield return null;
+        if (!state) {
+            for (int i = 0; i < subcardContainer.childCount - 1; i++)
+                subcardContainer.GetChild(i).gameObject.SetActive(false);
+        }
+        layout.spacing = space;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(subcardContainer.GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
     }
 
     public void SelectPath() {

@@ -35,6 +35,7 @@ public class OnEquipmentUse : ObjectiveEvent {
     public EquipmentData data = null;
     public GridElement user = null;
     public GridElement target = null;
+    public GridElement secondTarget = null;
 }
 
 public class UnitConditionEvent : ObjectiveEvent {

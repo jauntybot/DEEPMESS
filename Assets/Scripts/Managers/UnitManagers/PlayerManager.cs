@@ -87,6 +87,8 @@ public class PlayerManager : UnitManager {
         nail.gameObject.transform.parent = unitParent.transform;      
 
         pc = GetComponent<PlayerController>();
+
+        reviveTo = 1;
     }
 
 // Overriden functionality
@@ -160,10 +162,13 @@ public class PlayerManager : UnitManager {
 // Reset unit energy if not continued turn
             foreach(Unit u in units) {
                 if (u is PlayerUnit) {
-                    if (!u.conditions.Contains(Unit.Status.Disabled)) {
+                    if (!u.conditions.Contains(Unit.Status.Disabled) && !u.conditions.Contains(Unit.Status.Stunned)) {
                         u.energyCurrent = u.energyMax;
                         if (!u.conditions.Contains(Unit.Status.Immobilized))
                             u.moved = false;
+                    } else {
+                        u.energyCurrent = 0;
+                        u.moved = true;
                     }
                     u.elementCanvas.UpdateStatsDisplay();
                 }
@@ -173,11 +178,14 @@ public class PlayerManager : UnitManager {
             undoOrder = new List<Unit>();
             harvestedByMove = new Dictionary<Unit, GridElement>();
             UndoClearCallback?.Invoke(this);
-            ResolveConditions();
             if (nail.nailState == Nail.NailState.Primed) nail.elementCanvas.Bark("Hit me! Hit me!");
 // End Turn
         } else {
             DeselectUnit();
+            if (scenario.prevTurn != ScenarioManager.Turn.Descent && scenario.prevTurn != ScenarioManager.Turn.Cascade) {
+                Debug.Log("Not descent");
+                ResolveConditions();
+            }
             contextuals.UpdateGridCursor(false);
             if (scenario.prevTurn != ScenarioManager.Turn.Descent && !floorManager.currentFloor.gridElements.Find(ge => ge is BossUnit)) {
                 if (nail.nailState == Nail.NailState.Buried)
@@ -203,7 +211,6 @@ public class PlayerManager : UnitManager {
 #region Player Controller interface
 // Get grid input from player controller, translate it to functionality
     public void GridInput(GridElement input) {
-        Debug.Log(input);
 // Player clicks on unit
         if (input is Unit u) {
 // Player clicks on their own unit

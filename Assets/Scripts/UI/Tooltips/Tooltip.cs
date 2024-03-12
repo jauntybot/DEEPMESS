@@ -19,11 +19,13 @@ public class Tooltip : MonoBehaviour
     [SerializeField] protected RectTransform rectTransform;
 
     public virtual void SetText(string content = "", string header = "", bool clickToSkip = false, List<RuntimeAnimatorController> gif = null) {
-        if (string.IsNullOrEmpty(header)) 
+        if (string.IsNullOrEmpty(header)) {
             headerField.transform.parent.gameObject.SetActive(false);
-        else {
+            transform.GetChild(0).GetComponent<VerticalLayoutGroup>().padding.top = 5;
+        } else {
             headerField.transform.parent.gameObject.SetActive(true);
             headerField.text = header;
+            transform.GetChild(0).GetComponent<VerticalLayoutGroup>().padding.top = 20;
         }
 
         if (gif == null) 
@@ -67,26 +69,42 @@ public class Tooltip : MonoBehaviour
     }
 
     protected virtual void Update() {
-        switch (align) {
-            case Alignment.CenterScreen:
-                RectTransform anchor = transform.GetChild(0).GetComponent<RectTransform>();
-                anchor.anchorMin = new Vector2(0.5f, 0.5f);
-                anchor.anchorMax = new Vector2(0.5f, 0.5f);
-                anchor.anchoredPosition = new Vector2(0, anchor.rect.height/2);
+        if (transform.GetChild(0).gameObject.activeSelf) {
+            switch (align) {
+                case Alignment.CenterScreen:
+                    RectTransform anchor = transform.GetChild(0).GetComponent<RectTransform>();
+                    anchor.anchorMin = new Vector2(0.5f, 0.5f);
+                    anchor.anchorMax = new Vector2(0.5f, 0.5f);
+                    anchor.anchoredPosition = new Vector2(0, anchor.rect.height/2);
 
-            break;
-            case Alignment.ToCursor:
-                Vector2 position = Input.mousePosition;
-                transform.position = position;
+                break;
+                case Alignment.ToCursor:
+                    Vector2 position = Input.mousePosition;
+                    transform.position = position;
 
-                Vector2 localAnchor = Vector2.zero;
-                localAnchor.x = position.x < Screen.width/2 ? 0 : 1;
-                localAnchor.y = position.y < Screen.height/2 ? 0 : 1;
+                    Vector2 localAnchor = Vector2.zero;
+                    Vector2 sign;
+                    if (position.x < Screen.width/2) {
+                        localAnchor.x = 0;
+                        sign.x = 1;
+                    } else {
+                        localAnchor.x = 1;
+                        sign.x = -1;
+                    }
+                    
+                    if (position.y < Screen.height/2) {
+                        localAnchor.y = 0;
+                        sign.y = -1;
+                    } else {
+                        localAnchor.y = 1;
+                        sign.y = 1;
+                    }
 
-                rectTransform.anchorMax = localAnchor; rectTransform.anchorMin = localAnchor; 
-                rectTransform.pivot = localAnchor;
-                rectTransform.anchoredPosition = new Vector2(25 - localAnchor.x * 50, 25 - localAnchor.y * 50);
-            break;
+                    rectTransform.anchorMax = localAnchor; rectTransform.anchorMin = localAnchor; rectTransform.pivot = localAnchor;
+                    
+                    rectTransform.position = new Vector2(position.x + 15 * sign.x, position.y + 15 * sign.y);
+                break;
+            }
         }
     }
 }

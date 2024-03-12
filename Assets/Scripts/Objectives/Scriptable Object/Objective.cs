@@ -8,36 +8,40 @@ public class Objective : ScriptableObject {
     public string objectiveTitleString;
     public string objectiveString;
     public int progress, goal;
+    public int _goal;
     public enum Operator { OrMore, LessThanOrEqual }
     public Operator operation;
-    public SlagEquipmentData.UpgradePath reward;
+    public bool nuggetReward;
     public bool resolved, succeeded;
     public delegate void OnObjectiveCondition(Objective objective);
     public event OnObjectiveCondition ObjectiveUpdateCallback;
 
 
-    public virtual Objective Init() {
-        Restart();
+    public virtual Objective Init(bool reward, int p = 0) {
+        Restart(p);
+        nuggetReward = reward;
         return this;
     }
 
-    public virtual void Restart() {
+    public virtual void Restart(int p = 0) {
         resolved = false;
         succeeded = false;
         progress = 0;
+        int sign = operation == Operator.OrMore ? -1 : 1;
+        _goal = goal + p * sign;
     }
 
     public virtual void ProgressCheck(bool final = false) {
         if (!resolved) {
             switch (operation) {
                 case Operator.OrMore:
-                    if (progress >= goal) {
+                    if (progress >= _goal) {
                         resolved = true;
                         succeeded = true;
                     } 
                 break;
                 case Operator.LessThanOrEqual:
-                    if (progress > goal) {
+                    if (progress > _goal) {
                         resolved = true;
                         succeeded = false;
                     }
@@ -47,11 +51,11 @@ public class Objective : ScriptableObject {
                 resolved = true;
                 switch (operation) {
                     case Operator.OrMore:
-                        if (progress >= goal) 
+                        if (progress >= _goal) 
                             succeeded = true;
                     break;
                     case Operator.LessThanOrEqual:
-                        if (progress <= goal) 
+                        if (progress <= _goal) 
                             succeeded = true;
                     break;
                 };
@@ -59,5 +63,9 @@ public class Objective : ScriptableObject {
 
             ObjectiveUpdateCallback?.Invoke(this);
         }
+    }
+
+    public virtual void ClearObjective() {
+        
     }
 }

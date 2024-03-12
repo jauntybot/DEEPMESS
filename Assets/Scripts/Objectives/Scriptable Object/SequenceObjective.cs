@@ -14,7 +14,7 @@ public class SequenceObjective : Objective {
     bool floorFailed = false;
 
 
-    public override Objective Init() {
+    public override Objective Init(bool reward, int p) {
         switch(objectiveType) {
             default: break;
             case ObjectiveType.TwoKillDescend:
@@ -36,7 +36,7 @@ public class SequenceObjective : Objective {
                 ObjectiveEventManager.AddListener<FloorDescentEvent>(DescendWithEnemies);
             break;
         }
-        return base.Init();
+        return base.Init(reward, p);
     }
 
 // Two kill descend
@@ -61,7 +61,7 @@ public class SequenceObjective : Objective {
         if (evt.condition == Unit.Status.Restricted && evt.target is PlayerUnit) {
             if (evt.undo) {
                 progress--;
-                if (progress < goal) resolved = false;  
+                if (progress < _goal) resolved = false;  
             } 
             else progress++;
         }
@@ -93,6 +93,31 @@ public class SequenceObjective : Objective {
         if (evt.enemyDescentsCount > progress)
             progress = evt.enemyDescentsCount; 
         ProgressCheck();
+    }
+
+    public override void ClearObjective() {
+        base.ClearObjective();
+        switch(objectiveType) {
+            default: break;
+            case ObjectiveType.TwoKillDescend:
+                ObjectiveEventManager.RemoveListener<GridElementDestroyedEvent>(TwoKillDescendCheck);
+                ObjectiveEventManager.RemoveListener<FloorDescentEvent>(TwoKillDescendCheck);
+                ObjectiveEventManager.RemoveListener<EndTurnEvent>(TwoKillDescendCheck);
+            break;
+            case ObjectiveType.StandInBlood:
+                ObjectiveEventManager.RemoveListener<UnitConditionEvent>(StandInBloodCheck);
+            break;
+            case ObjectiveType.FloorsNoDmg:
+                ObjectiveEventManager.RemoveListener<GridElementDamagedEvent>(NoDamageDescentCheck);
+                ObjectiveEventManager.RemoveListener<FloorDescentEvent>(NoDamageDescentCheck);
+            break;
+            case ObjectiveType.PeekCount:
+                ObjectiveEventManager.RemoveListener<FloorPeekEvent>(FloorPeek);
+            break;
+            case ObjectiveType.DescendWithEnemies:
+                ObjectiveEventManager.RemoveListener<FloorDescentEvent>(DescendWithEnemies);
+            break;
+        }
     }
 
 }

@@ -23,7 +23,6 @@ public class NailDisplay : UnitOverview
     }
 
     public override void UpdateOverview() {
-        Debug.Log("nail pips: " );
         Nail n = (Nail)unit;
         switch (n.nailState) {
             default: break;

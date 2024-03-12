@@ -6,8 +6,10 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName = "Equipment/HammerData")]
 [System.Serializable]
-public class HammerData : SlagEquipmentData {
+public class HammerData : EquipmentData {
     
+    public int dmg = 1;
+    public int dmgMod = 0;
     public GridElement secondTarget;
     public GameObject hammer;
     public Nail nail;
@@ -29,8 +31,6 @@ public class HammerData : SlagEquipmentData {
     public override void EquipEquipment(Unit user) {
         if (user is PlayerUnit pu)
             pu.ui.UpdateEquipmentButtons();
-
-        slag = (PlayerUnit)user;
     }
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
@@ -113,6 +113,7 @@ public class HammerData : SlagEquipmentData {
 
     public override void UntargetEquipment(GridElement user) {
         base.UntargetEquipment(user);
+        Debug.Log("untarget equip");
         firstTarget = null;
         secondTarget = null;
         PlayerUnit pu = (PlayerUnit)user;
@@ -129,8 +130,15 @@ public class HammerData : SlagEquipmentData {
                 manager.undoableMoves = new Dictionary<Unit, Vector2>();
                 manager.undoOrder = new List<Unit>();
             }
+
+            Debug.Log(secondTarget);
+            OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
+            evt.data = this; evt.user = user; evt.target = firstTarget; evt.secondTarget = target;
+            ObjectiveEventManager.Broadcast(evt);
+
             user.elementCanvas.UpdateStatsDisplay();
-            yield return user.StartCoroutine(LaunchHammer((PlayerUnit)user, firstTarget, (PlayerUnit)target, secondTarget));    
+            yield return user.StartCoroutine(LaunchHammer((PlayerUnit)user, firstTarget, (PlayerUnit)target));    
+
 // First input, setup for second input
         } else {
             firstTarget = target;
@@ -148,7 +156,7 @@ public class HammerData : SlagEquipmentData {
         }
     }
 
-    public virtual IEnumerator LaunchHammer(PlayerUnit user, GridElement target = null, Unit passTo = null, GridElement target2 = null) {
+    public virtual IEnumerator LaunchHammer(PlayerUnit user, GridElement target = null, Unit passTo = null) {
         
         user.manager.DeselectUnit();
     
@@ -228,9 +236,9 @@ public class HammerData : SlagEquipmentData {
             target.PlaySound(useSFX);
             
             Instantiate(vfx, user.grid.PosFromCoord(target.coord) + new Vector3(0, 1, 0), Quaternion.identity);
-            int dmg = 1;
 
-            dmgCo(target.StartCoroutine(target.TakeDamage(dmg, dmgType, user, sourceEquip: this)));
+
+            dmgCo(target.StartCoroutine(target.TakeDamage(dmg + dmgMod, dmgType, user, sourceEquip: this)));
         }
 // Trigger descent if nail
         else if (target is Nail n) {
@@ -244,7 +252,7 @@ public class HammerData : SlagEquipmentData {
 // Revive slag
         else if (target is PlayerUnit pu) { 
             user.PlaySound(catchSFX);
-            if (pu.conditions.Contains(Unit.Status.Disabled))
+            if (pu.conditions.Contains(Unit.Status.Disabled)) 
                 pu.Stabilize();
         }
 
@@ -274,40 +282,4 @@ public class HammerData : SlagEquipmentData {
         reciever.ui.UpdateEquipmentButtons();
         sender.ui.UpdateEquipmentButtons();
     }
-
-// // PWER TIER I -- Deal additional damage if adjacent
-//             if (target is EnemyUnit && upgrades[UpgradePath.Shunt] == 1 && user == passTo) {
-//                 dmg ++;
-//                 Instantiate(meleeVFX, user.grid.PosFromCoord(target.coord), Quaternion.identity);
-//                 target.PlaySound(meleeSFX);
-//             }
-// // SPECIAL TIER I -- Push element on hit
-//             if (upgrades[UpgradePath.Scab] == 1 && target is not BossUnit && target is not EnemyStaticUnit) {
-//                 pushCo(target.StartCoroutine(PushUnit(target, (target.coord - user.coord).normalized)));
-//             }
-//         }
-//     IEnumerator PushUnit(GridElement pushed, Vector2 dir) {
-//         Vector3 startPos = pushed.transform.position;
-//         Vector2 toCoord = pushed.coord + dir;
-//         if (toCoord.x >= 0 && toCoord.x <= 7 && toCoord.y >= 0 && toCoord.y <= 7 && pushed.grid.CoordContents(toCoord).Count == 0) {
-//             float timer = 0;
-//             while (timer < animDur) {
-//                 pushed.transform.position = Vector3.Lerp(startPos, pushed.grid.PosFromCoord(toCoord), timer/animDur);
-//                 yield return null;
-//                 timer += Time.deltaTime;
-//             }
-//             pushed.UpdateElement(toCoord);
-//         } else yield return null;
-//     }
-
-//     // UNIT TIER I - Remove movement boost from hammer carrier
-//             if (upgrades[UpgradePath.Sludge] >= 1) slag.moveMod++;
-//             if (h.upgrades[UpgradePath.Sludge] >= 1) sender.moveMod--;
-
-    
-//     public override void UpgradeEquipment(UpgradePath targetPath) {
-//         base.UpgradeEquipment(targetPath);
-// // UNIT TIER I - Increase hammer carriers movement
-//         if (upgrades[UpgradePath.Sludge] >= 1) slag.moveMod++;
-//     }
 }

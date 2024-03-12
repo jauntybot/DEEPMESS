@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 //[RequireComponent(typeof(PolygonCollider2D))]
 [RequireComponent(typeof(AudioSource))]
-public class GridElement : MonoBehaviour{
+public class GridElement : MonoBehaviour {
 
     public Grid grid;
     
@@ -23,6 +23,8 @@ public class GridElement : MonoBehaviour{
     public Shield shield;
     public int energyCurrent, energyMax;
     public bool destroyed;
+    
+    public Queue<GridElementAction> actionQueue;
 
     [Header("UI/UX")]
     public List<SpriteRenderer> gfx;

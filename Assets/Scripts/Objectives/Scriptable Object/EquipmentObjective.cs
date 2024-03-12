@@ -10,9 +10,9 @@ public class EquipmentObjective : Objective {
     [SerializeField] ObjectiveType objectiveType;
 
 
-    public override Objective Init() {
+    public override Objective Init(bool reward, int p) {
         ObjectiveEventManager.AddListener<OnEquipmentUse>(OnEquipmentUse);
-        return base.Init();
+        return base.Init(reward, p);
     }
 
 
@@ -22,10 +22,15 @@ public class EquipmentObjective : Objective {
                 if (evt.data is BigGrabData && evt.target is EnemyUnit) progress++;
             break;
             case ObjectiveType.EnemyExplosions:
-                if (evt.data is SelfDetonate) progress++;
+                if (evt.data is SelfDetonate && evt.target == null) progress++;
             break;
         }
 
         ProgressCheck();
+    }
+
+    public override void ClearObjective() {
+        base.ClearObjective();
+        ObjectiveEventManager.RemoveListener<OnEquipmentUse>(OnEquipmentUse);
     }
 }
