@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
 public class BonusObjectiveCard : ObjectiveCard {
@@ -9,6 +10,6 @@ public class BonusObjectiveCard : ObjectiveCard {
         objective = _objective;
         objective.ObjectiveUpdateCallback += UpdateCard;
         
-
+        UpdateCard(_objective);
     }
 }
