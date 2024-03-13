@@ -7,7 +7,7 @@ public class Unit : GridElement {
     public override event OnElementUpdate ElementDestroyed;
 
     [HideInInspector] public UnitManager manager;
-    public Animator gfxAnim;
+
     [Header("Unit")]
     [SerializeField] DescentVFX descentVFX;
     public GameObject airTraillVFX;
@@ -150,7 +150,7 @@ public class Unit : GridElement {
                         tb.HarvestBulb(pu);
                 }
             } 
-            if (targetSqr.tileType != Tile.TileType.Blood) {
+            if (targetSqr.tileType != Tile.TileType.Blood && conditions.Contains(Status.Restricted)) {
                 RemoveCondition(Status.Restricted);
             }
         }

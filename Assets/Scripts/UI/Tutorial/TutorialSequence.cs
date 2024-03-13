@@ -53,7 +53,7 @@ public class TutorialSequence : MonoBehaviour {
 
         floorManager.floorSequence.currentThreshold = FloorPacket.PacketType.Tutorial;    
         floorManager.floorSequence.floorsTutorial = 3;
-        floorManager.floorSequence.localPackets.Add(tutorialPacket);
+        floorManager.floorSequence.AddPacket(tutorialPacket);
         floorManager.floorCount = 1;
         
         descents = 0;

@@ -110,7 +110,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 110, y: 50.97}
+  m_SizeDelta: {x: 110, y: 34.559998}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &6531650979536463014
 CanvasRenderer:
@@ -292,6 +292,7 @@ GameObject:
   - component: {fileID: 8455839462766485691}
   - component: {fileID: 2914526033182350791}
   - component: {fileID: 671296856187794730}
+  - component: {fileID: 2435905102272941780}
   m_Layer: 0
   m_Name: Bark (TMP)
   m_TagString: Untagged
@@ -316,8 +317,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 55, y: -25.485}
-  m_SizeDelta: {x: 100, y: 40.97}
+  m_AnchoredPosition: {x: 55, y: -17.279999}
+  m_SizeDelta: {x: 100, y: 24.56}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8455839462766485691
 CanvasRenderer:
@@ -347,7 +348,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Hit me! Hit me!
+  m_text: Hit me!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4658b7dfbefc86340b1279196af5183b, type: 2}
   m_sharedMaterial: {fileID: -3901078251180137152, guid: 4658b7dfbefc86340b1279196af5183b, type: 2}
@@ -381,7 +382,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -428,8 +429,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HorizontalFit: 0
+  m_HorizontalFit: 2
   m_VerticalFit: 2
+--- !u!114 &2435905102272941780
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3870454299596195277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: 100
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &4252696125652310349
 GameObject:
   m_ObjectHideFlags: 0

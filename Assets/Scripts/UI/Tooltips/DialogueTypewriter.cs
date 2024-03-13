@@ -7,6 +7,8 @@ using System.Net.Mime;
 public class DialogueTypewriter : MonoBehaviour {
 
     [SerializeField] float typewriteSpeed;
+    [SerializeField] float countUpDur;
+    [SerializeField] AnimationCurve countUpCurve;
     public bool writing;
     TMP_Text tmp;
     int visibleChar;
@@ -34,6 +36,8 @@ public class DialogueTypewriter : MonoBehaviour {
         SkipWriting();
 
     }
+
+
 
     public void SkipWriting() {
         writing = false;

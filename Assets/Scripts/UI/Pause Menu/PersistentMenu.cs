@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
+using Relics;
 
 public class PersistentMenu : MonoBehaviour
 {
@@ -11,21 +13,23 @@ public class PersistentMenu : MonoBehaviour
     public MusicController musicController;
     public PauseMenu pauseMenu;
     public int targetFPS;
-    [SerializeField] int fps;
+    //[SerializeField] int fps;
     TooltipSystem toolTips;
     private bool tooltipToggle = true;
     [SerializeField] AudioMixer mixer;
     [SerializeField] Slider musicSlider, sfxSlider;
-    bool uiToggle = true;
-    bool contextToggle = true;
+
     [SerializeField] GameObject battleCanvas, menuButton;
-    [SerializeField] TMPro.TMP_Text tooltipText;
+    [SerializeField] TMP_Text tooltipText;
     [SerializeField] GameObject menuButtons;
     public Animator fadeToBlack;
     public int startCavity;
 
     const string MIXER_MUSIC = "musicVolume";
     const string MIXER_SFX = "sfxVolume";
+
+    public float upcomingCurrency;
+    [SerializeField] TMP_Dropdown relicDropdown;
 
 
     public static PersistentMenu instance;
@@ -46,22 +50,16 @@ public class PersistentMenu : MonoBehaviour
 
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = targetFPS;
-        InvokeRepeating("GetFPS", 1, 1);
+        //InvokeRepeating("GetFPS", 1, 1);
 
-        // float init;
-        // mixer.GetFloat(MIXER_MUSIC, out init); 
-        // musicSlider.value = Mathf.Log(init)/20;
-        // mixer.GetFloat(MIXER_SFX, out init); 
-        // sfxSlider.value = Mathf.Log(init)/20;
-        
         Time.timeScale = 1;
 
         SceneManager.sceneLoaded += UpdateRefs;
     }
 
-    void GetFPS() {
-        fps = (int) (1f / Time.unscaledDeltaTime);
-    }
+    // void GetFPS() {
+    //     fps = (int) (1f / Time.unscaledDeltaTime);
+    // }
 
     void UpdateRefs(Scene scene = default, LoadSceneMode mode = default) {
         battleCanvas = null;
@@ -71,9 +69,19 @@ public class PersistentMenu : MonoBehaviour
             scenario = ScenarioManager.instance;
             if (startCavity != -1) {
                 scenario.StartCoroutine(scenario.Init(startCavity));
-            }
-            else
+            } else
                 scenario.StartCoroutine(scenario.Init());
+
+            relicDropdown.ClearOptions();
+            RelicManager relicManager = RelicManager.instance;
+            List<string> options = new List<string>();
+            for (int i = 0; i <= relicManager.serializedRelics.Count - 1; i++) {
+                options.Add(relicManager.serializedRelics[i].name);
+            }
+            relicDropdown.AddOptions(options);
+            relicDropdown.value = 0;
+            relicDropdown.RefreshShownValue();
+
             if (UIManager.instance) 
                 battleCanvas = UIManager.instance.gameObject;
             menuButtons.SetActive(true);
@@ -82,9 +90,10 @@ public class PersistentMenu : MonoBehaviour
         else if (MainMenuManager.instance) {
             menuButtons.SetActive(false);
             MainMenuManager.instance.optionsButton.onClick.AddListener(MainMenuPause);
+            if (upcomingCurrency > 0) StartCoroutine(WhatsToCome());
         }
 
-// First ever scene load, initialize MusicController
+// initialize MusicController if not initialized
         if (musicController.currentState == MusicController.MusicState.Null) {
             if (SceneManager.GetActiveScene().buildIndex == 0)
                 musicController.SwitchMusicState(MusicController.MusicState.MainMenu, false);
@@ -97,6 +106,29 @@ public class PersistentMenu : MonoBehaviour
             toolTips = TooltipSystem.instance;
         
         FadeToBlack(false);
+    }
+
+    RelicData relic;
+    public void SetRelic(int relicIndex) {
+        relic = scenario.relicManager.serializedRelics[relicIndex];
+    }
+    public void GiveRelic() {
+        StartCoroutine(scenario.relicManager.PresentRelic(relic));
+    }
+
+    bool whatsToCome;
+    IEnumerator WhatsToCome() {
+        whatsToCome = true;
+
+        while (whatsToCome) {
+
+            yield return null;
+        }    
+        upcomingCurrency = 0;
+    }
+
+    public void ContinueWhatsToCome() {
+        whatsToCome = false;
     }
 
     public void FadeToBlack(bool state) {
@@ -120,51 +152,11 @@ public class PersistentMenu : MonoBehaviour
         
     }
 
-    public void ToggleUI() {
-        uiToggle = !uiToggle;
-        if (battleCanvas) 
-            battleCanvas.SetActive(uiToggle);
-        menuButton.SetActive(uiToggle);
-    }
-
-    public void ToggleGridHighlights() {
-        if (FloorManager.instance) {
-            FloorManager.instance.GridHighlightToggle();
-        }
-    }
-
-    public void ToggleContext() {
-        contextToggle = !contextToggle;
-        if (ScenarioManager.instance) {
-            ScenarioManager.instance.player.contextuals.ToggleValid(contextToggle);
-            ScenarioManager.instance.player.contextuals.toggled = contextToggle;
-        }
-    }
-
-    public void ToggleTooltips() {
-        tooltipToggle = !tooltipToggle;
-        if (toolTips)
-            toolTips.gameObject.SetActive(tooltipToggle);
-        string state = tooltipToggle ? "ON" : "OFF";
-        tooltipText.text = "TOGGLE TOOLTIPS: " +  state;
-    }
 
     public void TriggerCascade() {
         if (FloorManager.instance && ScenarioManager.instance) {
             ScenarioManager.instance.prevTurn = ScenarioManager.Turn.Descent;
             FloorManager.instance.Descend(true);
-        }
-    }
-
-    public void HealAllUnitsToFull() {
-        foreach (Unit u in ScenarioManager.instance.player.units) {
-            if (u is Nail) 
-                StartCoroutine(u.TakeDamage(u.hpCurrent - u.hpMax));
-            else if (u is PlayerUnit pu) {
-                if (pu.conditions.Contains(Unit.Status.Disabled))
-                    pu.Stabilize();
-                StartCoroutine(u.TakeDamage(u.hpCurrent-u.hpMax));
-            }
         }
     }
 

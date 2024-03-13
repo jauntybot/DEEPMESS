@@ -28,6 +28,7 @@ public class GridElement : MonoBehaviour {
 
     [Header("UI/UX")]
     public List<SpriteRenderer> gfx;
+    [HideInInspector] public Animator gfxAnim;
 
     public delegate void OnElementUpdate(GridElement ge);
     public virtual event OnElementUpdate ElementUpdated;

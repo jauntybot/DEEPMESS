@@ -38,8 +38,7 @@ public class Burrow : EnemyAttackData {
 
     public IEnumerator BurrowOnSelf(GridElement user) {
 // Apply damage to units in AOE
-        SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(user.coord), Quaternion.identity).GetComponent<SpriteRenderer>();
-        sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
+        user.gfxAnim.SetTrigger("Attack");
         List<Vector2> aoe = EquipmentAdjacency.GetAdjacent(user.coord, range, this, targetTypes);
         List<Coroutine> affectedCo = new();
         List<GridElement> affected = new();
@@ -64,6 +63,12 @@ public class Burrow : EnemyAttackData {
                 }
             }
         }
+        float t = 0; while (t < 0.6f) { t += Time.deltaTime; yield return null; }
+
+        SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(user.coord), Quaternion.identity).GetComponent<SpriteRenderer>();
+        sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
+        
+        
         if (thornDmg > 0) {
             foreach (GridElement ge in thornSources) 
                 affectedCo.Add(user.StartCoroutine(user.TakeDamage(thornDmg/thornSources.Count, GridElement.DamageType.Melee, ge, ge.shield ? ge.shield.data : null)));
@@ -84,6 +89,7 @@ public class Burrow : EnemyAttackData {
             else
                 affectedCo.RemoveAt(i);
         }
+        
         
         FloorManager.instance.Descend(false, true, user.coord);
     }

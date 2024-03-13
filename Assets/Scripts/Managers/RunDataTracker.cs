@@ -5,58 +5,108 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
-public class RunDataTracker : MonoBehaviour
-{
+public class RunDataTracker : MonoBehaviour {
 
     ScenarioManager scenario;
     public GameObject panel;
 
-    float playTime;
+    // float playTime;
+    // bool runInProgress;
 
-    [SerializeField] TMP_Text resultsTMP, playTimeTMP, floorCountTMP, enemiesCountTMP;
-    [SerializeField] List<UnitResults> unitResults;
+    [SerializeField] GameObject floorRow, enemiesRow, scrapRow, cutRow;
 
-
-    bool runInProgress;
+    [SerializeField] TMP_Text resultsTMP, floorsCountUp, floorsMultCountUp, enemiesCountUp, enemiesMultCountUp, scrapCountUp, cutPercentCountUp, cutCountUp, totalCountUp;
 
 
     public void Init(ScenarioManager scen) {
         scenario = scen;
-        StartCoroutine(TrackTime());
+        //StartCoroutine(TrackTime());
 
     }
 
-    IEnumerator TrackTime() {
-        playTime = 0;
-        runInProgress = true;
+    // IEnumerator TrackTime() {
+    //     playTime = 0;
+    //     runInProgress = true;
 
-        while (runInProgress) {
-            yield return null;
-            playTime += Time.deltaTime;
-        }
-    }
+    //     while (runInProgress) {
+    //         yield return null;
+    //         playTime += Time.deltaTime;
+    //     }
+    // }
 
-    public void UpdateAndDisplay(bool win, int floors, int enemies) {
+    public IEnumerator UpdateAndDisplay(bool win, int floors, int enemies, int scrap) {
         panel.SetActive(true);
-        resultsTMP.text = win ? "EXCAVATION COMPLETE" : "EXCAVATION FAILED";
-        resultsTMP.color = win ? Color.white : Color.red;
-
-        float minutes = Mathf.FloorToInt(playTime / 60);
-        float seconds = Mathf.FloorToInt(playTime % 60);
-
-        playTimeTMP.text = string.Format("{0:00} : {1:00}", minutes, seconds);
-        floorCountTMP.text = floors.ToString() + " floors";
-        enemiesCountTMP.text = enemies.ToString() + " enemies";
-
-        int i = 0;
-        foreach (Unit u in scenario.player.units) {
-            if (u is PlayerUnit || u is Nail) {
-                unitResults[i].Init(u);
-                i++;
-            }
+        if (win) {
+            resultsTMP.text = "EXCAVATION COMPLETE";
+            resultsTMP.color = Color.white;
+            //cutRow.SetActive(false);
+            cutPercentCountUp.gameObject.SetActive(false);
+            cutCountUp.gameObject.SetActive(false);
+        } else {
+            resultsTMP.text = "EXCAVATION FAILED";
+            resultsTMP.color = Color.red;
+            //cutRow.SetActive(true);
+            cutPercentCountUp.gameObject.SetActive(true);
+            cutCountUp.gameObject.SetActive(true);
         }
 
+        // float minutes = Mathf.FloorToInt(playTime / 60);
+        // float seconds = Mathf.FloorToInt(playTime % 60);
+        //playTimeTMP.text = string.Format("{0:00} : {1:00}", minutes, seconds);
+
+        string countUp;
+        float t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        floorRow.SetActive(true);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
+        StartCoroutine(StringCountUp.CountUp(floors, 1f, (countUp) => { 
+            floorsCountUp.text = countUp;
+        }));
+        //t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        yield return StartCoroutine(StringCountUp.CountUp(floors * 10, 0.75f, (countUp) => { 
+            floorsMultCountUp.text = countUp;
+        }));
+        t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        enemiesRow.SetActive(true);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
+        StartCoroutine(StringCountUp.CountUp(enemies, 0.75f, (countUp) => { 
+            enemiesCountUp.text = countUp;
+        }));
+        //t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        yield return StartCoroutine(StringCountUp.CountUp(enemies * 5, 0.75f, (countUp) => { 
+            enemiesMultCountUp.text = countUp;
+        }));
+        t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        scrapRow.SetActive(true);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
+        yield return StartCoroutine(StringCountUp.CountUp(scrap, 0.75f, (countUp) => { 
+            scrapCountUp.text = countUp;
+        }));
+        t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        
+        int total = (floors * 10) + (enemies * 5) + scrap;
+        if (!win) {
+            cutRow.SetActive(true);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+            Canvas.ForceUpdateCanvases();
+            StartCoroutine(StringCountUp.CountUp(-20, 0.75f, (countUp) => { 
+                cutPercentCountUp.text = countUp + "%";
+            }));
+            //t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+            yield return StartCoroutine(StringCountUp.CountUp(-Mathf.RoundToInt(total*0.2f), 0.75f, (countUp) => { 
+                cutCountUp.text = countUp;
+            }));
+        }
+        
+        t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        yield return StartCoroutine(StringCountUp.CountUp(total + (win ? 0 : (int)(-total*0.2f)), 0.75f, (countUp) => { 
+            totalCountUp.text = countUp;
+        }));
+        PersistentMenu.instance.upcomingCurrency = total + (win ? 0 : (int)(-total*0.2f));
     }
+
 
     public void RestartRun() {
         scenario.scenario = ScenarioManager.Scenario.Null;

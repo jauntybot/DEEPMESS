@@ -51,7 +51,7 @@ public class EnemyManager : UnitManager {
     }
 
     void CountDefeatedEnemy(GridElement ge) {
-        Debug.Log("Enemy defeated");
+
         scenario.player.defeatedEnemies++;
         for (int i = 0; i <= units.Count - 1; i++)
             units[i].elementCanvas.UpdateTurnOrder(units.Count - i);
@@ -290,7 +290,7 @@ public class EnemyManager : UnitManager {
             validCoord = true;          
             
             spawn = spawns.Next();
-            Debug.Log(spawn);
+            
             
             if (pendingUnits.Find(u => u.coord == spawn)) validCoord = false;
             if (currentGrid.tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false; 

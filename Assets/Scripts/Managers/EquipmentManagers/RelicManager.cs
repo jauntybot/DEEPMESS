@@ -18,7 +18,7 @@ namespace Relics {
         [SerializeField] RelicReward reward;
         [SerializeField] Transform relicContainer;
         [SerializeField] GameObject relicPrefab;
-        [SerializeField] List<RelicData> serializedRelics;
+        public List<RelicData> serializedRelics;
         public ShuffleBag<RelicData> relicPool;
         public List<Relic> collectedRelics;
 
@@ -27,8 +27,11 @@ namespace Relics {
             relicPool = new ShuffleBag<RelicData>(serializedRelics.ToArray());
         }
 
-        public IEnumerator PresentRelic() {
-            RelicData data = relicPool.Next();
+        public IEnumerator PresentRelic(RelicData data = null) {
+            if (data == null)
+                data = relicPool.Next();
+            else if (relicPool.Contains(data)) relicPool.Remove(data);
+            
             yield return reward.StartCoroutine(reward.RewardSequence(data));
             if (reward.take)
                 CollectRelic(data);
