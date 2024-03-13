@@ -36,18 +36,19 @@ public class SupportBulbData : BulbEquipmentData
     }
 
 
-    public override IEnumerator UseEquipment(GridElement user, GridElement target = null)
-    {        
+    public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {        
         yield return base.UseEquipment(user, target);
-        PlayerUnit tar = (PlayerUnit)target;
+        Unit tar = (Unit)target;
         
         switch (supportType) {
             default:
             case SupportType.Heal:
                 if (!tar.conditions.Contains(Unit.Status.Disabled))
                     target.StartCoroutine(target.TakeDamage(-2, GridElement.DamageType.Heal, user));
-                else
-                    tar.Stabilize();
+                else {
+                    if (tar is PlayerUnit pu)
+                        pu.Stabilize();
+                }
 
             break;
             case SupportType.Surge:

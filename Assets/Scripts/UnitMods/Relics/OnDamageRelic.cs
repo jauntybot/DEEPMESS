@@ -26,6 +26,9 @@ namespace Relics {
                     }
                 break;
                 case RelicType.IronDeficiency:
+                    if (evt.element is Unit u3) {
+                        //Debug.Log("true, " !u3.shield && evt.damageType is GridElement.DamageType.Fall && evt.source is Wall)
+                    }
                     if (evt.element is Unit u2 && !u2.shield && evt.damageType is GridElement.DamageType.Fall && evt.source is Wall) {
                         u2.ApplyCondition(Unit.Status.Stunned);
                     }
