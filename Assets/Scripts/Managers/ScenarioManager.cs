@@ -235,12 +235,12 @@ public class ScenarioManager : MonoBehaviour
                 }
                 currentTurn = Turn.Descent;
                 player.StartEndTurn(false);
-                if (uiManager.gameObject.activeSelf) {
-                    if (floorManager.floorCount == floorManager.floorSequence.activePacket.packetLength)
-                        yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.FinalDescent));
-                    else
-                        yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Descent));
-                }
+                // if (uiManager.gameObject.activeSelf) {
+                //     if (floorManager.floorCount == floorManager.floorSequence.activePacket.packetLength)
+                //         yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.FinalDescent));
+                //     else
+                //         yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Descent));
+                // }
             break;
             case Turn.Cascade:
                 currentTurn = Turn.Cascade;
@@ -294,7 +294,7 @@ public class ScenarioManager : MonoBehaviour
         pathManager.ClearObjectives();
         relicManager.ClearRelics();
         yield return new WaitForSecondsRealtime(1.25f);
-        runDataTracker.UpdateAndDisplay(true, floorManager.currentFloor.index + 1, player.defeatedEnemies);
+        StartCoroutine(runDataTracker.UpdateAndDisplay(true, floorManager.currentFloor.index + 1, player.defeatedEnemies, 0));
     }
 
     public IEnumerator Lose() {
@@ -316,6 +316,6 @@ public class ScenarioManager : MonoBehaviour
         yield return StartCoroutine(player.RetrieveNailAnimation());
         pathManager.ClearObjectives();
         relicManager.ClearRelics();
-        runDataTracker.UpdateAndDisplay(false, floorManager.currentFloor ? floorManager.currentFloor.index + 1 : 0, player.defeatedEnemies);
+        StartCoroutine(runDataTracker.UpdateAndDisplay(false, floorManager.currentFloor ? floorManager.currentFloor.index + 1 : 0, player.defeatedEnemies, 0));
     }
 }

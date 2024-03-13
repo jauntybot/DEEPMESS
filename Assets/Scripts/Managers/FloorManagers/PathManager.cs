@@ -88,6 +88,8 @@ public class PathManager : MonoBehaviour {
 
         while (choosingPath)
             yield return null;
+
+            
         float t = 0; while (t <= 0.15f) { t += Time.deltaTime; yield return null; }
         Transform card = pathCardContainer.GetChild(0);
         Vector2 from = card.localPosition;
@@ -137,14 +139,11 @@ public class PathManager : MonoBehaviour {
 // Shuffle bag for random nugget rewards
         int nuggets = floorSequence.activePacket.nuggets + floorSequence.activePacket.bonusNuggetObjectives;
         ShuffleBag<SlagEquipmentData.UpgradePath> rndBag = new();
-        List<SlagEquipmentData.UpgradePath> rewards = new();
         for (int i = 0; i <= 1; i++) {
             rndBag.Add(SlagEquipmentData.UpgradePath.Shunt);
             rndBag.Add(SlagEquipmentData.UpgradePath.Scab);
             rndBag.Add(SlagEquipmentData.UpgradePath.Sludge);
         }
-        for (int i = 0; i < nuggets; i++)
-            rewards.Add(rndBag.Next());
 
 // Delay for anim in
         float t = 0;        
@@ -157,7 +156,7 @@ public class PathManager : MonoBehaviour {
         for (int i = 0; i <= nuggets - 1; i++) {
             Destroy(card.rewardContainer.GetChild(0).gameObject);
             t = 0; while (t < 0.25f) { t += Time.deltaTime; yield return null; } 
-            upgradeManager.CollectNugget(rewards[i]);
+            upgradeManager.CollectNugget(rndBag.Next());
             t = 0; while (t < 0.25f) { t += Time.deltaTime; yield return null; }
         }
 // Collect relic rewards sequentially
@@ -179,7 +178,7 @@ public class PathManager : MonoBehaviour {
             t = 0; while (t < 0.25f) { t += Time.deltaTime; yield return null; }
             if (floorSequence.activePacket.objectives[i].succeeded) {
                 if (floorSequence.activePacket.objectives[i].nuggetReward) {
-                    upgradeManager.CollectNugget(rewards[i]);
+                    upgradeManager.CollectNugget(rndBag.Next());
                 } else {
                     yield return relicManager.StartCoroutine(relicManager.PresentRelic());
                 }

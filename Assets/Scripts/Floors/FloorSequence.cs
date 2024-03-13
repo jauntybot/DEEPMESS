@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.XR;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 
 [CreateAssetMenu(menuName = "Floors/Floor Sequence")]
@@ -9,11 +10,13 @@ using UnityEngine.UIElements;
 public class FloorSequence : ScriptableObject {
 
     public List<FloorPacket> packets;
-    public List<FloorPacket> localPackets;
+    List<FloorPacket> localPackets;
+    public FloorPacket bossPacket;
+    public void AddPacket(FloorPacket packet) { localPackets.Add(packet); }
     public FloorPacket activePacket;
 
     public int floorsTutorial;
-    public GameObject bossPrefab;
+    public GameObject elitePrefab, bossPrefab;
     public FloorPacket.PacketType currentThreshold;
     public int floorsGot = 0;
 

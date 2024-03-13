@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BossUnit : EnemyUnit
-{
+public class BossUnit : EnemyUnit {
 
     [SerializeField] Unit prevTarget = null;
 

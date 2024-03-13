@@ -636,26 +636,26 @@ public class FloorManager : MonoBehaviour {
             if (currentFloor.tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false; 
         }
     
-        Unit boss = scenario.currentEnemy.SpawnBossUnit(spawn, floorSequence.bossPrefab.GetComponent<Unit>());
+        Unit unit = scenario.currentEnemy.SpawnBossUnit(spawn, floorSequence.bossPrefab.GetComponent<Unit>());
         Vector3 to = currentFloor.PosFromCoord(spawn);
         Vector3 from = to + new Vector3(0, floorOffset*2, 0);
 
         float timer = 0;
-        NestedFadeGroup.NestedFadeGroup fade = boss.GetComponent<NestedFadeGroup.NestedFadeGroup>();
-        boss.airTraillVFX.SetActive(true);
+        NestedFadeGroup.NestedFadeGroup fade = unit.GetComponent<NestedFadeGroup.NestedFadeGroup>();
+        unit.airTraillVFX.SetActive(true);
         while (timer <= unitDropDur) {
-            boss.transform.localPosition = Vector3.Lerp(from, to, dropCurve.Evaluate(timer/unitDropDur));
+            unit.transform.localPosition = Vector3.Lerp(from, to, dropCurve.Evaluate(timer/unitDropDur));
             fade.AlphaSelf = Mathf.Lerp(0, 1, timer/(unitDropDur/3));
             yield return null;
             timer += Time.deltaTime;
         }
-        boss.DescentVFX(currentFloor.tiles.Find(sqr => sqr.coord == boss.coord));
-        boss.transform.position = to;
-        boss.StoreInGrid(currentFloor);
-        boss.UpdateElement(boss.coord);
+        unit.DescentVFX(currentFloor.tiles.Find(sqr => sqr.coord == unit.coord));
+        unit.transform.position = to;
+        unit.StoreInGrid(currentFloor);
+        unit.UpdateElement(unit.coord);
         fade.AlphaSelf = 1;
 
-        boss.PlaySound(boss.landingSFX);
+        unit.PlaySound(unit.landingSFX);
         scenario.gpOptional.StartCoroutine(scenario.gpOptional.Boss());        
     }
 
@@ -683,7 +683,7 @@ public class FloorManager : MonoBehaviour {
         
 // Lerp units into screen
         List<Unit> units = new() { scenario.player.units[0], scenario.player.units[1], scenario.player.units[2], scenario.player.units[3] };
-        List<Vector2> to = new() {new Vector2(-1.182819f, 4.0243183f), new Vector2(-2.862819f, 3.54704558f), new Vector2(-0.5108191f, 2.9218184f), new Vector2(1.841181f, 2.296591f) };
+        List<Vector2> to = new() {new Vector2(6.182819f, 1.0243183f), new Vector2(5.862819f, -3.54704558f), new Vector2(7.5108191f, 2.9218184f), new Vector2(1.841181f, 2.296591f) };
         foreach (Unit u in units) u.gfxAnim.SetBool("Falling", true);
         scenario.player.hammerActions[0].hammer.SetActive(true);
         scenario.player.hammerActions[0].hammer.GetComponentInChildren<Animator>().SetBool("Falling", true);
@@ -724,14 +724,13 @@ public class FloorManager : MonoBehaviour {
             }
 // Objective assign sequence
             if (floorSequence.currentThreshold != FloorPacket.PacketType.BOSS && floorSequence.currentThreshold != FloorPacket.PacketType.BARRIER) {
-                //yield return scenario.relicManager.PresentRelic();
                 yield return scenario.pathManager.PathSequence(); 
+            } else if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) {
+                floorSequence.StartPacket(floorSequence.bossPacket);
+                if (!scenario.gpOptional.prebossEncountered)
+                    yield return StartCoroutine(scenario.gpOptional.Preboss());
+                uiManager.ToggleObjectiveTracker(false);
             }
-        }
-        if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) {
-            if (!scenario.gpOptional.prebossEncountered)
-                yield return StartCoroutine(scenario.gpOptional.Preboss());
-            uiManager.ToggleObjectiveTracker(false);
         }
 
 // Lerp units offscreen
