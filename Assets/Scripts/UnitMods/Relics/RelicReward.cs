@@ -23,7 +23,7 @@ public class RelicReward : MonoBehaviour {
         descriptionTMP.text = relic.description;
 
         while (deciding) { yield return null; }
-        float t = 0; while (t < 1) { yield return null; t += Time.deltaTime; }
+        float t = 0; while (t < 0.65f) { yield return null; t += Time.deltaTime; }
 
         transform.GetChild(0).gameObject.SetActive(false);
     }

@@ -16,7 +16,7 @@ public class FloorSequence : ScriptableObject {
     public FloorPacket activePacket;
 
     public int floorsTutorial;
-    public GameObject elitePrefab, bossPrefab;
+    public Unit elitePrefab, bossPrefab;
     public FloorPacket.PacketType currentThreshold;
     public int floorsGot = 0;
 
@@ -60,6 +60,8 @@ public class FloorSequence : ScriptableObject {
         activePacket.relics = packet.relics;
 
         activePacket.packetMods = new(packet.packetMods);
+        activePacket.eliteSpawn = false;
+        activePacket.eliteRange = new(packet.eliteRange.x,packet.eliteRange.y);
         activePacket.objectives = new(packet.objectives);
         activePacket.firstFloors = new(packet.firstFloors);
         activePacket.floors = new(packet.floors);
@@ -86,7 +88,7 @@ public class FloorSequence : ScriptableObject {
                 if (floorsGot >= activePacket.packetLength) currentThreshold = FloorPacket.PacketType.BOSS;
             break;
             case FloorPacket.PacketType.BOSS:
-                if (FloorManager.instance.bossSpawn && !FloorManager.instance.currentFloor.gridElements.Find(u => u is BossUnit)) currentThreshold = FloorPacket.PacketType.BARRIER;
+                if (FloorManager.instance.floorSequence.activePacket.eliteSpawn && !FloorManager.instance.currentFloor.gridElements.Find(u => u is BossUnit)) currentThreshold = FloorPacket.PacketType.BARRIER;
             break;
         }
 

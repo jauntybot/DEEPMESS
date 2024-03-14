@@ -108,14 +108,14 @@ public class ScenarioManager : MonoBehaviour
                 if (u is PlayerUnit || u is Nail)
                     units.Add(u);
             }
-            if (floorManager.floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && !floorManager.bossSpawn)
+            if (floorManager.floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && !floorManager.floorSequence.activePacket.eliteSpawn)
                 units.Remove(player.nail);
             
             yield return StartCoroutine(floorManager.DescendUnits(units));
-            if (floorManager.floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && !floorManager.bossSpawn) {
+            if (floorManager.floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && !floorManager.floorSequence.activePacket.eliteSpawn) {
                 yield return new WaitForSecondsRealtime(0.75f);
-                yield return StartCoroutine(floorManager.SpawnBoss());
-            }
+                yield return StartCoroutine(floorManager.SpawnBoss(floorManager.floorSequence.bossPrefab));
+            } 
             StartCoroutine(SwitchTurns(Turn.Enemy));
         }
     }
@@ -294,7 +294,7 @@ public class ScenarioManager : MonoBehaviour
         pathManager.ClearObjectives();
         relicManager.ClearRelics();
         yield return new WaitForSecondsRealtime(1.25f);
-        StartCoroutine(runDataTracker.UpdateAndDisplay(true, floorManager.currentFloor.index + 1, player.defeatedEnemies, 0));
+        StartCoroutine(runDataTracker.UpdateAndDisplay(true, floorManager.floors.Count - 1, player.defeatedEnemies, relicManager.scrapValue));
     }
 
     public IEnumerator Lose() {
@@ -316,6 +316,6 @@ public class ScenarioManager : MonoBehaviour
         yield return StartCoroutine(player.RetrieveNailAnimation());
         pathManager.ClearObjectives();
         relicManager.ClearRelics();
-        StartCoroutine(runDataTracker.UpdateAndDisplay(false, floorManager.currentFloor ? floorManager.currentFloor.index + 1 : 0, player.defeatedEnemies, 0));
+        StartCoroutine(runDataTracker.UpdateAndDisplay(false, floorManager.floors.Count - 2 >= 0 ? floorManager.floors.Count - 2 : 0, player.defeatedEnemies,  relicManager.scrapValue));
     }
 }

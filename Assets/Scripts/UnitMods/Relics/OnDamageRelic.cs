@@ -26,10 +26,17 @@ namespace Relics {
                     }
                 break;
                 case RelicType.IronDeficiency:
+                    bool a = false, b = false, c = false, d = false;
                     if (evt.element is Unit u3) {
-                        //Debug.Log("true, " !u3.shield && evt.damageType is GridElement.DamageType.Fall && evt.source is Wall)
+                        a = true;
+                        if (u3.shield) b = true;
+                        if (evt.damageType is GridElement.DamageType.Fall) c = true;
+                        if (evt.source is Wall) d = true;
                     }
+                    Debug.Log(a + ", " + b + ", " + c + ", " + d);
+
                     if (evt.element is Unit u2 && !u2.shield && evt.damageType is GridElement.DamageType.Fall && evt.source is Wall) {
+                        Debug.Log("apply condition");
                         u2.ApplyCondition(Unit.Status.Stunned);
                     }
                 break;

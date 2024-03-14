@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using System;
 using System.Linq;
-using UnityEngine.Experimental.Rendering.RenderGraphModule;
+
+
 using UnityEditor;
 
 // This class generates and sequences Floor prefabs (Grid class), as well as manages the descending of units
@@ -22,7 +23,6 @@ public class FloorManager : MonoBehaviour {
     public bool gridHightlightOverride;
     public Grid currentFloor;
     public List<Grid> floors;
-    [HideInInspector] public bool bossSpawn = false;
 
     [SerializeField] int _gridSize;
     public static int gridSize;
@@ -85,10 +85,10 @@ public class FloorManager : MonoBehaviour {
     }
 
     public void GenerateFloor(FloorDefinition definitionOverride = null, bool first = false) {
-        int index = floors.Count;
+        int index = floorSequence.floorsGot;
 
         Grid newFloor = Instantiate(floorPrefab, floorParent).GetComponent<Grid>();
-        newFloor.transform.localPosition = new Vector3(0, index * -floorOffset);
+        newFloor.transform.localPosition = new Vector3(0, floors.Count * -floorOffset);
         
         FloorDefinition floorDef;
         if (definitionOverride)
@@ -367,6 +367,19 @@ public class FloorManager : MonoBehaviour {
         if (enemy) {
             enemy.SeedUnits(currentFloor, enemy == currentFloor.enemy);
         }
+
+// Spawns elite
+        if (floorSequence.activePacket.packetMods.Contains(FloorPacket.PacketMods.Elite) && !floorSequence.activePacket.eliteSpawn) {
+            if (currentFloor.index + 1 >= floorSequence.activePacket.eliteRange.x && currentFloor.index + 1 <= floorSequence.activePacket.eliteRange.y) {
+                float dif = floorSequence.activePacket.eliteRange.y - currentFloor.index - 1;
+                int odds = UnityEngine.Random.Range(0, (int)dif + 1);
+                if (odds == 0) {
+                    yield return new WaitForSecondsRealtime(0.75f);
+                    yield return StartCoroutine(SpawnBoss(floorSequence.elitePrefab));
+                }
+            }
+        }
+        
         scenario.player.DescendGrids(currentFloor);
         currentFloor.LockGrid(false);
 
@@ -620,8 +633,8 @@ public class FloorManager : MonoBehaviour {
         fade.AlphaSelf = 1;
     }
 
-    public IEnumerator SpawnBoss() {
-        bossSpawn = true;
+    public IEnumerator SpawnBoss(Unit u) {
+        floorSequence.activePacket.eliteSpawn = true;
         bool validCoord = false;
         Vector2 spawn = Vector2.zero;
         while (!validCoord) {
@@ -636,7 +649,7 @@ public class FloorManager : MonoBehaviour {
             if (currentFloor.tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false; 
         }
     
-        Unit unit = scenario.currentEnemy.SpawnBossUnit(spawn, floorSequence.bossPrefab.GetComponent<Unit>());
+        Unit unit = scenario.currentEnemy.SpawnBossUnit(spawn, u);
         Vector3 to = currentFloor.PosFromCoord(spawn);
         Vector3 from = to + new Vector3(0, floorOffset*2, 0);
 
@@ -656,7 +669,9 @@ public class FloorManager : MonoBehaviour {
         fade.AlphaSelf = 1;
 
         unit.PlaySound(unit.landingSFX);
-        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Boss());        
+    
+        if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) 
+            scenario.gpOptional.StartCoroutine(scenario.gpOptional.Boss());        
     }
 
 

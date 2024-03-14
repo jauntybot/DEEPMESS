@@ -42,6 +42,7 @@ public class PathManager : MonoBehaviour {
         pathChoiceContainer.SetActive(true);
         sequenceTitle.text = "CHOOSE A PATH";
         activeCards = new();
+        float t  = 0;
 
         
         for (int i = pathCardContainer.childCount - 1; i >= 0; i--) {
@@ -51,7 +52,7 @@ public class PathManager : MonoBehaviour {
 // Draw packets from floor sequence for nodes
         int rnd = 2;
         switch(floorSequence.currentThreshold) {
-            case FloorPacket.PacketType.I: rnd = 2; break;
+            case FloorPacket.PacketType.I: rnd = 3; break;
             case FloorPacket.PacketType.II: rnd = 3; break;
             case FloorPacket.PacketType.III: rnd = 3; break;
             case FloorPacket.PacketType.BOSS: rnd = 1; break;
@@ -82,43 +83,59 @@ public class PathManager : MonoBehaviour {
             activeCards[i].AssignObjectives(packetObjs);
         }
         
-        yield return null;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(pathCardContainer.GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
+        HorizontalLayoutGroup layout = pathCardContainer.GetComponent<HorizontalLayoutGroup>();
+        layout.enabled = false;
+        t = 0; while (t < 0.2f) { t += Time.deltaTime; yield return null; }
+        
+        for (int i = 0; i <= pathCardContainer.childCount - 1; i++) {
+            pathCardContainer.GetChild(i).GetComponent<Animator>().SetTrigger("SlideIn");
+            t = 0; while (t < 0.1f) { t += Time.deltaTime; yield return null; }
+        }
+        t = 0; while (t < 0.2f) { t += Time.deltaTime; yield return null; }
+        
+        layout.enabled = true;
         LayoutRebuilder.ForceRebuildLayoutImmediate(pathCardContainer.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
 
         while (choosingPath)
             yield return null;
 
-            
-        float t = 0; while (t <= 0.15f) { t += Time.deltaTime; yield return null; }
+        pathChoiceContainer.SetActive(false);
+    }
+
+    public IEnumerator SelectPath(PathCard selected) {
+        Vector2 from = selected.transform.localPosition;
+        HorizontalLayoutGroup layout = pathCardContainer.GetComponent<HorizontalLayoutGroup>();
+        layout.enabled = false;
+        yield return null;
+        
+// Destroy other path nodes and unsub objectives
+        activeCards = new() { selected };
+        for (int i = pathCardContainer.childCount - 1; i >= 0; i--) {
+            PathCard c = pathCardContainer.GetChild(i).GetComponent<PathCard>();
+            if (c == selected) continue;
+            foreach(Transform child in c.bonusObjContainer) {
+                BonusObjectiveCard o = child.GetComponent<BonusObjectiveCard>();
+                if (o)
+                    o.Unsub();
+            }
+            //card.transform.parent = null;
+            c.GetComponent<Animator>().SetTrigger("Delete");
+        }
+        float t = 0; while (t < 0.35f) { t += Time.deltaTime; yield return null; }
+
         Transform card = pathCardContainer.GetChild(0);
-        Vector2 from = card.localPosition;
         t = 0; while (t <= 0.2f) { 
             card.localPosition = new Vector2(Mathf.Lerp(from.x, 0, t/0.2f), from.y);
             t += Time.deltaTime; 
             yield return null; 
         }
         card.localPosition = new Vector2(0, from.y);
-        pathCardContainer.GetComponent<HorizontalLayoutGroup>().enabled = true;
+        
+        layout.enabled = true;
         t = 0; while (t <= 1.25f) { t += Time.deltaTime; yield return null; }
-
-
-        pathChoiceContainer.SetActive(false);
-    }
-
-    public void SelectPath(PathCard selected) {
-// Destroy other path nodes and unsub objectives
-        pathCardContainer.GetComponent<HorizontalLayoutGroup>().enabled = false;
-        for (int i = pathCardContainer.childCount - 1; i >= 0; i--) {
-            PathCard card = pathCardContainer.GetChild(i).GetComponent<PathCard>();
-            if (card == selected) continue;
-            foreach(Transform child in card.bonusObjContainer) {
-                BonusObjectiveCard c = child.GetComponent<BonusObjectiveCard>();
-                if (c)
-                    c.Unsub();
-            }
-            Destroy(card.gameObject);
-        }
 
 // Assign selected path
         floorSequence.StartPacket(selected.floorPacket);
@@ -134,7 +151,7 @@ public class PathManager : MonoBehaviour {
         pathChoiceContainer.SetActive(true);
         sequenceTitle.text = "PATH RESULTS";
         PathCard card = pathCardContainer.GetChild(0).GetComponent<PathCard>();
-        card.subcardContainer.GetChild(0).gameObject.SetActive(false);
+        card.GetComponent<Animator>().SetTrigger("SlideIn");
 
 // Shuffle bag for random nugget rewards
         int nuggets = floorSequence.activePacket.nuggets + floorSequence.activePacket.bonusNuggetObjectives;
@@ -146,11 +163,7 @@ public class PathManager : MonoBehaviour {
         }
 
 // Delay for anim in
-        float t = 0;        
-        while (t < 1.25f) {
-            t += Time.deltaTime;
-            yield return null;
-        }
+        float t = 0; while (t < 1.25f) { t += Time.deltaTime; yield return null; }
 
 // Collect nugget rewards sequentially
         for (int i = 0; i <= nuggets - 1; i++) {

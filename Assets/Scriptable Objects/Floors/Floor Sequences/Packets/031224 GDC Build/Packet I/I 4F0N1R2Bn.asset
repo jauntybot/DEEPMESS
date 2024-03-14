@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: I 4F0N1R2Bn
   m_EditorClassIdentifier: 
   packetType: 1
-  packetLength: 4
+  packetLength: 2
   inOrder: 0
   firstFloors:
   - {fileID: 11400000, guid: 0beb7124178a741c9a62cf9d24015e17, type: 2}
@@ -35,9 +35,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ab037d2817dda4da18f780cc4a7558ec, type: 2}
   - {fileID: 11400000, guid: 561fc91499a084ccda02efd29f89672a, type: 2}
   - {fileID: 11400000, guid: 74b6ca577a7634ba2a01f80489237c28, type: 2}
-  packetMods: 
+  eliteSpawn: 0
+  packetMods: 01000000
+  eliteRange: {x: 2, y: 3}
+  extremeFloors: []
+  nuggets: 2
+  relics: 1
   bonusNuggetObjectives: 2
   bonusRelicObjectives: 0
-  objectives: []
-  nuggets: 0
-  relics: 1
+  objectives:
+  - {fileID: 11400000, guid: 9317604de3c38654dbd92909cf055be9, type: 2}
+  - {fileID: 11400000, guid: 5a5bd72c4b474234cb87bc2ae34828ac, type: 2}

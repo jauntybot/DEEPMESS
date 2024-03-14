@@ -21,10 +21,12 @@ namespace Relics {
         public List<RelicData> serializedRelics;
         public ShuffleBag<RelicData> relicPool;
         public List<Relic> collectedRelics;
+        public int scrapValue;
 
         void Start() {
             ClearRelics();
             relicPool = new ShuffleBag<RelicData>(serializedRelics.ToArray());
+            scrapValue = 0;
         }
 
         public IEnumerator PresentRelic(RelicData data = null) {
@@ -33,6 +35,7 @@ namespace Relics {
             else if (relicPool.Contains(data)) relicPool.Remove(data);
             
             yield return reward.StartCoroutine(reward.RewardSequence(data));
+            
             if (reward.take)
                 CollectRelic(data);
             else    
@@ -48,7 +51,7 @@ namespace Relics {
         }
 
         public void ScrapRelic(RelicData relic) {
-            
+            scrapValue += relic.scrapValue;
         }
 
         public void ClearRelics() {

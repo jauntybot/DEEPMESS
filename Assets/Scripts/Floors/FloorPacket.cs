@@ -15,13 +15,16 @@ public class FloorPacket : ScriptableObject {
     public List<FloorDefinition> floors;
 
     public enum PacketMods { Extreme, Elite };
+    [HideInInspector] public bool eliteSpawn;
     public List<PacketMods> packetMods;
+    public Vector2 eliteRange;
+    public List<FloorDefinition> extremeFloors;
+
+    public int nuggets;
+    public int relics;
 
     public int bonusNuggetObjectives;
     public int bonusRelicObjectives;
     //[HideInInspector]
     public List<Objective> objectives;
-    public int nuggets;
-    public int relics;
-
 }
