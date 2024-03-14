@@ -61,6 +61,7 @@ public class FloorSequence : ScriptableObject {
         activePacket.relics = packet.relics;
 
         activePacket.packetMods = new(packet.packetMods);
+        activePacket.extremeFloors = new(packet.extremeFloors);
         activePacket.eliteSpawn = false;
         activePacket.eliteRange = new(packet.eliteRange.x,packet.eliteRange.y);
         activePacket.objectives = new(packet.objectives);
