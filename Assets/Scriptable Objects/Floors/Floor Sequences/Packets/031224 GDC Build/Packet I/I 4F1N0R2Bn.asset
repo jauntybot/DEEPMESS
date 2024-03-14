@@ -35,9 +35,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ab037d2817dda4da18f780cc4a7558ec, type: 2}
   - {fileID: 11400000, guid: 561fc91499a084ccda02efd29f89672a, type: 2}
   - {fileID: 11400000, guid: 74b6ca577a7634ba2a01f80489237c28, type: 2}
-  packetMods: 00000000
+  eliteSpawn: 0
+  packetMods: 01000000
+  eliteRange: {x: 2, y: 4}
+  extremeFloors: []
+  nuggets: 1
+  relics: 2
   bonusNuggetObjectives: 2
   bonusRelicObjectives: 0
-  objectives: []
-  nuggets: 0
-  relics: 1
+  objectives:
+  - {fileID: 11400000, guid: 4325f849be666d048bfa99df032153ad, type: 2}
+  - {fileID: 11400000, guid: 5a5bd72c4b474234cb87bc2ae34828ac, type: 2}

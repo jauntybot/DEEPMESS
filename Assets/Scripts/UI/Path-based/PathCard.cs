@@ -15,6 +15,7 @@ public class PathCard : MonoBehaviour {
     [SerializeField] GameObject bonusObjPrefab, nuggetRewardPrefab, relicRewardPrefab, extremeTagPrefab, eliteTagPrefab;
     [SerializeField] TMP_Text floorCount;
     public Transform subcardContainer;
+    bool selectable = true;
 
 
     public void Init(PathManager _manager, FloorPacket _packet) {
@@ -31,6 +32,7 @@ public class PathCard : MonoBehaviour {
         for (int i = floorPacket.relics - 1; i >= 0; i--) 
             Instantiate(relicRewardPrefab, rewardContainer);
         for (int i = floorPacket.packetMods.Count - 1; i >= 0; i--) {
+            hazardsContainer.gameObject.SetActive(true);
             GameObject prefab;
             switch (floorPacket.packetMods[i]) {
                 default:
@@ -47,6 +49,9 @@ public class PathCard : MonoBehaviour {
         LayoutRebuilder.ForceRebuildLayoutImmediate(hazardsContainer.GetComponent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
+        
+        selectable = true;
+
         for (int i = 0; i < subcardContainer.childCount - 1; i++)
             subcardContainer.GetChild(i).gameObject.SetActive(false);
         subcardContainer.gameObject.GetComponent<VerticalLayoutGroup>().spacing = 0;
@@ -73,14 +78,14 @@ public class PathCard : MonoBehaviour {
     }
 
     public void SelectCard() {
-        manager.SelectCard(this);
+        if (selectable) {
+            manager.SelectCard(this);
+        }
     }
 
     public IEnumerator ExpandAnimation(bool state) {
         VerticalLayoutGroup layout = subcardContainer.gameObject.GetComponent<VerticalLayoutGroup>();
         if (state) {
-            if (hazardsContainer.childCount > 0) 
-                hazardsContainer.parent.gameObject.SetActive(true);
             if (bonusObjContainer.childCount > 0) 
                 bonusObjContainer.parent.gameObject.SetActive(true);
             subcardContainer.GetChild(0).gameObject.SetActive(true);
@@ -106,8 +111,12 @@ public class PathCard : MonoBehaviour {
     }
 
     public void SelectPath() {
-        manager.SelectPath(this);
-
+        manager.StartCoroutine(manager.SelectPath(this));
+        selectable = false;
+        Button b = subcardContainer.GetChild(0).GetComponent<Button>();
+        b.enabled = false;
+        foreach (Transform child in b.transform) 
+            child.gameObject.SetActive(false);
     }
 
     

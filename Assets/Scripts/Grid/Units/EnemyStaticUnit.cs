@@ -13,7 +13,6 @@ public class EnemyStaticUnit : EnemyUnit {
         if (!conditions.Contains(Status.Stunned)) {
             yield return StartCoroutine(AttackScan());
             yield return null;
-            manager.unitActing = false;
         } else {
             moved = true;
             energyCurrent = 0;
@@ -21,6 +20,7 @@ public class EnemyStaticUnit : EnemyUnit {
             RemoveCondition(Status.Stunned);
             yield return new WaitForSecondsRealtime(0.25f);
         }
+        manager.unitActing = false;
     }
 
     protected override IEnumerator AttackScan() {
