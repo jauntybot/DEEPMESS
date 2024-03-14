@@ -116,6 +116,10 @@ public class PersistentMenu : MonoBehaviour
         StartCoroutine(scenario.relicManager.PresentRelic(relic));
     }
 
+    public void GiveAllRelics() {
+        scenario.relicManager.GiveAllRelics();
+    }
+
     bool whatsToCome;
     IEnumerator WhatsToCome() {
         whatsToCome = true;

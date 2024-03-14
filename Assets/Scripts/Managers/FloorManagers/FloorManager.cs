@@ -370,9 +370,9 @@ public class FloorManager : MonoBehaviour {
 
 // Spawns elite
         if (floorSequence.activePacket.packetMods.Contains(FloorPacket.PacketMods.Elite) && !floorSequence.activePacket.eliteSpawn) {
-            if (currentFloor.transform.GetSiblingIndex() + 1 >= floorSequence.activePacket.eliteRange.x && currentFloor.transform.GetSiblingIndex() + 1 <= floorSequence.activePacket.eliteRange.y) {
-                float dif = floorSequence.activePacket.eliteRange.y - currentFloor.transform.GetSiblingIndex() - 1;
-                int odds = UnityEngine.Random.Range(0, (int)dif + 1);
+            if ((currentFloor.index+1) >= floorSequence.activePacket.eliteRange.x && (currentFloor.index+1) <= floorSequence.activePacket.eliteRange.y) {
+                float dif = floorSequence.activePacket.eliteRange.y+1 - (currentFloor.index+1);
+                int odds = (int)UnityEngine.Random.Range(0, dif);
                 if (odds == 0) {
                     yield return new WaitForSecondsRealtime(0.75f);
                     yield return StartCoroutine(SpawnBoss(floorSequence.elitePrefab));

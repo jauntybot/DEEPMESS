@@ -60,6 +60,13 @@ namespace Relics {
                 collectedRelics.RemoveAt(r);
             }
         }
+
+        public void GiveAllRelics() {
+            foreach (RelicData relic in serializedRelics) {
+                CollectRelic(relic);
+            }
+        }
+
     }
     
 }

@@ -131,6 +131,7 @@ public class FloorSequence : ScriptableObject {
                         int odds = Random.Range(0, hazardTotal - floorsGot - 1);
                         if (odds <= 0) {
                             floor = activePacket.extremeFloors[Random.Range(0, activePacket.extremeFloors.Count)];
+                            activePacket.extremeFloors.Remove(floor);
                             hazardFloorsGot++;
                         } else {
                             index = Random.Range(0, activePacket.floors.Count);
