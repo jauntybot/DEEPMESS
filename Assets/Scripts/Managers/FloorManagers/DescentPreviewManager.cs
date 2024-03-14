@@ -79,16 +79,15 @@ public class DescentPreviewManager : MonoBehaviour {
             if (tut) {
                 StartCoroutine(PeekTutorial(previewing));
             } else {
-
-            int dir = previewing ? 1 : -1;
-            previewing = !previewing;
-            
-            FloorPeekEvent evt = ObjectiveEvents.FloorPeekEvent;
-            evt.down = dir != 1;
-            ObjectiveEventManager.Broadcast(evt);
+                int dir = previewing ? 1 : -1;
+                previewing = !previewing;
+                
+                FloorPeekEvent evt = ObjectiveEvents.FloorPeekEvent;
+                evt.down = dir != 1;
+                ObjectiveEventManager.Broadcast(evt);
 
                 scenario.player.DeselectUnit();
-                if (!floorManager.transitioning && floorManager.floors.Count - 1 >= floorManager.currentFloor.index - dir) {
+                if (!floorManager.transitioning && floorManager.floors.Count - 1 >= currentFloor.transform.GetSiblingIndex() - dir) {
                     StartCoroutine(PreviewFloor(previewing));
                     if (UIManager.instance.gameObject.activeSelf)
                         UIManager.instance.PlaySound(previewing ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
@@ -106,6 +105,7 @@ public class DescentPreviewManager : MonoBehaviour {
     }
 
     public void UpdateFloors(Grid newFloor, Grid alignFloor) {
+        Debug.Log("Align floor: "  + alignFloor.name + " - " + alignFloor.index);
         currentFloor = newFloor;
         alignmentFloor = alignFloor;
         transform.parent = alignFloor.transform;

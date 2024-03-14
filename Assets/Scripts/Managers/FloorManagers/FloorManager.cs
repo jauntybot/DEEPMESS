@@ -112,7 +112,7 @@ public class FloorManager : MonoBehaviour {
         if (!first) {
             newFloor.transform.localScale = Vector3.one * 0.75f;
             newFloor.GetComponent<SortingGroup>().sortingOrder = -2;
-            previewManager.UpdateFloors(floors[newFloor.index - 1], newFloor);            
+            previewManager.UpdateFloors(floors[floors.Count - 2], newFloor);            
         }
     }
 
@@ -153,8 +153,8 @@ public class FloorManager : MonoBehaviour {
         floorCount += dir;
         UpdateFloorCounter();
 
-        if (floors.Count - 1 >= currentFloor.index + dir) // Checks if there is a floor in the direction transitioning
-            toFloor = floors[currentFloor.index + dir];
+        if (floors.Count - 1 >= currentFloor.transform.GetSiblingIndex() + dir) // Checks if there is a floor in the direction transitioning
+            toFloor = floors[currentFloor.transform.GetSiblingIndex() + dir];
 // Block player from selecting units
         scenario.player.ToggleUnitSelectability(dir == -1);
 
@@ -212,7 +212,7 @@ public class FloorManager : MonoBehaviour {
             toFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 1;
         }
 // Update floor manager current floor... preview next floor untis stats?
-        if (down && currentFloor.index-1 >= 0) floors[currentFloor.index-1].gameObject.SetActive(false);
+        if (down && currentFloor.transform.GetSiblingIndex()-1 >= 0) floors[currentFloor.transform.GetSiblingIndex()-1].gameObject.SetActive(false);
         if (toFloor) {
             toFloor.LockGrid(false);
             currentFloor.LockGrid(true);
@@ -253,7 +253,7 @@ public class FloorManager : MonoBehaviour {
         while (scenario.currentTurn == ScenarioManager.Turn.Cascade)
             yield return null;
         //StartCoroutine(ToggleDescentPreview(false));
-        previewManager.UpdateFloors(currentFloor, floors[currentFloor.index + 1]);            
+        previewManager.UpdateFloors(floors[floors.Count - 2], floors[floors.Count - 1]);        
         currentFloor.DisableGridHighlight();
 
     }
@@ -302,7 +302,7 @@ public class FloorManager : MonoBehaviour {
             // else
 
 // Check if at the end of packet / if there was a sub floor generated, if not packet is done
-            if (floors.Count - 1 > currentFloor.index) {
+            if (floors.Count - 1 > currentFloor.transform.GetSiblingIndex()) {
 // Generate next floor if still mid packet
                 if (!floorSequence.ThresholdCheck()) { //|| floorSequence.currentThreshold == FloorPacket.PacketType.BOSS
                     GenerateFloor();       
@@ -335,7 +335,7 @@ public class FloorManager : MonoBehaviour {
                 // }
                 
 // Descend units from previous floor
-                yield return StartCoroutine(DescendUnits(floors[currentFloor.index -1].gridElements, enemy));
+                yield return StartCoroutine(DescendUnits(floors[currentFloor.transform.GetSiblingIndex() -1].gridElements, enemy));
                  
                 StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
             } else {
@@ -370,8 +370,8 @@ public class FloorManager : MonoBehaviour {
 
 // Spawns elite
         if (floorSequence.activePacket.packetMods.Contains(FloorPacket.PacketMods.Elite) && !floorSequence.activePacket.eliteSpawn) {
-            if (currentFloor.index + 1 >= floorSequence.activePacket.eliteRange.x && currentFloor.index + 1 <= floorSequence.activePacket.eliteRange.y) {
-                float dif = floorSequence.activePacket.eliteRange.y - currentFloor.index - 1;
+            if (currentFloor.transform.GetSiblingIndex() + 1 >= floorSequence.activePacket.eliteRange.x && currentFloor.transform.GetSiblingIndex() + 1 <= floorSequence.activePacket.eliteRange.y) {
+                float dif = floorSequence.activePacket.eliteRange.y - currentFloor.transform.GetSiblingIndex() - 1;
                 int odds = UnityEngine.Random.Range(0, (int)dif + 1);
                 if (odds == 0) {
                     yield return new WaitForSecondsRealtime(0.75f);
@@ -840,7 +840,7 @@ public class FloorManager : MonoBehaviour {
         currentFloor.LockGrid(true);
 
         currentFloor.StartCoroutine(currentFloor.ShockwaveCollapse(scenario.player.nail.coord));
-        floors[currentFloor.index++].StartCoroutine(floors[currentFloor.index++].ShockwaveCollapse(scenario.player.nail.coord));
+        floors[currentFloor.transform.GetSiblingIndex()+1].StartCoroutine(floors[currentFloor.transform.GetSiblingIndex()+1].ShockwaveCollapse(scenario.player.nail.coord));
         yield return new WaitForSecondsRealtime(1f);
         Coroutine co = StartCoroutine(TransitionPackets());
         floorSequence.currentThreshold = FloorPacket.PacketType.BARRIER;
