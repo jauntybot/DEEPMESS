@@ -154,9 +154,8 @@ public class PathManager : MonoBehaviour {
         card.GetComponent<Animator>().SetTrigger("SlideIn");
 
 // Shuffle bag for random nugget rewards
-        int nuggets = floorSequence.activePacket.nuggets + floorSequence.activePacket.bonusNuggetObjectives;
         ShuffleBag<SlagEquipmentData.UpgradePath> rndBag = new();
-        for (int i = 0; i <= 1; i++) {
+        for (int i = 0; i <= 3; i++) {
             rndBag.Add(SlagEquipmentData.UpgradePath.Shunt);
             rndBag.Add(SlagEquipmentData.UpgradePath.Scab);
             rndBag.Add(SlagEquipmentData.UpgradePath.Sludge);
@@ -166,19 +165,18 @@ public class PathManager : MonoBehaviour {
         float t = 0; while (t < 1.25f) { t += Time.deltaTime; yield return null; }
 
 // Collect nugget rewards sequentially
-        for (int i = 0; i <= nuggets - 1; i++) {
-            Destroy(card.rewardContainer.GetChild(0).gameObject);
-            t = 0; while (t < 0.25f) { t += Time.deltaTime; yield return null; } 
+        for (int i = 0; i <= floorSequence.activePacket.nuggets - 1; i++) {
+            card.rewardContainer.GetChild(0).GetComponent<Animator>().SetTrigger("Reward");
+            t = 0; while (t < 1f) { t += Time.deltaTime; yield return null; } 
             upgradeManager.CollectNugget(rndBag.Next());
-            t = 0; while (t < 0.25f) { t += Time.deltaTime; yield return null; }
+            t = 0; while (t < 1.2f) { t += Time.deltaTime; yield return null; }
         }
 // Collect relic rewards sequentially
-        int relics = floorSequence.activePacket.relics;
-        for (int i = 0; i <= relics - 1; i++) {
-            Destroy(card.rewardContainer.GetChild(0).gameObject);
-            t = 0; while (t < 0.25f) { t += Time.deltaTime; yield return null; }
+        for (int i = 0; i <= floorSequence.activePacket.relics - 1; i++) {
+            card.rewardContainer.GetChild(0).GetComponent<Animator>().SetTrigger("Reward");
+            t = 0; while (t < 1f) { t += Time.deltaTime; yield return null; }
             yield return relicManager.StartCoroutine(relicManager.PresentRelic());
-            t = 0; while (t < 0.25f) { t += Time.deltaTime; yield return null; }
+            t = 0; while (t < 1.2f) { t += Time.deltaTime; yield return null; }
         }
 
 // Payout bonus objectives
@@ -187,7 +185,7 @@ public class PathManager : MonoBehaviour {
 
         int objs = floorSequence.activePacket.objectives.Count - 1;
         for (int i = 0; i <= objs; i++) {
-            Destroy(card.bonusObjContainer.GetChild(0).gameObject);
+            //Destroy(card.bonusObjContainer.GetChild(0).gameObject);
             t = 0; while (t < 0.25f) { t += Time.deltaTime; yield return null; }
             if (floorSequence.activePacket.objectives[i].succeeded) {
                 if (floorSequence.activePacket.objectives[i].nuggetReward) {

@@ -65,7 +65,7 @@ public class Burrow : EnemyAttackData {
         }
         float t = 0; while (t < 0.6f) { t += Time.deltaTime; yield return null; }
 
-        SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(user.coord), Quaternion.identity).GetComponent<SpriteRenderer>();
+        SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(user.coord), Quaternion.identity, user.grid.transform).GetComponent<SpriteRenderer>();
         sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
         
         

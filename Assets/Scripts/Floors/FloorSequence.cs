@@ -19,6 +19,7 @@ public class FloorSequence : ScriptableObject {
     public Unit elitePrefab, bossPrefab;
     public FloorPacket.PacketType currentThreshold;
     public int floorsGot = 0;
+    int hazardFloorsGot;
 
     public void Init(int index) {
         localPackets = new List<FloorPacket>();
@@ -69,6 +70,9 @@ public class FloorSequence : ScriptableObject {
 
         if (packet.packetType != FloorPacket.PacketType.BOSS)
             localPackets.Remove(packet);
+
+        floorsGot = 0;
+        hazardFloorsGot = 0;
     }
 
 // Returns true if threshold is passed
@@ -93,7 +97,6 @@ public class FloorSequence : ScriptableObject {
         }
 
         if (currentThreshold != prevThreshold) {
-            floorsGot = 0;
             return true;
         }
         return false;
@@ -118,9 +121,32 @@ public class FloorSequence : ScriptableObject {
             return floor;
 // Middle of packet
         } else {
-            int index = activePacket.inOrder ? 0 : Random.Range(0, activePacket.floors.Count-1);
-            FloorDefinition floor = activePacket.floors[index];
-            activePacket.floors.Remove(floor);
+            int index = 0;
+            FloorDefinition floor = null;
+            if (!activePacket.inOrder) {
+                if (activePacket.packetMods.Contains(FloorPacket.PacketMods.Extreme)) {
+                    int hazardTotal = Mathf.RoundToInt(activePacket.packetLength/2);
+                    if (hazardFloorsGot < hazardTotal) {
+                        int odds = Random.Range(0, hazardTotal - floorsGot - 1);
+                        if (odds <= 0) {
+                            floor = activePacket.extremeFloors[Random.Range(0, activePacket.extremeFloors.Count)];
+                            hazardFloorsGot++;
+                        } else {
+                            index = Random.Range(0, activePacket.floors.Count -1);
+                            floor = activePacket.floors[index];
+                            activePacket.floors.Remove(floor);
+                        }
+                    }
+                } else {
+                    index = Random.Range(0, activePacket.floors.Count -1);
+                    floor = activePacket.floors[index];
+                    activePacket.floors.Remove(floor);
+                }
+            } else {
+                floor = activePacket.floors[index];
+                activePacket.floors.Remove(floor);
+            }
+            
             floorsGot += 1;
             return floor;
         }
