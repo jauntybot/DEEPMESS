@@ -167,7 +167,7 @@ public class PathManager : MonoBehaviour {
 // Collect nugget rewards sequentially
         for (int i = 0; i <= floorSequence.activePacket.nuggets - 1; i++) {
             card.rewardContainer.GetChild(0).GetComponent<Animator>().SetTrigger("Reward");
-            t = 0; while (t < 1f) { t += Time.deltaTime; yield return null; } 
+            t = 0; while (t < .5f) { t += Time.deltaTime; yield return null; } 
             upgradeManager.CollectNugget(rndBag.Next());
             t = 0; while (t < 1.2f) { t += Time.deltaTime; yield return null; }
         }

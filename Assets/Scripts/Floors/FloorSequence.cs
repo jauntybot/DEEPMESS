@@ -133,13 +133,17 @@ public class FloorSequence : ScriptableObject {
                             floor = activePacket.extremeFloors[Random.Range(0, activePacket.extremeFloors.Count)];
                             hazardFloorsGot++;
                         } else {
-                            index = Random.Range(0, activePacket.floors.Count -1);
+                            index = Random.Range(0, activePacket.floors.Count);
                             floor = activePacket.floors[index];
                             activePacket.floors.Remove(floor);
                         }
+                    } else {
+                        index = Random.Range(0, activePacket.floors.Count);
+                        floor = activePacket.floors[index];
+                        activePacket.floors.Remove(floor);
                     }
                 } else {
-                    index = Random.Range(0, activePacket.floors.Count -1);
+                    index = Random.Range(0, activePacket.floors.Count);
                     floor = activePacket.floors[index];
                     activePacket.floors.Remove(floor);
                 }
