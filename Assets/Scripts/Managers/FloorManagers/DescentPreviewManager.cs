@@ -105,7 +105,6 @@ public class DescentPreviewManager : MonoBehaviour {
     }
 
     public void UpdateFloors(Grid newFloor, Grid alignFloor) {
-        Debug.Log("Align floor: "  + alignFloor.name + " - " + alignFloor.index);
         currentFloor = newFloor;
         alignmentFloor = alignFloor;
         transform.parent = alignFloor.transform;
