@@ -8,10 +8,10 @@ namespace Relics {
 
     public class Relic : MonoBehaviour {
 
-        Relics.RelicData data;
+        RelicData data;
         Image relicSprite;
 
-        public void Init(Relics.RelicData _data) {
+        public void Init(RelicData _data) {
             data = _data;
             data.Init();
             Debug.Log("relic init");

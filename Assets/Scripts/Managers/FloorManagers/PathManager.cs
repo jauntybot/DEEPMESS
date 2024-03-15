@@ -111,6 +111,7 @@ public class PathManager : MonoBehaviour {
         layout.enabled = false;
         yield return null;
         
+        float t = 0;
 // Destroy other path nodes and unsub objectives
         activeCards = new() { selected };
         for (int i = pathCardContainer.childCount - 1; i >= 0; i--) {
@@ -122,9 +123,11 @@ public class PathManager : MonoBehaviour {
                     o.Unsub();
             }
             //card.transform.parent = null;
-            c.GetComponent<Animator>().SetTrigger("Delete");
+            c.GetComponent<Animator>().SetBool("Del", true);
+            c.GetComponent<Animator>().SetTrigger("SlideOut");
+            t = 0; while (t < 0.1f) { t += Time.deltaTime; yield return null; }
         }
-        float t = 0; while (t < 0.35f) { t += Time.deltaTime; yield return null; }
+        t = 0; while (t < 0.35f) { t += Time.deltaTime; yield return null; }
 
         Transform card = pathCardContainer.GetChild(0);
         t = 0; while (t <= 0.2f) { 
@@ -136,6 +139,8 @@ public class PathManager : MonoBehaviour {
         
         layout.enabled = true;
         t = 0; while (t <= 1.25f) { t += Time.deltaTime; yield return null; }
+        card.GetComponent<Animator>().SetTrigger("SlideOut");
+        t = 0; while (t <= 0.5f) { t += Time.deltaTime; yield return null; }
 
 // Assign selected path
         floorSequence.StartPacket(selected.floorPacket);
@@ -168,7 +173,7 @@ public class PathManager : MonoBehaviour {
         for (int i = 0; i <= floorSequence.activePacket.nuggets - 1; i++) {
             Transform r = card.rewardContainer.GetChild(0);
             r.GetComponent<Animator>().SetTrigger("Reward");
-            t = 0; while (t < 0.25f) { t += Time.deltaTime; yield return null; } 
+            t = 0; while (t < 0.5f) { t += Time.deltaTime; yield return null; } 
             r.SetParent(null);
             upgradeManager.CollectNugget(rndBag.Next());
             t = 0; while (t < 0.6f) { t += Time.deltaTime; yield return null; }
@@ -177,8 +182,9 @@ public class PathManager : MonoBehaviour {
         for (int i = 0; i <= floorSequence.activePacket.relics - 1; i++) {
             Transform r = card.rewardContainer.GetChild(0);
             r.GetComponent<Animator>().SetTrigger("Reward");
-            t = 0; while (t < 0.35f) { t += Time.deltaTime; yield return null; }
+            t = 0; while (t < 0.5f) { t += Time.deltaTime; yield return null; }
             r.SetParent(null);
+            t = 0; while (t < 0.2f) { t += Time.deltaTime; yield return null; }
             yield return relicManager.StartCoroutine(relicManager.PresentRelic());
             t = 0; while (t < 0.6f) { t += Time.deltaTime; yield return null; }
         }
@@ -192,17 +198,22 @@ public class PathManager : MonoBehaviour {
             Animator anim = card.bonusObjContainer.GetChild(i).GetComponent<Animator>();
             if (floorSequence.activePacket.objectives[i].succeeded) {
                 anim.SetTrigger("ObReward");
-                t = 0; while (t < 0.25f) { t += Time.deltaTime; yield return null; }
+                t = 0; while (t < 0.5f) { t += Time.deltaTime; yield return null; }
+                LayoutRebuilder.ForceRebuildLayoutImmediate(anim.transform.parent.GetComponent<RectTransform>());
+                Canvas.ForceUpdateCanvases();
                 if (floorSequence.activePacket.objectives[i].nuggetReward) {
                     upgradeManager.CollectNugget(rndBag.Next());
                 } else {
-                    t = 0; while (t < 0.1f) { t += Time.deltaTime; yield return null; }
+                    t = 0; while (t < 0.2f) { t += Time.deltaTime; yield return null; }
                     yield return relicManager.StartCoroutine(relicManager.PresentRelic());
                 }
                 t = 0; while (t < 0.6f) { t += Time.deltaTime; yield return null; }
             } else {
                 anim.SetTrigger("ObFail");
-                t = 0; while (t < 0.6f) { t += Time.deltaTime; yield return null; }
+                t = 0; while (t < 0.3f) { t += Time.deltaTime; yield return null; }
+                LayoutRebuilder.ForceRebuildLayoutImmediate(anim.transform.parent.GetComponent<RectTransform>());
+                Canvas.ForceUpdateCanvases();
+                t = 0; while (t < 0.3f) { t += Time.deltaTime; yield return null; }
             }
             t = 0; while (t < 0.5f) { t += Time.deltaTime; yield return null; }
         }
@@ -210,7 +221,7 @@ public class PathManager : MonoBehaviour {
 
 // Delay for anim out
         t = 0; while (t < 1.25f) { t += Time.deltaTime; yield return null; }
-        card.GetComponent<Animator>().SetTrigger("SlideIn");
+        card.GetComponent<Animator>().SetTrigger("SlideOut");
         t = 0; while (t < 0.25f) { t += Time.deltaTime; yield return null; }
 
         pathChoiceContainer.SetActive(false);
@@ -222,7 +233,6 @@ public class PathManager : MonoBehaviour {
             PathCard card = child.GetComponent<PathCard>();
             card.UnsubObjectives();
         }
-        ObjectiveEventManager.Clear();
         SubscribeTracker();
     }
     

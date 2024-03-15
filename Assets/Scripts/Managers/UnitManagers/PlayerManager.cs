@@ -178,7 +178,7 @@ public class PlayerManager : UnitManager {
             undoOrder = new List<Unit>();
             harvestedByMove = new Dictionary<Unit, GridElement>();
             UndoClearCallback?.Invoke(this);
-            if (nail.nailState == Nail.NailState.Primed) nail.elementCanvas.Bark("Hit me! Hit me!");
+            //if (nail.nailState == Nail.NailState.Primed) nail.elementCanvas.Bark("Hit me! Hit me!");
 // End Turn
         } else {
             DeselectUnit();
@@ -190,6 +190,8 @@ public class PlayerManager : UnitManager {
             if (scenario.prevTurn != ScenarioManager.Turn.Descent && !floorManager.currentFloor.gridElements.Find(ge => ge is BossUnit)) {
                 if (nail.nailState == Nail.NailState.Buried)
                     nail.ToggleNailState(Nail.NailState.Primed);
+                else if (scenario.currentTurn is ScenarioManager.Turn.Enemy)
+                    nail.barkBox.Bark(BarkBox.BarkType.Delay);
             }
         }
         if (cascade) {
@@ -222,6 +224,8 @@ public class PlayerManager : UnitManager {
                     }
                     else if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
                         StartCoroutine(selectedUnit.ExecuteAction(u));
+                    } else if (u is Nail && selectedUnit.selectedEquipment is HammerData) {
+                        nail.barkBox.Bark(BarkBox.BarkType.NotPrimed);
                     } else {
                         DeselectUnit();
                         SelectUnit(u);

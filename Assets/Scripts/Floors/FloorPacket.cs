@@ -13,7 +13,8 @@ public class FloorPacket : ScriptableObject {
     public bool inOrder;
     public List<FloorDefinition> firstFloors;
     public List<FloorDefinition> floors;
-
+    public int minEnemies;
+    
     public enum PacketMods { Extreme, Elite };
     [HideInInspector] public bool eliteSpawn;
     public List<PacketMods> packetMods;

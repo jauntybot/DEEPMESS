@@ -35,7 +35,7 @@ public class FloorManager : MonoBehaviour {
     public float floorOffset, transitionDur, unitDropDur;
     public AnimationCurve dropCurve;
     public bool transitioning, peeking, descending;
-    public int floorCount;
+    int floorCount;
     bool cavityWait = false;
     public Coroutine floating;
     [SerializeField] ParallaxImageScroll parallax;
@@ -79,6 +79,7 @@ public class FloorManager : MonoBehaviour {
             tutorial.gameObject.SetActive(false);
         }
         
+        floorCount = 1;
         nailTries = 0;
 
         yield return null;
@@ -336,7 +337,9 @@ public class FloorManager : MonoBehaviour {
                 
 // Descend units from previous floor
                 yield return StartCoroutine(DescendUnits(floors[currentFloor.transform.GetSiblingIndex() -1].gridElements, enemy));
-                 
+                
+                if (currentFloor.index+1 == floorSequence.activePacket.packetLength) scenario.player.nail.barkBox.Bark(BarkBox.BarkType.FinalFloor);
+
                 StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
             } else {
     // NODE LOGIC
@@ -386,6 +389,9 @@ public class FloorManager : MonoBehaviour {
 
         if (uiManager.gameObject.activeSelf)    
             uiManager.metaDisplay.UpdateEnemiesRemaining(scenario.currentEnemy.units.Count);
+        if (scenario.currentEnemy.units.Count >= 6) {
+            if (UnityEngine.Random.Range(0, 9-scenario.currentEnemy.units.Count) == 0) scenario.player.nail.barkBox.Bark(BarkBox.BarkType.EnemyCount);
+        }
     }
 
 // Coroutine that sequences the descent of all valid units
@@ -578,8 +584,10 @@ public class FloorManager : MonoBehaviour {
 
         nail.PlaySound(nail.landingSFX);
 
-        if (subElement) 
+        if (subElement) {
             StartCoroutine(subElement.CollideFromBelow(nail));
+            StartCoroutine(nail.CollideFromAbove(subElement, 0));
+        }
         nail.transform.parent = nail.manager.transform;
     }
 
@@ -698,7 +706,7 @@ public class FloorManager : MonoBehaviour {
         
 // Lerp units into screen
         List<Unit> units = new() { scenario.player.units[0], scenario.player.units[1], scenario.player.units[2], scenario.player.units[3] };
-        List<Vector2> to = new() {new Vector2(6.182819f, 1.0243183f), new Vector2(5.862819f, -3.54704558f), new Vector2(7.5108191f, 2.9218184f), new Vector2(1.841181f, 2.296591f) };
+        List<Vector2> to = new() {new Vector2(7.5f, 1f), new Vector2(6.2f, 2), new Vector2(8.2f, 2.4f), new Vector2(8.4f, -1f) };
         foreach (Unit u in units) u.gfxAnim.SetBool("Falling", true);
         scenario.player.hammerActions[0].hammer.SetActive(true);
         scenario.player.hammerActions[0].hammer.GetComponentInChildren<Animator>().SetBool("Falling", true);
@@ -710,7 +718,7 @@ public class FloorManager : MonoBehaviour {
         while (timer <= unitDropDur) {
             parallax.ScrollParallax(Time.deltaTime * -1);
             for (int i = 0; i <= units.Count - 1; i++) {
-                units[i].transform.position = Vector3.Lerp(to[i] + new Vector2(0, floorOffset*2), to[i], dropCurve.Evaluate(timer/unitDropDur));
+                units[i].transform.localPosition = Vector3.Lerp(to[i] + new Vector2(0, floorOffset*2), to[i], dropCurve.Evaluate(timer/unitDropDur));
                 NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
                 fade.AlphaSelf = Mathf.Lerp(0, 1, timer/(unitDropDur/3));
             }
@@ -718,7 +726,7 @@ public class FloorManager : MonoBehaviour {
             timer += Time.deltaTime;
         }
         for (int i = 0; i <= units.Count - 1; i++) {
-            units[i].transform.position = to[i];
+            units[i].transform.localPosition = to[i];
             NestedFadeGroup.NestedFadeGroup fade = units[i].GetComponent<NestedFadeGroup.NestedFadeGroup>();
             fade.AlphaSelf = 1;
         }

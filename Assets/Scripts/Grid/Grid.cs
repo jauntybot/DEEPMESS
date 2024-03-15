@@ -52,7 +52,7 @@ public class Grid : MonoBehaviour {
                 altTiles.Add(spawn.coord);
             }
         }
-        bool bloodFallsL = false, bloodFallsR = false;
+        //bool bloodFallsL = false, bloodFallsR = false;
         for (int y = FloorManager.gridSize - 1; y >= 0; y--) {
             for (int x = 0; x < FloorManager.gridSize; x++) {
                 Tile tile = null;

@@ -5,8 +5,7 @@ using System.IO;
 
 [CreateAssetMenu(menuName = "Floors/Floor Definition")]
 [System.Serializable]
-public class FloorDefinition : ScriptableObject
-{
+public class FloorDefinition : ScriptableObject {
     public enum FloorType { Combat, SlotMachine };
     public FloorType floorType; 
     public int genPool;
@@ -14,7 +13,6 @@ public class FloorDefinition : ScriptableObject
 // Combat floor refs
     public FloorAtlas atlas;
     public List<Spawn> initSpawns = new();
-    public int minEnemies;
 
 
 // Slot machine floor refs

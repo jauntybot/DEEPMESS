@@ -17,6 +17,8 @@ public class Nail : Unit {
     public override event OnElementUpdate ElementDestroyed;
     public virtual event OnElementUpdate ElementDisabled;
 
+    public BarkBox barkBox;
+
     protected override void Start() {
         base.Start();
         selectedEquipment = equipment[0];
@@ -37,6 +39,7 @@ public class Nail : Unit {
                 gfxAnim.SetBool("Primed", true);
                 primedVFX.SetActive(true);
                 PlaySound(primedSFX);
+                if (Random.Range(0, 4) == 0) barkBox.Bark(BarkBox.BarkType.NailPrime);
             break;
             case NailState.Hiding:
             case NailState.Buried:
@@ -74,6 +77,11 @@ public class Nail : Unit {
             yield return base.TakeDamage(dmg, dmgType, source, sourceEquip);
             if (ui.overview)
                 ui.overview.UpdateOverview();
+                
+            if (source is EnemyUnit u && (u.destroyed || u.hpCurrent <= 0)) {
+                if (Random.Range(0, 2) == 0) barkBox.Bark(BarkBox.BarkType.NailKill);
+            }
+            if (hpCurrent <= 2) barkBox.Bark(BarkBox.BarkType.LowHP);
         }
     }
 
@@ -88,6 +96,14 @@ public class Nail : Unit {
 
             ApplyCondition(Status.Disabled);
             //gfxAnim.SetBool("Destoyed", true);
+        }
+    }
+
+    public override IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0, GridElement source = null, EquipmentData sourceEquip = null) {
+        yield return null;
+        if (subGE is EnemyUnit) {
+            if (Random.Range(0, 2) == 0)
+                barkBox.Bark(BarkBox.BarkType.NailCrush);
         }
     }
 }

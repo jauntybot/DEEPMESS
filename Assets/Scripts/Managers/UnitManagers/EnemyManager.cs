@@ -195,6 +195,9 @@ public class EnemyManager : UnitManager {
 
         //eManager.DescentTriggerCheck();
         UIManager.instance.metaDisplay.UpdateEnemiesRemaining(newGrid.enemy.units.Count);
+        if (newGrid.enemy.units.Count >= 5) {
+            if (Random.Range(0, 7-newGrid.enemy.units.Count) == 0) scenario.player.nail.barkBox.Bark(BarkBox.BarkType.EnemyCount);
+        }
         
         if (!toSelf)
            Destroy(this.gameObject);
@@ -203,15 +206,16 @@ public class EnemyManager : UnitManager {
     public virtual bool AddToReinforcements() {
         bool spawn = false;
 
-        if (units.Count < currentGrid.lvlDef.minEnemies) {
-            int count = currentGrid.lvlDef.minEnemies - units.Count;
+        if (units.Count < scenario.floorManager.floorSequence.activePacket.minEnemies) {
+            int count = scenario.floorManager.floorSequence.activePacket.minEnemies - units.Count;
             for (int i = 0; i < count; i++) {
                 Unit reinforcement = Reinforcement(scenario.tackleChance);
                 if (reinforcement) {
                     pendingUnits.Add(reinforcement);
-                    spawn = true;
                 }
             }
+            spawn = true;
+            scenario.floorManager.floorSequence.activePacket.minEnemies++;
         }
       
         return spawn;
@@ -268,6 +272,11 @@ public class EnemyManager : UnitManager {
             yield return StartCoroutine(floorManager.DescendUnits(pendingUnits, this));
             
         }
+        
+        if (units.Count >= 6) {
+            if (Random.Range(0, 9-units.Count) == 0) scenario.player.nail.barkBox.Bark(BarkBox.BarkType.EnemyCount);
+        }
+
         pendingUnits = new List<GridElement>();
 
         transform.parent = currentGrid.transform;
@@ -325,5 +334,8 @@ public class EnemyManager : UnitManager {
         if (unitsToAct.Contains((Unit)ge)) unitsToAct.Remove((Unit)ge);
         if (pendingUnits.Contains((Unit)ge)) pendingUnits.Remove((Unit)ge);
         UIManager.instance.metaDisplay.UpdateEnemiesRemaining(units.Count);
+        if (units.Count >= 6) {
+            if (Random.Range(0, 9-units.Count) == 0) scenario.player.nail.barkBox.Bark(BarkBox.BarkType.EnemyCount);
+        }
     }
 }

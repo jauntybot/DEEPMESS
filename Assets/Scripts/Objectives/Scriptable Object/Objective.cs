@@ -66,6 +66,7 @@ public class Objective : ScriptableObject {
     }
 
     public virtual void ClearObjective() {
+        Restart();
         
     }
 }

@@ -84,13 +84,14 @@ GameObject:
   - component: {fileID: 5907157469878306073}
   - component: {fileID: 4118387885610982875}
   - component: {fileID: 5346622724885710894}
+  - component: {fileID: 7187065984235458185}
   m_Layer: 0
-  m_Name: Bark Box
+  m_Name: Call Out
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &643119932917204658
 RectTransform:
   m_ObjectHideFlags: 0
@@ -98,19 +99,19 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1132378966094278440}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5673170473714949608}
-  m_Father: {fileID: 1003956329267171811}
-  m_RootOrder: 3
+  m_Father: {fileID: 7493979640212672322}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 49.5}
+  m_SizeDelta: {x: 150, y: 44.559998}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &6531650979536463014
 CanvasRenderer:
@@ -134,14 +135,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: c21a3d591c5d4604fa4bbe57c2e4c69f, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -149,7 +150,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3
 --- !u!114 &5907157469878306073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,17 +164,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 5
-    m_Right: 5
+    m_Left: 7
+    m_Right: 7
     m_Top: 5
-    m_Bottom: 5
+    m_Bottom: 15
   m_ChildAlignment: 4
   m_Spacing: 0
-  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 0
+  m_ChildControlWidth: 1
   m_ChildControlHeight: 0
-  m_ChildScaleWidth: 1
+  m_ChildScaleWidth: 0
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
 --- !u!114 &4118387885610982875
@@ -188,7 +189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HorizontalFit: 1
+  m_HorizontalFit: 2
   m_VerticalFit: 1
 --- !u!95 &5346622724885710894
 Animator:
@@ -210,6 +211,26 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+--- !u!114 &7187065984235458185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1132378966094278440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: 100
+  m_MinHeight: -1
+  m_PreferredWidth: 150
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &1296242734487807657
 GameObject:
   m_ObjectHideFlags: 0
@@ -291,8 +312,7 @@ GameObject:
   - component: {fileID: 5673170473714949608}
   - component: {fileID: 8455839462766485691}
   - component: {fileID: 2914526033182350791}
-  - component: {fileID: 671296856187794730}
-  - component: {fileID: 2435905102272941780}
+  - component: {fileID: 8281228120733382733}
   m_Layer: 0
   m_Name: Bark (TMP)
   m_TagString: Untagged
@@ -315,11 +335,11 @@ RectTransform:
   m_Father: {fileID: 643119932917204658}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 55, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 75, y: -29.56}
+  m_SizeDelta: {x: 136, y: 24.56}
+  m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &8455839462766485691
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -342,13 +362,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Hit me!
+  m_text: No can do
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4658b7dfbefc86340b1279196af5183b, type: 2}
   m_sharedMaterial: {fileID: -3901078251180137152, guid: 4658b7dfbefc86340b1279196af5183b, type: 2}
@@ -382,12 +402,12 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: -45.19
+  m_lineSpacing: -40
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -417,7 +437,7 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &671296856187794730
+--- !u!114 &8281228120733382733
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -429,28 +449,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
+  m_HorizontalFit: 0
   m_VerticalFit: 2
---- !u!114 &2435905102272941780
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3870454299596195277}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreLayout: 0
-  m_MinWidth: -1
-  m_MinHeight: -1
-  m_PreferredWidth: 100
-  m_PreferredHeight: -1
-  m_FlexibleWidth: -1
-  m_FlexibleHeight: -1
-  m_LayoutPriority: 1
 --- !u!1 &4252696125652310349
 GameObject:
   m_ObjectHideFlags: 0
@@ -636,6 +636,207 @@ MonoBehaviour:
   m_Spacing: {x: 0.02, y: 0}
   m_Constraint: 1
   m_ConstraintCount: 5
+--- !u!1 &5593847360975131248
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7493979640212672322}
+  - component: {fileID: 6231814736601486781}
+  - component: {fileID: 4715105822171930058}
+  m_Layer: 0
+  m_Name: Bark Box
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &7493979640212672322
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5593847360975131248}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 643119932917204658}
+  m_Father: {fileID: 1003956329267171811}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &6231814736601486781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5593847360975131248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 496b9cb749a02fe4a95122d95ff25d09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  barkSFX: {fileID: 11400000, guid: 839ebe1c7a6647148b69b0c7546d8ff0, type: 2}
+  barkBox: {fileID: 1132378966094278440}
+  barkBoxText: {fileID: 2914526033182350791}
+  delayStrings:
+  - Time to squirm!
+  - Anyone else gettin' hungry?
+  - Time to bounce!
+  - What are we waiting for?
+  finalFloorStrings:
+  - End of the line, squish
+  - Bottomed out!
+  - Finally!
+  - Almost made it out!
+  EnemyCountStrings:
+  - It's heatin' up!
+  - Enemy alert!
+  - Watch it!
+  - Uh-oh!
+  NotPrimedStrings:
+  - Ain't gonna fly, squish
+  - No can do
+  - ???
+  - Not primed yet
+  - Smash something else
+  LowHPStrings:
+  - Feelin' rusty!
+  - 'D:'
+  - :(
+  - I'm gettin' clobbered!
+  - Help!
+  SlagHurtStrings:
+  - Ouch, felt that in my goo
+  - Oof!
+  - Watch it!
+  - Nice defense!
+  - Hrrrng..
+  NailKillStrings:
+  - One down, a zillon to go
+  - Gotcha!
+  - '>:)'
+  - Don't touch this stuff!
+  - A nail that strikes back!
+  NailCrushStrings:
+  - Nailed it
+  - Boom
+  - Not today, meatbag
+  - What was that?
+  - Heheh...
+  NailPrimeStrings:
+  - Hammer time, squish!
+  - Ready!
+  - I could do this all day
+  - Hit me! Hit me!
+  - Primed!
+--- !u!82 &4715105822171930058
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5593847360975131248}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &7715025702989210221
 GameObject:
   m_ObjectHideFlags: 0
@@ -876,7 +1077,7 @@ RectTransform:
   - {fileID: 5176575663756676459}
   - {fileID: 10292563606671972}
   - {fileID: 8973077859108477975}
-  - {fileID: 643119932917204658}
+  - {fileID: 7493979640212672322}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -907,8 +1108,6 @@ MonoBehaviour:
   apPipPrefab: {fileID: 6918762094188802550, guid: d9948e72d4f3e3c4aa7ec4df6638a008, type: 3}
   dmgPipPrefab: {fileID: 6918762094188802550, guid: 5fee7b6436b63fb43a64571e15cc739b, type: 3}
   emptyPipPrefab: {fileID: 6918762094188802550, guid: dca1f4ae9e4ac3846b2bb7d6b3fe8f43, type: 3}
-  barkBox: {fileID: 1132378966094278440}
-  barkBoxText: {fileID: 2914526033182350791}
   turnOrder: {fileID: 8476314449676919890}
   dmgPanel: {fileID: 1296242734487807657}
   dmgAnim: {fileID: 3276868104782303798}
@@ -956,7 +1155,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &8738160444006610102
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -26,11 +26,13 @@ public class HammerData : EquipmentData {
     
     public virtual void EquipEquipment(Unit user, bool first) {
         base.EquipEquipment(user);
+        dmgMod = 0;
     }
 
     public override void EquipEquipment(Unit user) {
         if (user is PlayerUnit pu)
             pu.ui.UpdateEquipmentButtons();
+        dmgMod = 0;
     }
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
@@ -261,6 +263,16 @@ public class HammerData : EquipmentData {
     }
 
     public virtual void PassHammer(PlayerUnit sender, PlayerUnit reciever) {
+        if (reciever.conditions.Contains(Unit.Status.Disabled)) {
+            List<Unit> possiblePasses = new();
+            foreach (Unit u in sender.pManager.units) {
+                if (u is PlayerUnit && !u.conditions.Contains(Unit.Status.Disabled) && u != this)
+                    possiblePasses.Add(u);
+            }
+            if (possiblePasses.Count > 0) {                
+                reciever.StartCoroutine(LaunchHammer(reciever, null, possiblePasses[UnityEngine.Random.Range(0, possiblePasses.Count)]));   
+            }
+        }
         List<EquipmentData> toAdd = new();
         for (int i = sender.equipment.Count - 1; i >= 0; i--) {
             if (sender.equipment[i] is HammerData h) {

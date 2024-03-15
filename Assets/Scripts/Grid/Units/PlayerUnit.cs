@@ -186,6 +186,7 @@ public class PlayerUnit : Unit {
             if (ui.overview)
                 ui.overview.UpdateOverview();
             if (Mathf.Sign(dmg) == -1 && conditions.Contains(Status.Disabled)) Stabilize();
+            else if (Mathf.Sign(dmg) == 1 && Random.Range(0,3) == 0) pManager.nail.barkBox.Bark(BarkBox.BarkType.SlagHurt);
         }
     }
 
