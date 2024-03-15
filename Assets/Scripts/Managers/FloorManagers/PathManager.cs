@@ -31,6 +31,9 @@ public class PathManager : MonoBehaviour {
     [Header("Node Video Player")]
     [SerializeField] VideoPlayer videoPlayer;
     [SerializeField] List<VideoClip> nodeClips;
+    [SerializeField] List<AudioClip> nodeAudio;
+    [SerializeField] AudioSource audioSource;
+
     int clipIndex;
 
 // RELIC SYSTEM - DELETE
@@ -151,6 +154,7 @@ public class PathManager : MonoBehaviour {
         videoPlayer.clip = nodeClips[clipIndex];
         videoPlayer.frame = 0;
         videoPlayer.gameObject.SetActive(true);
+        audioSource.PlayOneShot(nodeAudio[clipIndex]);
         clipIndex++;
         t = 0; while (t < 0.5f) { 
             videoPlayer.GetComponent<RawImage>().color = new Color(1,1,1,Mathf.Lerp(0,1,t/0.5f));
