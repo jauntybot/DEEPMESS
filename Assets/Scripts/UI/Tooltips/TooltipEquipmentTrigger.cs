@@ -35,7 +35,7 @@ public class TooltipEquipmentTrigger : TooltipTrigger {
             case "HEAL BULB": HealBulb(); break;
             case "STUN BULB": StunBulb(); break;
             case "SURGE BULB": SurgeBulb(); break;
-            case "STRIKE+":
+            case "STRIKE+": StrikePlus(); break;
             case "STRIKE": Strike(); break;
             case "PIN COUSHIN": PinCoushin(); break;
             case "AUTO-BOMB": AutoBomb(); break;
@@ -56,7 +56,7 @@ public class TooltipEquipmentTrigger : TooltipTrigger {
             case "HEAL BULB": HealBulb(); break;
             case "STUN BULB": StunBulb(); break;
             case "SURGE BULB": SurgeBulb(); break;
-            case "STRIKE+":
+            case "STRIKE+": StrikePlus(); break;
             case "STRIKE": Strike(); break;
             case "PIN COUSHIN": PinCoushin(); break;
             case "AUTO-BOMB": AutoBomb(); break;
@@ -134,15 +134,21 @@ public class TooltipEquipmentTrigger : TooltipTrigger {
         anim = strikeAnim;
     }
 
+    void StrikePlus() {
+        header = "STRIKE+";
+        content = "Attacks adjacent target for 2 damage.";
+        anim = strikeAnim;
+    }
+
     void AutoBomb() {
         header = "AUTO-BOMB";
-        content = "After priming, self destructs on death. Explodes all surrounding tiles for 2 damage.";
+        content = "Takes one turn to prime. Does not move once primed, explodes on next turn or death. Explodes all surrounding tiles for 2 damage.";
         anim = autoBombAnim;
     }
 
     void PinCoushin() {
         header = "PIN COUSHIN";
-        content = "Shoots pins in 4 directions for 1 damage. Cannot be grabbed.";
+        content = "Shoots pins in 4 directions for 1 damage. Cannot be moved.";
         anim = pinCoushinAnim;
     }
 

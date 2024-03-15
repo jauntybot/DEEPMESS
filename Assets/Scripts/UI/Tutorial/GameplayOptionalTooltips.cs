@@ -33,25 +33,11 @@ public class GameplayOptionalTooltips : MonoBehaviour
         }
     }
 
-    public IEnumerator SplashMessage() {
-        header = "";
-        body = "Listen up, squish! We're on a big brain mission. Gotta feast on <b>" + ColorToRichText("tasty thoughts", keyColor) + "</b>, yeah? Scavenge, gobble, we'll make this place our own." + '\n';
-        tooltip.SetText(body, header, true);
-
-        while (!tooltip.skip) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-            
-        }
-
-        tooltip.transform.GetChild(0).gameObject.SetActive(false);
-    }
-
-
     public IEnumerator Objectives() {
         objectivesEncountered = true;
 
         header = "OBJECTIVES";
-        body = "The big slime's got a to-do list. Check 'em off, <b>" + ColorToRichText("score tasty god nuggets", keyColor) + "</b>. Upgrade gear, get stronger. Fail? No biggie, just a hiccup. No whining, squish, just keep grinding." + '\n';
+        body = "<b>" + ColorToRichText("Pick your path", keyColor) + "</b>, squish. Big Slime upstairs has intel on what lies below. Get a sense of the <b>" + ColorToRichText("danger", keyColor) + "</b>, and a peek at the <b>" + ColorToRichText("rewards", keyColor) + "</b>." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -71,7 +57,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "BULBS";
-        body = "<b>" + ColorToRichText("Bulbs", keyColor) + "</b>, handy munchies for your Slags. Step on them to grab, 1 per Slag. Use it or chuck it on the grid. <b>" + ColorToRichText("Bulbs are a free action", keyColor) + "</b>, so don't hoard them." + '\n';
+        body = "<b>" + ColorToRichText("Bulbs", keyColor) + "</b>, handy munchies for your Slags. Step on them to grab, 1 per Slag. <b>" + ColorToRichText("Bulbs are a free action", keyColor) + "</b>, so don't hoard them." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ bulbAnim });
 
         while (!tooltip.skip) {
@@ -87,7 +73,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
         rewardsEncountered = true;
 
         header = "OBJECTIVES";
-        body = "Hope you <b>" + ColorToRichText("nailed those objectives", keyColor) + "</b>. Use any nuggets you bagged to power up, squish. Apply 'em to <b>" + ColorToRichText("Slags", keyColor) + "</b> or even the <b>" + ColorToRichText("Hammer", keyColor) + "</b>. Make those Slags sing.";
+        body = "Nice getting through that, squish. Use any <b>" + ColorToRichText("Nuggets", keyColor) + "</b> you bag to power up and take any <b>" + ColorToRichText("Relics", keyColor) + "</b> to tweak our excavation in wild ways.";
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -134,7 +120,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
 
     public IEnumerator Preboss() {        
         header = "DANGER AHEAD";
-        body = "Sounds like trouble's knocking, <b>" + ColorToRichText("big time", keyColor) + "</b>. Nail stays put till the dust settles. <b>" + ColorToRichText("Your dance, squish", keyColor) + "</b>. We'll be chillin' up here." + '\n';
+        body = "Sounds like trouble's knocking, <b>" + ColorToRichText("big time", keyColor) + "</b>. Nail stays up here until you <b>" + ColorToRichText("clear the danger", keyColor) + "</b>." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -153,7 +139,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "BIG THREAT";
-        body = "That orange's the toughest nut yet! Move? Far. Attack? It's a ground-shaker, <b>" + ColorToRichText("causing everything to crash below", keyColor) + "</b>. Careful, squish. This one means business." + '\n';
+        body = "That's the toughest nut yet. It's a ground-shaker, <b>" + ColorToRichText("causing everything to crash below", keyColor) + "</b>. Careful, squish. This one means business." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
