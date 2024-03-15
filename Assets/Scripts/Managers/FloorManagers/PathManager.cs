@@ -6,6 +6,7 @@ using Relics;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Video;
 
 public class PathManager : MonoBehaviour {
 
@@ -20,12 +21,17 @@ public class PathManager : MonoBehaviour {
     [SerializeField] TMP_Text sequenceTitle;
     [SerializeField] Transform pathCardContainer;
     [SerializeField] GameObject pathCardPrefab, pathChoiceContainer;
+    [HideInInspector] public bool choosingPath = false;
     
     [Header("Serialized Objective Pools")]
     [SerializeField] List<Objective> packetIObjectives;
     [SerializeField] List<Objective> packetIIObjectives, packetIIIObjectives;
     [SerializeField] List<Sprite> rewardSprites;
-    public bool choosingPath = false;
+    
+    [Header("Node Video Player")]
+    [SerializeField] VideoPlayer videoPlayer;
+    [SerializeField] List<VideoClip> nodeClips;
+    int clipIndex;
 
 // RELIC SYSTEM - DELETE
     public int objectiveDiscount;
@@ -35,6 +41,8 @@ public class PathManager : MonoBehaviour {
         floorSequence = FloorManager.instance.floorSequence;
         ClearObjectives();
         objectiveDiscount = 0;
+        clipIndex = ScenarioManager.instance.startCavity-1;
+        if (clipIndex < 0) clipIndex = 0;
     }
 
     public IEnumerator PathSequence() {
@@ -101,8 +109,6 @@ public class PathManager : MonoBehaviour {
 
         while (choosingPath)
             yield return null;
-
-        pathChoiceContainer.SetActive(false);
     }
 
     public IEnumerator SelectPath(PathCard selected) {
@@ -138,9 +144,26 @@ public class PathManager : MonoBehaviour {
         card.localPosition = new Vector2(0, from.y);
         
         layout.enabled = true;
-        t = 0; while (t <= 1.25f) { t += Time.deltaTime; yield return null; }
+        t = 0; while (t <= 0.75f) { t += Time.deltaTime; yield return null; }
         card.GetComponent<Animator>().SetTrigger("SlideOut");
-        t = 0; while (t <= 0.5f) { t += Time.deltaTime; yield return null; }
+        t = 0; while (t <= .25f) { t += Time.deltaTime; yield return null; }
+        
+        videoPlayer.clip = nodeClips[clipIndex];
+        videoPlayer.frame = 0;
+        videoPlayer.gameObject.SetActive(true);
+        clipIndex++;
+        t = 0; while (t < 0.5f) { 
+            videoPlayer.GetComponent<RawImage>().color = new Color(1,1,1,Mathf.Lerp(0,1,t/0.5f));
+            t += Time.deltaTime; yield return null; 
+        }
+        pathChoiceContainer.SetActive(false);
+
+        t = 0; while (t < 6f) { t += Time.deltaTime; yield return null; }
+        t = 0; while (t < 0.5f) { 
+            videoPlayer.GetComponent<RawImage>().color = new Color(1,1,1,Mathf.Lerp(1,0,t/0.5f));
+            t += Time.deltaTime; yield return null; 
+        }
+        videoPlayer.gameObject.SetActive(false);
 
 // Assign selected path
         floorSequence.StartPacket(selected.floorPacket);
@@ -223,7 +246,7 @@ public class PathManager : MonoBehaviour {
         t = 0; while (t < 1f) { t += Time.deltaTime; yield return null; }
         card.GetComponent<Animator>().SetTrigger("SlideOut");
         t = 0; while (t < 1f) { t += Time.deltaTime; yield return null; }
-
+        
         pathChoiceContainer.SetActive(false);
         ClearObjectives();
     }

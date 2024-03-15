@@ -17,6 +17,9 @@ public class GameUnitFrame : MonoBehaviour {
             EquipmentData data = e.equipment[1];
             GetComponentInChildren<TooltipEquipmentTrigger>().Initialize(data);
             gear.sprite = data.icon;
+        } else if (ge is Nail) {
+            gear.gameObject.SetActive(true);
+            GetComponentInChildren<TooltipEquipmentTrigger>().Initialize("THORNS");
         }
     }
 

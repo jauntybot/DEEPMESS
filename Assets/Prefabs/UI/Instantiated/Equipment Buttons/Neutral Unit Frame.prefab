@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8382967875488926424
 RectTransform:
   m_ObjectHideFlags: 0
@@ -171,12 +171,18 @@ MonoBehaviour:
   header: 
   content: 
   anim: {fileID: 0}
+  equip: {fileID: 0}
   initSelf: 0
   hammerAnim: {fileID: 0}
   anvilAnim: {fileID: 0}
   bigGrabAnim: {fileID: 0}
   shieldAnim: {fileID: 0}
   bulbAnim: {fileID: 0}
+  thornsAnim: {fileID: 0}
+  strikeAnim: {fileID: 9100000, guid: 69e0a5ff3d8bc3440b50ff8122761a52, type: 2}
+  autoBombAnim: {fileID: 9100000, guid: 49dce402a45ee5548920b3d867041af7, type: 2}
+  pinCoushinAnim: {fileID: 9100000, guid: 9c851eff0590b964db7868ef46152215, type: 2}
+  quakeAnim: {fileID: 9100000, guid: e726654a28f01554bbaea2d025a32439, type: 2}
 --- !u!1 &4630802525587056548
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,6 +422,7 @@ GameObject:
   - component: {fileID: 3100251854733823800}
   - component: {fileID: 3804729322475790445}
   - component: {fileID: 992075069045301131}
+  - component: {fileID: 893020068614327247}
   m_Layer: 5
   m_Name: Friendly Frame
   m_TagString: Untagged
@@ -483,6 +490,34 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &893020068614327247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6998811114448797877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d38c2447f701f49ecafacd4b870b8e8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  location: 0
+  header: 
+  content: 
+  anim: {fileID: 0}
+  equip: {fileID: 0}
+  initSelf: 0
+  hammerAnim: {fileID: 0}
+  anvilAnim: {fileID: 0}
+  bigGrabAnim: {fileID: 0}
+  shieldAnim: {fileID: 0}
+  bulbAnim: {fileID: 0}
+  thornsAnim: {fileID: 9100000, guid: 401ac99a4f04de043b0146a3fedd93ff, type: 2}
+  strikeAnim: {fileID: 0}
+  autoBombAnim: {fileID: 0}
+  pinCoushinAnim: {fileID: 0}
+  quakeAnim: {fileID: 0}
 --- !u!1 &8894259369280478371
 GameObject:
   m_ObjectHideFlags: 0

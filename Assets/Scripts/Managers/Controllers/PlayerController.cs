@@ -77,7 +77,7 @@ public class PlayerController : MonoBehaviour {
                     else
                         manager.GridMouseOver(new Vector2(-32, -32), false);
                 } else     
-                    UpdateCursor(PlayerController.CursorState.Default);  
+                    manager.GridMouseOver(new Vector2(-32, -32), false);
                 
 
                 if (Input.GetMouseButtonDown(1)) {

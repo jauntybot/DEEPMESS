@@ -23,10 +23,15 @@ public class GameUnitUI : UnitUI {
         if (u is PlayerUnit) {
             portrait.rectTransform.localPosition = new Vector2(-113, -95);    
             portrait.rectTransform.sizeDelta = new Vector2(600, 600);
-        } else if (u is EnemyUnit) {
+        } else if (u is EnemyUnit && u is not BossUnit) {
             portrait.rectTransform.localPosition = new Vector2(-135, -381);
             portrait.rectTransform.sizeDelta = new Vector2(600, 600);
-             GameUnitFrame frame = Instantiate(gameUnitFramePrefab, equipmentParent.transform).GetComponent<GameUnitFrame>();
+            GameUnitFrame frame = Instantiate(gameUnitFramePrefab, equipmentParent.transform).GetComponent<GameUnitFrame>();
+            frame.Init(u);
+        } else if (u is BossUnit) {
+            portrait.rectTransform.localPosition = new Vector2(-128, 36);
+            portrait.rectTransform.sizeDelta = new Vector2(190, 190);
+            GameUnitFrame frame = Instantiate(gameUnitFramePrefab, equipmentParent.transform).GetComponent<GameUnitFrame>();
             frame.Init(u);
         } else if (u is Anvil) {
             portrait.rectTransform.localPosition = new Vector2(-17, -51);

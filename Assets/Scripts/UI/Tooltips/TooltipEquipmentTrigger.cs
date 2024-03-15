@@ -10,6 +10,7 @@ public class TooltipEquipmentTrigger : TooltipTrigger {
     [HideInInspector] public EquipmentData equip;
     [SerializeField] bool initSelf;
     [SerializeField] RuntimeAnimatorController hammerAnim, anvilAnim, bigGrabAnim, shieldAnim, bulbAnim;
+    [SerializeField] RuntimeAnimatorController thornsAnim, strikeAnim, autoBombAnim, pinCoushinAnim, quakeAnim;
 
     void Start() {
         if (initSelf) Initialize(GetComponent<EquipmentButton>().data);
@@ -30,9 +31,32 @@ public class TooltipEquipmentTrigger : TooltipTrigger {
             case "SWAP": Swap(); break;
             case "BIG GRAB": BigGrab(); break;
             case "HAMMER": Hammer(); break;
+            case "THORNS": Thorns(); break;
             case "HEAL BULB": HealBulb(); break;
             case "STUN BULB": StunBulb(); break;
             case "SURGE BULB": SurgeBulb(); break;
+            case "STRIKE+":
+            case "STRIKE": Strike(); break;
+            case "PIN COUSHIN": PinCoushin(); break;
+            case "AUTO-BOMB": AutoBomb(); break;
+            case "QUAKE": Quake(); break;
+        }
+    }
+
+    public void Initialize(string name) {
+        switch (name) {
+            case "ANVIL": Anvil(); break;
+            case "IMMOBILIZE": Immobilize(); break;
+            case "BIG WIND": BigWind(); break;
+            case "SHIELD": Shield(); break;
+            case "SWAP": Swap(); break;
+            case "BIG GRAB": BigGrab(); break;
+            case "HAMMER": Hammer(); break;
+            case "THORNS": Thorns(); break;
+            case "HEAL BULB": HealBulb(); break;
+            case "STUN BULB": StunBulb(); break;
+            case "SURGE BULB": SurgeBulb(); break;
+            case "STRIKE+":
             case "STRIKE": Strike(); break;
             case "PIN COUSHIN": PinCoushin(); break;
             case "AUTO-BOMB": AutoBomb(); break;
@@ -79,6 +103,12 @@ public class TooltipEquipmentTrigger : TooltipTrigger {
         anim = hammerAnim;
     }
 
+    void Thorns() {
+        header = "THORNS";
+        content = "Deals 1 damage to attacking enemies.";
+        anim = thornsAnim;
+    }
+
     void HealBulb() {
         header = "HEAL BULB";
         content = "Restores 2HP.";
@@ -101,25 +131,25 @@ public class TooltipEquipmentTrigger : TooltipTrigger {
     void Strike() {
         header = "STRIKE";
         content = "Attacks adjacent target for 1 damage.";
-        anim = null;
+        anim = strikeAnim;
     }
 
     void AutoBomb() {
         header = "AUTO-BOMB";
         content = "After priming, self destructs on death. Explodes all surrounding tiles for 2 damage.";
-        anim = null;
+        anim = autoBombAnim;
     }
 
     void PinCoushin() {
         header = "PIN COUSHIN";
         content = "Shoots pins in 4 directions for 1 damage. Cannot be grabbed.";
-        anim = null;
+        anim = pinCoushinAnim;
     }
 
     void Quake() {
         header = "QUAKE";
         content = "Attacks all surrounding tiles for 1 damage causing a cascade.";
-        anim = null;
+        anim = quakeAnim;
     }
 
 }
