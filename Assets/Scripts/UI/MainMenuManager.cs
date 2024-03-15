@@ -47,11 +47,15 @@ public class MainMenuManager : MonoBehaviour
         t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
         tooltip.transform.GetChild(0).gameObject.SetActive(true);
         tooltip.SetText(
-            "Nice work in there, squish. Welcome home. Here's where you could upgrade your arsenal before starting again."
+            "Nice work in there, squish. Welcome back topside. Here's where you'll beef up your arsenal before taking another crack at the Big One's brain."
         , "Slime Hub", true);
         while (!tooltip.skip) yield return null;
         tooltip.SetText(
-            "You can buy more gear for your slags, and relics to encounter in the depths. "
+            "Down the road, you'll be able to use your earnings to snag new Gear for your Slags, carve out shortcuts through the skull, and toss new Relics into the loot pool for your deep dives."
+        , "Coming Soon", true);
+        while (!tooltip.skip) yield return null;
+        tooltip.SetText(
+            "Looking forward to digging deeper and making more mess with you next time!"
         , "Next Time", true);
         while (!tooltip.skip) yield return null;
 

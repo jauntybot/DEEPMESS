@@ -319,10 +319,6 @@ public class FloorManager : MonoBehaviour {
                 if (floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
                     if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.gpOptional.bulbEncountered)
                         scenario.gpOptional.StartCoroutine(scenario.gpOptional.TileBulb());
-                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is EnemyDetonateUnit) != null && !scenario.gpOptional.basophicEncountered)
-                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Basophic());
-                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is EnemyStaticUnit) != null && !scenario.gpOptional.vacuoleEncountered)
-                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Vacuole());
                     // if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS && !scenario.gpOptional.prebossEncountered) { 
                     //     scenario.gpOptional.StartCoroutine(scenario.gpOptional.Preboss());
                     // }
@@ -867,6 +863,14 @@ public class FloorManager : MonoBehaviour {
         Vector3 toScale = Vector3.one * 0.75f;
         if (!currentFloor)
             scenario.player.transform.parent = floorParent;
+
+        for (int i = transitionParent.childCount - 1; i >= 0; i--) {
+            if (transitionParent.GetChild(i).gameObject == arm) continue;
+            GridElement ge = transitionParent.GetChild(i).GetComponent<GridElement>();
+            if (ge is Nail) continue;
+            
+            transitionParent.GetChild(i).SetParent(currentFloor != null ? currentFloor.transform : floorParent);
+        }
 
         while (timer < transitionDur) {
             floorParent.transform.position = Vector3.Lerp(from, from - new Vector3(0, floorOffset), timer/transitionDur);

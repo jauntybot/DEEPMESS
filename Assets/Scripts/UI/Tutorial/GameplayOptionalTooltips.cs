@@ -121,54 +121,11 @@ public class GameplayOptionalTooltips : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "SLAG REVIVE";
-        body = "Slags get downed, no biggie. Hammer the downed one to <b>" + ColorToRichText("bring 'em back with 1 HP", keyColor) + "</b>. Revive or let 'em nap. Your call, squish." + '\n';
+        body = "Slags get <b>" + ColorToRichText("downed", keyColor) + "</b>, no biggie. Hammer the downed one to <b>" + ColorToRichText("revive", keyColor) + "</b> or let 'em nap. Your call, squish." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ reviveAnim });
 
         while (!tooltip.skip) 
             yield return new WaitForSecondsRealtime(1/Util.fps);   
-
-        screenFade.SetTrigger("FadeOut");
-        tooltip.transform.GetChild(0).gameObject.SetActive(false);
-    }
-
-
-    public IEnumerator Basophic() {
-        basophicEncountered = true;
-        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
-            yield return null;
-        }
-        yield return new WaitForSecondsRealtime(0.25f);
-        screenFade.gameObject.SetActive(true);
-
-        header = "NEW DANGERS";
-        body = "This <b>" + ColorToRichText("baddie's a bomb", keyColor) + "</b>. After readying up, it will damage <b>" + ColorToRichText("all the tiles around it", keyColor) + "</b> when it pops. Handle with care or deal with the damage." + '\n';
-        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ basophicAnim });
-
-        while (!tooltip.skip) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-            
-        }
-
-        screenFade.SetTrigger("FadeOut");
-        tooltip.transform.GetChild(0).gameObject.SetActive(false);
-    }
-
-    public IEnumerator Vacuole() {
-        vacuoleEncountered = true;
-        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
-            yield return null;
-        }
-        yield return new WaitForSecondsRealtime(0.25f);
-        screenFade.gameObject.SetActive(true);
-
-        header = "NEW DANGERS";
-        body = "Stuck in place, this one. <b>" + ColorToRichText("Shoots thorns in every direction", keyColor) + "</b>. No retreat, just a barrage of pain. Stay clear or become a pincushion, squish." + '\n';
-        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ basophicAnim });
-
-        while (!tooltip.skip) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-            
-        }
 
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);

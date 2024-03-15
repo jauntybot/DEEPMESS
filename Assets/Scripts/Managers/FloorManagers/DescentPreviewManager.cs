@@ -75,33 +75,25 @@ public class DescentPreviewManager : MonoBehaviour {
     }
 
     public void PreviewButton() {
-        if (UIManager.instance.peekButton.interactable == true && !FloorManager.instance.transitioning) {
-            if (tut) {
-                StartCoroutine(PeekTutorial(previewing));
-            } else {
-                int dir = previewing ? 1 : -1;
-                previewing = !previewing;
-                
-                FloorPeekEvent evt = ObjectiveEvents.FloorPeekEvent;
-                evt.down = dir != 1;
-                ObjectiveEventManager.Broadcast(evt);
+        if (UIManager.instance.peekButton.interactable && !FloorManager.instance.transitioning) {
+            int dir = previewing ? 1 : -1;
+            previewing = !previewing;
+            
+            FloorPeekEvent evt = ObjectiveEvents.FloorPeekEvent;
+            evt.down = dir != 1;
+            ObjectiveEventManager.Broadcast(evt);
 
-                scenario.player.DeselectUnit();
-                if (!floorManager.transitioning && floorManager.floors.Count - 1 >= currentFloor.transform.GetSiblingIndex() - dir) {
-                    StartCoroutine(PreviewFloor(previewing));
-                    if (UIManager.instance.gameObject.activeSelf)
-                        UIManager.instance.PlaySound(previewing ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
-                }
+            scenario.player.DeselectUnit();
+            if (!floorManager.transitioning && floorManager.floors.Count - 1 >= currentFloor.transform.GetSiblingIndex() - dir) {
+                StartCoroutine(PreviewFloor(previewing));
+                if (UIManager.instance.gameObject.activeSelf)
+                    UIManager.instance.PlaySound(previewing ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
+                    if (tut) {
+                        tut = false;
+                        StartCoroutine(floorManager.tutorial.PeekButton());
+                    }
             }
         }
-    }
-
-    IEnumerator PeekTutorial(bool down) {
-
-        tut = false;
-        yield return floorManager.tutorial.StartCoroutine(floorManager.tutorial.PeekButton());
-        PreviewButton();
-
     }
 
     public void UpdateFloors(Grid newFloor, Grid alignFloor) {
