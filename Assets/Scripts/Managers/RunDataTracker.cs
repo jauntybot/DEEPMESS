@@ -145,5 +145,4 @@ public class RunDataTracker : MonoBehaviour {
         yield return new WaitForSecondsRealtime(1f);
         SceneManager.LoadScene(index, LoadSceneMode.Single);
     }
-
 }

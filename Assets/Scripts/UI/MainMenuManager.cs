@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
@@ -20,6 +21,31 @@ public class MainMenuManager : MonoBehaviour
     public Button optionsButton;
     [SerializeField] GameObject buttonColumn;
     [SerializeField] Animator creditsAnim, playButtonsAnim, nailAnim;
+
+    [Header("What's To Come Refs")]
+    [SerializeField] TMP_Text currencyCountUp;
+
+    bool whatsToCome;
+    public IEnumerator WhatsToCome(int currency) {
+        whatsToCome = true;
+
+        
+        yield return StartCoroutine(StringCountUp.CountUp(currency, 0.75f, (countUp) => { 
+            currencyCountUp.text = countUp;
+        }));
+
+        while (whatsToCome) {
+
+            yield return null;
+        }    
+
+
+        PersistentMenu.instance.upcomingCurrency = 0;
+    }
+
+    public void ContinueWhatsToCome() {
+        whatsToCome = false;
+    }
 
     public void ToggleCredits(bool state) {
         for (int i = buttonColumn.transform.childCount - 1; i >= 0; i--) {

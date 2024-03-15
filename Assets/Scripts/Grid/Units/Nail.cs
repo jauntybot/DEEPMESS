@@ -99,6 +99,14 @@ public class Nail : Unit {
         }
     }
 
+    public override IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0) {
+        yield return null;
+        if (subGE is EnemyUnit) {
+            if (Random.Range(0, 2) == 0)
+                barkBox.Bark(BarkBox.BarkType.NailCrush);
+        }
+    }
+
     public override IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0, GridElement source = null, EquipmentData sourceEquip = null) {
         yield return null;
         if (subGE is EnemyUnit) {

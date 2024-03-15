@@ -28,7 +28,7 @@ public class PersistentMenu : MonoBehaviour
     const string MIXER_MUSIC = "musicVolume";
     const string MIXER_SFX = "sfxVolume";
 
-    public float upcomingCurrency;
+    public int upcomingCurrency;
     [SerializeField] TMP_Dropdown relicDropdown;
 
 
@@ -90,7 +90,7 @@ public class PersistentMenu : MonoBehaviour
         else if (MainMenuManager.instance) {
             menuButtons.SetActive(false);
             MainMenuManager.instance.optionsButton.onClick.AddListener(MainMenuPause);
-            if (upcomingCurrency > 0) StartCoroutine(WhatsToCome());
+            if (upcomingCurrency > 0) MainMenuManager.instance.StartCoroutine(MainMenuManager.instance.WhatsToCome(upcomingCurrency));
         }
 
 // initialize MusicController if not initialized
@@ -118,21 +118,6 @@ public class PersistentMenu : MonoBehaviour
 
     public void GiveAllRelics() {
         scenario.relicManager.GiveAllRelics();
-    }
-
-    bool whatsToCome;
-    IEnumerator WhatsToCome() {
-        whatsToCome = true;
-
-        while (whatsToCome) {
-
-            yield return null;
-        }    
-        upcomingCurrency = 0;
-    }
-
-    public void ContinueWhatsToCome() {
-        whatsToCome = false;
     }
 
     public void FadeToBlack(bool state) {

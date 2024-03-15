@@ -220,9 +220,9 @@ public class PathManager : MonoBehaviour {
 
 
 // Delay for anim out
-        t = 0; while (t < 1.25f) { t += Time.deltaTime; yield return null; }
+        t = 0; while (t < 1f) { t += Time.deltaTime; yield return null; }
         card.GetComponent<Animator>().SetTrigger("SlideOut");
-        t = 0; while (t < 0.25f) { t += Time.deltaTime; yield return null; }
+        t = 0; while (t < 1f) { t += Time.deltaTime; yield return null; }
 
         pathChoiceContainer.SetActive(false);
         ClearObjectives();
