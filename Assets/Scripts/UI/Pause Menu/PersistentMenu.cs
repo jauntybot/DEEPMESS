@@ -91,6 +91,7 @@ public class PersistentMenu : MonoBehaviour
             menuButtons.SetActive(false);
             MainMenuManager.instance.optionsButton.onClick.AddListener(MainMenuPause);
             if (upcomingCurrency > 0) MainMenuManager.instance.StartCoroutine(MainMenuManager.instance.WhatsToCome(upcomingCurrency));
+            else MainMenuManager.instance.Init();
         }
 
 // initialize MusicController if not initialized

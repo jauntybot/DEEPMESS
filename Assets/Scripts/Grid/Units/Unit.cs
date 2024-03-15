@@ -110,7 +110,7 @@ public class Unit : GridElement {
             } else if (targetSqr.tileType == Tile.TileType.Bile && hpCurrent > 0) {
 // SHIELD UNIT TIER II -- Bile bouyancy
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
-                if (!(shield && shield.buoyant) && this is not BossUnit) {
+                if (!destroyed && !(shield && shield.buoyant) && this is not BossUnit) {
                     RemoveShield();
                     StartCoroutine(TakeDamage(hpMax, DamageType.Bile));
                 }
