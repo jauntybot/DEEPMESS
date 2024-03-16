@@ -126,7 +126,6 @@ public class HammerData : EquipmentData {
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
 // Second input, throw hammer
         if (firstTarget != null) {
-            user.energyCurrent -= energyCost;
             if (user is PlayerUnit pu) {
                 PlayerManager manager = (PlayerManager)pu.manager;
                 manager.undoableMoves = new Dictionary<Unit, Vector2>();
@@ -140,6 +139,7 @@ public class HammerData : EquipmentData {
 
             user.elementCanvas.UpdateStatsDisplay();
             yield return user.StartCoroutine(LaunchHammer((PlayerUnit)user, firstTarget, (PlayerUnit)target));    
+            user.energyCurrent -= energyCost;
 
 // First input, setup for second input
         } else {

@@ -56,6 +56,7 @@ public class FloorSequence : ScriptableObject {
 // Replace active packet params manually
         activePacket.packetType = packet.packetType;
         activePacket.inOrder = packet.inOrder;
+        activePacket.minEnemies = packet.minEnemies;
         activePacket.packetLength = packet.packetLength;
         activePacket.nuggets = packet.nuggets;
         activePacket.relics = packet.relics;

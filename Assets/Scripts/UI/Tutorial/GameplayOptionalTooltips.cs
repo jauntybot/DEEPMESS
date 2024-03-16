@@ -14,7 +14,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
     public Animator screenFade;
     [SerializeField] RuntimeAnimatorController anvilAnim, bigThrowAnim, basophicAnim, reviveAnim, bulbAnim;
     public bool bulbEncountered = false, deathReviveEncountered = false, basophicEncountered = false, prebossEncountered = false, bossEncountered = false,
-        vacuoleEncountered = true, objectivesEncountered = false, rewardsEncountered = false;
+        vacuoleEncountered = true, pathsEncountered = false, rewardsEncountered = false;
 
     void Awake() {
         if (GameplayOptionalTooltips.instance) {
@@ -33,10 +33,10 @@ public class GameplayOptionalTooltips : MonoBehaviour
         }
     }
 
-    public IEnumerator Objectives() {
-        objectivesEncountered = true;
+    public IEnumerator Paths() {
+        pathsEncountered = true;
 
-        header = "OBJECTIVES";
+        header = "PATHS";
         body = "<b>" + ColorToRichText("Pick your path", keyColor) + "</b>, squish. Big Slime upstairs has intel on what lies below. Get a sense of the <b>" + ColorToRichText("danger", keyColor) + "</b>, and a peek at the <b>" + ColorToRichText("rewards", keyColor) + "</b>." + '\n';
         tooltip.SetText(body, header, true);
 
@@ -48,7 +48,6 @@ public class GameplayOptionalTooltips : MonoBehaviour
     }
 
     public IEnumerator TileBulb() {
-        Debug.Log("Tile bulb");
         bulbEncountered = true;
         while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
             yield return null;

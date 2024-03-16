@@ -16,8 +16,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] Texture2D defaultCursor, clickableCursor, moveCursor, nullMoveCursor, targetCursor, nullTargetCursor, buttonHoverCursor;
     int layerMask = 5;
 
-    void Start() 
-    {
+    void Awake() {
         layerMask = ~layerMask;
 
         manager = GetComponent<PlayerManager>();
@@ -53,47 +52,39 @@ public class PlayerController : MonoBehaviour {
         Cursor.SetCursor(targetTexture, pointerAnchor, CursorMode.ForceSoftware);
     }
 
-
-// Coroutine that runs while the player is allowed to select elements on the grid
-    public IEnumerator GridInput() {
-        while (manager.scenario.currentTurn == ScenarioManager.Turn.Player || manager.scenario.currentTurn == ScenarioManager.Turn.Cascade) {
-            if (!FloorManager.instance.descending && !manager.unitActing) {
-                yield return new WaitForSecondsRealtime(1/Util.fps);
-                RaycastHit2D hit = ClickInput();
-// On mouseover
-                if (hit != default(RaycastHit2D) && !MouseOverUI()) {
-                    if (hit.transform.GetComponent<GridElement>()) {
-// On click
-                        manager.GridMouseOver(hit.transform.GetComponent<GridElement>().coord, true);
-// Disable input under these conditions
-                        if (!manager.unitActing && !(FloorManager.instance.peeking && manager.scenario.currentTurn != ScenarioManager.Turn.Cascade)) {
-                            if (Input.GetMouseButtonDown(0)) {
-// Pass call to contextualize click to manager
-                                manager.GridInput(hit.transform.GetComponent<GridElement>());       
-                                yield return new WaitForSecondsRealtime(1/Util.fps);
+    public void Update() {
+        if (manager) {
+            if (manager.scenario != null && manager.scenario.currentTurn == ScenarioManager.Turn.Player || manager.scenario.currentTurn == ScenarioManager.Turn.Cascade) {
+                if (!FloorManager.instance.descending && !manager.unitActing) {
+                    RaycastHit2D hit = ClickInput();
+    // On mouseover
+                    if (hit != default(RaycastHit2D) && !MouseOverUI()) {
+                        if (hit.transform.GetComponent<GridElement>()) {
+                            Debug.Log("Mouse over grid");
+    // On click
+                            manager.GridMouseOver(hit.transform.GetComponent<GridElement>().coord, true);
+    // Disable input under these conditions
+                            if (!manager.unitActing && !(FloorManager.instance.peeking && manager.scenario.currentTurn != ScenarioManager.Turn.Cascade)) {
+                                if (Input.GetMouseButtonDown(0)) {
+    // Pass call to contextualize click to manager
+                                    manager.GridInput(hit.transform.GetComponent<GridElement>());
+                                }
                             }
+                        } else {
+                            manager.GridMouseOver(new Vector2(-32, -32), false);
                         }
-                    }    
-                    else
+                    } else {
+                        Debug.Log("Mouse not over grid");
                         manager.GridMouseOver(new Vector2(-32, -32), false);
-                } else     
-                    manager.GridMouseOver(new Vector2(-32, -32), false);
+                    }
+
+                    if (Input.GetMouseButtonDown(1)) {
+                        manager.DeselectUnit();
+                    }
+                } 
                 
-
-                if (Input.GetMouseButtonDown(1)) {
-                    manager.DeselectUnit();
-                }
-
-                // if (Input.GetKeyDown(KeyCode.Tab)) {
-                //     manager.DisplayAllHP(true);
-                // } 
-                // if (Input.GetKeyUp(KeyCode.Tab)) {
-                //     manager.DisplayAllHP(false);
-                // }
-            } else
-                yield return new WaitForSecondsRealtime(1/Util.fps);
-            
-            OnTurnHotkeyInput();
+                OnTurnHotkeyInput();
+            }
         }
     }
 
@@ -109,7 +100,7 @@ public class PlayerController : MonoBehaviour {
 
             if (manager && manager.scenario && !FloorManager.instance.peeking && !PersistentMenu.instance.pauseMenu.isActiveAndEnabled) {
                 
-                if (Input.GetKeyDown(KeyCode.P) && ScenarioManager.instance.currentTurn == ScenarioManager.Turn.Player && FloorManager.instance.currentFloor == manager.currentGrid) {
+                if (Input.GetKeyDown(KeyCode.P) && ScenarioManager.instance.currentTurn == ScenarioManager.Turn.Player && !FloorManager.instance.transitioning && UIManager.instance.peekButton.interactable) {
                     PersistentMenu.instance.TriggerCascade();
                 }
                 if (Input.GetKeyDown(KeyCode.A)) {
@@ -171,10 +162,12 @@ public class PlayerController : MonoBehaviour {
         EventSystem.current.RaycastAll(ped, rays);
 
         for (int i = rays.Count - 1; i >= 0; i--) {
+            Debug.Log(rays[i].gameObject.name);
             if (rays[i].gameObject.layer != 5 && rays[i].gameObject.layer != 6)
                 rays.Remove(rays[i]);
         }   
-
+        if (rays.Count > 0)
+            Debug.Log("Mouse over UI");
         return rays.Count > 0;
     }
 

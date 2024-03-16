@@ -52,9 +52,8 @@ public class EnemyDetonateUnit : EnemyUnit {
             moved = true;
             energyCurrent = 0;
             yield return new WaitForSecondsRealtime(0.125f);
-            RemoveCondition(Status.Stunned);
         }
-    
+        manager.unitActing = false;    
     }
 
     public override IEnumerator CalculateAction() {

@@ -44,7 +44,7 @@ public class TutorialSequence : MonoBehaviour {
     [Header("Gameplay Optional Tooltips")]
     bool enemyBehavior = false;
     public bool hittingEnemies = false, enemySpawnEncountered = false, undoEncountered = false, nailDamageEncountered = false, bloodEncountered = false, 
-        objectivesEncountered = false, collisionEncountered = false, slotsEncountered = false;
+        objectivesEncountered = false, collisionEncountered = false, slotsEncountered = false, sequenceEnd = false;
 
 
     public void Initialize(ScenarioManager manager) {
@@ -131,7 +131,6 @@ public class TutorialSequence : MonoBehaviour {
         yield return StartCoroutine(DiggingDown());
         yield return StartCoroutine(scenario.messagePanel.PlayMessage(MessagePanel.Message.Antibody));
 // yield first enemy turn
-        yield return StartCoroutine(ScatterTurn());
         yield return StartCoroutine(EnemyTurn());
 
         yield return new WaitForSecondsRealtime(1.25f);
@@ -146,6 +145,7 @@ public class TutorialSequence : MonoBehaviour {
 // Descent 2
         
         yield return StartCoroutine(scenario.messagePanel.PlayMessage(MessagePanel.Message.Antibody));
+        yield return StartCoroutine(ScatterTurn());
         yield return StartCoroutine(EnemyTurn());
         yield return new WaitForSecondsRealtime(1.25f);
 
@@ -223,6 +223,8 @@ public class TutorialSequence : MonoBehaviour {
     }
 
     public IEnumerator SelectingTheHammer() {
+        Vector3 prevPos = tooltip.transform.GetComponent<RectTransform>().anchoredPosition;
+        tooltip.transform.GetComponent<RectTransform>().anchoredPosition = new Vector2(-500, prevPos.y);
         header = "ARMING THE HAMMER";
         body = "<b>" + ColorToRichText("Hammer's our main tool", keyColor) + "</b>—use it to hit anything and everything. Arm it with the button in <b>" + ColorToRichText("button", keyColor) + "</b> left.";
         tooltip.SetText(body, header, true);
@@ -238,6 +240,7 @@ public class TutorialSequence : MonoBehaviour {
         while (scenario.player.units[0].selectedEquipment == null) yield return null;
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
         
+        tooltip.transform.GetComponent<RectTransform>().anchoredPosition = prevPos;
         Destroy(highlight);
     }
 
@@ -330,7 +333,7 @@ public class TutorialSequence : MonoBehaviour {
 
         while (true) {
             yield return null;
-            if (scenario.player.units[0].energyCurrent == 0 || scenario.player.units[1].energyCurrent == 0) {
+            if (scenario.player.units[0].energyCurrent == 0) {
                 break;
             } else if (scenario.player.units[0].moved && scenario.player.units[0].coord.x != scenario.currentEnemy.units[0].coord.x && scenario.player.units[0].coord.y != scenario.currentEnemy.units[0].coord.y && !oopsies)
                 yield return StartCoroutine(Oopsies(2));
@@ -340,7 +343,13 @@ public class TutorialSequence : MonoBehaviour {
         Destroy(highlight);
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
         tooltip.transform.GetComponent<RectTransform>().anchoredPosition = prevPos;
-        yield return new WaitForSecondsRealtime(1.5f);
+        
+        while (true) {
+            if (scenario.player.units[1].energyCurrent == 0) break;
+            if (scenario.player.units[0].energyCurrent == 0 && scenario.player.units[0].equipment.Find(e => e is HammerData) != null) break;
+            yield return null;
+        }
+        yield return new WaitForSecondsRealtime(1f);
         yield return StartCoroutine(OnTurnMoveAndAP());
 
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
@@ -394,6 +403,7 @@ public class TutorialSequence : MonoBehaviour {
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
 
+        tooltip.contentField.GetComponent<RectTransform>().sizeDelta = new Vector2(900, tooltip.contentField.GetComponent<RectTransform>().sizeDelta.y);
         header = "GEAR";
         body = "Each piece of Gear's unique. Check those <b>" + ColorToRichText("buttons", keyColor) + "</b> in the bottom left to get to know your arsenal." + '\n';
         tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ shieldAnim, anvilAnim, bigGrabAnim });
@@ -401,7 +411,7 @@ public class TutorialSequence : MonoBehaviour {
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
-
+        tooltip.contentField.GetComponent<RectTransform>().sizeDelta = new Vector2(400, tooltip.contentField.GetComponent<RectTransform>().sizeDelta.y);
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
 
@@ -417,7 +427,7 @@ public class TutorialSequence : MonoBehaviour {
         screenFade.gameObject.SetActive(true);
 
         header = "ENEMY TURN";
-        body = "<b>" + ColorToRichText("Enemy units ain't decoration", keyColor) + "</b>. Select enemies to learn about them in the bottom left." + '\n';
+        body = "<b>" + ColorToRichText("Enemy units ain't decoration", keyColor) + "</b>. Select enemies on your turn to learn about them in the bottom left." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -498,7 +508,9 @@ public class TutorialSequence : MonoBehaviour {
         brTooltip.SetText(body, header, true);
         peeked = true;
 
-        while (!brTooltip.skip || floorManager.currentFloor.index == 1) {
+        while (floorManager.transitioning) yield return null;
+        yield return new WaitForSecondsRealtime(0.5f);
+        while (!brTooltip.skip && floorManager.peeking) {
             yield return new WaitForSecondsRealtime(1/Util.fps);   
         }
         
@@ -650,7 +662,6 @@ public class TutorialSequence : MonoBehaviour {
             break;
             case 1:
                 EnemyManager prevEnemy = scenario.currentEnemy;
-                floorManager.floorSequence.ThresholdCheck();
 
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return StartCoroutine(floorManager.TransitionFloors(true, false));
@@ -690,11 +701,11 @@ public class TutorialSequence : MonoBehaviour {
             default:
                 EnemyManager enemy = (EnemyManager)floorManager.currentFloor.enemy;
                 PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
-                floorManager.floorSequence.ThresholdCheck();
                 foreach (Unit u in playerUnits) {
                     u.StartCoroutine(u.TakeDamage(u.hpCurrent - u.hpMax, GridElement.DamageType.Heal));
                 }
                 if (!peeked) peekHighlight.SetActive(true);
+                floorManager.floorSequence.ThresholdCheck();
                 yield return StartCoroutine(floorManager.TransitionPackets(enemy));
             break;
         }

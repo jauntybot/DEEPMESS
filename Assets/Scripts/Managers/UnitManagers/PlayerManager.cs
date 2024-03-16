@@ -158,7 +158,6 @@ public class PlayerManager : UnitManager {
         ToggleUnitSelectability(start);
 // Start Turn
         if (start) {
-            StartCoroutine(pc.GridInput());
 // Reset unit energy if not continued turn
             foreach(Unit u in units) {
                 if (u is PlayerUnit) {

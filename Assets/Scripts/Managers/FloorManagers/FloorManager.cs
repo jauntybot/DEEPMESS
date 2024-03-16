@@ -319,9 +319,6 @@ public class FloorManager : MonoBehaviour {
                 if (floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
                     if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.gpOptional.bulbEncountered)
                         scenario.gpOptional.StartCoroutine(scenario.gpOptional.TileBulb());
-                    // if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS && !scenario.gpOptional.prebossEncountered) { 
-                    //     scenario.gpOptional.StartCoroutine(scenario.gpOptional.Preboss());
-                    // }
                 }
 
 // Yield for cascade sequence
@@ -686,20 +683,7 @@ public class FloorManager : MonoBehaviour {
             yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent));
         }
         yield return new WaitForSecondsRealtime(0.25f);
-// Destroy Anvils
-        // List<Coroutine> cos = new();
-        // for (int i = scenario.player.units.Count - 1; i >= 0; i-- ) {
-        //     Unit u = scenario.player.units[i];
-        //     if (u is not PlayerUnit && u is not Nail)
-        //         cos.Add(StartCoroutine(u.DestroySequence()));
-        // }
-        // for (int i = cos.Count - 1; i >= 0; i--) {
-        //     if (cos[i] != null) 
-        //         yield return cos[i];
-        //     else
-        //         cos.RemoveAt(i);
-        // }
-        
+
 // Lerp units into screen
         List<Unit> units = new() { scenario.player.units[0], scenario.player.units[1], scenario.player.units[2], scenario.player.units[3] };
         List<Vector2> to = new() {new Vector2(7.5f, 1f), new Vector2(6.2f, 2), new Vector2(8.2f, 2.4f), new Vector2(8.4f, -1f) };
@@ -737,12 +721,17 @@ public class FloorManager : MonoBehaviour {
         if (floorSequence.currentThreshold != FloorPacket.PacketType.Tutorial) {
 // Path reward + Upgrade sequence
             if (currentFloor != null && floorSequence.currentThreshold != FloorPacket.PacketType.I && floorSequence.currentThreshold != FloorPacket.PacketType.BARRIER) {
+                if (tutorial.isActiveAndEnabled && !tutorial.sequenceEnd) yield return tutorial.StartCoroutine(tutorial.TutorialEnd());
                 if (!scenario.gpOptional.rewardsEncountered) yield return scenario.gpOptional.StartCoroutine(scenario.gpOptional.Rewards());
                 yield return scenario.pathManager.PathRewardSequence();
                 yield return scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
             }
 // Objective assign sequence
             if (floorSequence.currentThreshold != FloorPacket.PacketType.BOSS && floorSequence.currentThreshold != FloorPacket.PacketType.BARRIER) {
+                if (!scenario.gpOptional.pathsEncountered) {
+                    
+                    yield return StartCoroutine(scenario.gpOptional.Paths());
+                }
                 yield return scenario.pathManager.PathSequence(); 
             } else if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) {
                 floorSequence.StartPacket(floorSequence.bossPacket);

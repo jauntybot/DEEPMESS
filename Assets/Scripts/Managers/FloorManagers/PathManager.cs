@@ -171,7 +171,10 @@ public class PathManager : MonoBehaviour {
 
 // Assign selected path
         floorSequence.StartPacket(selected.floorPacket);
-        SubscribeTracker(selected.floorPacket.objectives);
+        if (selected.floorPacket.objectives.Count > 0) {
+            tracker.gameObject.SetActive(true);
+            SubscribeTracker(selected.floorPacket.objectives);
+        } else tracker.gameObject.SetActive(false);
         
         choosingPath = false;
     }

@@ -334,8 +334,5 @@ public class EnemyManager : UnitManager {
         if (unitsToAct.Contains((Unit)ge)) unitsToAct.Remove((Unit)ge);
         if (pendingUnits.Contains((Unit)ge)) pendingUnits.Remove((Unit)ge);
         UIManager.instance.metaDisplay.UpdateEnemiesRemaining(units.Count);
-        if (units.Count >= 6) {
-            if (Random.Range(0, 9-units.Count) == 0) scenario.player.nail.barkBox.Bark(BarkBox.BarkType.EnemyCount);
-        }
     }
 }
