@@ -40,7 +40,9 @@ public class EnemyManager : UnitManager {
         UIManager.instance.UpdatePortrait(u, false);
 
         u.StoreInGrid(currentGrid);
-        u.UpdateElement(coord);
+        u.transform.position = u.grid.PosFromCoord(coord);
+        u.UpdateSortOrder(coord);
+        u.coord = coord;
         u.grid.RemoveElement(u);
 
         
@@ -253,6 +255,7 @@ public class EnemyManager : UnitManager {
 
     int spawn = 0;
     public virtual IEnumerator DescendReinforcements() {
+        bool reinforce = false;
         foreach (Unit u in pendingUnits) {
             if (u is EnemyUnit)
                 units.Add(u);
@@ -260,6 +263,11 @@ public class EnemyManager : UnitManager {
                 scenario.player.units.Add(u);
             DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
             dp.Initialize(u, floorManager.previewManager);
+            reinforce = true;
+            if (spawn >= 1) {
+                FloorManager.instance.floorSequence.activePacket.minEnemies++;
+                spawn = 0;
+            } else spawn++;
         }
         for (int i = pendingPreviews.Count - 1; i >= 0; i--) {
             Destroy(pendingPreviews[i].gameObject);
@@ -269,14 +277,8 @@ public class EnemyManager : UnitManager {
             yield return StartCoroutine(floorManager.DescendUnits(pendingUnits, this));
             
         }
-        
-        if (spawn >= 1) {
-            scenario.floorManager.floorSequence.activePacket.minEnemies++;
-            spawn = 0;
-        }
-        spawn++;
 
-        if (units.Count >= 6) {
+        if (reinforce && units.Count >= 6) {
             if (Random.Range(0, 9-units.Count) == 0) scenario.player.nail.barkBox.Bark(BarkBox.BarkType.EnemyCount);
         }
 

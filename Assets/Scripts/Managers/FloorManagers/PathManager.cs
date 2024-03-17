@@ -49,6 +49,8 @@ public class PathManager : MonoBehaviour {
     }
 
     public IEnumerator PathSequence() {
+        HorizontalLayoutGroup layout = pathCardContainer.GetComponent<HorizontalLayoutGroup>();
+        layout.enabled = true;
         choosingPath = true;
         pathChoiceContainer.SetActive(true);
         sequenceTitle.text = "CHOOSE A PATH";
@@ -96,7 +98,6 @@ public class PathManager : MonoBehaviour {
         
         LayoutRebuilder.ForceRebuildLayoutImmediate(pathCardContainer.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
-        HorizontalLayoutGroup layout = pathCardContainer.GetComponent<HorizontalLayoutGroup>();
         layout.enabled = false;
         t = 0; while (t < 0.2f) { t += Time.deltaTime; yield return null; }
         

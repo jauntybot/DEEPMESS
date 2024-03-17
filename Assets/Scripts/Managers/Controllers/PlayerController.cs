@@ -97,7 +97,7 @@ public class PlayerController : MonoBehaviour {
 
             if (manager && manager.scenario && !FloorManager.instance.peeking && !PersistentMenu.instance.pauseMenu.isActiveAndEnabled) {
                 
-                if (Input.GetKeyDown(KeyCode.P) && ScenarioManager.instance.currentTurn == ScenarioManager.Turn.Player && !FloorManager.instance.transitioning && UIManager.instance.peekButton.interactable) {
+                if (Input.GetKeyDown(KeyCode.P) && ScenarioManager.instance.currentTurn == ScenarioManager.Turn.Player) {
                     PersistentMenu.instance.TriggerCascade();
                 }
                 if (Input.GetKeyDown(KeyCode.A)) {

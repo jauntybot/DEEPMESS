@@ -139,7 +139,7 @@ public class PersistentMenu : MonoBehaviour
 
 
     public void TriggerCascade() {
-        if (FloorManager.instance && ScenarioManager.instance) {
+        if (FloorManager.instance && ScenarioManager.instance && !FloorManager.instance.transitioning && !FloorManager.instance.peeking) {
             ScenarioManager.instance.prevTurn = ScenarioManager.Turn.Descent;
             FloorManager.instance.Descend(true);
         }
