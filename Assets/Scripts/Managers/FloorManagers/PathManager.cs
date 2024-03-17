@@ -160,6 +160,7 @@ public class PathManager : MonoBehaviour {
             videoPlayer.GetComponent<RawImage>().color = new Color(1,1,1,Mathf.Lerp(0,1,t/0.5f));
             t += Time.deltaTime; yield return null; 
         }
+        videoPlayer.GetComponent<RawImage>().color = new Color(1,1,1,1);
         pathChoiceContainer.SetActive(false);
 
         t = 0; while (t < 6f) { t += Time.deltaTime; yield return null; }

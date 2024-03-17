@@ -195,9 +195,6 @@ public class EnemyManager : UnitManager {
 
         //eManager.DescentTriggerCheck();
         UIManager.instance.metaDisplay.UpdateEnemiesRemaining(newGrid.enemy.units.Count);
-        if (newGrid.enemy.units.Count >= 5) {
-            if (Random.Range(0, 7-newGrid.enemy.units.Count) == 0) scenario.player.nail.barkBox.Bark(BarkBox.BarkType.EnemyCount);
-        }
         
         if (!toSelf)
            Destroy(this.gameObject);
@@ -215,7 +212,6 @@ public class EnemyManager : UnitManager {
                 }
             }
             spawn = true;
-            scenario.floorManager.floorSequence.activePacket.minEnemies++;
         }
       
         return spawn;
@@ -255,6 +251,7 @@ public class EnemyManager : UnitManager {
         }
     }
 
+    int spawn = 0;
     public virtual IEnumerator DescendReinforcements() {
         foreach (Unit u in pendingUnits) {
             if (u is EnemyUnit)
@@ -273,6 +270,12 @@ public class EnemyManager : UnitManager {
             
         }
         
+        if (spawn >= 1) {
+            scenario.floorManager.floorSequence.activePacket.minEnemies++;
+            spawn = 0;
+        }
+        spawn++;
+
         if (units.Count >= 6) {
             if (Random.Range(0, 9-units.Count) == 0) scenario.player.nail.barkBox.Bark(BarkBox.BarkType.EnemyCount);
         }

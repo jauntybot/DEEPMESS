@@ -24,6 +24,7 @@ public class Nail : Unit {
         selectedEquipment = equipment[0];
         gfxAnim = gfx[0].GetComponent<Animator>();
         ToggleNailState(NailState.Falling);
+        barkBox.Init(this);
     }
 
 

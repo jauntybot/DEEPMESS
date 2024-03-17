@@ -16,14 +16,13 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] Texture2D defaultCursor, clickableCursor, moveCursor, nullMoveCursor, targetCursor, nullTargetCursor, buttonHoverCursor;
     int layerMask = 5;
 
-    void Awake() {
+    bool init = false;
+    public void Init() {
         layerMask = ~layerMask;
 
         manager = GetComponent<PlayerManager>();
-
-        //StartCoroutine(HotkeyInput());
-
         UpdateCursor();
+        init = true;
     }
 
 
@@ -53,14 +52,13 @@ public class PlayerController : MonoBehaviour {
     }
 
     public void Update() {
-        if (manager) {
-            if (manager.scenario != null && manager.scenario.currentTurn == ScenarioManager.Turn.Player || manager.scenario.currentTurn == ScenarioManager.Turn.Cascade) {
+        if (init) {
+            if (manager.scenario.currentTurn == ScenarioManager.Turn.Player || manager.scenario.currentTurn == ScenarioManager.Turn.Cascade) {
                 if (!FloorManager.instance.descending && !manager.unitActing) {
                     RaycastHit2D hit = ClickInput();
     // On mouseover
                     if (hit != default(RaycastHit2D) && !MouseOverUI()) {
                         if (hit.transform.GetComponent<GridElement>()) {
-                            Debug.Log("Mouse over grid");
     // On click
                             manager.GridMouseOver(hit.transform.GetComponent<GridElement>().coord, true);
     // Disable input under these conditions
@@ -74,7 +72,6 @@ public class PlayerController : MonoBehaviour {
                             manager.GridMouseOver(new Vector2(-32, -32), false);
                         }
                     } else {
-                        Debug.Log("Mouse not over grid");
                         manager.GridMouseOver(new Vector2(-32, -32), false);
                     }
 
@@ -162,12 +159,9 @@ public class PlayerController : MonoBehaviour {
         EventSystem.current.RaycastAll(ped, rays);
 
         for (int i = rays.Count - 1; i >= 0; i--) {
-            Debug.Log(rays[i].gameObject.name);
             if (rays[i].gameObject.layer != 5 && rays[i].gameObject.layer != 6)
                 rays.Remove(rays[i]);
         }   
-        if (rays.Count > 0)
-            Debug.Log("Mouse over UI");
         return rays.Count > 0;
     }
 

@@ -382,9 +382,6 @@ public class FloorManager : MonoBehaviour {
 
         if (uiManager.gameObject.activeSelf)    
             uiManager.metaDisplay.UpdateEnemiesRemaining(scenario.currentEnemy.units.Count);
-        if (scenario.currentEnemy.units.Count >= 6) {
-            if (UnityEngine.Random.Range(0, 9-scenario.currentEnemy.units.Count) == 0) scenario.player.nail.barkBox.Bark(BarkBox.BarkType.EnemyCount);
-        }
     }
 
 // Coroutine that sequences the descent of all valid units

@@ -15,11 +15,10 @@ public class PersistentMenu : MonoBehaviour
     public int targetFPS;
     //[SerializeField] int fps;
     TooltipSystem toolTips;
-    private bool tooltipToggle = true;
     [SerializeField] AudioMixer mixer;
     [SerializeField] Slider musicSlider, sfxSlider;
 
-    [SerializeField] GameObject battleCanvas, menuButton;
+    [SerializeField] GameObject menuButton;
     [SerializeField] TMP_Text tooltipText;
     [SerializeField] GameObject menuButtons;
     public Animator fadeToBlack;
@@ -62,8 +61,6 @@ public class PersistentMenu : MonoBehaviour
     // }
 
     void UpdateRefs(Scene scene = default, LoadSceneMode mode = default) {
-        battleCanvas = null;
-
         if (ScenarioManager.instance) {
 // Initialize scenario manager starts game
             scenario = ScenarioManager.instance;
@@ -82,8 +79,6 @@ public class PersistentMenu : MonoBehaviour
             relicDropdown.value = 0;
             relicDropdown.RefreshShownValue();
 
-            if (UIManager.instance) 
-                battleCanvas = UIManager.instance.gameObject;
             menuButtons.SetActive(true);
         }
 // Initialize the MainMenuManager

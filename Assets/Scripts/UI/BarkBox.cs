@@ -15,13 +15,16 @@ public class BarkBox : MonoBehaviour {
     
     [SerializeField] List<string> delayStrings, finalFloorStrings, EnemyCountStrings, NotPrimedStrings, LowHPStrings, SlagHurtStrings, NailKillStrings, NailCrushStrings, NailPrimeStrings;
     
+    Nail nail;
 
-    void Start() {
+    public void Init(Nail n) {
         audioSource = GetComponent<AudioSource>();
+        nail = n;
     }
 
     public void Bark(BarkType type) {
-        if (FloorManager.instance.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
+        if (FloorManager.instance.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial
+            && nail.nailState != Nail.NailState.Falling) {
             barkBox.SetActive(false);
             string bark;
             switch (type) {

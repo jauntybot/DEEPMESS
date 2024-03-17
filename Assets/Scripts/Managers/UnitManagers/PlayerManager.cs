@@ -87,6 +87,7 @@ public class PlayerManager : UnitManager {
         nail.gameObject.transform.parent = unitParent.transform;      
 
         pc = GetComponent<PlayerController>();
+        pc.Init();
 
         reviveTo = 1;
     }
@@ -225,7 +226,8 @@ public class PlayerManager : UnitManager {
                         StartCoroutine(selectedUnit.ExecuteAction(u));
                     } else if (u is Nail && selectedUnit.selectedEquipment is HammerData) {
                         nail.barkBox.Bark(BarkBox.BarkType.NotPrimed);
-                    } else {
+                    } 
+                    else {
                         DeselectUnit();
                         SelectUnit(u);
                     }
@@ -235,21 +237,21 @@ public class PlayerManager : UnitManager {
             }
 // Player clicks on enemy unit
             else if (u.manager is EnemyManager) {
-                if (overrideEquipment && !selectedUnit) {
+                if (overrideEquipment && selectedUnit == null) {
                     foreach(Unit _u in units) {
                         if (u.coord == _u.coord) {
                             SelectUnit(_u);
                         }
                     }
-                }
-                if (selectedUnit) {
+                } else if (selectedUnit) {
 // Unit is a target of valid action adjacency
                     if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
                         StartCoroutine(selectedUnit.ExecuteAction(u));
-                    } 
-                } else {
+                    } else if (selectedUnit.selectedEquipment == null || selectedUnit.selectedEquipment is MoveData)
+                        SelectUnit(u); 
+                } else 
                     SelectUnit(u);
-                }
+                
             }
         }
 // Player clicks on square
