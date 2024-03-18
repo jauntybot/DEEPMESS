@@ -25,8 +25,6 @@ public class DescentPreviewManager : MonoBehaviour {
     public IEnumerator PreviewFloor(bool down) {
         scenario.player.GridMouseOver(new Vector2(-32, -32), false);
         floorManager.transitioning = true;
-        if (scenario.currentTurn == ScenarioManager.Turn.Player)
-            UIManager.instance.endTurnButton.interactable = !down;
         if (down) {
             peekAnim.SetBool("Active", true);
             if (!hidePreviews)
@@ -78,6 +76,8 @@ public class DescentPreviewManager : MonoBehaviour {
         if (UIManager.instance.peekButton.interactable && !FloorManager.instance.transitioning) {
             int dir = previewing ? 1 : -1;
             previewing = !previewing;
+            if (scenario.currentTurn == ScenarioManager.Turn.Player)
+                UIManager.instance.endTurnButton.interactable = !previewing;
             
             FloorPeekEvent evt = ObjectiveEvents.FloorPeekEvent;
             evt.down = dir != 1;

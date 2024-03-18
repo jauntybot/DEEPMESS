@@ -208,12 +208,12 @@ public class ScenarioManager : MonoBehaviour
                     }
                 }
                 if (!lose && !player.nail.conditions.Contains(Unit.Status.Disabled)) {
+                    currentTurn = Turn.Player;
                     uiManager.LockPeekButton(false);
                     uiManager.LockHUDButtons(false);
                     if (uiManager.gameObject.activeSelf)
                         yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Slag));
 
-                    currentTurn = Turn.Player;
 
                     player.StartEndTurn(true);
                 } else {

@@ -139,6 +139,7 @@ public class TutorialSequence : MonoBehaviour {
         StartCoroutine(HittingAnEnemy());
         while (scenario.currentTurn != ScenarioManager.Turn.Enemy) yield return null;
         while (scenario.currentTurn != ScenarioManager.Turn.Player) yield return null;
+        yield return new WaitForSecondsRealtime(0.5f);
         yield return StartCoroutine(PeekHeadsUp());
 
         while (descents < 2) yield return null;

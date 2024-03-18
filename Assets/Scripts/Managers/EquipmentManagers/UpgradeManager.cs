@@ -4,13 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using Relics;
 
 public class UpgradeManager : MonoBehaviour {
 
     PlayerManager pManager;
     AudioSource audioS;
     [SerializeField] SFX selectSFX;
-    [SerializeField] GameObject upgradeScreen, confirmButton, unitUIContainer, nuggetContainer;
+    [SerializeField] GameObject upgradeScreen, scrapButton, confirmButton, unitUIContainer, nuggetContainer;
     [SerializeField] GameObject godNuggetPrefab;
     [SerializeField] List<SlagEquipmentData.UpgradePath> nuggets = new();
     public NuggetButton selectedParticle;
@@ -24,8 +25,10 @@ public class UpgradeManager : MonoBehaviour {
 
     public void Init(List<Unit> _units, PlayerManager _pManager) {
         audioS = GetComponent<AudioSource>();
-
         unitUIContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+
+        scrapButton.SetActive(false);
+
         for (int i = unitUIContainer.transform.childCount - 1; i >= 0; i--)
             Destroy(unitUIContainer.transform.GetChild(i).gameObject);
         foreach (Unit unit in _units) {
@@ -111,6 +114,8 @@ public class UpgradeManager : MonoBehaviour {
             ui.UpdateModifier(path);
         }
 
+        scrapButton.SetActive(true);
+
         LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
     }
@@ -120,6 +125,24 @@ public class UpgradeManager : MonoBehaviour {
         Destroy(selectedParticle.gameObject);
         foreach(UnitUpgradeUI ui in unitUpgradeUIs)
             ui.ClearModifier();
+
+        scrapButton.SetActive(false);
+        
+        RelicManager.instance.scrapValue += 33;
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
+        ConfirmCheck();
+    }
+
+    public void ScrapParticle() {
+        nuggets.Remove(selectedParticle.type);
+        Destroy(selectedParticle.gameObject);
+        foreach (UnitUpgradeUI ui in unitUpgradeUIs) 
+            ui.ClearModifier();
+
+        scrapButton.SetActive(false);
+
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();

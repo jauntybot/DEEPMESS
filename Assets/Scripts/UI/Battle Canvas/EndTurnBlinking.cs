@@ -35,13 +35,15 @@ public class EndTurnBlinking : MonoBehaviour
     public void BlinkEndTurn() {
         if (CheckEnergy()){
             if (!blinking) StartCoroutine(BlinkButton());
+        } else if (blinking) {
+            blinking = !blinking;
         }
     }
 
     public IEnumerator BlinkButton() {
         blinking = true;
         highlightAnim.SetBool("Active", true);
-        while (scenario.currentTurn == ScenarioManager.Turn.Player) {
+        while (blinking && scenario.currentTurn == ScenarioManager.Turn.Player) {
             yield return null;
         }
         highlightAnim.SetBool("Active", false);

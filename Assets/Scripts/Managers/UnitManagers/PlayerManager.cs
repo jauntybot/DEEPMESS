@@ -178,12 +178,10 @@ public class PlayerManager : UnitManager {
             undoOrder = new List<Unit>();
             harvestedByMove = new Dictionary<Unit, GridElement>();
             UndoClearCallback?.Invoke(this);
-            //if (nail.nailState == Nail.NailState.Primed) nail.elementCanvas.Bark("Hit me! Hit me!");
 // End Turn
         } else {
             DeselectUnit();
             if (scenario.prevTurn != ScenarioManager.Turn.Descent && scenario.prevTurn != ScenarioManager.Turn.Cascade) {
-                Debug.Log("Not descent");
                 ResolveConditions();
             }
             contextuals.UpdateGridCursor(false);
