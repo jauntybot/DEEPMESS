@@ -447,7 +447,8 @@ public class TutorialSequence : MonoBehaviour {
         header = "";
         body = "Playtime's over, squish. Time for the real deal. <b>" + ColorToRichText("Dig. Make mess", keyColor) + "</b>.";
         tooltip.SetText(body, header, true);
-
+        sequenceEnd = true;
+        
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1 / Util.fps);
         }

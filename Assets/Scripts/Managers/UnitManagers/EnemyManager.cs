@@ -253,7 +253,6 @@ public class EnemyManager : UnitManager {
         }
     }
 
-    int spawn = 0;
     public virtual IEnumerator DescendReinforcements() {
         bool reinforce = false;
         foreach (Unit u in pendingUnits) {
@@ -264,10 +263,7 @@ public class EnemyManager : UnitManager {
             DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
             dp.Initialize(u, floorManager.previewManager);
             reinforce = true;
-            if (spawn >= 1) {
-                FloorManager.instance.floorSequence.activePacket.minEnemies++;
-                spawn = 0;
-            } else spawn++;
+
         }
         for (int i = pendingPreviews.Count - 1; i >= 0; i--) {
             Destroy(pendingPreviews[i].gameObject);
