@@ -123,6 +123,22 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &171974185 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6505874322839820830, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+  m_PrefabInstance: {fileID: 1617724317}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &171974187 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6505874322839820824, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+  m_PrefabInstance: {fileID: 1617724317}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 171974185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 468c3aac07fe54e038550c820da32a87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!95 &455435749 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 1617691600151960667, guid: 6d29d70c4f7adff498463f44bf3ca1fd, type: 3}
@@ -1912,7 +1928,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1248484298}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 171974185}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 171974187}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: Anbandonable
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1329441575
 GameObject:
   m_ObjectHideFlags: 0
@@ -2828,7 +2868,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1288536923603691963, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1355684551776140109, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
       propertyPath: m_AnchorMax.y
@@ -2844,7 +2884,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1355684551776140109, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 190
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1396693530608905552, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
       propertyPath: m_RaycastTarget
@@ -2856,7 +2896,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1670441829647447200, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1729675723735064021, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
       propertyPath: m_IsActive
@@ -3036,7 +3076,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6505874322839820830, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6505874323547961910, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
       propertyPath: m_AnchorMax.y
@@ -3096,7 +3136,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7034459034886766756, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 148.03
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7034459034886766756, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
       propertyPath: m_AnchoredPosition.y
