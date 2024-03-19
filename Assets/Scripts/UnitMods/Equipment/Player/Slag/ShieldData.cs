@@ -46,18 +46,15 @@ public class ShieldData : SlagEquipmentData {
 
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         yield return base.UseEquipment(user, target);
-        Unit unit = (Unit)user;
 
         PlayerUnit pu = (PlayerUnit)user;
 // SPECIAL TIER I - Increase shield limit
         int shieldLimit = upgrades[UpgradePath.Scab] >= 1 ? 1 : 0;
 // Destory instances exceeding shield limit
         if (activeShields.Count > shieldLimit) {
-            int destroyCount = activeShields.Count - shieldLimit;
-            for (int i = 0; i < destroyCount; i++) {
-                activeShields[0].unit.RemoveShield();
-                activeShields.RemoveAt(0);
-            }
+            Shield s = activeShields[0];
+            s.unit.RemoveShield();
+            activeShields.Remove(s);
         } 
 // Instantiate new shield obj
         Shield shield = Instantiate(shieldPrefab, target.transform).GetComponent<Shield>();
