@@ -14,9 +14,7 @@ public class Shield : MonoBehaviour {
         anim = gfx.GetComponent<Animator>();
         unit = target;
 // UNIT TIER I - Prevents liquid tile effects
-        if (data.upgrades[SlagEquipmentData.UpgradePath.Sludge] >= 1) {
-            buoyant = true;
-        }
+        buoyant = data.upgrades[SlagEquipmentData.UpgradePath.Sludge] >= 1;
 // UNIT TIER II - Heals users
         healing = data.upgrades[SlagEquipmentData.UpgradePath.Sludge] >= 2; 
 // SPECIAL TIER II - Damages attackers
@@ -27,6 +25,8 @@ public class Shield : MonoBehaviour {
     }
 
     public void DestroySelf(GridElement source = null) {
+        if (data.activeShields.Contains(this))
+            data.activeShields.Remove(this);
         anim.SetTrigger("Destroy");
     }
 }

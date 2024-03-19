@@ -403,7 +403,7 @@ public class TutorialSequence : MonoBehaviour {
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
-
+        float x = tooltip.contentField.GetComponent<RectTransform>().sizeDelta.x;
         tooltip.contentField.GetComponent<RectTransform>().sizeDelta = new Vector2(900, tooltip.contentField.GetComponent<RectTransform>().sizeDelta.y);
         header = "GEAR";
         body = "Each piece of Gear's unique. Check those <b>" + ColorToRichText("buttons", keyColor) + "</b> in the bottom left to get to know your arsenal." + '\n';
@@ -412,7 +412,7 @@ public class TutorialSequence : MonoBehaviour {
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
-        tooltip.contentField.GetComponent<RectTransform>().sizeDelta = new Vector2(400, tooltip.contentField.GetComponent<RectTransform>().sizeDelta.y);
+        tooltip.contentField.GetComponent<RectTransform>().sizeDelta = new Vector2(x, tooltip.contentField.GetComponent<RectTransform>().sizeDelta.y);
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
 
@@ -448,7 +448,7 @@ public class TutorialSequence : MonoBehaviour {
         body = "Playtime's over, squish. Time for the real deal. <b>" + ColorToRichText("Dig. Make mess", keyColor) + "</b>.";
         tooltip.SetText(body, header, true);
         sequenceEnd = true;
-        
+
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1 / Util.fps);
         }

@@ -8,7 +8,7 @@ using UnityEngine;
 public class ShieldData : SlagEquipmentData {
 
     [SerializeField] GameObject shieldPrefab;
-    List<Shield> activeShields = new();
+    public List<Shield> activeShields = new();
 
     public override void EquipEquipment(Unit user) {
         base.EquipEquipment(user);
@@ -86,7 +86,15 @@ public class ShieldData : SlagEquipmentData {
                 slag.elementCanvas.InstantiateMaxPips();
                 //slag.ui.overview.hPPips.UpdatePips();
                 slag.StartCoroutine(slag.TakeDamage(-1, GridElement.DamageType.Heal));
+                foreach(Shield shield in activeShields)
+                    shield.buoyant = true;
+            } else if (upgrades[targetPath] == 2) {
+                foreach(Shield shield in activeShields)
+                    shield.healing = true;
             }
+        } else if (targetPath == UpgradePath.Scab && upgrades[targetPath] == 2) {
+            foreach(Shield shield in activeShields)
+                    shield.thorns = true;
         }
     }
 }

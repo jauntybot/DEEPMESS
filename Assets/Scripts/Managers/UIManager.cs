@@ -94,8 +94,8 @@ public class UIManager : MonoBehaviour {
     }
 
     public void LockHUDButtons(bool state) {
-        LockPeekButton(state);
         endTurnButton.interactable = !state;
+        LockPeekButton(state);
         undoButton.interactable = state ? false : scenario.player.undoOrder.Count > 0;
         turnOrder.EnableHover(!state);
     }
