@@ -43,9 +43,15 @@ public class FloorSequence : ScriptableObject {
             if (localPackets[i].packetType == currentThreshold) options.Add(localPackets[i]);
 
         List<FloorPacket> rnd = new();
+        bool hazard = false;
         for (int c = 0; c < count; c++) {
             int index = Random.Range(0, options.Count-1);
-            rnd.Add(options[index]);
+            if (options[index].packetMods.Count > 0 && !hazard) {
+                rnd.Add(options[index]);
+                hazard = true;
+                
+            } else rnd.Add(options[index]);
+            
             options.RemoveAt(index);
         }
 
