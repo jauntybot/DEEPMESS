@@ -26,24 +26,14 @@ namespace Relics {
                     }
                 break;
                 case RelicType.IronDeficiency:
-                    bool a = false, b = false, c = false, d = false;
-                    if (evt.element is Unit u3) {
-                        a = true;
-                        if (u3.shield) b = true;
-                        if (evt.damageType is GridElement.DamageType.Fall) c = true;
-                        if (evt.source is Wall) d = true;
-                    }
-                    Debug.Log(a + ", " + b + ", " + c + ", " + d);
-
                     if (evt.element is Unit u2 && !u2.shield && evt.damageType is GridElement.DamageType.Fall && evt.source is Wall) {
-                        Debug.Log("apply condition");
                         u2.ApplyCondition(Unit.Status.Stunned);
                     }
                 break;
                 case RelicType.SpringedNeck:
                     if (evt.sourceEquip is HammerData && 
                     evt.element is EnemyUnit && evt.element is not EnemyStaticUnit && evt.element is not BossUnit)
-                        evt.element.StartCoroutine(PushUnit(evt.element, (evt.element.coord - evt.source.coord).normalized));
+                        evt.source.StartCoroutine(PushUnit(evt.element, (evt.element.coord - evt.source.coord).normalized));
                 break;
             }
         }
