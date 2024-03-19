@@ -5,12 +5,13 @@ using UnityEngine;
 public class Shield : MonoBehaviour {
 
     [HideInInspector] public Unit unit;
-    [HideInInspector] public ShieldData data;
+    public ShieldData data;
     public SpriteRenderer gfx;
     Animator anim;
     public bool buoyant, thorns, healing;
 
-    public void Init(Unit target, ShieldData data) {
+    public void Init(Unit target, Unit user) {
+        data = (ShieldData)user.equipment[1];
         anim = gfx.GetComponent<Animator>();
         unit = target;
 // UNIT TIER I - Prevents liquid tile effects
@@ -21,7 +22,7 @@ public class Shield : MonoBehaviour {
         thorns = data.upgrades[SlagEquipmentData.UpgradePath.Scab] >= 2;
 
         
-        gfx.sortingOrder = unit.grid.SortOrderFromCoord(unit.coord);
+        gfx.sortingOrder = unit.grid.SortOrderFromCoord(unit.coord)+1;
     }
 
     public void DestroySelf(GridElement source = null) {

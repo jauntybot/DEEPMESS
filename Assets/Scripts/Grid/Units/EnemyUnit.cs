@@ -132,7 +132,7 @@ public class EnemyUnit : Unit {
 // Old logic
                 closestUnit = null;
                 foreach (Unit unit in manager.scenario.player.units) {
-                    if (grid.gridElements.Contains(unit) && !unit.conditions.Contains(Status.Disabled) && equipment[1].targetTypes.Find(t => t.GetType() == unit.GetType())) {
+                    if (grid.gridElements.Contains(unit) && unit.hpCurrent != 0 && !unit.conditions.Contains(Status.Disabled) && equipment[1].targetTypes.Find(t => t.GetType() == unit.GetType())) {
                         if (closestUnit == null || Vector2.Distance(unit.coord, coord) < Vector2.Distance(closestUnit.coord, coord))
                             closestUnit = unit;
                     }
