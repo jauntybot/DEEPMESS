@@ -153,8 +153,8 @@ public class PathManager : MonoBehaviour {
         t = 0; while (t <= .25f) { t += Time.deltaTime; yield return null; }
         
         videoPlayer.clip = nodeClips[clipIndex];
-        videoPlayer.frame = 0;
         videoPlayer.gameObject.SetActive(true);
+        videoPlayer.frame = 0;
         audioSource.PlayOneShot(nodeAudio[clipIndex]);
         clipIndex++;
         t = 0; while (t < 0.5f) { 
