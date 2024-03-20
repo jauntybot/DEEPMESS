@@ -51,7 +51,6 @@ public class EnemyUnit : Unit {
        
         grid.DisableGridHighlight();
         manager.unitActing = false;
-        Debug.Log("Unit action done");
     }
 
     protected virtual IEnumerator MoveScan() {

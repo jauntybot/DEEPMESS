@@ -98,6 +98,7 @@ public class PathManager : MonoBehaviour {
         
         LayoutRebuilder.ForceRebuildLayoutImmediate(pathCardContainer.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
+        yield return null;
         layout.enabled = false;
         t = 0; while (t < 0.2f) { t += Time.deltaTime; yield return null; }
         
