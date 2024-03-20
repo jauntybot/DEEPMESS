@@ -191,7 +191,8 @@ public class FloorManager : MonoBehaviour {
             if (toFloor) {
                 toFloor.transform.localScale = Vector3.Lerp(toFromScale, Vector3.one, timer/transitionDur);
 // Fade in destination floor if present
-                toFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = Mathf.Lerp(0, 1, timer/transitionDur);
+                if (!down)
+                    toFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = Mathf.Lerp(0, 1, timer/transitionDur);
             }
             
 // Fade previewed GridElements like player units
