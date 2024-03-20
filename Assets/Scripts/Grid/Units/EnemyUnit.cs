@@ -27,7 +27,7 @@ public class EnemyUnit : Unit {
             }
         } else {
             moved = true;
-            energyCurrent = 0;
+            //energyCurrent = 0;
             yield return new WaitForSecondsRealtime(0.25f);
         }
 
@@ -43,7 +43,7 @@ public class EnemyUnit : Unit {
             }
         } else {
             moved = true;
-            energyCurrent = 0;
+            //energyCurrent = 0;
             yield return new WaitForSecondsRealtime(0.125f);
             RemoveCondition(Status.Stunned);
             yield return new WaitForSecondsRealtime(0.25f);

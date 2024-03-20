@@ -69,15 +69,6 @@ public class EnemyManager : UnitManager {
         return u;
     }
 
-    public virtual void DescentTriggerCheck(GridElement ge = null) {
-        if (scenario.currentEnemy == this && scenario.currentTurn != ScenarioManager.Turn.Descent) {
-            if (units.Count <= 0) {
-                StopActingUnit();
-                floorManager.Descend(false, false);
-            }
-        }
-    }
-
     public virtual IEnumerator TakeTurn(bool scatter) {
 // Reset manager and units for turn
         foreach(Unit u in units) {
@@ -131,7 +122,7 @@ public class EnemyManager : UnitManager {
         
         Unit lastUnit = null;
         if (units.Count > 0) lastUnit = units[0];
-        if (!lastUnit || lastUnit is not BossUnit || (lastUnit is BossUnit && lastUnit.energyCurrent != 0)) {
+        if (!lastUnit || (lastUnit is BossUnit && lastUnit.energyCurrent != 0)) {
             if (AddToReinforcements()) {
                 yield return StartCoroutine(SpawnReinforcements());
                 yield return new WaitForSecondsRealtime(1.5f);
