@@ -58,7 +58,9 @@ public class ShieldData : SlagEquipmentData {
         } 
 // Instantiate new shield obj
         Shield shield = Instantiate(shieldPrefab, target.transform).GetComponent<Shield>();
-        shield.Init((Unit)target, (Unit)user);
+        if (target is Unit unit && user is Unit pony)
+            shield.Init(unit, pony);
+
         activeShields.Add(shield);
         target.ApplyShield(shield);
     }
