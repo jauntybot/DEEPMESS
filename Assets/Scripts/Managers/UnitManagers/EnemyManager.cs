@@ -122,7 +122,7 @@ public class EnemyManager : UnitManager {
         
         Unit lastUnit = null;
         if (units.Count > 0) lastUnit = units[0];
-        if (!lastUnit || (lastUnit is BossUnit && lastUnit.energyCurrent != 0)) {
+        if (!lastUnit || !(lastUnit is BossUnit && lastUnit.energyCurrent == 0)) {
             if (AddToReinforcements()) {
                 yield return StartCoroutine(SpawnReinforcements());
                 yield return new WaitForSecondsRealtime(1.5f);
