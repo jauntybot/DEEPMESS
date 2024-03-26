@@ -247,7 +247,7 @@ public class PlayerManager : UnitManager {
                         StartCoroutine(selectedUnit.ExecuteAction(u));
                     } else if (selectedUnit.selectedEquipment == null || selectedUnit.selectedEquipment is MoveData)
                         SelectUnit(u); 
-                } else 
+                } else if (!overrideEquipment)
                     SelectUnit(u);
                 
             }

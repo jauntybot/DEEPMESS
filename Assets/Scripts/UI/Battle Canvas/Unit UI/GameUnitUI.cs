@@ -160,7 +160,7 @@ public class GameUnitUI : UnitUI {
         //unit.ui.UpdateEquipmentButtons();
     }
 
-
+// BIG YIKES -- UI element is controling how Slags loadout is updated, move to PlayerUnit
     public void UpdateLoadout(EquipmentData equip) {
 // Remove old equipment unless the same
         if (equip is SlagEquipmentData) {
@@ -172,7 +172,7 @@ public class GameUnitUI : UnitUI {
             }
         } 
 // Add new equipment to unit
-        unit.equipment.Insert(1, equip);
+        unit.equipment.Insert(2, equip);
         PlayerUnit pu = (PlayerUnit)unit;
 
         UpdateEquipmentButtons(); 
