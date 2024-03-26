@@ -160,7 +160,7 @@ public class Unit : GridElement {
         if (!destroyed) {
             TargetElement(true);
 
-            int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg * 2 : dmg;
+            int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg + 1 : dmg;
             yield return base.TakeDamage(modifiedDmg, dmgType, source, sourceEquip);
 
             TargetElement(targeted);
@@ -168,22 +168,23 @@ public class Unit : GridElement {
     }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        if (!destroyed) {
-            ElementDestroyed?.Invoke(this);
-            ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
-            
-            PlaySound(destroyedSFX);
-            float timer = 0f;
-            while (timer < 0.5f) {
-                yield return null;
-                timer += Time.deltaTime;
-            }
+        if (!destroyed) 
+            destroyed = true;
 
-            if (manager.selectedUnit == this) manager.DeselectUnit();
-
-            if (gameObject != null)
-                Destroy(gameObject);
+        ElementDestroyed?.Invoke(this);
+        ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
+        
+        PlaySound(destroyedSFX);
+        float timer = 0f;
+        while (timer < 0.5f) {
+            yield return null;
+            timer += Time.deltaTime;
         }
+
+        if (manager.selectedUnit == this) manager.DeselectUnit();
+
+        if (gameObject != null)
+            Destroy(gameObject);
     }
 
 #endregion

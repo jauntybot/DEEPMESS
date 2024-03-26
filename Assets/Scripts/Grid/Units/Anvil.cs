@@ -52,12 +52,14 @@ public class Anvil : Unit {
     }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        if (!destroyed) {
+        if (!destroyed) 
+            destroyed = true;
+        
 // POWER TIER I - Detonate anvil
-            if (data && !(data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 0 || dmgType == DamageType.Unspecified))
-                yield return Detonate(data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 2 ? 2 : 1);
-            yield return base.DestroySequence(dmgType, source, sourceEquip);
-       }
+        if (data && !(data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 0 || dmgType == DamageType.Unspecified))
+            yield return Detonate(data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 2 ? 2 : 1);
+        yield return base.DestroySequence(dmgType, source, sourceEquip);
+       
     }
 
     public virtual IEnumerator Detonate(int dmg) {

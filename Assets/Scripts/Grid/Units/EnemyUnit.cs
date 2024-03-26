@@ -169,26 +169,25 @@ public class EnemyUnit : Unit {
     }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        if (!destroyed) {
-            switch(dmgType) {
-                case DamageType.Unspecified:
-                    gfxAnim.SetTrigger("Split");
-                break;
-                case DamageType.Bile:
-                    gfxAnim.SetTrigger("Melt");
-                break;
-                case DamageType.Crush:
-                    gfxAnim.SetTrigger("Crush");
-                break;
-                case DamageType.Melee:
-                    gfxAnim.SetTrigger("Split");
-                break;
-            }
-            
-            Splatter(Vector2.zero);
-
-            yield return base.DestroySequence(dmgType, source, sourceEquip);
+        switch(dmgType) {
+            case DamageType.Unspecified:
+                gfxAnim.SetTrigger("Split");
+            break;
+            case DamageType.Bile:
+                gfxAnim.SetTrigger("Melt");
+            break;
+            case DamageType.Crush:
+                gfxAnim.SetTrigger("Crush");
+            break;
+            case DamageType.Melee:
+                gfxAnim.SetTrigger("Split");
+            break;
         }
+        
+        Splatter(Vector2.zero);
+
+        yield return base.DestroySequence(dmgType, source, sourceEquip);
+        
     }
 
     public override IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0) {
