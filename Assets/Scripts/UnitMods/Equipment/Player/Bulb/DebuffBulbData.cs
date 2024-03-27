@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 
@@ -12,7 +13,8 @@ public class DebuffBulbData : BulbEquipmentData
 
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
-        return base.TargetEquipment(user, mod);
+        PlayerUnit pu = (PlayerUnit)user;
+        return base.TargetEquipment(user, pu.bulbMod);
 
     }
 
