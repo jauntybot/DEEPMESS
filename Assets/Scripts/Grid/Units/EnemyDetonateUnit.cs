@@ -38,7 +38,7 @@ public class EnemyDetonateUnit : EnemyUnit {
             GameObject g = Instantiate(explosionVFX, grid.PosFromCoord(c), Quaternion.identity);
             g.GetComponentInChildren<SpriteRenderer>().sortingOrder = grid.SortOrderFromCoord(c);
         }
-
+        t = 0; while (t <= 0.5f) { t += Time.deltaTime; yield return null; }
     }
 
     public override IEnumerator ScatterTurn() {
@@ -98,7 +98,7 @@ public class EnemyDetonateUnit : EnemyUnit {
             
             ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
             yield return StartCoroutine(ExplodeCo());
-            //yield return base.DestroySequence(dmgType, source, sourceEquip);
+            yield return base.DestroySequence(dmgType, source, sourceEquip);
         } else 
             yield return base.DestroySequence(dmgType, source, sourceEquip);
         
