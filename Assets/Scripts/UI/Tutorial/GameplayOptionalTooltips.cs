@@ -138,7 +138,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
         screenFade.gameObject.SetActive(true);
 
         header = "BIG THREAT";
-        body = "That's the toughest nut yet. It's a ground-shaker, <b>" + ColorToRichText("causing everything to crash below", keyColor) + "</b>. Careful, squish. This one means business." + '\n';
+        body = "That's the toughest nut yet. It's a ground-shaker, <b>" + ColorToRichText("its attacks cause descents", keyColor) + "</b>. Careful, squish. This one means business." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {

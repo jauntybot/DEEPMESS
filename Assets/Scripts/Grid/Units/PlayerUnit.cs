@@ -151,33 +151,34 @@ public class PlayerUnit : Unit {
 
 // Override destroy so that player units are disabled instead
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        if (!destroyed) {
-            PlaySound(destroyedSFX);
+        if (!destroyed) 
+            destroyed = true;
 
-            bool droppedHammer = false;
-            for (int i = equipment.Count - 1; i >= 0; i--) {
-                if (equipment[i] is HammerData hammer) {
-                    if (!droppedHammer) {
-                        List<Unit> possiblePasses = new();
-                        foreach (Unit u in pManager.units) {
-                            if (u is PlayerUnit && !u.conditions.Contains(Status.Disabled) && u != this)
-                                possiblePasses.Add(u);
-                        }
-                        if (possiblePasses.Count > 0) {                
-                            StartCoroutine(hammer.LaunchHammer(this, null, possiblePasses[Random.Range(0, possiblePasses.Count)]));   
-                            droppedHammer = true;
-                        }
+        PlaySound(destroyedSFX);
+
+        bool droppedHammer = false;
+        for (int i = equipment.Count - 1; i >= 0; i--) {
+            if (equipment[i] is HammerData hammer) {
+                if (!droppedHammer) {
+                    List<Unit> possiblePasses = new();
+                    foreach (Unit u in pManager.units) {
+                        if (u is PlayerUnit && !u.conditions.Contains(Status.Disabled) && u != this)
+                            possiblePasses.Add(u);
+                    }
+                    if (possiblePasses.Count > 0) {                
+                        StartCoroutine(hammer.LaunchHammer(this, null, possiblePasses[Random.Range(0, possiblePasses.Count)]));   
+                        droppedHammer = true;
                     }
                 }
             }
-            yield return null;
-
-            ElementDisabled?.Invoke(this);
-            ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));
-            
-            SwitchAnim(AnimState.Disabled);
-            ApplyCondition(Status.Disabled);
         }
+        yield return null;
+
+        ElementDisabled?.Invoke(this);
+        ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));
+        
+        SwitchAnim(AnimState.Disabled);
+        ApplyCondition(Status.Disabled);
     }
 
     public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {

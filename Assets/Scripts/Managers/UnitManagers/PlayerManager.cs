@@ -241,13 +241,13 @@ public class PlayerManager : UnitManager {
                             SelectUnit(_u);
                         }
                     }
-                } else if (selectedUnit) {
+                } else if (selectedUnit && selectedUnit is PlayerUnit) {
 // Unit is a target of valid action adjacency
                     if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
                         StartCoroutine(selectedUnit.ExecuteAction(u));
                     } else if (selectedUnit.selectedEquipment == null || selectedUnit.selectedEquipment is MoveData)
                         SelectUnit(u); 
-                } else 
+                } else if (!overrideEquipment)
                     SelectUnit(u);
                 
             }
@@ -278,7 +278,7 @@ public class PlayerManager : UnitManager {
                             SelectUnit(_u);
                         }
                     }
-                } else if (selectedUnit) {
+                } else if (selectedUnit && selectedUnit is PlayerUnit) {
 // Square is a target of valid action adjacency
                     if (selectedUnit.ValidCommand(tile.coord, selectedUnit.selectedEquipment)) {
                         currentGrid.DisableGridHighlight();
@@ -288,7 +288,7 @@ public class PlayerManager : UnitManager {
             }            
         }
         else {
-            if (selectedUnit) {
+            if (selectedUnit && selectedUnit is PlayerUnit) {
                 if (selectedUnit.ValidCommand(input.coord, selectedUnit.selectedEquipment)) {
                     currentGrid.DisableGridHighlight();
                     StartCoroutine(selectedUnit.ExecuteAction(input));
@@ -326,23 +326,22 @@ public class PlayerManager : UnitManager {
                             pc.ToggleCursorValid(false);
                             contextuals.UpdateGridCursor(state, pos, true, false);
                         }
-                    }
-                    else {
+                    } else {
                         contextuals.ToggleValid(false);
                         pc.ToggleCursorValid(false);
                         contextuals.UpdateGridCursor(state, pos, true, false);
                     }
                 }
             }
-        }
 // No unit selected
-        else if (scenario.currentTurn == ScenarioManager.Turn.Player) {
+        } else if (scenario.currentTurn == ScenarioManager.Turn.Player || scenario.currentTurn == ScenarioManager.Turn.Cascade) {
             bool hovering = false;
             foreach (GridElement ge in floorManager.currentFloor.CoordContents(pos)) {
                 if (ge is Unit u) {
                     hovering = true;
+                    if (u.selectable)
+                        pc.ToggleCursorValid(true);
                     if (u == prevCursorTarget) break;
-                    pc.ToggleCursorValid(true);
                     
                     hoveredUnit = u;
                     if (!prevCursorTarget) prevCursorTarget = u;

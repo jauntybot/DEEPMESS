@@ -51,9 +51,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   floorManager: {fileID: 0}
-  objectiveManager: {fileID: 0}
   uiManager: {fileID: 0}
   gpOptional: {fileID: 0}
+  relicManager: {fileID: 0}
   pathManager: {fileID: 0}
   startCavity: 0
   currentEnemy: {fileID: 0}
@@ -63,6 +63,7 @@ MonoBehaviour:
   scenario: 0
   currentTurn: 0
   prevTurn: 0
+  tackleChance: 0
 --- !u!114 &395662736343092654
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,7 +83,6 @@ MonoBehaviour:
   gridHightlightOverride: 0
   currentFloor: {fileID: 0}
   floors: []
-  bossSpawn: 0
   _gridSize: 8
   _sqrSize: 1.5
   godParticlePrefab: {fileID: 0}
@@ -126,7 +126,6 @@ MonoBehaviour:
   transitioning: 0
   peeking: 0
   descending: 0
-  floorCount: 0
   parallax: {fileID: 0}
   previewManager: {fileID: 395662736360046287}
   cavityTransition: {fileID: 0}
@@ -135,6 +134,7 @@ MonoBehaviour:
   equipmentColor: {r: 0.84313726, g: 0.78431374, b: 0.09803922, a: 0.24705882}
   movePreview: {r: 0.49019608, g: 0.74509805, b: 0.29411766, a: 0.1254902}
   enemyMovePreview: {r: 0.88235295, g: 0.33333334, b: 0.49019608, a: 0.1254902}
+  nailTries: 0
 --- !u!1 &395662736360046273
 GameObject:
   m_ObjectHideFlags: 0
@@ -887,6 +887,10 @@ PrefabInstance:
       propertyPath: peekButton
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2017525369693994961, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
+      propertyPath: shieldAnim
+      value: 
+      objectReference: {fileID: 9100000, guid: f0a139e84cf4b36469baa29f722513d1, type: 2}
     - target: {fileID: 2017525369693994961, guid: 130954a17b71d0348ba81c2b6a161c94, type: 3}
       propertyPath: basophicAnim
       value: 

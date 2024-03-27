@@ -24,104 +24,87 @@ public class TooltipEquipmentTrigger : TooltipTrigger {
         equip = data;
         string name = equip.name;
         switch (name) {
-            case "ANVIL": Anvil(); break;
-            case "IMMOBILIZE": Immobilize(); break;
-            case "BIG WIND": BigWind(); break;
-            case "SHIELD": Shield(); break;
-            case "SWAP": Swap(); break;
-            case "BIG GRAB": BigGrab(); break;
-            case "HAMMER": Hammer(); break;
-            case "THORNS": Thorns(); break;
-            case "HEAL BULB": HealBulb(); break;
-            case "STUN BULB": StunBulb(); break;
-            case "SURGE BULB": SurgeBulb(); break;
-            case "STRIKE+": StrikePlus(); break;
-            case "STRIKE": Strike(); break;
-            case "PIN COUSHIN": PinCoushin(); break;
-            case "AUTO-BOMB": AutoBomb(); break;
-            case "QUAKE": Quake(); break;
+            case "Anvil": Anvil(); break;
+            case "Shield": Shield(); break;
+            case "Big Grab": BigGrab(); break;
+            case "Hammer": Hammer(); break;
+            case "Thorns": Thorns(); break;
+            case "Heal Bulb": HealBulb(); break;
+            case "Stun Bulb": StunBulb(); break;
+            case "Surge Bulb": SurgeBulb(); break;
+            case "Strike+": StrikePlus(); break;
+            case "Strike": Strike(); break;
+            case "Pin Coushin": PinCoushin(); break;
+            case "Auto-Bomb": AutoBomb(); break;
+            case "Quake": Quake(); break;
         }
     }
 
     public void Initialize(string name) {
         switch (name) {
-            case "ANVIL": Anvil(); break;
-            case "IMMOBILIZE": Immobilize(); break;
-            case "BIG WIND": BigWind(); break;
-            case "SHIELD": Shield(); break;
-            case "SWAP": Swap(); break;
-            case "BIG GRAB": BigGrab(); break;
-            case "HAMMER": Hammer(); break;
-            case "THORNS": Thorns(); break;
-            case "HEAL BULB": HealBulb(); break;
-            case "STUN BULB": StunBulb(); break;
-            case "SURGE BULB": SurgeBulb(); break;
-            case "STRIKE+": StrikePlus(); break;
-            case "STRIKE": Strike(); break;
-            case "PIN COUSHIN": PinCoushin(); break;
-            case "AUTO-BOMB": AutoBomb(); break;
-            case "QUAKE": Quake(); break;
+            case "Anvil": Anvil(); break;
+            case "Shield": Shield(); break;
+            case "Big Grab": BigGrab(); break;
+            case "Hammer": Hammer(); break;
+            case "Thorns": Thorns(); break;
+            case "Heal Bulb": HealBulb(); break;
+            case "Stun Bulb": StunBulb(); break;
+            case "Surge Bulb": SurgeBulb(); break;
+            case "Strike+": StrikePlus(); break;
+            case "Strike": Strike(); break;
+            case "Pin Coushin": PinCoushin(); break;
+            case "Auto-Bomb": AutoBomb(); break;
+            case "Quake": Quake(); break;
         }
     }
 
+
+
     void Anvil() {
-        header = "ANVIL";
+        header = "Anvil";
         content = "Drop an anvil and move away. Anvil attracts enemies and descends with units.";
         anim = anvilAnim;
     }
 
-    void Immobilize() {
-        header = "Immobilize";
-        content = "Immobilize an enemy unit for the duration of the current floor.";
-    }
-
-    void BigWind() {
-        header = "BIG WIND";
-        content = "Push all enemies 1 tile in chosen cardinal direction.";
-    }
 
     void Shield() {
-        header = "SHIELD";
-        content = " Shield any player unit, protecting it from damage once.";
+        header = "Shield";
+        content = "Shield a Slag, protects from 1 attack.";
         anim = shieldAnim;
     }
 
-    void Swap() {
-        header = "SWAP";
-        content = "Switch positions with any other unit.";
-    }
 
     void BigGrab() {
-        header = "BIG GRAB";
+        header = "Big Grab";
         content = "Grab and throw an enemy, stunning it for 1 turn.";
         anim = bigGrabAnim;
     }
 
     void Hammer() {
-        header = "HAMMER";
+        header = "Hammer";
         content = "Throw in a straight line, then arc a ricochet to any Slag.";
         anim = hammerAnim;
     }
 
     void Thorns() {
-        header = "THORNS";
+        header = "Thorns";
         content = "Deals 1 damage to attacking enemies.";
         anim = thornsAnim;
     }
 
     void HealBulb() {
-        header = "HEAL BULB";
+        header = "Heal Bulb";
         content = "Restores 2HP.";
         anim = bulbAnim;
     }
 
     void StunBulb() {
-        header = "STUN BULB";
+        header = "Stun Bulb";
         content = "Explodes in area of effect, stunning anything inside.";
         anim = bulbAnim;
     }
     void SurgeBulb() {
-        header = "SURGE BULB";
+        header = "Surge Bulb";
         content = "Refreshes Slag action and move.";
         anim = bulbAnim;
     }
@@ -129,33 +112,32 @@ public class TooltipEquipmentTrigger : TooltipTrigger {
 // ENEMY EQUIPMENT
     
     void Strike() {
-        header = "STRIKE";
+        header = "Strike";
         content = "Attacks adjacent target for 1 damage.";
         anim = strikeAnim;
     }
 
     void StrikePlus() {
-        header = "STRIKE+";
+        header = "Strike+";
         content = "Attacks adjacent target for 2 damage.";
         anim = strikeAnim;
     }
 
     void AutoBomb() {
-        header = "AUTO-BOMB";
-        content = "Takes one turn to prime. Does not move once primed, explodes on next turn or death. Explodes all surrounding tiles for 2 damage.";
+        header = "Auto-Bomb";
+        content = "Takes 1 turn to prime. Explodes next turn or on death when primed. All surrounding tiles take 1 damage.";
         anim = autoBombAnim;
     }
 
     void PinCoushin() {
-        header = "PIN COUSHIN";
+        header = "Pin Coushin";
         content = "Shoots pins in 4 directions for 1 damage. Cannot be moved.";
         anim = pinCoushinAnim;
     }
 
     void Quake() {
-        header = "QUAKE";
+        header = "Quake";
         content = "Attacks all surrounding tiles for 1 damage causing a cascade.";
         anim = quakeAnim;
     }
-
 }

@@ -9,6 +9,7 @@ public class EnemyManager : UnitManager {
     [SerializeField] Unit defaultUnit;
     public List<Unit> unitsToAct = new();
     [SerializeField] List<GridElement> pendingUnits = new();
+    [SerializeField] Transform spawnParent;
     public List<GameObject> pendingPreviews = new();
     protected Coroutine actingUnitCo;
 
@@ -122,7 +123,7 @@ public class EnemyManager : UnitManager {
         
         Unit lastUnit = null;
         if (units.Count > 0) lastUnit = units[0];
-        if (!lastUnit || (lastUnit is BossUnit && lastUnit.energyCurrent != 0)) {
+        if (!lastUnit || !(lastUnit is BossUnit && lastUnit.energyCurrent == 0)) {
             if (AddToReinforcements()) {
                 yield return StartCoroutine(SpawnReinforcements());
                 yield return new WaitForSecondsRealtime(1.5f);
@@ -180,6 +181,7 @@ public class EnemyManager : UnitManager {
             units[i].transform.parent = newGrid.enemy.unitParent.transform;
             units[i].StoreInGrid(newGrid);
             units[i].UpdateElement(units[i].coord);
+
             units.RemoveAt(i);
         }
 
@@ -217,7 +219,7 @@ public class EnemyManager : UnitManager {
         yield return null;
         pendingPreviews = new List<GameObject>();
         foreach (Unit u in pendingUnits) {
-            GameObject obj = Instantiate(reinforcementPrefab, unitParent.transform);
+            GameObject obj = Instantiate(reinforcementPrefab, spawnParent.transform);
             pendingPreviews.Add(obj);
             int sort = currentGrid.SortOrderFromCoord(u.coord);
             obj.transform.position = currentGrid.PosFromCoord(u.coord);

@@ -46,6 +46,7 @@ public class GridElement : MonoBehaviour {
         audioSource = GetComponent<AudioSource>();
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
+        //coord = new Vector2(-32, -32);
 
         hpCurrent = hpMax;
         energyCurrent = energyMax;
@@ -112,7 +113,8 @@ public class GridElement : MonoBehaviour {
             
             ElementDamaged?.Invoke(this);
             TargetElement(false);
-            if (hpCurrent <= 0) {
+            if (hpCurrent <= 0 && !destroyed) {
+                destroyed = true;
                 yield return StartCoroutine(DestroySequence(dmgType, source, sourceEquip));
             }
         }
@@ -129,24 +131,24 @@ public class GridElement : MonoBehaviour {
     }
 
     public virtual IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        if (!destroyed) {
+        if (!destroyed) 
             destroyed = true;
-            ElementDestroyed?.Invoke(this);
-            ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
+        ElementDestroyed?.Invoke(this);
+        ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
 
-            PlaySound(destroyedSFX);
+        PlaySound(destroyedSFX);
+        
+        if (elementCanvas)
+            elementCanvas.ToggleStatsDisplay(false);
+        yield return new WaitForSecondsRealtime(.5f);
+
+        foreach (SpriteRenderer sr in gfx) 
+            sr.enabled = false;
             
-            if (elementCanvas)
-                elementCanvas.ToggleStatsDisplay(false);
-            yield return new WaitForSecondsRealtime(.5f);
-
-            foreach (SpriteRenderer sr in gfx) 
-                sr.enabled = false;
-                
-            enabled = false;
-            if (gameObject != null)
-                Destroy(gameObject);
-        }
+        enabled = false;
+        if (gameObject != null)
+            Destroy(gameObject);
+        
     }
 
     protected virtual GridElementDestroyedEvent GenerateDestroyEvent(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {

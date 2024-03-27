@@ -53,6 +53,8 @@ public class Tooltip : MonoBehaviour
         
         transform.GetChild(0).gameObject.SetActive(true);
 
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
         StartCoroutine(Rebuild());
 
         //limit text width
@@ -84,7 +86,7 @@ public class Tooltip : MonoBehaviour
 
                     Vector2 localAnchor = Vector2.zero;
                     Vector2 sign;
-                    if (position.x < Screen.width/2) {
+                    if (position.x < Screen.width * 4/5) {
                         localAnchor.x = 0;
                         sign.x = 1;
                     } else {
@@ -92,17 +94,23 @@ public class Tooltip : MonoBehaviour
                         sign.x = -1;
                     }
                     
-                    if (position.y < Screen.height/2) {
+                    if (position.y < Screen.height * 4/5) {
                         localAnchor.y = 0;
-                        sign.y = -1;
+                        sign.y = 1;
                     } else {
                         localAnchor.y = 1;
-                        sign.y = 1;
+                        sign.y = -1;
                     }
 
                     rectTransform.anchorMax = localAnchor; rectTransform.anchorMin = localAnchor; rectTransform.pivot = localAnchor;
                     
-                    rectTransform.position = new Vector2(position.x + 15 * sign.x, position.y + 15 * sign.y);
+                    Vector3 pos = new Vector2(position.x + 20 * sign.x, position.y);
+                    if (sign.y == -1) {
+                        if (sign.x == -1) pos.x += 20; 
+                        else pos.x += 40;
+                        pos.y -= 20;
+                    }
+                    rectTransform.position = pos;
                 break;
             }
         }

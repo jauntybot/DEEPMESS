@@ -11,7 +11,8 @@ public class Shield : MonoBehaviour {
     public bool buoyant, thorns, healing;
 
     public void Init(Unit target, Unit user) {
-        data = (ShieldData)user.equipment[1];
+        if (user.equipment[1] is ShieldData s)
+            data = s;
         anim = gfx.GetComponent<Animator>();
         unit = target;
 // UNIT TIER I - Prevents liquid tile effects
