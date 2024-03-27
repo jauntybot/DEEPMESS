@@ -21,6 +21,8 @@ public class DescentPreview : MonoBehaviour {
         if (u is EnemyUnit) {
             if (u is EnemyStaticUnit)
                 portraitSR.transform.localPosition = new Vector3(0.05f, -0.93f ,0);
+            else if (u is BossUnit)
+                portraitSR.transform.localPosition = new Vector3(0.028f, -0.08f ,0);
             else
                 portraitSR.transform.localPosition = new Vector3(-0.031f, -1,0);
 

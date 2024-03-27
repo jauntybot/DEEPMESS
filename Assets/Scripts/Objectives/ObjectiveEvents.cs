@@ -41,6 +41,7 @@ public class OnEquipmentUse : ObjectiveEvent {
 public class UnitConditionEvent : ObjectiveEvent {
     public Unit target;
     public Unit.Status condition = Unit.Status.Normal;
+    public bool apply = true;
     public bool undo = false;
 
 }

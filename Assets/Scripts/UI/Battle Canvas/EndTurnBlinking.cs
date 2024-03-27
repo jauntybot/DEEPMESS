@@ -11,7 +11,7 @@ public class EndTurnBlinking : MonoBehaviour
 
     private bool outOfEnergy;
 
-    private bool blinking = false;
+    [SerializeField] private bool blinking = false;
 
     // Start is called before the first frame update
     void Start()

@@ -304,6 +304,7 @@ public class Unit : GridElement {
         UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
         evt.undo = true;
         evt.condition = s;
+        evt.apply = false;
         evt.target = this;
         ObjectiveEventManager.Broadcast(evt);
 

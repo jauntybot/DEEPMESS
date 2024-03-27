@@ -22,7 +22,8 @@ public class MoveData : EquipmentData {
         for (int i = validCoords.Count - 1; i >= 0; i--) {
             if (user.grid.tiles.Find(sqr => sqr.coord == validCoords[i]).tileType == Tile.TileType.Bile &&
 // SHIELD UNIT TIER I - Bile buoyancy
-            !(user.shield && user.shield.buoyant))
+            !(user.shield && user.shield.buoyant)
+            && user is not BossUnit)
                 validCoords.RemoveAt(i);
         }
         user.grid.DisplayValidCoords(validCoords, gridColor);

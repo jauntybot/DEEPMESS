@@ -139,7 +139,7 @@ public class ScenarioManager : MonoBehaviour
             
         }
         yield return StartCoroutine(floorManager.ChooseLandingPositions());
-        yield return new WaitForSecondsRealtime(1.25f);
+        yield return new WaitForSecondsRealtime(.5f);
     }
 
 #endregion
