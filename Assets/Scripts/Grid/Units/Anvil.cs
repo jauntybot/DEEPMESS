@@ -52,9 +52,6 @@ public class Anvil : Unit {
     }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        if (!destroyed) 
-            destroyed = true;
-        
 // POWER TIER I - Detonate anvil
         if (data && !(data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 0 || dmgType == DamageType.Unspecified))
             yield return Detonate(data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 2 ? 2 : 1);
