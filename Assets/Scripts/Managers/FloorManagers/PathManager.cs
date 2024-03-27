@@ -154,8 +154,8 @@ public class PathManager : MonoBehaviour {
         t = 0; while (t <= .25f) { t += Time.deltaTime; yield return null; }
         
         videoPlayer.clip = nodeClips[clipIndex];
-        videoPlayer.gameObject.SetActive(true);
         videoPlayer.frame = 0;
+        videoPlayer.gameObject.SetActive(true);
         audioSource.PlayOneShot(nodeAudio[clipIndex]);
         clipIndex++;
         RawImage vp = videoPlayer.GetComponent<RawImage>();

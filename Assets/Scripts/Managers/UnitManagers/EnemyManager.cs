@@ -180,6 +180,7 @@ public class EnemyManager : UnitManager {
 
             units[i].transform.parent = newGrid.enemy.unitParent.transform;
             units[i].StoreInGrid(newGrid);
+            units[i].UpdateElement(units[i].coord);
 
             units.RemoveAt(i);
         }

@@ -99,12 +99,13 @@ public class Unit : GridElement {
     }
 
     public override void UpdateElement(Vector2 c) {
+        Vector2 prevCoord = coord;
         base.UpdateElement(c);
         if (manager.scenario.currentTurn != ScenarioManager.Turn.Cascade) {
             Tile targetSqr = grid.tiles.Find(sqr => sqr.coord == c);
             if (targetSqr.tileType == Tile.TileType.Blood) {
-                Debug.Log(name + " playing SFX on " + targetSqr.gameObject.name);
-                targetSqr.PlaySound(targetSqr.dmgdSFX);
+                if (prevCoord != new Vector2(-32, -32) && prevCoord != c)
+                    targetSqr.PlaySound(targetSqr.dmgdSFX);
 // SHIELD UNIT TIER II -- Blood bouyancy
                 if (!conditions.Contains(Status.Disabled) && !(shield && shield.buoyant))
                     ApplyCondition(Status.Restricted);
@@ -129,12 +130,13 @@ public class Unit : GridElement {
 
 // For when a Slag is acting on a Unit to move it, such as BigGrab or any push mechanics
     public virtual void UpdateElement(Vector2 c, GridElement source, EquipmentData sourceEquip = null) {
+        Vector2 prevCoord = coord;
         base.UpdateElement(c);
         if (manager.scenario.currentTurn != ScenarioManager.Turn.Cascade) {
             Tile targetSqr = grid.tiles.Find(sqr => sqr.coord == c);
             if (targetSqr.tileType == Tile.TileType.Blood) {
-                Debug.Log(name + " playing SFX on " + targetSqr.name);
-                targetSqr.PlaySound(targetSqr.dmgdSFX);
+                if (prevCoord != new Vector2(-32, -32) && prevCoord != c)
+                    targetSqr.PlaySound(targetSqr.dmgdSFX);
 // SHIELD UNIT TIER II -- Blood bouyancy
                 if (!conditions.Contains(Status.Disabled) && !(shield && shield.buoyant))
                     ApplyCondition(Status.Restricted);
@@ -316,6 +318,7 @@ public class Unit : GridElement {
                         ui.UpdateEquipmentButtons();
                 break;
                 case Status.Disabled:
+                    destroyed = false;
                     hpCurrent = 0;
                     StartCoroutine(TakeDamage(-manager.reviveTo));
                     if (manager.reviveTo == 1) {

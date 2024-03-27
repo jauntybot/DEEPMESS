@@ -175,6 +175,8 @@ public static class EquipmentAdjacency {
                     if (!_toFrom.ContainsKey(coord)) {
 // If there is something already occupying this coord                        
                         bool occupied = false;
+                        Tile tile = FloorManager.instance.currentFloor.tiles.Find(t => t.coord == coord);
+                        if (data.filters.Find(f => f is Tile t && t.tileType == Tile.TileType.Bile) && tile.tileType == Tile.TileType.Bile) continue;
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered

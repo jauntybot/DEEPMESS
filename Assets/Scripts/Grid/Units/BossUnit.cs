@@ -7,10 +7,8 @@ public class BossUnit : EnemyUnit {
     [SerializeField] Unit prevTarget = null;
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        if (!destroyed) {
-            manager.StartCoroutine(manager.scenario.FinalDrop());
-            yield return base.DestroySequence(dmgType, source, sourceEquip);
-        }
+        manager.StartCoroutine(manager.scenario.FinalDrop());
+        yield return base.DestroySequence(dmgType, source, sourceEquip);
     }
 
     public override bool ValidCommand(Vector2 target, EquipmentData equip) {

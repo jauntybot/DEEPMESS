@@ -174,11 +174,15 @@ public class GridContextuals : MonoBehaviour {
                 case ContextDisplay.Stepped:
                     Dictionary<Vector2, Vector2> fromTo = EquipmentAdjacency.SteppedCoordAdjacency(fromCoord, to, from.selectedEquipment);
                     Vector2 prev = fromCoord;
-                    lr.positionCount = lrI + (fromTo.Count + 1) * 3;
-                    for (int i = 1; i <= fromTo.Count; i++) {
-                        Vector3 linePos = floorManager.currentFloor.PosFromCoord(fromTo[prev]);
-                        lr.SetPosition(lrI + 3*i, linePos); lr.SetPosition(lrI + 3*i + 1, linePos); lr.SetPosition(lrI + 3*i + 2, linePos);
-                        prev = fromTo[prev];
+                    if (fromTo.Count > 0) {
+                        lr.positionCount = lrI + (fromTo.Count + 1) * 3;
+                        for (int i = 1; i <= fromTo.Count; i++) {
+                            Vector3 linePos = floorManager.currentFloor.PosFromCoord(fromTo[prev]);
+                            lr.SetPosition(lrI + 3*i, linePos); lr.SetPosition(lrI + 3*i + 1, linePos); lr.SetPosition(lrI + 3*i + 2, linePos);
+                            prev = fromTo[prev];
+                        }
+                    } else {
+                        lr.positionCount = 0;
                     }
                 
                 break;

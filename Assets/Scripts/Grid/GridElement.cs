@@ -46,6 +46,7 @@ public class GridElement : MonoBehaviour {
         audioSource = GetComponent<AudioSource>();
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
+        //coord = new Vector2(-32, -32);
 
         hpCurrent = hpMax;
         energyCurrent = energyMax;
