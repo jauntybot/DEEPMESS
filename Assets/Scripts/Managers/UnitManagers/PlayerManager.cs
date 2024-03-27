@@ -519,7 +519,7 @@ public class PlayerManager : UnitManager {
                 UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
                 evt.condition = Unit.Status.Restricted;
                 evt.target = lastMoved;
-                evt.undo = true;
+                evt.undo = false;
                 ObjectiveEventManager.Broadcast(evt);
             }
 

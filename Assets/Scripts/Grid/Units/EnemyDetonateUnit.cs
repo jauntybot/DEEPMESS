@@ -83,12 +83,18 @@ public class EnemyDetonateUnit : EnemyUnit {
         UpdateAction(equipment[1]);
         grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
         yield return new WaitForSecondsRealtime(0.5f);
-        StartCoroutine(selectedEquipment.UseEquipment(this, null));
+        List<Coroutine> cos = new();
+        cos.Add(StartCoroutine(selectedEquipment.UseEquipment(this, null)));
         grid.UpdateSelectedCursor(false, Vector2.one * -32);
         grid.DisableGridHighlight();
-        Coroutine co = StartCoroutine(TakeDamage(hpCurrent));
+        cos.Add(StartCoroutine(TakeDamage(hpCurrent)));
         manager.DeselectUnit();
-        yield return co;
+        for (int i = cos.Count - 1; i >= 0; i--) {
+            if (cos[i] != null) 
+                yield return cos[i];
+            else
+                cos.RemoveAt(i);
+        }
     }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
