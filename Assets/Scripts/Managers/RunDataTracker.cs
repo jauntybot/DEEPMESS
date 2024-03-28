@@ -35,6 +35,8 @@ public class RunDataTracker : MonoBehaviour {
     // }
 
     public IEnumerator UpdateAndDisplay(bool win, int floors, int enemies, int scrap) {
+        int total = (floors * 10) + (enemies * 5) + scrap;
+        PersistentMenu.instance.upcomingCurrency = total + (win ? 0 : (int)(-total*0.2f));
         panel.SetActive(true);
         if (win) {
             resultsTMP.text = "EXCAVATION COMPLETE";
@@ -98,7 +100,6 @@ public class RunDataTracker : MonoBehaviour {
         }));
         t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
         
-        int total = (floors * 10) + (enemies * 5) + scrap;
         if (!win) {
             cutRow.SetActive(true);
             yield return null;
@@ -120,7 +121,6 @@ public class RunDataTracker : MonoBehaviour {
         yield return StartCoroutine(StringCountUp.CountUp(total + (win ? 0 : (int)(-total*0.2f)), 0.75f, (countUp) => { 
             totalCountUp.text = countUp;
         }));
-        PersistentMenu.instance.upcomingCurrency = total + (win ? 0 : (int)(-total*0.2f));
     }
 
 
