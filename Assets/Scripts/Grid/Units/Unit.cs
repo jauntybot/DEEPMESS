@@ -140,7 +140,7 @@ public class Unit : GridElement {
                     targetSqr.PlaySound(targetSqr.dmgdSFX);
 // SHIELD UNIT TIER II -- Blood bouyancy
                 if (!conditions.Contains(Status.Disabled) && !(shield && shield.buoyant))
-                    ApplyCondition(Status.Restricted);
+                    ApplyCondition(Status.Restricted, sourceEquip && sourceEquip is CascadeMoveData);
             } else if (targetSqr.tileType == Tile.TileType.Bile && hpCurrent > 0) {
 // SHIELD UNIT TIER II -- Bile bouyancy
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
@@ -258,7 +258,7 @@ public class Unit : GridElement {
     }
 
 
-    public virtual void ApplyCondition(Status s) {
+    public virtual void ApplyCondition(Status s, bool undo = false) {
         UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
         evt.undo = false;
         evt.apply = true;

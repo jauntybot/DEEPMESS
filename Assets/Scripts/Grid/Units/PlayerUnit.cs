@@ -199,7 +199,7 @@ public class PlayerUnit : Unit {
         yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
     }
 
-    public override void ApplyCondition(Status s) {
+    public override void ApplyCondition(Status s, bool undo = false) {
         base.ApplyCondition(s);
         //ui.ToggleEquipmentButtons();
         if (s == Status.Restricted && !manager.scenario.floorManager.tutorial.bloodEncountered && manager.scenario.floorManager.tutorial.isActiveAndEnabled && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)

@@ -210,7 +210,7 @@ public class EnemyUnit : Unit {
         
     }
 
-    public override void ApplyCondition(Status s) {
+    public override void ApplyCondition(Status s, bool undo = false) {
         base.ApplyCondition(s);
         if (s == Status.Stunned) PlaySound(stunnedSFX);
     }
