@@ -215,7 +215,7 @@ public class EnemyUnit : Unit {
         if (s == Status.Stunned) PlaySound(stunnedSFX);
     }
 
-    public override void RemoveCondition(Status s) {
+    public override void RemoveCondition(Status s, bool undo = false) {
         base.RemoveCondition(s);
         if (s == Status.Stunned) PlaySound(stunnedSFX);
     }

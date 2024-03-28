@@ -156,7 +156,7 @@ public class Unit : GridElement {
                 }
             } 
             if (targetSqr.tileType != Tile.TileType.Blood && conditions.Contains(Status.Restricted)) {
-                RemoveCondition(Status.Restricted);
+                RemoveCondition(Status.Restricted, sourceEquip && sourceEquip is CascadeMoveData);
             }
         }
     }
@@ -261,6 +261,7 @@ public class Unit : GridElement {
     public virtual void ApplyCondition(Status s) {
         UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
         evt.undo = false;
+        evt.apply = true;
         evt.condition = s;
         evt.target = this;
         ObjectiveEventManager.Broadcast(evt);
@@ -301,9 +302,9 @@ public class Unit : GridElement {
 
 
     
-    public virtual void RemoveCondition(Status s) {
+    public virtual void RemoveCondition(Status s, bool undo = false) {
         UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
-        evt.undo = true;
+        evt.undo = undo;
         evt.condition = s;
         evt.apply = false;
         evt.target = this;
