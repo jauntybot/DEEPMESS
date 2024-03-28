@@ -37,7 +37,7 @@ public class CascadeMoveData : MoveData {
 
         unit.coord = moveTo;
         yield return null;
-        unit.UpdateElement(moveTo);
+        unit.UpdateElement(moveTo, unit, this);
 
         yield return new WaitForSecondsRealtime(0.25f);
         if (!unit.targeted) unit.TargetElement(false);
