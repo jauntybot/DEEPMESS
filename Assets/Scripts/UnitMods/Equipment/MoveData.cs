@@ -42,7 +42,7 @@ public class MoveData : EquipmentData {
         yield return user.StartCoroutine(MoveToCoord((Unit)user, target.coord));
     }
 
-    public virtual IEnumerator MoveToCoord(Unit unit, Vector2 moveTo, bool undo = false) {       
+    public virtual IEnumerator MoveToCoord(Unit unit, Vector2 moveTo) {       
 // Build frontier dictionary for stepped lerp
         Dictionary<Vector2, Vector2> fromTo = new();
         if (animType == AnimType.Stepped) 

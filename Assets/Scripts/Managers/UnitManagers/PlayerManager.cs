@@ -368,10 +368,6 @@ public class PlayerManager : UnitManager {
                 
                 pc.ToggleCursorValid(false);
             }
-        } else if (hoveredUnit) {
-            selectedUnit = hoveredUnit;
-            DeselectUnit();
-            hoveredUnit = null;
         }
 
         bool update = false;
@@ -456,7 +452,6 @@ public class PlayerManager : UnitManager {
 
         }
         base.DeselectUnit();
-        turnBlink.BlinkEndTurn();
         prevCursorTargetState = false;
         contextuals.displaying = false;
         targetCursorState = PlayerController.CursorState.Default;
@@ -470,6 +465,8 @@ public class PlayerManager : UnitManager {
         while (unitActing) {
             yield return null;
         }
+
+        turnBlink.BlinkEndTurn();
 
         scenario.uiManager.LockHUDButtons(false);
         if (overrideEquipment)
@@ -514,7 +511,7 @@ public class PlayerManager : UnitManager {
             }
 // Snap unit to undo position
             MoveData move = (MoveData)cascadeMovement;
-            StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved], true));
+            StartCoroutine(move.MoveToCoord(lastMoved, undoableMoves[lastMoved]));
             lastMoved.moved = false;
             lastMoved.elementCanvas.UpdateStatsDisplay();
 // Lazy override for stand in blood count
@@ -523,7 +520,7 @@ public class PlayerManager : UnitManager {
                 UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
                 evt.condition = Unit.Status.Restricted;
                 evt.target = lastMoved;
-                evt.undo = false;
+                evt.undo = true;
                 ObjectiveEventManager.Broadcast(evt);
             }
 
