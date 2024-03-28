@@ -54,7 +54,6 @@ public class TooltipSystem : MonoBehaviour {
                         switch (data.orderedUpgrades[i]) {
                             case SlagEquipmentData.UpgradePath.Shunt:
                                 body = data.upgradeStrings.powerStrings[shunt];
-                                Debug.Log( data.upgradeStrings.powerStrings[shunt]);
                                 shunt++;
                             break;
                             case SlagEquipmentData.UpgradePath.Scab:

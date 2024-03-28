@@ -122,7 +122,8 @@ public class Unit : GridElement {
                     if (!tb.harvested && equipment.Find(e => e is BulbEquipmentData) == null)
                         tb.HarvestBulb(pu);
                 }
-            } else if (conditions.Contains(Status.Restricted)) {
+            } 
+            if (targetSqr.tileType != Tile.TileType.Blood && conditions.Contains(Status.Restricted)) {
                 RemoveCondition(Status.Restricted);
             }
         }

@@ -80,7 +80,7 @@ public class PlayerUnit : Unit {
 // first target selected, update grid contextuals  
                 } else {
                     co = StartCoroutine(base.ExecuteAction(target));
-                    GridElement anim = equip.contextualAnimGO.GetComponent<GridElement>();
+                    Animator anim = equip.contextualAnimGO.GetComponentInChildren<Animator>();
                     pManager.contextuals.UpdateContext(equip, equip.gridColor, equip.multiContext, anim, target);
                 }
             }
@@ -189,6 +189,10 @@ public class PlayerUnit : Unit {
             if (Mathf.Sign(dmg) == -1 && conditions.Contains(Status.Disabled)) Stabilize();
             else if (Mathf.Sign(dmg) == 1 && Random.Range(0,3) == 0) pManager.nail.barkBox.Bark(BarkBox.BarkType.SlagHurt);
         }
+    }
+
+    public override IEnumerator CollideFromBelow(GridElement above, GridElement source, EquipmentData sourceEquip) {
+        yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
     }
 
     public override IEnumerator CollideFromBelow(GridElement above) {

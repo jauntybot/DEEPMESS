@@ -11,6 +11,7 @@ public class Anvil : Unit {
     [SerializeField] GameObject explosionVFX;
     [SerializeField] SFX detonateSFX;
     [SerializeField] List<GridElement> targetTypes;
+    bool explode;
 
     protected override void Start() {
 // Manual override of Base.Start to exclude hp initialization
@@ -44,6 +45,7 @@ public class Anvil : Unit {
         } else
             elementCanvas.InstantiateMaxPips();
 
+            explode = data.upgrades[SlagEquipmentData.UpgradePath.Shunt] != 0;
     }
 
     public override IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0) {
@@ -53,7 +55,7 @@ public class Anvil : Unit {
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
 // POWER TIER I - Detonate anvil
-        if (data && !(data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 0 || dmgType == DamageType.Unspecified))
+        if (explode)
             yield return Detonate(data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 2 ? 2 : 1);
         yield return base.DestroySequence(dmgType, source, sourceEquip);
        

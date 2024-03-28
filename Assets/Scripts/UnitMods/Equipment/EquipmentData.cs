@@ -64,6 +64,10 @@ public class EquipmentData : ScriptableObject {
         
         user.PlaySound(useSFX);
 
+        OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
+        evt.data = this; evt.user = user; evt.target = firstTarget;
+        ObjectiveEventManager.Broadcast(evt);
+
         yield return null;
     }
 
