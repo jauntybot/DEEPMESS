@@ -41,11 +41,15 @@ public class ResolutionManager : MonoBehaviour {
             dropdown.value = currentResolutionIndex;
             dropdown.RefreshShownValue();
         }
+
+        SetResolution(0);
     }
 
     public void SetResolution(int resolutionIndex) {
-        Resolution resolution = filteredResolutions[resolutionIndex];
-        Screen.SetResolution(resolution.width, resolution.height, true);
+        if (filteredResolutions.Count > 0) {
+            Resolution resolution = filteredResolutions[resolutionIndex];
+            Screen.SetResolution(resolution.width, resolution.height, true);
+        }
     }
 
 }
