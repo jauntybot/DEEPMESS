@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EndTurnBlinking : MonoBehaviour
-{
+public class EndTurnBlinking : MonoBehaviour {
     ScenarioManager scenario;
     PlayerManager playerManager;
     [SerializeField] Animator highlightAnim;
@@ -14,13 +13,10 @@ public class EndTurnBlinking : MonoBehaviour
     [SerializeField] private bool blinking = false;
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         scenario = ScenarioManager.instance;
         playerManager = scenario.player;
     }
-
-
 
     bool CheckEnergy() {
         outOfEnergy = true;
@@ -34,7 +30,8 @@ public class EndTurnBlinking : MonoBehaviour
 
     public void BlinkEndTurn() {
         if (CheckEnergy()){
-            if (!blinking) StartCoroutine(BlinkButton());
+            if (!blinking && scenario.currentTurn == ScenarioManager.Turn.Player) 
+                StartCoroutine(BlinkButton());
         } else if (blinking) {
             blinking = !blinking;
         }

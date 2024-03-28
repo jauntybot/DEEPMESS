@@ -47,6 +47,10 @@ public class ShieldData : SlagEquipmentData {
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         yield return base.UseEquipment(user, target);
 
+        OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
+        evt.data = this; evt.user = user; evt.target = target;
+        ObjectiveEventManager.Broadcast(evt);
+
         PlayerUnit pu = (PlayerUnit)user;
 // SPECIAL TIER I - Increase shield limit
         int shieldLimit = upgrades[UpgradePath.Scab] >= 1 ? 1 : 0;

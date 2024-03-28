@@ -23,7 +23,8 @@ public class BigGrabData : SlagEquipmentData {
                     occupied = true; remove = true;
                     foreach(GridElement target in firstTargets) {
                         if (ge.GetType() == target.GetType()) {
-                            ge.elementCanvas.ToggleStatsDisplay(true);
+                            if (ge.elementCanvas)
+                                ge.elementCanvas.ToggleStatsDisplay(true);
                             remove = false;
                         }
                     }
@@ -114,12 +115,12 @@ public class BigGrabData : SlagEquipmentData {
             if (user is PlayerUnit u) u.ui.ToggleEquipmentButtons();
             user.PlaySound(selectSFX);
 
-            yield return user.StartCoroutine(GrabUnit((Unit)user, (Unit)firstTarget));
+            yield return user.StartCoroutine(GrabUnit((Unit)user, firstTarget));
         } else {
             SpriteRenderer sr = Instantiate(vfx, user.grid.PosFromCoord(user.coord), Quaternion.identity).GetComponent<SpriteRenderer>();
             sr.sortingOrder = user.grid.SortOrderFromCoord(user.coord);
             
-            Coroutine co = user.StartCoroutine(ThrowUnit((Unit)user, (Unit)firstTarget, target.coord));
+            Coroutine co = user.StartCoroutine(ThrowUnit((Unit)user, firstTarget, target.coord));
             
             OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
             evt.data = this; evt.user = user; evt.target = firstTarget;
@@ -131,7 +132,7 @@ public class BigGrabData : SlagEquipmentData {
         }
     }
 
-    public IEnumerator GrabUnit(Unit grabber, Unit grabbed) {
+    public IEnumerator GrabUnit(Unit grabber, GridElement grabbed) {
         Vector3 origin = grabber.grid.PosFromCoord(grabber.coord);
         Vector3 target = grabbed.grid.PosFromCoord(grabbed.coord);
         Vector3 dif = target + (origin - target)/2;
@@ -146,7 +147,7 @@ public class BigGrabData : SlagEquipmentData {
 
     }
 
-    public IEnumerator ThrowUnit(Unit thrower, Unit thrown, Vector2 coord) {
+    public IEnumerator ThrowUnit(Unit thrower, GridElement thrown, Vector2 coord) {
         Vector3 to = thrower.grid.PosFromCoord(coord);
         Vector3 origin = thrown.transform.position;
         float h = 0.25f + Vector2.Distance(thrower.coord, coord) / 2;
@@ -162,22 +163,35 @@ public class BigGrabData : SlagEquipmentData {
                 collisionChecked = true;
             }
         }
+        List<Coroutine> cos = new();
+
+// UNIT TIER II - Throw onto occupied spaces
         if (thrower.grid.CoordContents(coord).Count > 0) {
             GridElement subGE = null;
             foreach (GridElement ge in thrower.grid.CoordContents(coord)) {
                 subGE = ge;
-                ge.StartCoroutine(ge.CollideFromBelow(thrown, thrower, this));
+                cos.Add(ge.StartCoroutine(ge.CollideFromBelow(thrown, thrower, this)));
             }
-            thrown.StartCoroutine(thrown.CollideFromAbove(subGE, 0, thrower, this));
+            if (thrown is Unit u)
+                cos.Add(u.StartCoroutine(u.CollideFromAbove(subGE, 0, thrower, this)));
         }
+
         if (thrown is EnemyUnit eu) {
             eu.ApplyCondition(Unit.Status.Stunned);
         }
         
 // UNIT TIER I - Deal damage on throw
-        if (upgrades[UpgradePath.Sludge] >= 1) thrown.StartCoroutine(thrown.TakeDamage(1, GridElement.DamageType.Fall, thrower, this));
+        if (upgrades[UpgradePath.Sludge] >= 1) cos.Add(thrown.StartCoroutine(thrown.TakeDamage(1, GridElement.DamageType.Fall, thrower, this)));
         
-        thrown.UpdateElement(coord, thrower, this);
+        if (thrown is Unit u2)
+            u2.UpdateElement(coord, thrower, this);
+        else
+            thrown.UpdateElement(coord);
+
+        for (int i = cos.Count - 1; i >= 0; i--) {
+            if (cos[i] != null) yield return cos[i];
+            else cos.RemoveAt(i);
+        }
     }
 
     public override void UpgradeEquipment(UpgradePath targetPath) {

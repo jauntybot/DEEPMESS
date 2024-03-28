@@ -73,8 +73,8 @@ public class DescentPreviewManager : MonoBehaviour {
     }
 
     public void PreviewButton() {
-        if (UIManager.instance.peekButton.interactable && !FloorManager.instance.transitioning) {
-            int dir = previewing ? 1 : -1;
+        int dir = previewing ? 1 : -1;
+        if (!floorManager.transitioning && floorManager.floors.Count - 1 >= currentFloor.transform.GetSiblingIndex() - dir) {
             previewing = !previewing;
             if (scenario.currentTurn == ScenarioManager.Turn.Player)
                 UIManager.instance.endTurnButton.interactable = !previewing;
@@ -83,8 +83,7 @@ public class DescentPreviewManager : MonoBehaviour {
             evt.down = dir != 1;
             ObjectiveEventManager.Broadcast(evt);
 
-            scenario.player.DeselectUnit();
-            if (!floorManager.transitioning && floorManager.floors.Count - 1 >= currentFloor.transform.GetSiblingIndex() - dir) {
+                scenario.player.DeselectUnit();
                 StartCoroutine(PreviewFloor(previewing));
                 if (UIManager.instance.gameObject.activeSelf)
                     UIManager.instance.PlaySound(previewing ? UIManager.instance.peekBelowSFX.Get() : UIManager.instance.peekAboveSFX.Get());
@@ -92,7 +91,6 @@ public class DescentPreviewManager : MonoBehaviour {
                         tut = false;
                         StartCoroutine(floorManager.tutorial.PeekButton());
                     }
-            }
         }
     }
 

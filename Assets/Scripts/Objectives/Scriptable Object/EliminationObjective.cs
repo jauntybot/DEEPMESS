@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Objective/Eliminations")]
 public class EliminationObjective : Objective {
     
-    public enum ObjectiveType { EnemyEliminations, EnemyCrushes, EnemyOnEnemyEliminations, DestroyAnvils, DestroyWalls, AnvilEliminations, BigGrabEliminations, ShieldEliminations };
+    public enum ObjectiveType { EnemyEliminations, EnemyCrushes, EnemyOnEnemyEliminations, DestroyAnvils, DestroyWalls, AnvilEliminations, BigGrabEliminations, ShieldEliminations, DescentEliminations };
     [Header("Elimination Conditions")]
     [SerializeField] ObjectiveType objectiveType;
 
@@ -48,6 +48,9 @@ public class EliminationObjective : Objective {
                 if (evt.source && evt.sourceEquip) {
                     if (evt.element is EnemyUnit && (evt.source.shield || evt.sourceEquip is ShieldData)) progress++;
                 }
+            break;
+            case ObjectiveType.DescentEliminations:
+                if (evt.element is EnemyUnit && ScenarioManager.instance.currentTurn == ScenarioManager.Turn.Descent) progress++;
             break;
         }
 

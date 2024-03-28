@@ -31,6 +31,7 @@ public class GridContextuals : MonoBehaviour {
         manager = m;
         floorManager = FloorManager.instance;
         cursorAnimator = contextCursor.GetComponentInChildren<Animator>();
+        cursorAnimator.keepAnimatorStateOnDisable = true;
     
         ToggleValid(false);
     }
@@ -198,7 +199,7 @@ public class GridContextuals : MonoBehaviour {
         }
     }
 
-    public void UpdateContext(EquipmentData data, int highlightIndex, ContextDisplay newContext = ContextDisplay.None, GridElement newAnim = null, GridElement newFrom = null) {
+    public void UpdateContext(EquipmentData data, int highlightIndex, ContextDisplay newContext = ContextDisplay.None, Animator newAnim = null, GridElement newFrom = null) {
         currentContext = data.contextDisplay;
         if (newContext != ContextDisplay.None) currentContext = newContext;
 
@@ -233,6 +234,7 @@ public class GridContextuals : MonoBehaviour {
     }  
 
     public void UpdateCursorAnim(Transform refTrans) {
+        Debug.Log(refTrans.gameObject.name);
         cursorAnimator.GetComponent<NestedFadeGroup.NestedFadeGroupSpriteRenderer>().AlphaSelf = 0.5f;
         Animator anim = null;
         if (refTrans.GetComponentInChildren<Animator>())

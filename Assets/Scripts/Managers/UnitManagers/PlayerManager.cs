@@ -368,6 +368,10 @@ public class PlayerManager : UnitManager {
                 
                 pc.ToggleCursorValid(false);
             }
+        } else if (hoveredUnit) {
+            selectedUnit = hoveredUnit;
+            DeselectUnit();
+            hoveredUnit = null;
         }
 
         bool update = false;
