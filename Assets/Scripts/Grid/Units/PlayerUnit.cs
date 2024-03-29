@@ -182,7 +182,7 @@ public class PlayerUnit : Unit {
     }
 
     public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        if (!destroyed) {
+        if (!destroyed || dmg < 0) {
             yield return base.TakeDamage(dmg, dmgType, source, sourceEquip);
             if (ui.overview)
                 ui.overview.UpdateOverview();

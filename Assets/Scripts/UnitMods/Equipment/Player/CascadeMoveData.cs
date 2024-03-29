@@ -26,7 +26,7 @@ public class CascadeMoveData : MoveData {
         yield return user.StartCoroutine(MoveToCoord((Unit)user, target.coord));
     }
 
-     public override IEnumerator MoveToCoord(Unit unit, Vector2 moveTo, bool undo = false) {       
+    public override IEnumerator MoveToCoord(Unit unit, Vector2 moveTo) {       
 
 // Build frontier dictionary for stepped lerp
         Dictionary<Vector2, Vector2> fromTo = new();
