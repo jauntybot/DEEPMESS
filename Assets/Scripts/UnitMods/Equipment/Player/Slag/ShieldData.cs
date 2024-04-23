@@ -47,6 +47,10 @@ public class ShieldData : SlagEquipmentData {
     public override IEnumerator UseEquipment(GridElement user, GridElement target = null) {
         yield return base.UseEquipment(user, target);
 
+        OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
+        evt.data = this; evt.user = user; evt.target = target;
+        ObjectiveEventManager.Broadcast(evt);
+
         PlayerUnit pu = (PlayerUnit)user;
 // SPECIAL TIER I - Increase shield limit
         int shieldLimit = upgrades[UpgradePath.Scab] >= 1 ? 1 : 0;
@@ -58,8 +62,7 @@ public class ShieldData : SlagEquipmentData {
         } 
 // Instantiate new shield obj
         Shield shield = Instantiate(shieldPrefab, target.transform).GetComponent<Shield>();
-        if (target is Unit unit && user is Unit pony)
-            shield.Init(unit, pony);
+        shield.Init((Unit)target, pu);
 
         activeShields.Add(shield);
         target.ApplyShield(shield);

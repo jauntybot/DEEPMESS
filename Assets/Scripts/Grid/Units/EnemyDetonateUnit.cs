@@ -33,21 +33,23 @@ public class EnemyDetonateUnit : EnemyUnit {
                 g.GetComponentInChildren<SpriteRenderer>().sortingOrder = grid.SortOrderFromCoord(c);
             }
         }
-        t = 0;
-        while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
+        t = 0; while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
         foreach (Vector2 c in secondWave) {
             GameObject g = Instantiate(explosionVFX, grid.PosFromCoord(c), Quaternion.identity);
             g.GetComponentInChildren<SpriteRenderer>().sortingOrder = grid.SortOrderFromCoord(c);
         }
-
+        t = 0; while (t <= 0.5f) { t += Time.deltaTime; yield return null; }
     }
 
     public override IEnumerator ScatterTurn() {
         if (!conditions.Contains(Status.Stunned)) {
             if (!primed)
                 yield return base.ScatterTurn();
-            else
-                yield return StartCoroutine(ExplodeCo());
+            else {
+                moved = true;
+                yield return new WaitForSecondsRealtime(0.25f);
+            }
+                
         } else {
             moved = true;
             energyCurrent = 0;
@@ -81,22 +83,31 @@ public class EnemyDetonateUnit : EnemyUnit {
         UpdateAction(equipment[1]);
         grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
         yield return new WaitForSecondsRealtime(0.5f);
-        StartCoroutine(selectedEquipment.UseEquipment(this, null));
+        List<Coroutine> cos = new();
+        cos.Add(StartCoroutine(selectedEquipment.UseEquipment(this, null)));
         grid.UpdateSelectedCursor(false, Vector2.one * -32);
         grid.DisableGridHighlight();
-        Coroutine co = StartCoroutine(TakeDamage(hpCurrent));
+        cos.Add(StartCoroutine(TakeDamage(hpCurrent)));
         manager.DeselectUnit();
-        yield return co;
+        for (int i = cos.Count - 1; i >= 0; i--) {
+            if (cos[i] != null) 
+                yield return cos[i];
+            else
+                cos.RemoveAt(i);
+        }
     }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        if (!destroyed) {
-            if (primed) {
-                ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
-                yield return StartCoroutine(ExplodeCo());
-            } else
-                yield return base.DestroySequence(dmgType, source, sourceEquip);
-        }
+        if (primed) {
+            if (!destroyed) 
+                destroyed = true;
+            
+            ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
+            yield return StartCoroutine(ExplodeCo());
+            yield return base.DestroySequence(dmgType, source, sourceEquip);
+        } else 
+            yield return base.DestroySequence(dmgType, source, sourceEquip);
+        
     }
 
 }

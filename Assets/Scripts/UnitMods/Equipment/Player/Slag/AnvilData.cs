@@ -11,6 +11,10 @@ public class AnvilData : SlagEquipmentData {
         yield return base.UseEquipment(user, target);
         PlayerUnit pu = (PlayerUnit)user;
 
+        OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
+        evt.data = this; evt.user = user; evt.target = target;
+        ObjectiveEventManager.Broadcast(evt);
+
 // Destroy instances exceeding anvil limit
         int activeAnvils = 0;
         List<Anvil> anvils = new();

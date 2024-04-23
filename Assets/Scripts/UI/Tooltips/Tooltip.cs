@@ -53,6 +53,8 @@ public class Tooltip : MonoBehaviour
         
         transform.GetChild(0).gameObject.SetActive(true);
 
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
         StartCoroutine(Rebuild());
 
         //limit text width

@@ -20,11 +20,9 @@ public class Wall : GridElement
     }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        if (!destroyed) {
-            anim.enabled = true;
-            anim.SetTrigger("Destroy");
-            yield return base.DestroySequence(dmgType, source, sourceEquip);
-        }
+        anim.enabled = true;
+        anim.SetTrigger("Destroy");
+        yield return base.DestroySequence(dmgType, source, sourceEquip);
     }
 
 }

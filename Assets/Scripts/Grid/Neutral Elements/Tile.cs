@@ -21,6 +21,7 @@ public class Tile : GridElement {
 
 // Initialize refs
     protected virtual void Awake() {
+        audioSource = GetComponent<AudioSource>();
         hitbox = GetComponent<PolygonCollider2D>();
         if (rndSprite.Count > 0)
             gfx[0].sprite = rndSprite[Random.Range(0,rndSprite.Count)];
@@ -48,8 +49,7 @@ public class Tile : GridElement {
         hitbox.enabled = state;
     }
 
-    public virtual void UpdateHighlight(Color color, bool fill) 
-    {
+    public virtual void UpdateHighlight(Color color, bool fill) {
         SpriteShapeRenderer ssr = highlight.GetComponent<SpriteShapeRenderer>();
         if (ssr) {
             ssr.color = new Color(color.r, color.g, color.b, fill ? color.a : 0);
@@ -62,8 +62,7 @@ public class Tile : GridElement {
         }
     }
 
-    public override void UpdateElement(Vector2 c)
-    {
+    public override void UpdateElement(Vector2 c) {
         base.UpdateElement(c);
         if (!white) {
 // Apply color variant to GFX sprite renderer

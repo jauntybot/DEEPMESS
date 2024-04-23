@@ -19,9 +19,9 @@ namespace Relics {
             switch (relicType) {
                 default:
                 case RelicType.ScytheCells:
-                    if (evt.target is EnemyUnit && evt.condition is Unit.Status.Restricted && !evt.undo) {
+                    if (evt.target is EnemyUnit && evt.condition is Unit.Status.Restricted && !evt.undo && evt.apply) {
                         evt.target.ApplyCondition(Unit.Status.Weakened);
-                    } else if (evt.target is EnemyUnit && evt.condition is Unit.Status.Restricted && evt.undo)
+                    } else if (evt.target is EnemyUnit && evt.condition is Unit.Status.Restricted && !evt.undo && !evt.apply)
                         evt.target.RemoveCondition(Unit.Status.Weakened);
                 break;
             }

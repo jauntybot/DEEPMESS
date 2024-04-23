@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Objective/Equipment")]
 public class EquipmentObjective : Objective {
 
-    public enum ObjectiveType { BigGrabThrows, EnemyExplosions };
+    public enum ObjectiveType { BigGrab, Shield, Anvil, EnemyExplosions };
     [Header("Equipment Conditions")] 
     [SerializeField] ObjectiveType objectiveType;
 
@@ -18,8 +18,14 @@ public class EquipmentObjective : Objective {
 
     protected virtual void OnEquipmentUse(OnEquipmentUse evt) {
         switch (objectiveType) {
-            case ObjectiveType.BigGrabThrows:
-                if (evt.data is BigGrabData && evt.target is EnemyUnit) progress++;
+            case ObjectiveType.BigGrab:
+                if (evt.data is BigGrabData) progress++;
+            break;
+            case ObjectiveType.Anvil:
+                if (evt.data is AnvilData) progress++;
+            break;
+            case ObjectiveType.Shield:
+                if (evt.data is ShieldData) progress++;
             break;
             case ObjectiveType.EnemyExplosions:
                 if (evt.data is SelfDetonate && evt.target == null) progress++;

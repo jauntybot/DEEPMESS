@@ -154,20 +154,22 @@ public class PathManager : MonoBehaviour {
         t = 0; while (t <= .25f) { t += Time.deltaTime; yield return null; }
         
         videoPlayer.clip = nodeClips[clipIndex];
-        videoPlayer.gameObject.SetActive(true);
         videoPlayer.frame = 0;
+        videoPlayer.gameObject.SetActive(true);
         audioSource.PlayOneShot(nodeAudio[clipIndex]);
         clipIndex++;
+        RawImage vp = videoPlayer.GetComponent<RawImage>();
+        vp.color = new Color(1,1,1,0);
         t = 0; while (t < 0.5f) { 
-            videoPlayer.GetComponent<RawImage>().color = new Color(1,1,1,Mathf.Lerp(0,1,t/0.5f));
+            vp.color = new Color(1,1,1,Mathf.Lerp(0,1,t/0.5f));
             t += Time.deltaTime; yield return null; 
         }
-        videoPlayer.GetComponent<RawImage>().color = new Color(1,1,1,1);
+        vp.color = new Color(1,1,1,1);
         pathChoiceContainer.SetActive(false);
 
         t = 0; while (t < 6f) { t += Time.deltaTime; yield return null; }
         t = 0; while (t < 0.5f) { 
-            videoPlayer.GetComponent<RawImage>().color = new Color(1,1,1,Mathf.Lerp(1,0,t/0.5f));
+            vp.color = new Color(1,1,1,Mathf.Lerp(1,0,t/0.5f));
             t += Time.deltaTime; yield return null; 
         }
         videoPlayer.gameObject.SetActive(false);

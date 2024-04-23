@@ -20,6 +20,9 @@ public class ObjectiveTracker : MonoBehaviour {
             ObjectiveCard card = Instantiate(objectiveCardPrefab, objectiveCardParent.transform).GetComponent<ObjectiveCard>();
             card.Init(ob);
         }
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(objectiveCardParent.GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
     }
 
     public void UnsubObjectives() {

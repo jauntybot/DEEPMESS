@@ -99,11 +99,13 @@ public class Unit : GridElement {
     }
 
     public override void UpdateElement(Vector2 c) {
+        Vector2 prevCoord = coord;
         base.UpdateElement(c);
         if (manager.scenario.currentTurn != ScenarioManager.Turn.Cascade) {
             Tile targetSqr = grid.tiles.Find(sqr => sqr.coord == c);
             if (targetSqr.tileType == Tile.TileType.Blood) {
-                targetSqr.PlaySound(targetSqr.dmgdSFX);
+                if (prevCoord != new Vector2(-32, -32) && prevCoord != c)
+                    targetSqr.PlaySound(targetSqr.dmgdSFX);
 // SHIELD UNIT TIER II -- Blood bouyancy
                 if (!conditions.Contains(Status.Disabled) && !(shield && shield.buoyant))
                     ApplyCondition(Status.Restricted);
@@ -120,22 +122,25 @@ public class Unit : GridElement {
                     if (!tb.harvested && equipment.Find(e => e is BulbEquipmentData) == null)
                         tb.HarvestBulb(pu);
                 }
-            } else if (conditions.Contains(Status.Restricted)) {
+            } 
+            if (targetSqr.tileType != Tile.TileType.Blood && conditions.Contains(Status.Restricted)) {
                 RemoveCondition(Status.Restricted);
             }
         }
     }
 
 // For when a Slag is acting on a Unit to move it, such as BigGrab or any push mechanics
-    public virtual void UpdateElement(Vector2 c, GridElement source = null, EquipmentData sourceEquip = null) {
+    public virtual void UpdateElement(Vector2 c, GridElement source, EquipmentData sourceEquip = null) {
+        Vector2 prevCoord = coord;
         base.UpdateElement(c);
         if (manager.scenario.currentTurn != ScenarioManager.Turn.Cascade) {
             Tile targetSqr = grid.tiles.Find(sqr => sqr.coord == c);
             if (targetSqr.tileType == Tile.TileType.Blood) {
-                targetSqr.PlaySound(targetSqr.dmgdSFX);
+                if (prevCoord != new Vector2(-32, -32) && prevCoord != c)
+                    targetSqr.PlaySound(targetSqr.dmgdSFX);
 // SHIELD UNIT TIER II -- Blood bouyancy
                 if (!conditions.Contains(Status.Disabled) && !(shield && shield.buoyant))
-                    ApplyCondition(Status.Restricted);
+                    ApplyCondition(Status.Restricted, sourceEquip && sourceEquip is CascadeMoveData);
             } else if (targetSqr.tileType == Tile.TileType.Bile && hpCurrent > 0) {
 // SHIELD UNIT TIER II -- Bile bouyancy
                 targetSqr.PlaySound(targetSqr.dmgdSFX);
@@ -151,7 +156,7 @@ public class Unit : GridElement {
                 }
             } 
             if (targetSqr.tileType != Tile.TileType.Blood && conditions.Contains(Status.Restricted)) {
-                RemoveCondition(Status.Restricted);
+                RemoveCondition(Status.Restricted, sourceEquip && sourceEquip is CascadeMoveData);
             }
         }
     }
@@ -160,7 +165,7 @@ public class Unit : GridElement {
         if (!destroyed) {
             TargetElement(true);
 
-            int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg * 2 : dmg;
+            int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg + 1 : dmg;
             yield return base.TakeDamage(modifiedDmg, dmgType, source, sourceEquip);
 
             TargetElement(targeted);
@@ -168,22 +173,23 @@ public class Unit : GridElement {
     }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
-        if (!destroyed) {
-            ElementDestroyed?.Invoke(this);
-            ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
-            
-            PlaySound(destroyedSFX);
-            float timer = 0f;
-            while (timer < 0.5f) {
-                yield return null;
-                timer += Time.deltaTime;
-            }
+        if (!destroyed) 
+            destroyed = true;
 
-            if (manager.selectedUnit == this) manager.DeselectUnit();
-
-            if (gameObject != null)
-                Destroy(gameObject);
+        ElementDestroyed?.Invoke(this);
+        ObjectiveEventManager.Broadcast(GenerateDestroyEvent(dmgType, source, sourceEquip));        
+        
+        PlaySound(destroyedSFX);
+        float timer = 0f;
+        while (timer < 0.5f) {
+            yield return null;
+            timer += Time.deltaTime;
         }
+
+        if (manager.selectedUnit == this) manager.DeselectUnit();
+
+        if (gameObject != null)
+            Destroy(gameObject);
     }
 
 #endregion
@@ -252,9 +258,10 @@ public class Unit : GridElement {
     }
 
 
-    public virtual void ApplyCondition(Status s) {
+    public virtual void ApplyCondition(Status s, bool undo = false) {
         UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
         evt.undo = false;
+        evt.apply = true;
         evt.condition = s;
         evt.target = this;
         ObjectiveEventManager.Broadcast(evt);
@@ -295,10 +302,11 @@ public class Unit : GridElement {
 
 
     
-    public virtual void RemoveCondition(Status s) {
+    public virtual void RemoveCondition(Status s, bool undo = false) {
         UnitConditionEvent evt = ObjectiveEvents.UnitConditionEvent;
-        evt.undo = true;
+        evt.undo = undo;
         evt.condition = s;
+        evt.apply = false;
         evt.target = this;
         ObjectiveEventManager.Broadcast(evt);
 
@@ -313,6 +321,7 @@ public class Unit : GridElement {
                         ui.UpdateEquipmentButtons();
                 break;
                 case Status.Disabled:
+                    destroyed = false;
                     hpCurrent = 0;
                     StartCoroutine(TakeDamage(-manager.reviveTo));
                     if (manager.reviveTo == 1) {
