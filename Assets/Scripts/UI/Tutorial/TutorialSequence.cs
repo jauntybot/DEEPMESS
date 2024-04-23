@@ -227,7 +227,7 @@ public class TutorialSequence : MonoBehaviour {
         Vector3 prevPos = tooltip.transform.GetComponent<RectTransform>().anchoredPosition;
         tooltip.transform.GetComponent<RectTransform>().anchoredPosition = new Vector2(-500, prevPos.y);
         header = "ARMING THE HAMMER";
-        body = "<b>" + ColorToRichText("Hammer's our main tool", keyColor) + "</b>—use it to hit anything and everything. Arm it with the button in <b>" + ColorToRichText("button", keyColor) + "</b> left.";
+        body = "<b>" + ColorToRichText("Hammer's our main tool", keyColor) + "</b>—use it to hit anything and everything. Arm it with the <b>" + ColorToRichText("button", keyColor) + "</b> in the bottom left.";
         tooltip.SetText(body, header, true);
 
         while (tooltip.GetComponentInChildren<DialogueTypewriter>().writing) yield return null;
