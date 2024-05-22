@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class EquipmentButton : MonoBehaviour {
     GameUnitUI ui;
-    public EquipmentData data;
+    public GearData data;
     public enum EquipType { PerFloor, Hammer, Bulb };
     public Animator subAnim;
     [HideInInspector] public EquipType equipType;
@@ -13,7 +13,7 @@ public class EquipmentButton : MonoBehaviour {
     
     public Button button;
     [SerializeField] Image icon;
-    public delegate void OnEquipmentUpdate(EquipmentData equipment, int rangeMod);
+    public delegate void OnEquipmentUpdate(GearData equipment, int rangeMod);
     private int rangeMod;
     public event OnEquipmentUpdate EquipmentSelected;
 
@@ -22,10 +22,10 @@ public class EquipmentButton : MonoBehaviour {
     public bool selected;
     
 
-    public void Initialize(GameUnitUI _ui, EquipmentData d, GridElement ge) {
+    public void Initialize(GameUnitUI _ui, GearData d, GridElement ge) {
         ui = _ui;
         data = d;
-        if (d is SlagEquipmentData && d is not HammerData) equipType = EquipType.PerFloor;
+        if (d is SlagGearData && d is not HammerData) equipType = EquipType.PerFloor;
         else if (d is HammerData) equipType = EquipType.Hammer;
         else if (d is BulbEquipmentData) equipType = EquipType.Bulb;
         unit = (PlayerUnit)ge;

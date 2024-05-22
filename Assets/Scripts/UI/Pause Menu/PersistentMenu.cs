@@ -7,8 +7,7 @@ using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using Relics;
 
-public class PersistentMenu : MonoBehaviour
-{
+public class PersistentMenu : MonoBehaviour, IUserDataPersistence {
     ScenarioManager scenario;
     public MusicController musicController;
     public PauseMenu pauseMenu;
@@ -17,6 +16,8 @@ public class PersistentMenu : MonoBehaviour
     TooltipSystem toolTips;
     [SerializeField] AudioMixer mixer;
     [SerializeField] Slider musicSlider, sfxSlider;
+    ResolutionManager resolutionManager;
+    [SerializeField] TMP_Dropdown resolutionsDropdown;
 
     [SerializeField] GameObject menuButton;
     [SerializeField] TMP_Text tooltipText;
@@ -44,8 +45,10 @@ public class PersistentMenu : MonoBehaviour
         musicController = GetComponentInChildren<MusicController>();
         musicSlider.onValueChanged.AddListener(SetMusicVolume);
         sfxSlider.onValueChanged.AddListener(SetSFXVolume);
-        musicSlider.value = 5f;
-        sfxSlider.value = 5f;
+        
+        ConfigureResolutionDropdown();
+        // musicSlider.value = 5f;
+        // sfxSlider.value = 5f;
 
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = targetFPS;
@@ -54,6 +57,58 @@ public class PersistentMenu : MonoBehaviour
         Time.timeScale = 1;
 
         SceneManager.sceneLoaded += UpdateRefs;
+    }
+
+    int currentResolutionIndex;
+    List<Resolution> filteredResolutions = new();
+    void ConfigureResolutionDropdown() {
+        Resolution[] resolutions = Screen.resolutions;
+        float currentRefereshRate;
+
+        resolutionsDropdown.ClearOptions();
+        currentRefereshRate = Screen.currentResolution.refreshRate;
+
+        for (int i = resolutions.Length - 1; i >= 0 ; i--) {
+            if (resolutions[i].refreshRate == currentRefereshRate &&
+                ((resolutions[i].width == 1280 && resolutions[i].height == 720) ||
+                (resolutions[i].width == 1280 && resolutions[i].height == 800) ||
+                (resolutions[i].width == 1920 && resolutions[i].height == 1080) ||
+                (resolutions[i].width == 1920 && resolutions[i].height == 1200) ||
+                (resolutions[i].width == 2560 && resolutions[i].height == 1440) ||
+                (resolutions[i].width == 2560 && resolutions[i].height == 1600)))
+                filteredResolutions.Add(resolutions[i]);
+                Debug.Log(resolutions[i].width + ", " + resolutions[i].height + ", " + resolutions[i].refreshRate);
+        }
+
+        List<string> options = new List<string>();
+        for (int i = 0; i < filteredResolutions.Count; i++) {
+            string resolutionOption = filteredResolutions[i].width + "x" + filteredResolutions[i].height;
+            options.Add(resolutionOption);
+            if (filteredResolutions[i].width == Screen.width && filteredResolutions[i].height == Screen.height)
+                currentResolutionIndex = i;
+        }
+
+        if (resolutionsDropdown) {
+            resolutionsDropdown.AddOptions(options);
+            resolutionsDropdown.value = currentResolutionIndex;
+            resolutionsDropdown.RefreshShownValue();
+        }
+    }
+
+    public void LoadUser(UserData user) {
+        musicSlider.value = user.musicVol;
+        sfxSlider.value = user.sfxVol;
+        
+        SetResolution(user.resolutionIndex);
+        SetMusicVolume(user.musicVol);
+        SetSFXVolume(user.sfxVol);
+        
+    }
+
+    public void SaveUser(ref UserData user) {
+        user.musicVol = musicSlider.value;
+        user.sfxVol = sfxSlider.value;
+        user.resolutionIndex = currentResolutionIndex;
     }
 
     // void GetFPS() {
@@ -104,18 +159,6 @@ public class PersistentMenu : MonoBehaviour
         FadeToBlack(false);
     }
 
-    RelicData relic;
-    public void SetRelic(int relicIndex) {
-        relic = scenario.relicManager.serializedRelics[relicIndex];
-    }
-    public void GiveRelic() {
-        StartCoroutine(scenario.relicManager.PresentRelic(relic));
-    }
-
-    public void GiveAllRelics() {
-        scenario.relicManager.GiveAllRelics();
-    }
-
     public void FadeToBlack(bool state) {
         fadeToBlack.SetBool("Fade", state);
     }
@@ -137,7 +180,22 @@ public class PersistentMenu : MonoBehaviour
         
     }
 
+    public void SetResolution(int index) {
+        if (filteredResolutions.Count > 0) {
+            Resolution resolution = filteredResolutions[index];
+            Screen.SetResolution(resolution.width, resolution.height, true);
+            currentResolutionIndex = index;
+        }
+    }
+    
+    public void SetResolution(Resolution resolution) {
+        if (filteredResolutions.Contains(resolution)) {
+            Screen.SetResolution(resolution.width, resolution.height, true);
+            currentResolutionIndex = filteredResolutions.IndexOf(resolution);
+        } else SetResolution(0);
+    }
 
+    #region Debug Functions
     public void TriggerCascade() {
         if (FloorManager.instance && ScenarioManager.instance && !FloorManager.instance.transitioning && !FloorManager.instance.peeking) {
             ScenarioManager.instance.prevTurn = ScenarioManager.Turn.Descent;
@@ -145,4 +203,16 @@ public class PersistentMenu : MonoBehaviour
         }
     }
 
+    RelicData relic;
+    public void SetRelic(int relicIndex) {
+        relic = scenario.relicManager.serializedRelics[relicIndex];
+    }
+    public void GiveRelic() {
+        StartCoroutine(scenario.relicManager.PresentRelic(relic));
+    }
+
+    public void GiveAllRelics() {
+        scenario.relicManager.GiveAllRelics();
+    }
+    #endregion
 }

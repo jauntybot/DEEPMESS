@@ -19,8 +19,8 @@ public class PlayerManager : UnitManager {
     public UpgradeManager upgradeManager;
     public Nail nail;
     public List<HammerData> hammerActions;
-    [SerializeField] EquipmentData cascadeMovement;
-     public EquipmentData overrideEquipment = null;
+    [SerializeField] GearData cascadeMovement;
+     public GearData overrideEquipment = null;
     [SerializeField] public GridContextuals contextuals;
     [HideInInspector] public Vector2 lastHoveredCoord;
     [HideInInspector] public int defeatedEnemies;
@@ -28,7 +28,7 @@ public class PlayerManager : UnitManager {
     public delegate void OnPlayerAction(PlayerManager player);
     public virtual event OnPlayerAction UndoClearCallback;
 
-    public List<SlagEquipmentData.UpgradePath> collectedParticles = new();
+    //public List<SlagGearData.UpgradePath> collectedParticles = new();
 
     [Header("PREFABS")]
     [SerializeField] public GameObject nailPrefab;
@@ -146,7 +146,7 @@ public class PlayerManager : UnitManager {
         h.transform.GetChild(0).transform.localPosition = new Vector3(0.5f, 0, 0);
         foreach(HammerData equip in hammerData) {
             unit.equipment.Insert(unit.equipment.Count, equip);
-            equip.EquipEquipment(unit, true);
+            equip.EquipGear(unit, true);
             equip.AssignHammer(h, nail);
         }        
         unit.ui.UpdateEquipmentButtons();
@@ -420,7 +420,7 @@ public class PlayerManager : UnitManager {
         }
     }
 
-    public void EquipmentSelected(EquipmentData equip = null) {
+    public void EquipmentSelected(GearData equip = null) {
         if (equip && selectedUnit) {
             if (!equip.multiselect || equip.firstTarget == null) {
                 contextuals.StartUpdateCoroutine();
@@ -436,8 +436,8 @@ public class PlayerManager : UnitManager {
 
     public override void DeselectUnit() {      
         if (selectedUnit is PlayerUnit pu && selectedUnit.selectedEquipment) {
-            if (selectedUnit.selectedEquipment is SlagEquipmentData && selectedUnit.selectedEquipment is not HammerData) {
-                EquipmentButton butt = selectedUnit.ui.equipButtons.Find(e => e.data is SlagEquipmentData);
+            if (selectedUnit.selectedEquipment is SlagGearData && selectedUnit.selectedEquipment is not HammerData) {
+                EquipmentButton butt = selectedUnit.ui.equipButtons.Find(e => e.data is SlagGearData);
                 if (butt)
                     butt.DeselectEquipment();
             } else if (selectedUnit.selectedEquipment is HammerData) {
@@ -496,7 +496,7 @@ public class PlayerManager : UnitManager {
                     lastMoved.bulbPickups--;
                 } else if (harvestedByMove[lastMoved] is GodParticleGE particle) {
                     particle.UndoHarvest();
-                    collectedParticles.Remove(particle.type);
+                    //collectedParticles.Remove(particle.type);
                     harvestedByMove.Remove(lastMoved);
                 }
             }

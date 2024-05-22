@@ -14,7 +14,7 @@ public class GameUnitFrame : MonoBehaviour {
         Image gear = friendly ? friendlyGear : enemyGear;
         if (!friendly) {
             EnemyUnit e = (EnemyUnit)ge;
-            EquipmentData data = e.equipment[1];
+            GearData data = e.equipment[1];
             GetComponentInChildren<TooltipEquipmentTrigger>().Initialize(data);
             gear.sprite = data.icon;
         } else if (ge is Nail) {

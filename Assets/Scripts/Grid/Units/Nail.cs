@@ -73,7 +73,7 @@ public class Nail : Unit {
         }
     }
 
-    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         if (!destroyed) {
             yield return base.TakeDamage(dmg, dmgType, source, sourceEquip);
             if (ui.overview)
@@ -86,7 +86,7 @@ public class Nail : Unit {
         }
     }
 
-    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         if (!destroyed) 
             destroyed = true;
         
@@ -109,7 +109,7 @@ public class Nail : Unit {
         }
     }
 
-    public override IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0, GridElement source = null, EquipmentData sourceEquip = null) {
+    public override IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0, GridElement source = null, GearData sourceEquip = null) {
         yield return null;
         if (subGE is EnemyUnit) {
             if (Random.Range(0, 2) == 0)

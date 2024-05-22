@@ -84,7 +84,7 @@ public class EnemyDetonateUnit : EnemyUnit {
         grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
         yield return new WaitForSecondsRealtime(0.5f);
         List<Coroutine> cos = new();
-        cos.Add(StartCoroutine(selectedEquipment.UseEquipment(this, null)));
+        cos.Add(StartCoroutine(selectedEquipment.UseGear(this, null)));
         grid.UpdateSelectedCursor(false, Vector2.one * -32);
         grid.DisableGridHighlight();
         cos.Add(StartCoroutine(TakeDamage(hpCurrent)));
@@ -97,7 +97,7 @@ public class EnemyDetonateUnit : EnemyUnit {
         }
     }
 
-    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         if (primed) {
             if (!destroyed) 
                 destroyed = true;

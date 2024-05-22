@@ -25,7 +25,7 @@ public class PlayerUnit : Unit {
 
 
     // Called when an action is applied to a unit or to clear it's actions
-    public override void UpdateAction(EquipmentData equipment = null, int mod = 0) {
+    public override void UpdateAction(GearData equipment = null, int mod = 0) {
         if (pManager.overrideEquipment == null) {
             base.UpdateAction(equipment, mod);
             pManager.EquipmentSelected(equipment);
@@ -36,7 +36,7 @@ public class PlayerUnit : Unit {
         }
     }
 
-    public override bool ValidCommand(Vector2 target, EquipmentData equip) {
+    public override bool ValidCommand(Vector2 target, GearData equip) {
         if (equip == null) return false;
         if (validActionCoords.Count == 0) return false;
         if (!validActionCoords.Contains(target)) return false;
@@ -47,13 +47,13 @@ public class PlayerUnit : Unit {
     }
 
     public override IEnumerator ExecuteAction(GridElement target = null) {
-        EquipmentData equip = selectedEquipment;
+        GearData equip = selectedEquipment;
         Coroutine co = null;
 // Input parsing - what kind of equipment is being used 
 // single target equipment, not movement
         if (equip) {
 // Tally for end of run scoring
-            if (equip is SlagEquipmentData && equip is not HammerData) {
+            if (equip is SlagGearData && equip is not HammerData) {
                 if (equip is not BigGrabData || equip.firstTarget != null) 
                     equipUses++;
             }
@@ -150,7 +150,7 @@ public class PlayerUnit : Unit {
     }
 
 // Override destroy so that player units are disabled instead
-    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         if (!destroyed) 
             destroyed = true;
 
@@ -181,7 +181,7 @@ public class PlayerUnit : Unit {
         ApplyCondition(Status.Disabled);
     }
 
-    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         if (!destroyed || dmg < 0) {
             yield return base.TakeDamage(dmg, dmgType, source, sourceEquip);
             if (ui.overview)
@@ -191,7 +191,7 @@ public class PlayerUnit : Unit {
         }
     }
 
-    public override IEnumerator CollideFromBelow(GridElement above, GridElement source, EquipmentData sourceEquip) {
+    public override IEnumerator CollideFromBelow(GridElement above, GridElement source, GearData sourceEquip) {
         yield return StartCoroutine(TakeDamage(1, DamageType.Melee));
     }
 

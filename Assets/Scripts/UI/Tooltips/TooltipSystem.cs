@@ -41,35 +41,35 @@ public class TooltipSystem : MonoBehaviour {
         instance.tooltipBL.transform.GetChild(0).gameObject.SetActive(true);
 
         if (trigger is TooltipEquipmentTrigger tr) {
-            if (tr.equip is SlagEquipmentData data && data.orderedUpgrades.Count > 0) {
+            if (tr.equip is SlagGearData data ) { //&& data.orderedUpgrades.Count > 0
                 instance.upgradeContainer.gameObject.SetActive(true);
                 int  shunt = 0, scab = 0, sludge = 0;
                 for (int i = 0; i < 3; i++) {
-                    if (i <= data.orderedUpgrades.Count - 1) {
-                        instance.upgradeContainer.GetChild(i).gameObject.SetActive(true);
-                        UpgradeTooltip tt = instance.upgradeContainer.GetChild(i).GetComponent<UpgradeTooltip>();
-                        string no = data.upgrades[data.orderedUpgrades[i]] == 1 ? "I" : "II";
-                        string body = "";
-                        int nug = 0;
-                        switch (data.orderedUpgrades[i]) {
-                            case SlagEquipmentData.UpgradePath.Shunt:
-                                body = data.upgradeStrings.powerStrings[shunt];
-                                shunt++;
-                            break;
-                            case SlagEquipmentData.UpgradePath.Scab:
-                                body = data.upgradeStrings.specialStrings[scab];
-                                nug = 1;
-                                scab++;
-                            break;
-                            case SlagEquipmentData.UpgradePath.Sludge:
-                                body = data.upgradeStrings.unitStrings[sludge];
-                                nug = 2;
-                                sludge++;
-                            break;
-                        }
-                        //data.orderedUpgrades[i].ToString() + " " + no
-                        tt.SetText(body, "", false, nug);
-                    } else
+                    // if (i <= data.orderedUpgrades.Count - 1) {
+                    //     instance.upgradeContainer.GetChild(i).gameObject.SetActive(true);
+                    //     UpgradeTooltip tt = instance.upgradeContainer.GetChild(i).GetComponent<UpgradeTooltip>();
+                    //     string no = data.upgrades[data.orderedUpgrades[i]] == 1 ? "I" : "II";
+                    //     string body = "";
+                    //     int nug = 0;
+                    //     switch (data.orderedUpgrades[i]) {
+                    //         case SlagGearData.UpgradePath.Shunt:
+                    //             body = data.upgradeStrings.powerStrings[shunt];
+                    //             shunt++;
+                    //         break;
+                    //         case SlagGearData.UpgradePath.Scab:
+                    //             body = data.upgradeStrings.specialStrings[scab];
+                    //             nug = 1;
+                    //             scab++;
+                    //         break;
+                    //         case SlagGearData.UpgradePath.Sludge:
+                    //             body = data.upgradeStrings.unitStrings[sludge];
+                    //             nug = 2;
+                    //             sludge++;
+                    //         break;
+                    //     }
+                    //     //data.orderedUpgrades[i].ToString() + " " + no
+                    //     tt.SetText(body, "", false, nug);
+                    // } else
                         instance.upgradeContainer.GetChild(i).gameObject.SetActive(false);
                 }
             } else 

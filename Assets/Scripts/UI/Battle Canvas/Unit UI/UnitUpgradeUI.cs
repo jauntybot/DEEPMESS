@@ -8,7 +8,7 @@ public class UnitUpgradeUI : UnitUI {
 
     [SerializeField] Image gearIcon;
     public UpgradeManager upgrade;
-    public SlagEquipmentData equip;
+    public SlagGearData equip;
     public HPPips hpPips;
     [SerializeField] Button upgradeButton;
     [SerializeField] GameObject nuggetPrefab;
@@ -16,7 +16,7 @@ public class UnitUpgradeUI : UnitUI {
     public List<NuggetSlot> slots;
     int appliedUpgrades = 0;
     [SerializeField] List<Color> particleSprites;
-    SlagEquipmentData.UpgradePath activeParticle;
+    //SlagGearData.UpgradePath activeParticle;
 
     [HideInInspector] public GameObject previewParticle;
 
@@ -25,7 +25,7 @@ public class UnitUpgradeUI : UnitUI {
         UnitUI ui = base.Initialize(u);
         hpPips.Init(u);
 
-        equip = (SlagEquipmentData)u.equipment.Find(e => e is SlagEquipmentData && e is not HammerData);
+        equip = (SlagGearData)u.equipment.Find(e => e is SlagGearData && e is not HammerData);
         if (gearIcon)
             gearIcon.sprite = equip.icon;
         upgradeButton.GetComponent<UpgradeButtonHoldHandler>().Init(this);
@@ -44,49 +44,49 @@ public class UnitUpgradeUI : UnitUI {
         return ui;
     }
 
-    public void UpdateModifier(SlagEquipmentData.UpgradePath path) {
+    public void UpdateModifier() {
         if (CurrentSlot()) {
             ClearModifier();
 
-            activeParticle = path;
-            string mod = "MAXED OUT";
-            if (equip.orderedUpgrades.Count < 3 || equip.upgrades[path] < 2) {
-                previewParticle = Instantiate(nuggetPrefab, CurrentSlot().transform);
-                Image nugget = previewParticle.GetComponentInChildren<Image>();
-                nugget.color = new Color(nugget.color.r, nugget.color.g, nugget.color.b, 0.6f);
-                Animator anim = previewParticle.GetComponentInChildren<Animator>();
-                switch (path) {
-                    case SlagEquipmentData.UpgradePath.Shunt:
-                        if (equip.upgrades[path] < 2)
-                            mod = equip.upgradeStrings.powerStrings[equip.upgrades[path]];
-                        anim.SetInteger("Color", 0);
-                    break;
-                    case SlagEquipmentData.UpgradePath.Scab:
-                        if (equip.upgrades[path] < 2)
-                            mod = equip.upgradeStrings.specialStrings[equip.upgrades[path]];
-                        anim.SetInteger("Color", 1);
-                    break;
-                    case SlagEquipmentData.UpgradePath.Sludge:
-                        if (equip.upgrades[path] < 2)
-                            mod = equip.upgradeStrings.unitStrings[equip.upgrades[path]];
-                        anim.SetInteger("Color", 2);
-                    break;
-                }
-                anim.keepAnimatorStateOnDisable = true;
-            }
+            // activeParticle = path;
+            // string mod = "MAXED OUT";
+            // if (equip.orderedUpgrades.Count < 3 || equip.upgrades[path] < 2) {
+            //     previewParticle = Instantiate(nuggetPrefab, CurrentSlot().transform);
+            //     Image nugget = previewParticle.GetComponentInChildren<Image>();
+            //     nugget.color = new Color(nugget.color.r, nugget.color.g, nugget.color.b, 0.6f);
+            //     Animator anim = previewParticle.GetComponentInChildren<Animator>();
+            //     switch (path) {
+            //         case SlagGearData.UpgradePath.Shunt:
+            //             if (equip.upgrades[path] < 2)
+            //                 mod = equip.upgradeStrings.powerStrings[equip.upgrades[path]];
+            //             anim.SetInteger("Color", 0);
+            //         break;
+            //         case SlagGearData.UpgradePath.Scab:
+            //             if (equip.upgrades[path] < 2)
+            //                 mod = equip.upgradeStrings.specialStrings[equip.upgrades[path]];
+            //             anim.SetInteger("Color", 1);
+            //         break;
+            //         case SlagGearData.UpgradePath.Sludge:
+            //             if (equip.upgrades[path] < 2)
+            //                 mod = equip.upgradeStrings.unitStrings[equip.upgrades[path]];
+            //             anim.SetInteger("Color", 2);
+            //         break;
+            //     }
+            //     anim.keepAnimatorStateOnDisable = true;
+            // }
 
-            string no = "";
-            if (mod != "MAXED OUT") {
-                switch(equip.upgrades[path]) {
-                    default:
-                    case 0: no = "I"; break;
-                    case 1: no = "II"; break;
-                    case 2: no = ""; break;
-                }
-            }
+            // string no = "";
+            // if (mod != "MAXED OUT") {
+            //     switch(equip.upgrades[path]) {
+            //         default:
+            //         case 0: no = "I"; break;
+            //         case 1: no = "II"; break;
+            //         case 2: no = ""; break;
+            //     }
+            // }
 
             
-            CurrentSlot().UpdateModifier(path.ToString().ToUpper() + " " + no, mod);
+            //CurrentSlot().UpdateModifier(path.ToString().ToUpper() + " " + no, mod);
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
             Canvas.ForceUpdateCanvases();
@@ -125,7 +125,7 @@ public class UnitUpgradeUI : UnitUI {
         ClearModifier(true);
         appliedUpgrades++;
 
-        equip.UpgradeEquipment(activeParticle);
+        //equip.UpgradeGear(activeParticle);
         upgrade.ApplyParticle();
     }
 

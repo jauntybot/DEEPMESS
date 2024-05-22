@@ -107,7 +107,7 @@ public class GridContextuals : MonoBehaviour {
         neutralTooltip.HoverOver();
     }
 
-    public void DisplayGridContextuals(GridElement origin, EquipmentData data, int gridColor, GameObject refTrans = null) {
+    public void DisplayGridContextuals(GridElement origin, GearData data, int gridColor, GameObject refTrans = null) {
         if (toggled) {
             ToggleValid(data.contextDisplay != ContextDisplay.None);
             if (data.contextualAnimGO != null)
@@ -199,7 +199,7 @@ public class GridContextuals : MonoBehaviour {
         }
     }
 
-    public void UpdateContext(EquipmentData data, int highlightIndex, ContextDisplay newContext = ContextDisplay.None, Animator newAnim = null, GridElement newFrom = null) {
+    public void UpdateContext(GearData data, int highlightIndex, ContextDisplay newContext = ContextDisplay.None, Animator newAnim = null, GridElement newFrom = null) {
         currentContext = data.contextDisplay;
         if (newContext != ContextDisplay.None) currentContext = newContext;
 

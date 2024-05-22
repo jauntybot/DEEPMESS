@@ -18,7 +18,7 @@ public class FloorDefinition : ScriptableObject {
 // Slot machine floor refs
     public enum SlotsType { Equipment, Upgrades };
     public SlotsType slotsType;
-    public List<EquipmentData> equipmentTable;
+    public List<GearData> equipmentTable;
     //public List<UpgradeData> upgradeTable;
 
     [System.Serializable]

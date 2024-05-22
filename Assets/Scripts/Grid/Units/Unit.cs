@@ -12,8 +12,8 @@ public class Unit : GridElement {
     [SerializeField] DescentVFX descentVFX;
     public GameObject airTraillVFX;
     public bool selected;
-    public EquipmentData selectedEquipment;
-    public List<EquipmentData> equipment;
+    public GearData selectedEquipment;
+    public List<GearData> equipment;
     public bool moved;
 
     public List<Vector2> validActionCoords;
@@ -59,12 +59,12 @@ public class Unit : GridElement {
 
 
 // Initialize equipment from prefab
-        foreach(EquipmentData e in equipment) {
-            e.EquipEquipment(this);
+        foreach(GearData e in equipment) {
+            e.EquipGear(this);
         }
     }
 
-    public virtual void UpdateAction(EquipmentData equipment = null, int mod = 0) {
+    public virtual void UpdateAction(GearData equipment = null, int mod = 0) {
 // Clear data
         validActionCoords = null;
         grid.DisableGridHighlight();
@@ -79,7 +79,7 @@ public class Unit : GridElement {
 
     public virtual IEnumerator ExecuteAction(GridElement target = null) {
         if (selectedEquipment) {
-            yield return StartCoroutine(selectedEquipment.UseEquipment(this, target));
+            yield return StartCoroutine(selectedEquipment.UseGear(this, target));
         }
         if (selectedEquipment && !selectedEquipment.multiselect) {
             selectedEquipment.UntargetEquipment(this);
@@ -88,7 +88,7 @@ public class Unit : GridElement {
         manager.unitActing = false;
     }
 
-    public virtual bool ValidCommand(Vector2 target, EquipmentData equip) {
+    public virtual bool ValidCommand(Vector2 target, GearData equip) {
         if (equip == null) return false;
         if (validActionCoords.Count == 0) return false;
         if (!validActionCoords.Contains(target)) return false;
@@ -130,7 +130,7 @@ public class Unit : GridElement {
     }
 
 // For when a Slag is acting on a Unit to move it, such as BigGrab or any push mechanics
-    public virtual void UpdateElement(Vector2 c, GridElement source, EquipmentData sourceEquip = null) {
+    public virtual void UpdateElement(Vector2 c, GridElement source, GearData sourceEquip = null) {
         Vector2 prevCoord = coord;
         base.UpdateElement(c);
         if (manager.scenario.currentTurn != ScenarioManager.Turn.Cascade) {
@@ -161,7 +161,7 @@ public class Unit : GridElement {
         }
     }
 
-    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         if (!destroyed) {
             TargetElement(true);
 
@@ -172,7 +172,7 @@ public class Unit : GridElement {
         }
     }
 
-    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         if (!destroyed) 
             destroyed = true;
 
@@ -230,7 +230,7 @@ public class Unit : GridElement {
     }
 
 // For when a Slag is acting on a Unit to move it, such as BigGrab or any push mechanics
-    public virtual IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0, GridElement source = null, EquipmentData sourceEquip = null) {
+    public virtual IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0, GridElement source = null, GearData sourceEquip = null) {
 // Tutorial tooltip popup
         if (manager.scenario.floorManager.tutorial.isActiveAndEnabled && !manager.scenario.floorManager.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
             manager.scenario.floorManager.tutorial.StartCoroutine(manager.scenario.floorManager.tutorial.DescentDamage());
@@ -246,6 +246,8 @@ public class Unit : GridElement {
         if (shield) {
             Shield temp = shield;
             shield = null;
+            if (temp.aerodynamics)
+                moveMod--;
 // SHIELD UNIT TIER I - Remove buoyancy
             if (temp.buoyant)
                 UpdateElement(coord);

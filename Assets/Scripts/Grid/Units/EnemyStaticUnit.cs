@@ -27,7 +27,7 @@ public class EnemyStaticUnit : EnemyUnit {
         UpdateAction(equipment[1]);
         gfxAnim.SetTrigger("Attack");
         yield return new WaitForSecondsRealtime(0.5f);
-        Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this));
+        Coroutine co = StartCoroutine(selectedEquipment.UseGear(this));
         grid.UpdateSelectedCursor(false, Vector2.one * -32);
         grid.DisableGridHighlight();
         yield return co;

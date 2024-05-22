@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65a7ede9a421bc64888b4eeedcdb6ce4, type: 3}
+  m_Name: Shield
+  m_EditorClassIdentifier: 
+  name: Shield
+  icon: {fileID: 21300000, guid: 472e03929229a2b4c9c673588e4d1847, type: 3}
+  contextualAnimGO: {fileID: 4540997612109558425, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}
+  contextDisplay: 1
+  multiContext: 0
+  gridColor: 2
+  vfx: {fileID: 0}
+  multiselect: 0
+  firstTarget: {fileID: 0}
+  adjacency: 0
+  range: 1
+  aoeAdjacency: 0
+  aoeRange: 0
+  energyCost: 1
+  animDur: 0.5
+  filters: []
+  targetTypes:
+  - {fileID: 7182560657884744695, guid: cd80e2d4f52c4d549aeb38fea8674678, type: 3}
+  - {fileID: 1124182531442868255, guid: 519ca6ef5b5110d4781188c1bfb97c31, type: 3}
+  selectSFX: {fileID: 0}
+  useSFX: {fileID: 11400000, guid: 768f4df616649e94c80b7de04a73116e, type: 2}
+  slag: {fileID: 0}
+  upgrades:
+  - {fileID: 11400000, guid: 563a0d764b943244cbe34f4068e46e31, type: 2}
+  - {fileID: 11400000, guid: b140d8b60742d6d44b4b1b60b0a53091, type: 2}
+  - {fileID: 11400000, guid: a24585c321c4cda448b32b3ea09ef2e3, type: 2}
+  - {fileID: 11400000, guid: c680753c3abff5847816795c90aa1c36, type: 2}
+  - {fileID: 11400000, guid: 40bdf18bf1af50348a5ea12418debc1a, type: 2}
+  - {fileID: 11400000, guid: 9aa6a31042d1d014f955a4cdb980c8f1, type: 2}
+  slottedUpgrades:
+  - {fileID: 11400000, guid: 40bdf18bf1af50348a5ea12418debc1a, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  shieldPrefab: {fileID: 4540997612109558425, guid: b4fd788bbd9310a4994cf153abf87c6a, type: 3}
+  activeShields:
+  - {fileID: 0}
+  shieldHP: 1
+  thorns: 0
+  liveWired: 0
+  aerodynamics: 0
+  pinchClosed: 1
+  pinchClosedVFX: {fileID: 4829650248153905427, guid: cab4d2b023fe733408914ec679e6663f, type: 3}
+  pinchClosedInflictedVFX: {fileID: 7392698658775810185, guid: 799f36291982fe7438d96908b94b3dd2, type: 3}

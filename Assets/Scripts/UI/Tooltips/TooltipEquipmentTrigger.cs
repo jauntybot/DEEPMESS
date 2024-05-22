@@ -7,7 +7,7 @@ using UnityEngine.UI;
 [ExecuteInEditMode]
 public class TooltipEquipmentTrigger : TooltipTrigger {
 
-    [HideInInspector] public EquipmentData equip;
+    [HideInInspector] public GearData equip;
     [SerializeField] bool initSelf;
     [SerializeField] RuntimeAnimatorController hammerAnim, anvilAnim, bigGrabAnim, shieldAnim, bulbAnim;
     [SerializeField] RuntimeAnimatorController thornsAnim, strikeAnim, autoBombAnim, pinCoushinAnim, quakeAnim;
@@ -20,7 +20,7 @@ public class TooltipEquipmentTrigger : TooltipTrigger {
         base.OnPointerEnter(eventData);
     }
 
-    public void Initialize(EquipmentData data) {
+    public void Initialize(GearData data) {
         equip = data;
         string name = equip.name;
         switch (name) {

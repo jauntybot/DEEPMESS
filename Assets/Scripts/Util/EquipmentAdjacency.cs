@@ -8,24 +8,24 @@ public static class EquipmentAdjacency {
 #region Coordinate Adjacency
 
 // Accessor function, pass all params here and it will use the appropriate equation
-    public static List<Vector2> GetAdjacent(Vector2 from, int range, EquipmentData data, List<GridElement> targetLast = null, Grid grid = null, bool offGrid = false) {
+    public static List<Vector2> GetAdjacent(Vector2 from, int range, GearData data, List<GridElement> targetLast = null, Grid grid = null, bool offGrid = false) {
         List<Vector2> _coords = new();
 
         switch(data.adjacency) {
             default:
-            case EquipmentData.AdjacencyType.Diamond:
+            case GearData.AdjacencyType.Diamond:
                 _coords = DiamondAdjacency(from, range, data, data.filters, targetLast);
             break;
-            case EquipmentData.AdjacencyType.Orthogonal:
+            case GearData.AdjacencyType.Orthogonal:
                 _coords = OrthagonalAdjacency(from, range, data.filters, targetLast);
             break;
-            case EquipmentData.AdjacencyType.OfType:
+            case GearData.AdjacencyType.OfType:
                 _coords = OfTypeOnBoardAdjacency(data.filters, grid);
             break;
-            case EquipmentData.AdjacencyType.OfTypeInRange:
+            case GearData.AdjacencyType.OfTypeInRange:
                 _coords = DiamondAdjacency(from, range, data, data.filters, targetLast, true);
             break;
-            case EquipmentData.AdjacencyType.Box:
+            case GearData.AdjacencyType.Box:
                 _coords = BoxAdjacency(from, range, targetLast);
             break;
         }
@@ -34,7 +34,7 @@ public static class EquipmentAdjacency {
         return _coords;
     }
 
-    public static List<Vector2> DiamondAdjacency(Vector2 from, int range, EquipmentData data, List<GridElement> filters, List<GridElement> targetLast = null, bool ofType = false) {
+    public static List<Vector2> DiamondAdjacency(Vector2 from, int range, GearData data = null, List<GridElement> filters = null, List<GridElement> targetLast = null, bool ofType = false) {
         List<Vector2> _coords = new();
         List<Vector2> frontier = new();
         frontier.Add(from);
@@ -66,12 +66,14 @@ public static class EquipmentAdjacency {
                             if (valid == false) continue;
                         }
 // Check if Tile is valid
-                        foreach (GridElement ge in filters) {
-                            if (ge is Tile sqr) {
-                                Tile target = FloorManager.instance.currentFloor.tiles.Find(sqr => sqr.coord == coord);
-                                if (target != null) {
-                                    if (target.tileType == sqr.tileType) {
-                                        valid = false;
+                        if (filters != null) {
+                            foreach (GridElement ge in filters) {
+                                if (ge is Tile sqr) {
+                                    Tile target = FloorManager.instance.currentFloor.tiles.Find(sqr => sqr.coord == coord);
+                                    if (target != null) {
+                                        if (target.tileType == sqr.tileType) {
+                                            valid = false;
+                                        }
                                     }
                                 }
                             }
@@ -108,12 +110,14 @@ public static class EquipmentAdjacency {
                             if (valid == false) continue;
                         }
 // Check if Tile is valid
-                        foreach (GridElement ge in filters) {
-                            if (ge is Tile sqr) {
-                                Tile target = FloorManager.instance.currentFloor.tiles.Find(sqr => sqr.coord == coord);
-                                if (target != null) {
-                                    if (target.tileType == sqr.tileType) {
-                                        valid = false;
+                        if (filters != null) {
+                            foreach (GridElement ge in filters) {
+                                if (ge is Tile sqr) {
+                                    Tile target = FloorManager.instance.currentFloor.tiles.Find(sqr => sqr.coord == coord);
+                                    if (target != null) {
+                                        if (target.tileType == sqr.tileType) {
+                                            valid = false;
+                                        }
                                     }
                                 }
                             }
@@ -134,7 +138,7 @@ public static class EquipmentAdjacency {
         return _coords;
     }
 
-    public static Dictionary<Vector2, Vector2> SteppedCoordAdjacency(Vector2 from, Vector2 to, EquipmentData data) {
+    public static Dictionary<Vector2, Vector2> SteppedCoordAdjacency(Vector2 from, Vector2 to, GearData data) {
         Dictionary<Vector2, Vector2> _toFrom = new();
         List<Vector2> frontier = new() { from };
         Vector2 current = from;
@@ -214,7 +218,7 @@ public static class EquipmentAdjacency {
     }
 
     
-    public static Dictionary<Vector2, Vector2> ClosestSteppedCoordAdjacency(Vector2 from, Vector2 to, EquipmentData data) {
+    public static Dictionary<Vector2, Vector2> ClosestSteppedCoordAdjacency(Vector2 from, Vector2 to, GearData data) {
         Dictionary<Vector2, Vector2> _toFrom = new();
         List<Vector2> frontier = new() { from };
         Vector2 current = from;
@@ -299,7 +303,7 @@ public static class EquipmentAdjacency {
         return _fromTo;         
     }
 
-    public static List<Vector2> OrthagonalAdjacency(Vector2 from, int range, List<GridElement> filters, List<GridElement> targetLast = null) 
+    public static List<Vector2> OrthagonalAdjacency(Vector2 from, int range, List<GridElement> filters = null, List<GridElement> targetLast = null) 
     {
         List<Vector2> _coords = new();
         Vector2 dir = Vector2.zero;
@@ -388,7 +392,7 @@ public static class EquipmentAdjacency {
     }
 
 /*
-    protected static List<Vector2> DiagonalAdjacency(Vector2 origin, EquipmentData e) 
+    protected static List<Vector2> DiagonalAdjacency(Vector2 origin, GearData e) 
     {
         List<Vector2> _coords = new List<Vector2>();
         Vector2 dir = Vector2.zero;
@@ -407,7 +411,7 @@ public static class EquipmentAdjacency {
                 Vector2 coord = origin + dir * r;
                 if (FloorManager.instance.currentFloor.CoordContents(coord) is GridElement ge) {
                     switch (e.action) {
-                        case EquipmentData.Action.Move:
+                        case GearData.Action.Move:
                             if (ge is Unit u) {
                                 if (u.owner != owner) blocked = true;
                                 else 
@@ -415,7 +419,7 @@ public static class EquipmentAdjacency {
                             } else
                                 blocked = true;
                         break;
-                        case EquipmentData.Action.Attack:
+                        case GearData.Action.Attack:
                             if (ge is Unit u2) {
                                 if (u2.owner == owner) blocked = true;
                                 else 

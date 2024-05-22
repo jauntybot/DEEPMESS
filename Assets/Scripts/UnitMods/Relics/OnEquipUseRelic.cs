@@ -17,7 +17,7 @@ namespace Relics {
                 case RelicType.AluminumShaft:
                     PlayerManager manager = ScenarioManager.instance.player;
                     foreach(Unit u in manager.units) {
-                        foreach (EquipmentData equip in u.equipment) {
+                        foreach (GearData equip in u.equipment) {
                             if (equip is HammerData)
                                 u.moveMod ++;
                         }

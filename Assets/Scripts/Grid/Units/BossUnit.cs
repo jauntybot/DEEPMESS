@@ -6,12 +6,12 @@ public class BossUnit : EnemyUnit {
 
     [SerializeField] Unit prevTarget = null;
 
-    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         manager.StartCoroutine(manager.scenario.FinalDrop());
         yield return base.DestroySequence(dmgType, source, sourceEquip);
     }
 
-    public override bool ValidCommand(Vector2 target, EquipmentData equip) {
+    public override bool ValidCommand(Vector2 target, GearData equip) {
         if (equip == null) return false;
         if (validActionCoords.Count == 0) return false;
         if (!validActionCoords.Contains(target)) return false;
