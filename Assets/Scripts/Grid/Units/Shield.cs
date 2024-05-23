@@ -8,21 +8,22 @@ public class Shield : MonoBehaviour {
     public ShieldData data;
     public SpriteRenderer gfx;
     Animator anim;
-    public bool buoyant, thorns, healing;
+    public bool buoyant, thorns, liveWired, aerodynamics, healing;
 
-    public void Init(Unit target, Unit user) {
-        if (user.equipment[1] is ShieldData s)
-            data = s;
+    public void Init(Unit target, ShieldData _data) {
+        data = _data;
         anim = gfx.GetComponent<Animator>();
         unit = target;
-// UNIT TIER I - Prevents liquid tile effects
-        buoyant = data.upgrades[SlagEquipmentData.UpgradePath.Sludge] >= 1;
-// UNIT TIER II - Heals users
-        healing = data.upgrades[SlagEquipmentData.UpgradePath.Sludge] >= 2; 
-// SPECIAL TIER II - Damages attackers
-        thorns = data.upgrades[SlagEquipmentData.UpgradePath.Scab] >= 2;
 
-        
+// UNIT TIER I - Prevents liquid tile effects
+//         buoyant = data.upgrades[SlagGearData.UpgradePath.Sludge] >= 1;
+// // UNIT TIER II - Heals users
+//         healing = data.upgrades[SlagGearData.UpgradePath.Sludge] >= 2; 
+
+        thorns = data.thorns;
+        liveWired = data.liveWired;
+        aerodynamics = data.aerodynamics;
+
         gfx.sortingOrder = unit.grid.SortOrderFromCoord(unit.coord)+1;
     }
 

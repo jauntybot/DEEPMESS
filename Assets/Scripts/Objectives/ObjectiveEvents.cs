@@ -19,7 +19,7 @@ public class GridElementDamagedEvent : ObjectiveEvent {
     public int dmg = 0;
     public GridElement.DamageType damageType = GridElement.DamageType.Unspecified;
     public GridElement source = null;
-    public EquipmentData sourceEquip = null;
+    public GearData sourceEquip = null;
 
 }
 
@@ -27,12 +27,12 @@ public class GridElementDestroyedEvent : ObjectiveEvent {
     public GridElement element = null;
     public GridElement.DamageType damageType = GridElement.DamageType.Unspecified;
     public GridElement source = null;
-    public EquipmentData sourceEquip = null;
+    public GearData sourceEquip = null;
 
 }
 
 public class OnEquipmentUse : ObjectiveEvent {
-    public EquipmentData data = null;
+    public GearData data = null;
     public GridElement user = null;
     public GridElement target = null;
     public GridElement secondTarget = null;

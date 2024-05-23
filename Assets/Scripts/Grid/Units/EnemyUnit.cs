@@ -1,4 +1,6 @@
+
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyUnit : Unit {
@@ -19,7 +21,7 @@ public class EnemyUnit : Unit {
                 //manager.SelectUnit(this);
                 manager.currentGrid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
                 yield return new WaitForSecondsRealtime(0.5f);
-                Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, manager.currentGrid.tiles.Find(sqr => sqr.coord == targetCoord)));
+                Coroutine co = StartCoroutine(selectedEquipment.UseGear(this, manager.currentGrid.tiles.Find(sqr => sqr.coord == targetCoord)));
                 manager.currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
                 manager.currentGrid.DisableGridHighlight();
                 yield return co;
@@ -59,7 +61,7 @@ public class EnemyUnit : Unit {
         //while (!Input.GetMouseButtonDown(0)) yield return null;
         //manager.SelectUnit(this);
         yield return new WaitForSecondsRealtime(0.5f);
-        Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, grid.tiles.Find(sqr => sqr.coord == targetCoord)));
+        Coroutine co = StartCoroutine(selectedEquipment.UseGear(this, grid.tiles.Find(sqr => sqr.coord == targetCoord)));
         grid.UpdateSelectedCursor(false, Vector2.one * -32);
         grid.DisableGridHighlight();
         yield return co;
@@ -75,7 +77,7 @@ public class EnemyUnit : Unit {
                 foreach (GridElement ge in grid.CoordContents(coord))
                     target = ge;
                 yield return new WaitForSecondsRealtime(0.5f);
-                Coroutine co = StartCoroutine(selectedEquipment.UseEquipment(this, target));
+                Coroutine co = StartCoroutine(selectedEquipment.UseGear(this, target));
                 grid.UpdateSelectedCursor(false, Vector2.one * -32);
                 grid.DisableGridHighlight();
                 yield return co;
@@ -90,17 +92,17 @@ public class EnemyUnit : Unit {
     public virtual Vector2 SelectOptimalCoord(Pathfinding pathfinding) {
         switch (pathfinding) {
             case Pathfinding.ClosestCoord:
-                // int shortestPathCount = 64;
-                // Dictionary<Vector2, Vector2> shortestPath = new Dictionary<Vector2, Vector2>();
-                // Vector2 targetCoord = coord;
-                // Debug.Log("First while loop");
-// Calculate a path from each target to self
+//                 int shortestPathCount = 64;
+//                 Dictionary<Vector2, Vector2> shortestPath = new Dictionary<Vector2, Vector2>();
+//                 Vector2 targetCoord = coord;
+//                 Debug.Log("First while loop");
+// //Calculate a path from each target to self
 //                 while (!shortestPath.ContainsKey(coord)) {
 //                     foreach (Unit unit in manager.scenario.player.units) {
 // // Don't target disabled slags
 //                         if (!unit.conditions.Contains(Status.Disabled)) {
 // // Possible spaces in range of and originating from target
-//                             List<Vector2> targetCoords = EquipmentAdjacency.GetAdjacent(unit.coord, equipment[1].range, equipment[0]);
+//                             List<Vector2> targetCoords = EquipmentAdjacency.GetAdjacent(unit.coord, 8, equipment[0]);
 //                             foreach (Vector2 c in targetCoords) {
 //                                 Dictionary<Vector2, Vector2> fromTo = new Dictionary<Vector2, Vector2>(); 
 //                                 fromTo = EquipmentAdjacency.ClosestSteppedCoordAdjacency(coord, c, equipment[0]);
@@ -108,12 +110,17 @@ public class EnemyUnit : Unit {
 //                                     shortestPath = fromTo;
 //                                     shortestPathCount = fromTo.Count;
 //                                     targetCoord = c;
+//                                     grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.blue, true);
+//                                 } else {
+//                                     grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.red, true);
 //                                 }
+
 //                             }
 //                         }
 //                     }
 //                 }
 
+                
 //                 if (targetCoord != coord) {
 //                     grid.tiles.Find(t => t.coord == targetCoord).ToggleValidCoord(true, Color.blue, true);
 //                     string coords = "MoveTo Coord: " + targetCoord + ", ";
@@ -127,8 +134,9 @@ public class EnemyUnit : Unit {
 //                 }
                 
 //                 return targetCoord;
-
-// Old logic
+//             break;
+//         }
+//Old logic
                 closestUnit = null;
                 foreach (Unit unit in manager.scenario.player.units) {
                     if (grid.gridElements.Contains(unit) && unit.hpCurrent != 0 && !unit.conditions.Contains(Status.Disabled) && equipment[1].targetTypes.Find(t => t.GetType() == unit.GetType())) {
@@ -154,7 +162,7 @@ public class EnemyUnit : Unit {
         return coord;
     }
 
-    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         if (!destroyed) {
             int modifiedDmg = conditions.Contains(Status.Weakened) ? dmg * 2 : dmg;
             if (hpCurrent - modifiedDmg <= hpMax/2) 
@@ -168,7 +176,7 @@ public class EnemyUnit : Unit {
         }
     }
 
-    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         switch(dmgType) {
             case DamageType.Unspecified:
                 gfxAnim.SetTrigger("Split");

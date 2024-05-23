@@ -194,12 +194,12 @@ public class PathManager : MonoBehaviour {
         card.GetComponent<Animator>().SetTrigger("SlideIn");
 
 // Shuffle bag for random nugget rewards
-        ShuffleBag<SlagEquipmentData.UpgradePath> rndBag = new();
-        for (int i = 0; i <= 3; i++) {
-            rndBag.Add(SlagEquipmentData.UpgradePath.Shunt);
-            rndBag.Add(SlagEquipmentData.UpgradePath.Scab);
-            rndBag.Add(SlagEquipmentData.UpgradePath.Sludge);
-        }
+        // ShuffleBag<SlagGearData.UpgradePath> rndBag = new();
+        // for (int i = 0; i <= 3; i++) {
+        //     rndBag.Add(SlagGearData.UpgradePath.Shunt);
+        //     rndBag.Add(SlagGearData.UpgradePath.Scab);
+        //     rndBag.Add(SlagGearData.UpgradePath.Sludge);
+        // }
 
 // Delay for anim in
         float t = 0; while (t < 1.25f) { t += Time.deltaTime; yield return null; }
@@ -210,7 +210,7 @@ public class PathManager : MonoBehaviour {
             r.GetComponent<Animator>().SetTrigger("Reward");
             t = 0; while (t < 0.5f) { t += Time.deltaTime; yield return null; } 
             r.SetParent(null);
-            upgradeManager.CollectNugget(rndBag.Next());
+            //upgradeManager.CollectNugget(rndBag.Next());
             t = 0; while (t < 0.6f) { t += Time.deltaTime; yield return null; }
         }
 // Collect relic rewards sequentially
@@ -236,12 +236,12 @@ public class PathManager : MonoBehaviour {
                 t = 0; while (t < 0.5f) { t += Time.deltaTime; yield return null; }
                 LayoutRebuilder.ForceRebuildLayoutImmediate(anim.transform.parent.GetComponent<RectTransform>());
                 Canvas.ForceUpdateCanvases();
-                if (floorSequence.activePacket.objectives[i].nuggetReward) {
-                    upgradeManager.CollectNugget(rndBag.Next());
-                } else {
+                // if (floorSequence.activePacket.objectives[i].nuggetReward) {
+                //     upgradeManager.CollectNugget(rndBag.Next());
+                // } else {
                     t = 0; while (t < 0.2f) { t += Time.deltaTime; yield return null; }
                     yield return relicManager.StartCoroutine(relicManager.PresentRelic());
-                }
+                //}
                 t = 0; while (t < 0.6f) { t += Time.deltaTime; yield return null; }
             } else {
                 anim.SetTrigger("ObFail");

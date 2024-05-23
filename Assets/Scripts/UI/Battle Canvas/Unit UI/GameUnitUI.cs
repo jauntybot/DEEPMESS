@@ -116,7 +116,7 @@ public class GameUnitUI : UnitUI {
                 EquipmentButton b = equipButtons.Find(b => b.data == unit.equipment[i]);
                 if (b == null) {
                     GameObject prefab = null; Transform parent = null; int index = 0;
-                    if (unit.equipment[i] is SlagEquipmentData && unit.equipment[i] is not HammerData) {
+                    if (unit.equipment[i] is SlagGearData && unit.equipment[i] is not HammerData) {
                         prefab = slagEquipmentButtonPrefab;
                         parent = equipmentParent.transform;
                     } else if (unit.equipment[i] is HammerData) {
@@ -161,11 +161,11 @@ public class GameUnitUI : UnitUI {
     }
 
 // BIG YIKES -- UI element is controling how Slags loadout is updated, move to PlayerUnit
-    public void UpdateLoadout(EquipmentData equip) {
+    public void UpdateLoadout(GearData equip) {
 // Remove old equipment unless the same
-        if (equip is SlagEquipmentData) {
+        if (equip is SlagGearData) {
             for (int i = unit.equipment.Count - 1; i >= 0; i--) {
-                if (unit.equipment[i] is SlagEquipmentData e) {
+                if (unit.equipment[i] is SlagGearData e) {
                     if (equip == e) return;
                     unit.equipment.Remove(e);
                 }

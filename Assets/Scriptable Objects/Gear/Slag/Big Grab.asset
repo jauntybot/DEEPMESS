@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab2e6415a15305c41abd805bdf69a13c, type: 3}
+  m_Name: Big Grab
+  m_EditorClassIdentifier: 
+  name: Big Grab
+  icon: {fileID: 21300000, guid: 64030a2d92eb0264aaee58102c5044c3, type: 3}
+  contextualAnimGO: {fileID: 0}
+  contextDisplay: 0
+  multiContext: 4
+  gridColor: 2
+  vfx: {fileID: 3278671783809869257, guid: 50b9ca80dd45b0148a39f11ee5b64462, type: 3}
+  multiselect: 1
+  firstTarget: {fileID: 0}
+  adjacency: 1
+  range: 3
+  aoeAdjacency: 0
+  aoeRange: 0
+  energyCost: 1
+  animDur: 0.1
+  filters: []
+  targetTypes: []
+  selectSFX: {fileID: 11400000, guid: 9a3d6531a09935b49afcc3ef0b43c9a9, type: 2}
+  useSFX: {fileID: 11400000, guid: 406a2da6a39de9a4abce72e256e055b4, type: 2}
+  slag: {fileID: 0}
+  upgrades:
+  - {fileID: 11400000, guid: fc1127c5899283c4eb53097e2a91fe61, type: 2}
+  - {fileID: 11400000, guid: 9af81834ea6532a4ea71761d57ddc75a, type: 2}
+  - {fileID: 11400000, guid: 58971ca2188997141bdfe56001000e90, type: 2}
+  - {fileID: 11400000, guid: a2c63cf286b726b4f8e4d937cfe51964, type: 2}
+  - {fileID: 11400000, guid: 072f9e69a8c62a0489248e246ec5eabe, type: 2}
+  - {fileID: 11400000, guid: 21c57f0b4410b7b4a8e65de4767edaec, type: 2}
+  slottedUpgrades:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  firstTargets:
+  - {fileID: 2016796106260804354, guid: b12bed586f9b98a4b9f6045893aeb48a, type: 3}
+  - {fileID: 3378454130664419741, guid: 10279871042a13c47989eec11d6a5edf, type: 3}
+  upgradeTargets:
+  - {fileID: 2897877390811545440, guid: d00e722c41845a742aba65c37f6e0450, type: 3}
+  - {fileID: 4634978180570587290, guid: c7249e601f4730c4999df2560c657aac, type: 3}
+  grabRange: 1
+  flexibleSlime: 0
+  maim: 0
+  impact: 0
+  landscaper: 0
+  ontoOccupied: 0

@@ -7,11 +7,11 @@ public class Anvil : Unit {
 
 
     [Header("ANVIL UNIT")]
-    [HideInInspector] public AnvilData data;
-    [SerializeField] GameObject explosionVFX;
+    AnvilData data;
+    [SerializeField] GameObject explosionVFX, wallPrefab;
     [SerializeField] SFX detonateSFX;
     [SerializeField] List<GridElement> targetTypes;
-    bool explode;
+    bool reinforcedBottom, explode, liveWire, crystalize;
 
     protected override void Start() {
 // Manual override of Base.Start to exclude hp initialization
@@ -33,11 +33,12 @@ public class Anvil : Unit {
         if (conditionDisplay) conditionDisplay.Init(this);
     }
 
-    public virtual void Init(AnvilData _data) {
+    public virtual void Init(int _hp, AnvilData _data) {
         data = _data;
 // SPECIAL TIERS -- Increase anvil max HP
-        if (data.upgrades[SlagEquipmentData.UpgradePath.Scab] == 1) hpMax = 2;
-        if (data.upgrades[SlagEquipmentData.UpgradePath.Scab] >= 2) hpMax = 3;
+        // if (data.upgrades[SlagGearData.UpgradePath.Scab] == 1) hpMax = 2;
+        // if (data.upgrades[SlagGearData.UpgradePath.Scab] >= 2) hpMax = 3;
+        hpMax = _hp;
         hpCurrent = hpMax;
         if (elementCanvas == null)  {
             elementCanvas = GetComponentInChildren<ElementCanvas>();
@@ -45,18 +46,38 @@ public class Anvil : Unit {
         } else
             elementCanvas.InstantiateMaxPips();
 
-            explode = data.upgrades[SlagEquipmentData.UpgradePath.Shunt] != 0;
+            reinforcedBottom = data.reinforcedBottom;
+            explode = data.explode;
+            liveWire = data.liveWire;
+            crystalize = data.crystalize;
     }
 
     public override IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0) {
-        yield return StartCoroutine(TakeDamage(hpCurrent));
+        if (reinforcedBottom)
+            yield return base.CollideFromAbove(subGE, hardLand);
+        else
+            yield return StartCoroutine(TakeDamage(hpCurrent));
 
     }
 
-    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+    public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
+        if (liveWire && source is EnemyUnit u && dmgType != DamageType.Fall && dmgType != DamageType.Crush) {
+            u.ApplyCondition(Status.Stunned);
+        }
+        yield return base.TakeDamage(dmg, dmgType, source, sourceEquip);
+    }
+
+    public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
 // POWER TIER I - Detonate anvil
         if (explode)
-            yield return Detonate(data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 2 ? 2 : 1);
+            yield return Detonate(1);
+        if (crystalize) {
+            Wall wall = Instantiate(wallPrefab).GetComponent<GridElement>().GetComponent<Wall>();
+            wall.transform.SetParent(FloorManager.instance.currentFloor.neutralGEContainer.transform);
+
+            wall.StoreInGrid(FloorManager.instance.currentFloor);
+            wall.UpdateElement(coord);
+        }
         yield return base.DestroySequence(dmgType, source, sourceEquip);
        
     }
@@ -76,8 +97,8 @@ public class Anvil : Unit {
                     foreach (GridElement ge in grid.CoordContents(coord)) {
                         if ((ge is Unit || ge is Wall) && ge != this) {
 // POWER TIER II - Remove friendly fire
-                            if (!((ge is PlayerUnit || ge is Nail) && data.upgrades[SlagEquipmentData.UpgradePath.Shunt] == 2))
-                                affectedCo.Add(ge.StartCoroutine(ge.TakeDamage(dmg, DamageType.Explosion, this, data)));                        
+                            // if (!((ge is PlayerUnit || ge is Nail) && data.upgrades[SlagGearData.UpgradePath.Shunt] == 2))
+                            affectedCo.Add(ge.StartCoroutine(ge.TakeDamage(dmg, DamageType.Explosion, this, data)));                        
                         }
                     }
                 }

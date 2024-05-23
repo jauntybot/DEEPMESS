@@ -5,30 +5,30 @@ using UnityEngine;
 public class GodParticleGE : GridElement {
 
     bool harvested = false;
-    public SlagEquipmentData.UpgradePath type;
+    //public SlagGearData.UpgradePath type;
 
     [SerializeField] List<Sprite> sprites;
 
     public void Init() {
-        type = (SlagEquipmentData.UpgradePath)Random.Range(0, SlagEquipmentData.UpgradePath.GetNames(typeof(SlagEquipmentData.UpgradePath)).Length);
-        switch (type) {
-            case SlagEquipmentData.UpgradePath.Shunt:
-                gfx[0].sprite = sprites[0];
-            break;
-            case SlagEquipmentData.UpgradePath.Scab:
-                gfx[0].sprite = sprites[1];
-            break;
-            case SlagEquipmentData.UpgradePath.Sludge:
-                gfx[0].sprite = sprites[2];
-            break;
-        }
+        // type = (SlagGearData.UpgradePath)Random.Range(0, SlagGearData.UpgradePath.GetNames(typeof(SlagGearData.UpgradePath)).Length);
+        // switch (type) {
+        //     case SlagGearData.UpgradePath.Shunt:
+        //         gfx[0].sprite = sprites[0];
+        //     break;
+        //     case SlagGearData.UpgradePath.Scab:
+        //         gfx[0].sprite = sprites[1];
+        //     break;
+        //     case SlagGearData.UpgradePath.Sludge:
+        //         gfx[0].sprite = sprites[2];
+        //     break;
+        // }
     }
 
     public override void OnSharedSpace(GridElement sharedWith) {
         if (!harvested) {
             base.OnSharedSpace(sharedWith);
             if (sharedWith is PlayerUnit pu) {
-                pu.pManager.collectedParticles.Add(type);
+                //pu.pManager.collectedParticles.Add(type);
                 pu.pManager.harvestedByMove.Add(pu, this);
                 pu.pManager.UndoClearCallback += DestroySelf;
                 foreach(SpriteRenderer sr in gfx)

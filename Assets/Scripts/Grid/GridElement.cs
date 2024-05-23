@@ -90,7 +90,7 @@ public class GridElement : MonoBehaviour {
     }
 
   
-    public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+    public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         if (!destroyed) {
             ObjectiveEventManager.Broadcast(GenerateDamageEvent(dmgType, dmg, source, sourceEquip));
             if (shield == null || Mathf.Sign(dmg) == -1) {
@@ -120,7 +120,7 @@ public class GridElement : MonoBehaviour {
         }
     }
 
-    protected virtual GridElementDamagedEvent GenerateDamageEvent(DamageType dmgType, int dmg, GridElement source = null, EquipmentData sourceEquip = null) {
+    protected virtual GridElementDamagedEvent GenerateDamageEvent(DamageType dmgType, int dmg, GridElement source = null, GearData sourceEquip = null) {
         GridElementDamagedEvent evt = ObjectiveEvents.GridElementDamagedEvent;
         evt.element = this;
         evt.damageType = dmgType;
@@ -130,7 +130,7 @@ public class GridElement : MonoBehaviour {
         return evt;
     }
 
-    public virtual IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+    public virtual IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         if (!destroyed) 
             destroyed = true;
         ElementDestroyed?.Invoke(this);
@@ -151,7 +151,7 @@ public class GridElement : MonoBehaviour {
         
     }
 
-    protected virtual GridElementDestroyedEvent GenerateDestroyEvent(DamageType dmgType = DamageType.Unspecified, GridElement source = null, EquipmentData sourceEquip = null) {
+    protected virtual GridElementDestroyedEvent GenerateDestroyEvent(DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         GridElementDestroyedEvent evt = ObjectiveEvents.GridElementDestroyedEvent;
         evt.element = this;
         evt.damageType = dmgType;
@@ -173,7 +173,7 @@ public class GridElement : MonoBehaviour {
     }
 
 // For when a Slag is acting on a Unit to move it, such as BigGrab or any push mechanics
-    public virtual IEnumerator CollideFromBelow(GridElement above, GridElement source, EquipmentData sourceEquip) {
+    public virtual IEnumerator CollideFromBelow(GridElement above, GridElement source, GearData sourceEquip) {
         RemoveShield();
         yield return StartCoroutine(DestroySequence(DamageType.Crush, source, sourceEquip));
     }

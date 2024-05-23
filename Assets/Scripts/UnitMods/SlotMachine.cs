@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class SlotMachine : MonoBehaviour
 {
     LoadoutManager manager;
-    [SerializeField] public List<EquipmentData> equipmentTable;
-    public EquipmentData selectedReward;
+    [SerializeField] public List<GearData> equipmentTable;
+    public GearData selectedReward;
     UnitLoadoutUI selectedUI;
     [SerializeField] Transform slotsContainer, orText;
     List<SlotMachineSlot> slots;
@@ -17,7 +17,7 @@ public class SlotMachine : MonoBehaviour
     AudioSource audioSource;
 
 
-    public void Initialize(List<EquipmentData> table) {
+    public void Initialize(List<GearData> table) {
         
         // foreach (UnitLoadoutUI ui in ScenarioManager.instance.player.loadout.unitLoadoutUIs) {
         //     Button b = ui.slotsLoadoutButton.GetComponent<Button>();

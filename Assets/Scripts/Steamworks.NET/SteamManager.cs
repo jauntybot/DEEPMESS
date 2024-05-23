@@ -77,7 +77,7 @@ public class SteamManager : MonoBehaviour {
 		}
 
 		// We want our SteamManager Instance to persist across scenes.
-		DontDestroyOnLoad(gameObject);
+		//DontDestroyOnLoad(gameObject);
 
 		if (!Packsize.Test()) {
 			Debug.LogError("[Steamworks.NET] Packsize Test returned false, the wrong version of Steamworks.NET is being run in this platform.", this);

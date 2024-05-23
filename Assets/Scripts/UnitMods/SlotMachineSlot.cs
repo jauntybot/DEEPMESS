@@ -7,7 +7,7 @@ public class SlotMachineSlot : MonoBehaviour
 {
 
     SlotMachine slotMachine;
-    List<EquipmentData> equipmentTable;
+    List<GearData> equipmentTable;
     int index = 0, finalIndex;
     Animator anim;
     [SerializeField] Image slotSpin1, slotSpin2;
@@ -19,7 +19,7 @@ public class SlotMachineSlot : MonoBehaviour
         anim.StopPlayback();
     }
 
-    public void Initialize(SlotMachine slot, List<EquipmentData> table, int _finalIndex) {
+    public void Initialize(SlotMachine slot, List<GearData> table, int _finalIndex) {
         slotMachine = slot;
         equipmentTable = table;
         GetComponent<Button>().interactable = false;
