@@ -15,7 +15,7 @@ public class FloorChunk : ScriptableObject {
     public List<FloorDefinition> floors;
     public int minEnemies;
     
-    public enum PacketMods { Hazard, Elite };
+    public enum PacketMods { Hazard, Elite, Extreme };
     [HideInInspector] public bool eliteSpawn;
     public List<PacketMods> packetMods;
     public int evtOffset;
