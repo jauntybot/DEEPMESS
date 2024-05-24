@@ -23,7 +23,7 @@ public class BarkBox : MonoBehaviour {
     }
 
     public void Bark(BarkType type) {
-        if (FloorManager.instance.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial
+        if (FloorManager.instance.floorSequence.activePacket.packetType != FloorChunk.PacketType.Tutorial
             && nail.nailState != Nail.NailState.Falling) {
             barkBox.SetActive(false);
             string bark;

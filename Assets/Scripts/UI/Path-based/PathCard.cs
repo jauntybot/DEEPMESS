@@ -9,7 +9,7 @@ public class PathCard : MonoBehaviour {
     PathManager manager;
     Button button;
 
-    public FloorPacket floorPacket;
+    public FloorChunk floorPacket;
 
     public Transform rewardContainer, bonusObjContainer, hazardsContainer;
     [SerializeField] GameObject bonusObjPrefab, nuggetRewardPrefab, relicRewardPrefab, extremeTagPrefab, eliteTagPrefab;
@@ -18,7 +18,7 @@ public class PathCard : MonoBehaviour {
     bool selectable = true;
 
 
-    public void Init(PathManager _manager, FloorPacket _packet) {
+    public void Init(PathManager _manager, FloorChunk _packet) {
         manager = _manager;
         button = GetComponent<Button>();
         
@@ -27,19 +27,19 @@ public class PathCard : MonoBehaviour {
 
         floorCount.text = floorPacket.packetLength.ToString();
 
-        for (int i = floorPacket.nuggets - 1; i >= 0; i--) 
-            Instantiate(nuggetRewardPrefab, rewardContainer);
-        for (int i = floorPacket.relics - 1; i >= 0; i--) 
-            Instantiate(relicRewardPrefab, rewardContainer);
+        // for (int i = floorPacket.nuggets - 1; i >= 0; i--) 
+        //     Instantiate(nuggetRewardPrefab, rewardContainer);
+        // for (int i = floorPacket.relics - 1; i >= 0; i--) 
+        //     Instantiate(relicRewardPrefab, rewardContainer);
         for (int i = floorPacket.packetMods.Count - 1; i >= 0; i--) {
             hazardsContainer.gameObject.SetActive(true);
             GameObject prefab;
             switch (floorPacket.packetMods[i]) {
                 default:
-                case FloorPacket.PacketMods.Extreme:
+                case FloorChunk.PacketMods.Hazard:
                     prefab = extremeTagPrefab;
                 break;
-                case FloorPacket.PacketMods.Elite:
+                case FloorChunk.PacketMods.Elite:
                     prefab = eliteTagPrefab;
                 break;
             }
@@ -62,7 +62,7 @@ public class PathCard : MonoBehaviour {
             BonusObjectiveCard card = Instantiate(bonusObjPrefab, bonusObjContainer).GetComponent<BonusObjectiveCard>();
             card.Init(objs[i]);
         }
-        floorPacket.objectives = objs;
+        //floorPacket.objectives = objs;
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(bonusObjContainer.GetComponent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());

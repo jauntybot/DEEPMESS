@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Wall : GridElement
-{
+public class Wall : GridElement {
 
     [SerializeField] Animator anim;
     [SerializeField] List<Sprite> rndSprite;

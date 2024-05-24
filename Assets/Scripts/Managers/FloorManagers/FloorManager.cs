@@ -261,8 +261,7 @@ public class FloorManager : MonoBehaviour {
     }
 
     public void Descend(bool cascade = false, bool nail = true, Vector2 pos = default) {
-        bool tut = floorSequence.activePacket.packetType == FloorPacket.PacketType.Tutorial;
-        Debug.Log("Tutorial Descent: " + tut);
+        bool tut = floorSequence.activePacket.packetType == FloorChunk.PacketType.Tutorial;
         StartCoroutine(DescendFloors(cascade, tut, nail, pos));
         
     }
@@ -306,10 +305,10 @@ public class FloorManager : MonoBehaviour {
 // Check if at the end of packet / if there was a sub floor generated, if not packet is done
             if (floors.Count - 1 > currentFloor.transform.GetSiblingIndex()) {
 // Generate next floor if still mid packet
-                if (!floorSequence.ThresholdCheck()) { //|| floorSequence.currentThreshold == FloorPacket.PacketType.BOSS
+                if (!floorSequence.ThresholdCheck()) { //|| floorSequence.currentThreshold == FloorChunk.PacketType.BOSS
                     GenerateFloor();       
                 }
-                if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) scen = ScenarioManager.Scenario.Boss;
+                if (floorSequence.currentThreshold == FloorChunk.PacketType.BOSS) scen = ScenarioManager.Scenario.Boss;
 
                 scenario.player.nail.ToggleNailState(Nail.NailState.Falling);   
                 yield return StartCoroutine(TransitionFloors(true, false));
@@ -317,7 +316,7 @@ public class FloorManager : MonoBehaviour {
                 yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, scen));
                 yield return new WaitForSecondsRealtime(0.25f);
 // Check for tutorial tooltip triggers
-                if (floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial) {
+                if (floorSequence.activePacket.packetType != FloorChunk.PacketType.Tutorial) {
                     if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.gpOptional.bulbEncountered)
                         scenario.gpOptional.StartCoroutine(scenario.gpOptional.TileBulb());
                 }
@@ -366,17 +365,13 @@ public class FloorManager : MonoBehaviour {
         }
 
 // Spawns elite
-        if (floorSequence.activePacket.packetMods.Contains(FloorPacket.PacketMods.Elite) && !floorSequence.activePacket.eliteSpawn) {
-            if ((currentFloor.index+1) >= floorSequence.activePacket.eliteRange.x && (currentFloor.index+1) <= floorSequence.activePacket.eliteRange.y) {
-                float dif = floorSequence.activePacket.eliteRange.y+1 - (currentFloor.index+1);
-                int odds = (int)UnityEngine.Random.Range(0, dif);
-                if (odds == 0) {
-                    yield return new WaitForSecondsRealtime(0.75f);
-                    yield return StartCoroutine(SpawnBoss(floorSequence.elitePrefab));
-                }
+        if (floorSequence.activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite)) {
+            if (floorCount%3 == 0) {
+                yield return new WaitForSecondsRealtime(0.75f);
+                yield return StartCoroutine(SpawnBoss(floorSequence.elitePrefab, true));
             }
         }
-        
+
         scenario.player.DescendGrids(currentFloor);
         currentFloor.LockGrid(false);
 
@@ -384,6 +379,7 @@ public class FloorManager : MonoBehaviour {
         if (uiManager.gameObject.activeSelf)    
             uiManager.metaDisplay.UpdateEnemiesRemaining(scenario.currentEnemy.units.Count);
     }
+
 
 // Coroutine that sequences the descent of all valid units
     public IEnumerator DropUnits(List<GridElement> units, bool hardLand) {
@@ -446,7 +442,7 @@ public class FloorManager : MonoBehaviour {
         }
         yield return new WaitForSecondsRealtime(0.75f);
         
-        if (nail && floorSequence.activePacket.packetType != FloorPacket.PacketType.BOSS) {
+        if (nail && floorSequence.activePacket.packetType != FloorChunk.PacketType.BOSS) {
             yield return StartCoroutine(DropNail(nail));
             //yield return StartCoroutine(DropParticle());
         }
@@ -632,7 +628,7 @@ public class FloorManager : MonoBehaviour {
         fade.AlphaSelf = 1;
     }
 
-    public IEnumerator SpawnBoss(Unit u) {
+    public IEnumerator SpawnBoss(Unit u, bool relic = false) {
         floorSequence.activePacket.eliteSpawn = true;
         bool validCoord = false;
         Vector2 spawn = Vector2.zero;
@@ -648,7 +644,7 @@ public class FloorManager : MonoBehaviour {
             if (currentFloor.tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false; 
         }
     
-        Unit unit = scenario.currentEnemy.SpawnBossUnit(spawn, u);
+        Unit unit = scenario.currentEnemy.SpawnBossUnit(spawn, u, relic);
         Vector3 to = currentFloor.PosFromCoord(spawn);
         Vector3 from = to + new Vector3(0, floorOffset*2, 0);
 
@@ -669,7 +665,7 @@ public class FloorManager : MonoBehaviour {
 
         unit.PlaySound(unit.landingSFX);
     
-        if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) 
+        if (floorSequence.currentThreshold == FloorChunk.PacketType.BOSS) 
             scenario.gpOptional.StartCoroutine(scenario.gpOptional.Boss());        
     }
 
@@ -716,32 +712,35 @@ public class FloorManager : MonoBehaviour {
 
         uiManager.ToggleBattleCanvas(false);
 
-        if (floorSequence.currentThreshold != FloorPacket.PacketType.Tutorial) {
-// Path reward + Upgrade sequence
-            if (currentFloor != null && floorSequence.currentThreshold != FloorPacket.PacketType.I && floorSequence.currentThreshold != FloorPacket.PacketType.BARRIER) {
-                if (tutorial.isActiveAndEnabled && !tutorial.sequenceEnd) yield return tutorial.StartCoroutine(tutorial.TutorialEnd());
-                if (!scenario.gpOptional.rewardsEncountered) yield return scenario.gpOptional.StartCoroutine(scenario.gpOptional.Rewards());
-                yield return scenario.pathManager.PathRewardSequence();
-                yield return scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
-            }
-// Objective assign sequence
-            if (floorSequence.currentThreshold != FloorPacket.PacketType.BOSS && floorSequence.currentThreshold != FloorPacket.PacketType.BARRIER) {
-                if (!scenario.gpOptional.pathsEncountered) {
+//         if (floorSequence.currentThreshold != FloorChunk.PacketType.Tutorial) {
+// // Path reward + Upgrade sequence
+//             if (currentFloor != null && floorSequence.currentThreshold != FloorChunk.PacketType.I && floorSequence.currentThreshold != FloorChunk.PacketType.BARRIER) {
+//                 if (tutorial.isActiveAndEnabled && !tutorial.sequenceEnd) yield return tutorial.StartCoroutine(tutorial.TutorialEnd());
+//                 if (!scenario.gpOptional.rewardsEncountered) yield return scenario.gpOptional.StartCoroutine(scenario.gpOptional.Rewards());
+//                 yield return scenario.pathManager.PathRewardSequence();
+//                 yield return scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
+//             }
+// // Objective assign sequence
+//             if (floorSequence.currentThreshold != FloorChunk.PacketType.BOSS && floorSequence.currentThreshold != FloorChunk.PacketType.BARRIER) {
+//                 if (!scenario.gpOptional.pathsEncountered) {
                     
-                    yield return StartCoroutine(scenario.gpOptional.Paths());
-                }
-                yield return scenario.pathManager.PathSequence(); 
-            } else if (floorSequence.currentThreshold == FloorPacket.PacketType.BOSS) {
+//                     yield return StartCoroutine(scenario.gpOptional.Paths());
+//                 }
+//             } else
+            
+            yield return scenario.pathManager.PathSequence(); 
+
+            if (floorSequence.currentThreshold == FloorChunk.PacketType.BOSS) {
                 floorSequence.StartPacket(floorSequence.bossPacket);
                 if (!scenario.gpOptional.prebossEncountered)
                     yield return StartCoroutine(scenario.gpOptional.Preboss());
                 uiManager.ToggleObjectiveTracker(false);
-            }
+            //}
         }
 
 // Lerp units offscreen
         scenario.player.nail.PlaySound(cavityTransition);
-        if (floorSequence.currentThreshold != FloorPacket.PacketType.BARRIER) {
+        if (floorSequence.currentThreshold != FloorChunk.PacketType.BARRIER) {
             StopCoroutine(floating);
             timer = 0;
             Vector3 startPos = transitionParent.transform.position;
@@ -834,7 +833,7 @@ public class FloorManager : MonoBehaviour {
         floors[currentFloor.transform.GetSiblingIndex()+1].StartCoroutine(floors[currentFloor.transform.GetSiblingIndex()+1].ShockwaveCollapse(scenario.player.nail.coord));
         yield return new WaitForSecondsRealtime(1f);
         Coroutine co = StartCoroutine(TransitionPackets());
-        floorSequence.currentThreshold = FloorPacket.PacketType.BARRIER;
+        floorSequence.currentThreshold = FloorChunk.PacketType.BARRIER;
         yield return co;
         //yield return StartCoroutine(TransitionFloors(true, false));
     }

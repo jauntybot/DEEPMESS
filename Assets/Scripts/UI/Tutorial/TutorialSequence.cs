@@ -19,7 +19,7 @@ public class TutorialSequence : MonoBehaviour {
 
     ScenarioManager scenario;
     FloorManager floorManager;
-    public FloorPacket tutorialPacket;
+    public FloorChunk tutorialPacket;
     
     public DialogueTooltip tooltip, brTooltip;
     public Animator screenFade;
@@ -52,7 +52,7 @@ public class TutorialSequence : MonoBehaviour {
         floorManager = scenario.floorManager;
 
 
-        floorManager.floorSequence.currentThreshold = FloorPacket.PacketType.Tutorial;    
+        floorManager.floorSequence.currentThreshold = FloorChunk.PacketType.Tutorial;    
         floorManager.floorSequence.floorsTutorial = 3;
         floorManager.floorSequence.AddPacket(tutorialPacket);
         

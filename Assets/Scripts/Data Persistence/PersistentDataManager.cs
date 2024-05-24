@@ -73,4 +73,10 @@ public class PersistentDataManager : MonoBehaviour {
         return new List<IUserDataPersistence>(userDataObjs);
     }
 
+    List<IUserDataPersistence> FindAllRunDataObjs() {
+        IEnumerable<IUserDataPersistence> runDataObjs = FindObjectsOfType<MonoBehaviour>().OfType<IUserDataPersistence>();
+
+        return new List<IUserDataPersistence>(runDataObjs);
+    }
+
 }

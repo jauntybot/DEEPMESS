@@ -14,7 +14,7 @@ public class SaveDataManager : MonoBehaviour
 
 
     ScenarioManager scenario;
-    public FloorPacket savedPacket;
+    public FloorChunk savedPacket;
 
     void LoadSavedState() {
 

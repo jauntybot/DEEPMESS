@@ -153,7 +153,7 @@ public class UpgradeManager : MonoBehaviour {
         // if (nuggets.Count <= 0)
         //     confirmButton.SetActive(true);
         // else
-            confirmButton.SetActive(false);
+            confirmButton.SetActive(true);
     }
 
     public void EndUpgradeSequence() {

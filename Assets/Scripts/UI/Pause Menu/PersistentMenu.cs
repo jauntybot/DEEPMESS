@@ -7,7 +7,7 @@ using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using Relics;
 
-public class PersistentMenu : MonoBehaviour, IUserDataPersistence {
+public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersistence {
     ScenarioManager scenario;
     public MusicController musicController;
     public PauseMenu pauseMenu;
@@ -16,7 +16,6 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence {
     TooltipSystem toolTips;
     [SerializeField] AudioMixer mixer;
     [SerializeField] Slider musicSlider, sfxSlider;
-    ResolutionManager resolutionManager;
     [SerializeField] TMP_Dropdown resolutionsDropdown;
 
     [SerializeField] GameObject menuButton;
@@ -111,6 +110,21 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence {
         user.resolutionIndex = currentResolutionIndex;
     }
 
+    
+    public void LoadRun(RunData run) {
+
+    }
+
+    public void SaveRun(ref RunData run) {
+        RunData data = new RunData(scenario.floorManager.currentFloor.lvlDef, scenario.floorManager.floorSequence.activePacket, scenario.player.units, scenario.relicManager.collectedRelics);
+        
+        run.currentFloor = scenario.floorManager.currentFloor.lvlDef;
+        run.activeChunk = scenario.floorManager.floorSequence.activePacket;
+
+        run.gear1 = (SlagGearData)scenario.player.units[0].equipment[1];
+        run.gear1Upgrades = run.gear1.upgrades;
+    }
+
     // void GetFPS() {
     //     fps = (int) (1f / Time.unscaledDeltaTime);
     // }
@@ -157,6 +171,16 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence {
             toolTips = TooltipSystem.instance;
         
         FadeToBlack(false);
+    }
+
+    public IEnumerator FadeToScene(int index) {
+        yield return new WaitForSecondsRealtime(0.25f);
+        fadeToBlack.SetBool("Fade", true);
+        if (index == 0) {
+            PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.MainMenu, true);
+        }
+        yield return new WaitForSecondsRealtime(1f);
+        SceneManager.LoadScene(index, LoadSceneMode.Single);
     }
 
     public void FadeToBlack(bool state) {

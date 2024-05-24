@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class PauseMenu : MonoBehaviour {
     
     [SerializeField] Button abandonButton;
+    [SerializeField] GameObject mainDirectory, helpMenu;
     void OnEnable() {
         Time.timeScale = 0;
     }
@@ -20,14 +21,16 @@ public class PauseMenu : MonoBehaviour {
         gameObject.SetActive(false);        
     }
 
-    public void RestartButton() {
+    public void HelpButton(bool state) {
+        mainDirectory.SetActive(!state);
+        helpMenu.SetActive(state);
+    }
+
+    public void AbandonButton() {
         Time.timeScale = 1;
         ScenarioManager.instance.StartCoroutine(ScenarioManager.instance.Lose());
         gameObject.SetActive(false);   
     }
 
-    public void MainMenu() {
-        Time.timeScale = 1;
-        SceneManager.LoadScene(0);
-    }
+
 }

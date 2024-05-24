@@ -234,7 +234,6 @@ public class GridContextuals : MonoBehaviour {
     }  
 
     public void UpdateCursorAnim(Transform refTrans) {
-        Debug.Log(refTrans.gameObject.name);
         cursorAnimator.GetComponent<NestedFadeGroup.NestedFadeGroupSpriteRenderer>().AlphaSelf = 0.5f;
         Animator anim = null;
         if (refTrans.GetComponentInChildren<Animator>())
