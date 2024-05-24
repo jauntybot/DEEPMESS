@@ -115,7 +115,7 @@ public class HammerData : GearData {
 
     public override void UntargetEquipment(GridElement user) {
         base.UntargetEquipment(user);
-        Debug.Log("untarget equip");
+
         firstTarget = null;
         secondTarget = null;
         PlayerUnit pu = (PlayerUnit)user;
@@ -132,7 +132,6 @@ public class HammerData : GearData {
                 manager.undoOrder = new List<Unit>();
             }
 
-            Debug.Log(secondTarget);
             OnEquipmentUse evt = ObjectiveEvents.OnEquipmentUse;
             evt.data = this; evt.user = user; evt.target = firstTarget; evt.secondTarget = target;
             ObjectiveEventManager.Broadcast(evt);
@@ -234,7 +233,7 @@ public class HammerData : GearData {
         prevCoord = target.coord;                  
 
 // Attack target if unit
-        if (target is EnemyUnit || target is Wall) {
+        if (target is EnemyUnit || target is Wall || target is BloatedBulb) {
             target.PlaySound(useSFX);
             
             Instantiate(vfx, user.grid.PosFromCoord(target.coord) + new Vector3(0, 1, 0), Quaternion.identity);

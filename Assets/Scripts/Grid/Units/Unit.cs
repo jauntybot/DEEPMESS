@@ -220,7 +220,7 @@ public class Unit : GridElement {
 
     public virtual IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0) {
 // Tutorial tooltip popup
-        if (manager.scenario.floorManager.tutorial.isActiveAndEnabled && !manager.scenario.floorManager.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
+        if (manager.scenario.floorManager.tutorial.isActiveAndEnabled && !manager.scenario.floorManager.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorChunk.PacketType.Tutorial)
             manager.scenario.floorManager.tutorial.StartCoroutine(manager.scenario.floorManager.tutorial.DescentDamage());
         
         if (subGE is PlayerUnit)
@@ -232,7 +232,7 @@ public class Unit : GridElement {
 // For when a Slag is acting on a Unit to move it, such as BigGrab or any push mechanics
     public virtual IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0, GridElement source = null, GearData sourceEquip = null) {
 // Tutorial tooltip popup
-        if (manager.scenario.floorManager.tutorial.isActiveAndEnabled && !manager.scenario.floorManager.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorPacket.PacketType.Tutorial)
+        if (manager.scenario.floorManager.tutorial.isActiveAndEnabled && !manager.scenario.floorManager.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorChunk.PacketType.Tutorial)
             manager.scenario.floorManager.tutorial.StartCoroutine(manager.scenario.floorManager.tutorial.DescentDamage());
         
         if (subGE is PlayerUnit)

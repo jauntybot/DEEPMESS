@@ -13,12 +13,10 @@ public class FloorDefinition : ScriptableObject {
 // Combat floor refs
     public FloorAtlas atlas;
     public List<Spawn> initSpawns = new();
+    [HideInInspector] public bool spawnBeacon = false;
+    [HideInInspector] public bool spawnBloatedBulb = false;
 
 
-// Slot machine floor refs
-    public enum SlotsType { Equipment, Upgrades };
-    public SlotsType slotsType;
-    public List<GearData> equipmentTable;
     //public List<UpgradeData> upgradeTable;
 
     [System.Serializable]

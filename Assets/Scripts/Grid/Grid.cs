@@ -17,7 +17,7 @@ public class Grid : MonoBehaviour {
     public GameObject gridContainer, neutralGEContainer;
     [SerializeField] GameObject chessNotation;
     [SerializeField] GameObject enemyPrefab;
-    [SerializeField] GameObject tilePrefab, selectedCursor;
+    [SerializeField] GameObject tilePrefab, beaconPrefab, bulbPrefab, selectedCursor;
     public bool overrideHighlight;
     
 
@@ -126,6 +126,53 @@ public class Grid : MonoBehaviour {
 
                 neutralGE.StoreInGrid(this);
                 neutralGE.UpdateElement(spawn.coord);
+            }
+        }
+
+// Beacon spawning
+        if (lvlDef.spawnBeacon) {
+            ShuffleBag<Vector2> spawns = new();
+// Build shuffle bag of exisitng walls
+            foreach (GridElement ge in gridElements) {
+                if (ge is Wall) spawns.Add(ge.coord);
+            }
+// If there are no walls
+            if (spawns.Count == 0) {
+                for (int x = 0; x <= 7; x++) { for (int y = 0; y <= 7; y++) { spawns.Add(new Vector2(x,y)); } }
+                bool validCoord = false;
+// Find a valid coord that is unoccupied
+                Vector2 spawn = new();
+                while (!validCoord) {
+                    if (spawns.Count == 0) continue;
+                    validCoord = true;
+                        
+                    spawn = spawns.Next();
+                    if (tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false;
+                    if (tiles.Find(sqr => sqr.coord == spawn) is TileBulb) validCoord = false;
+                    if (enemy.units.Find(u => u.coord == spawn) ) validCoord = false;
+                    if (player.units.Find(u => u.coord == spawn) ) validCoord = false;
+                }
+            }
+// Final check there is a valid coordd to spawn
+            if (spawns.Count > 0) {
+                GridElement neutralGE = Instantiate(beaconPrefab, this.transform).GetComponent<GridElement>();
+                neutralGE.transform.parent = neutralGEContainer.transform;
+
+                neutralGE.StoreInGrid(this);
+                neutralGE.UpdateElement(spawns.Next());
+            }
+        }
+// Bloated Bulb spawning
+        if (lvlDef.spawnBloatedBulb) {
+            Tile bulb = tiles.Find(t => t is TileBulb);
+            if (bulb != null) {
+                GridElement neutralGE = Instantiate(bulbPrefab, this.transform).GetComponent<GridElement>();
+                neutralGE.transform.parent = neutralGEContainer.transform;
+
+                neutralGE.StoreInGrid(this);
+                neutralGE.UpdateElement(bulb.coord);
+
+                neutralGE.ElementDestroyed += ScenarioManager.instance.RewardOnKill;
             }
         }
     }

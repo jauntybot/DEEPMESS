@@ -65,19 +65,19 @@ public class PathManager : MonoBehaviour {
 // Draw packets from floor sequence for nodes
         int rnd = 2;
         switch(floorSequence.currentThreshold) {
-            case FloorPacket.PacketType.I: rnd = 2; break;
-            case FloorPacket.PacketType.II: rnd = 3; break;
-            case FloorPacket.PacketType.III: rnd = 3; break;
-            case FloorPacket.PacketType.BOSS: rnd = 1; break;
+            case FloorChunk.PacketType.I: rnd = 3; break;
+            case FloorChunk.PacketType.II: rnd = 3; break;
+            case FloorChunk.PacketType.III: rnd = 3; break;
+            case FloorChunk.PacketType.BOSS: rnd = 1; break;
         }
-        List<FloorPacket> randomPackets = floorSequence.RandomNodes(rnd);
+        List<FloorChunk> randomPackets = floorSequence.RandomNodes(rnd);
         
 // Initialize PathCards
         int totalObjectives = 0;
         for (int i = 0; i <= randomPackets.Count - 1; i++) {
             PathCard pc = Instantiate(pathCardPrefab, pathCardContainer).GetComponent<PathCard>();
             pc.Init(this, randomPackets[i]);
-            totalObjectives += randomPackets[i].bonusNuggetObjectives + randomPackets[i].bonusRelicObjectives;
+            //totalObjectives += randomPackets[i].bonusNuggetObjectives + randomPackets[i].bonusRelicObjectives;
             activeCards.Add(pc);
         }
 
@@ -85,14 +85,14 @@ public class PathManager : MonoBehaviour {
         List<Objective> objectives = GetObjectives(totalObjectives);
         for (int i = 0; i <= activeCards.Count - 1; i++) {
             List<Objective> packetObjs = new();
-            for (int o = randomPackets[i].bonusNuggetObjectives - 1; o >= 0; o--) {
-                packetObjs.Add(objectives[0].Init(true, objectiveDiscount));
-                objectives.RemoveAt(0);
-            }
-            for (int o = randomPackets[i].bonusRelicObjectives - 1; o >= 0; o--) {
-                packetObjs.Add(objectives[0].Init(false, objectiveDiscount));
-                objectives.RemoveAt(0);
-            }
+            // for (int o = randomPackets[i].bonusNuggetObjectives - 1; o >= 0; o--) {
+            //     packetObjs.Add(objectives[0].Init(true, objectiveDiscount));
+            //     objectives.RemoveAt(0);
+            // }
+            // for (int o = randomPackets[i].bonusRelicObjectives - 1; o >= 0; o--) {
+            //     packetObjs.Add(objectives[0].Init(false, objectiveDiscount));
+            //     objectives.RemoveAt(0);
+            // }
             activeCards[i].AssignObjectives(packetObjs);
         }
         
@@ -176,91 +176,92 @@ public class PathManager : MonoBehaviour {
 
 // Assign selected path
         floorSequence.StartPacket(selected.floorPacket);
-        if (selected.floorPacket.objectives.Count > 0) {
-            tracker.gameObject.SetActive(true);
-            SubscribeTracker(selected.floorPacket.objectives);
-        } else tracker.gameObject.SetActive(false);
+        // if (selected.floorPacket.objectives.Count > 0) {
+        //     tracker.gameObject.SetActive(true);
+        //     SubscribeTracker(selected.floorPacket.objectives);
+        // } else
+        tracker.gameObject.SetActive(false);
         
         choosingPath = false;
     }
 
     public IEnumerator PathRewardSequence() {
-        foreach (Objective ob in floorSequence.activePacket.objectives)
-            ob.ProgressCheck(true);
+        // foreach (Objective ob in floorSequence.activePacket.objectives)
+        //     ob.ProgressCheck(true);
+        yield return null;
+//         pathChoiceContainer.SetActive(true);
+//         sequenceTitle.text = "PATH RESULTS";
+//         PathCard card = pathCardContainer.GetChild(0).GetComponent<PathCard>();
+//         card.GetComponent<Animator>().SetTrigger("SlideIn");
 
-        pathChoiceContainer.SetActive(true);
-        sequenceTitle.text = "PATH RESULTS";
-        PathCard card = pathCardContainer.GetChild(0).GetComponent<PathCard>();
-        card.GetComponent<Animator>().SetTrigger("SlideIn");
+// // Shuffle bag for random nugget rewards
+//         // ShuffleBag<SlagGearData.UpgradePath> rndBag = new();
+//         // for (int i = 0; i <= 3; i++) {
+//         //     rndBag.Add(SlagGearData.UpgradePath.Shunt);
+//         //     rndBag.Add(SlagGearData.UpgradePath.Scab);
+//         //     rndBag.Add(SlagGearData.UpgradePath.Sludge);
+//         // }
 
-// Shuffle bag for random nugget rewards
-        // ShuffleBag<SlagGearData.UpgradePath> rndBag = new();
-        // for (int i = 0; i <= 3; i++) {
-        //     rndBag.Add(SlagGearData.UpgradePath.Shunt);
-        //     rndBag.Add(SlagGearData.UpgradePath.Scab);
-        //     rndBag.Add(SlagGearData.UpgradePath.Sludge);
-        // }
+// // Delay for anim in
+//         float t = 0; while (t < 1.25f) { t += Time.deltaTime; yield return null; }
 
-// Delay for anim in
-        float t = 0; while (t < 1.25f) { t += Time.deltaTime; yield return null; }
+// // Collect nugget rewards sequentially
+//         for (int i = 0; i <= floorSequence.activePacket.nuggets - 1; i++) {
+//             Transform r = card.rewardContainer.GetChild(0);
+//             r.GetComponent<Animator>().SetTrigger("Reward");
+//             t = 0; while (t < 0.5f) { t += Time.deltaTime; yield return null; } 
+//             r.SetParent(null);
+//             //upgradeManager.CollectNugget(rndBag.Next());
+//             t = 0; while (t < 0.6f) { t += Time.deltaTime; yield return null; }
+//         }
+// // Collect relic rewards sequentially
+//         for (int i = 0; i <= floorSequence.activePacket.relics - 1; i++) {
+//             Transform r = card.rewardContainer.GetChild(0);
+//             r.GetComponent<Animator>().SetTrigger("Reward");
+//             t = 0; while (t < 0.5f) { t += Time.deltaTime; yield return null; }
+//             r.SetParent(null);
+//             t = 0; while (t < 0.2f) { t += Time.deltaTime; yield return null; }
+//             yield return relicManager.StartCoroutine(relicManager.PresentRelic());
+//             t = 0; while (t < 0.6f) { t += Time.deltaTime; yield return null; }
+//         }
 
-// Collect nugget rewards sequentially
-        for (int i = 0; i <= floorSequence.activePacket.nuggets - 1; i++) {
-            Transform r = card.rewardContainer.GetChild(0);
-            r.GetComponent<Animator>().SetTrigger("Reward");
-            t = 0; while (t < 0.5f) { t += Time.deltaTime; yield return null; } 
-            r.SetParent(null);
-            //upgradeManager.CollectNugget(rndBag.Next());
-            t = 0; while (t < 0.6f) { t += Time.deltaTime; yield return null; }
-        }
-// Collect relic rewards sequentially
-        for (int i = 0; i <= floorSequence.activePacket.relics - 1; i++) {
-            Transform r = card.rewardContainer.GetChild(0);
-            r.GetComponent<Animator>().SetTrigger("Reward");
-            t = 0; while (t < 0.5f) { t += Time.deltaTime; yield return null; }
-            r.SetParent(null);
-            t = 0; while (t < 0.2f) { t += Time.deltaTime; yield return null; }
-            yield return relicManager.StartCoroutine(relicManager.PresentRelic());
-            t = 0; while (t < 0.6f) { t += Time.deltaTime; yield return null; }
-        }
+// // Payout bonus objectives
+//         foreach (Objective ob in floorSequence.activePacket.objectives)
+//             ob.ProgressCheck(true);
 
-// Payout bonus objectives
-        foreach (Objective ob in floorSequence.activePacket.objectives)
-            ob.ProgressCheck(true);
-
-        int objs = floorSequence.activePacket.objectives.Count - 1;
-        for (int i = 0; i <= objs; i++) {
-            Animator anim = card.bonusObjContainer.GetChild(i).GetComponent<Animator>();
-            if (floorSequence.activePacket.objectives[i].succeeded) {
-                anim.SetTrigger("ObReward");
-                t = 0; while (t < 0.5f) { t += Time.deltaTime; yield return null; }
-                LayoutRebuilder.ForceRebuildLayoutImmediate(anim.transform.parent.GetComponent<RectTransform>());
-                Canvas.ForceUpdateCanvases();
-                // if (floorSequence.activePacket.objectives[i].nuggetReward) {
-                //     upgradeManager.CollectNugget(rndBag.Next());
-                // } else {
-                    t = 0; while (t < 0.2f) { t += Time.deltaTime; yield return null; }
-                    yield return relicManager.StartCoroutine(relicManager.PresentRelic());
-                //}
-                t = 0; while (t < 0.6f) { t += Time.deltaTime; yield return null; }
-            } else {
-                anim.SetTrigger("ObFail");
-                t = 0; while (t < 0.3f) { t += Time.deltaTime; yield return null; }
-                LayoutRebuilder.ForceRebuildLayoutImmediate(anim.transform.parent.GetComponent<RectTransform>());
-                Canvas.ForceUpdateCanvases();
-                t = 0; while (t < 0.3f) { t += Time.deltaTime; yield return null; }
-            }
-            t = 0; while (t < 0.5f) { t += Time.deltaTime; yield return null; }
-        }
+//         int objs = floorSequence.activePacket.objectives.Count - 1;
+//         for (int i = 0; i <= objs; i++) {
+//             Animator anim = card.bonusObjContainer.GetChild(i).GetComponent<Animator>();
+//             if (floorSequence.activePacket.objectives[i].succeeded) {
+//                 anim.SetTrigger("ObReward");
+//                 t = 0; while (t < 0.5f) { t += Time.deltaTime; yield return null; }
+//                 LayoutRebuilder.ForceRebuildLayoutImmediate(anim.transform.parent.GetComponent<RectTransform>());
+//                 Canvas.ForceUpdateCanvases();
+//                 // if (floorSequence.activePacket.objectives[i].nuggetReward) {
+//                 //     upgradeManager.CollectNugget(rndBag.Next());
+//                 // } else {
+//                     t = 0; while (t < 0.2f) { t += Time.deltaTime; yield return null; }
+//                     yield return relicManager.StartCoroutine(relicManager.PresentRelic());
+//                 //}
+//                 t = 0; while (t < 0.6f) { t += Time.deltaTime; yield return null; }
+//             } else {
+//                 anim.SetTrigger("ObFail");
+//                 t = 0; while (t < 0.3f) { t += Time.deltaTime; yield return null; }
+//                 LayoutRebuilder.ForceRebuildLayoutImmediate(anim.transform.parent.GetComponent<RectTransform>());
+//                 Canvas.ForceUpdateCanvases();
+//                 t = 0; while (t < 0.3f) { t += Time.deltaTime; yield return null; }
+//             }
+//             t = 0; while (t < 0.5f) { t += Time.deltaTime; yield return null; }
+//         }
 
 
-// Delay for anim out
-        t = 0; while (t < 1f) { t += Time.deltaTime; yield return null; }
-        card.GetComponent<Animator>().SetTrigger("SlideOut");
-        t = 0; while (t < 1f) { t += Time.deltaTime; yield return null; }
+// // Delay for anim out
+//         t = 0; while (t < 1f) { t += Time.deltaTime; yield return null; }
+//         card.GetComponent<Animator>().SetTrigger("SlideOut");
+//         t = 0; while (t < 1f) { t += Time.deltaTime; yield return null; }
         
-        pathChoiceContainer.SetActive(false);
-        ClearObjectives();
+//         pathChoiceContainer.SetActive(false);
+//         ClearObjectives();
     }
 
     public void ClearObjectives() {

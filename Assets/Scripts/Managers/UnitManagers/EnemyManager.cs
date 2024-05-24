@@ -60,15 +60,18 @@ public class EnemyManager : UnitManager {
             units[i].elementCanvas.UpdateTurnOrder(units.Count - i);
     }
 
-    public virtual Unit SpawnBossUnit(Vector2 coord, Unit unit) {
+    public virtual Unit SpawnBossUnit(Vector2 coord, Unit unit, bool relic = false) {
         Unit u = SpawnUnit(unit, coord);
         
         units.Remove(u);
         units.Insert(0, u);
 
+        if (relic) u.ElementDestroyed += scenario.RewardOnKill;
+
         u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
         return u;
     }
+
 
     public virtual IEnumerator TakeTurn(bool scatter) {
 // Reset manager and units for turn

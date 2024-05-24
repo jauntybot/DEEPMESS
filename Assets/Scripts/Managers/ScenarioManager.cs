@@ -6,8 +6,7 @@ using UnityEngine.SceneManagement;
 
 // Class that manages the game state during battles
 
-public class ScenarioManager : MonoBehaviour
-{
+public class ScenarioManager : MonoBehaviour {
 
 #region SINGLETON (and Awake)
     public static ScenarioManager instance;
@@ -36,8 +35,11 @@ public class ScenarioManager : MonoBehaviour
 // State machines
     public enum Scenario { Null, Combat, Boss, Provision, Barrier, EndState };
     public Scenario scenario;
-    public enum Turn { Null, Player, Enemy, Descent, Cascade, Loadout, Slots }
+    public enum Turn { Null, Player, Enemy, Descent, Cascade, Event, Loadout, }
     public Turn currentTurn, prevTurn;
+    [SerializeField] int relicQueue = 0; 
+    [SerializeField] Coroutine relicQueueCo;
+    [SerializeField] bool queuing;
 
 // RELIC PARAMS - DELETE
     [HideInInspector] public int tackleChance;
@@ -68,6 +70,9 @@ public class ScenarioManager : MonoBehaviour
             gpOptional.Initialize();
         }
         
+        relicQueueCo = null;
+        relicQueue = 0;
+        
         tackleChance = 0;
 
         yield return null;
@@ -85,7 +90,7 @@ public class ScenarioManager : MonoBehaviour
         }
         player.ToggleUnitSelectability(true);
 
-        if (floorManager.floorSequence.activePacket.packetType == FloorPacket.PacketType.Tutorial) {
+        if (floorManager.floorSequence.activePacket.packetType == FloorChunk.PacketType.Tutorial) {
             foreach (GridElement ge in player.units)
                 floorManager.currentFloor.RemoveElement(ge);
                 
@@ -108,11 +113,11 @@ public class ScenarioManager : MonoBehaviour
                 if (u is PlayerUnit || u is Nail)
                     units.Add(u);
             }
-            if (floorManager.floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && !floorManager.floorSequence.activePacket.eliteSpawn)
+            if (floorManager.floorSequence.activePacket.packetType == FloorChunk.PacketType.BOSS && !floorManager.floorSequence.activePacket.eliteSpawn)
                 units.Remove(player.nail);
             
             yield return StartCoroutine(floorManager.DescendUnits(units));
-            if (floorManager.floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && !floorManager.floorSequence.activePacket.eliteSpawn) {
+            if (floorManager.floorSequence.activePacket.packetType == FloorChunk.PacketType.BOSS && !floorManager.floorSequence.activePacket.eliteSpawn) {
                 yield return new WaitForSecondsRealtime(0.75f);
                 yield return StartCoroutine(floorManager.SpawnBoss(floorManager.floorSequence.bossPrefab));
             } 
@@ -188,6 +193,10 @@ public class ScenarioManager : MonoBehaviour
             case Turn.Enemy:
                 currentTurn = Turn.Enemy;
                 player.StartEndTurn(false);
+                GridElement beacon = floorManager.currentFloor.gridElements.Find(ge => ge is Beacon);
+                if (beacon != null) {
+                    beacon.GetComponent<Beacon>().EnableSelection(false);
+                }
                 yield return new WaitForSecondsRealtime(0.625f);
 
                 if (prevTurn == Turn.Descent)
@@ -216,6 +225,10 @@ public class ScenarioManager : MonoBehaviour
 
 
                     player.StartEndTurn(true);
+                    GridElement be = floorManager.currentFloor.gridElements.Find(ge => ge is Beacon);
+                    if (be != null) {
+                        be.GetComponent<Beacon>().EnableSelection(true);
+                    }
                 } else {
                     yield return StartCoroutine(Lose());
                 }
@@ -273,10 +286,32 @@ public class ScenarioManager : MonoBehaviour
         ObjectiveEventManager.Broadcast(evt);
 
         player.overrideEquipment = null;
-        if (floorManager.floorSequence.currentThreshold == FloorPacket.PacketType.Tutorial)
+        if (floorManager.floorSequence.currentThreshold == FloorChunk.PacketType.Tutorial)
             floorManager.tutorial.SwitchTurns();
         else
             StartCoroutine(SwitchTurns());
+    }
+
+    public void RewardOnKill(GridElement ge) {
+        QueueRelicReward();
+    }
+
+    public void QueueRelicReward() {
+        relicQueue++;
+        //if (relicQueueCo == null) relicQueueCo = StartCoroutine(PresentRelicWhenIdle());
+// Same as above
+        relicQueueCo ??= StartCoroutine(PresentRelicWhenIdle());
+    }
+
+    public IEnumerator PresentRelicWhenIdle() {
+        queuing = true;
+        while (currentTurn != Turn.Player) yield return null;
+        yield return new WaitForSecondsRealtime(0.2f);
+        while (player.unitActing) yield return null;
+        relicQueue--;
+        queuing = false;
+        yield return relicManager.StartCoroutine(relicManager.PresentRelic());
+        if (relicQueue > 0) relicQueueCo = StartCoroutine(PresentRelicWhenIdle());
     }
 
     public IEnumerator FinalDrop() {
@@ -318,4 +353,5 @@ public class ScenarioManager : MonoBehaviour
         relicManager.ClearRelics();
         StartCoroutine(runDataTracker.UpdateAndDisplay(false, floorManager.floors.Count - 2 >= 0 ? floorManager.floors.Count - 2 : 0, player.defeatedEnemies,  relicManager.scrapValue));
     }
+
 }

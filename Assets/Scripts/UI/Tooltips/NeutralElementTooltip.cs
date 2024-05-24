@@ -55,6 +55,8 @@ public class NeutralElementTooltip : Tooltip
             rectTransform.gameObject.SetActive(true);
             if (ge is Wall) {
                 SetText("Blocks movement, damages if landed on. Can be destroyed.", "WALL");
+            } else if (ge is Beacon) {
+                SetText("Click to activate. Sends an upgrade request to the Slime Hub.", "BEACON");
             } else if (ge is Tile t) {
                 if (ge is TileBulb) {
                     SetText("Contains a bulb.", "BULB", false, new List<RuntimeAnimatorController>{ bulbAnim });

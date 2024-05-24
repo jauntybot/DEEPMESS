@@ -211,8 +211,8 @@ public class PlayerManager : UnitManager {
 #region Player Controller interface
 // Get grid input from player controller, translate it to functionality
     public void GridInput(GridElement input) {
-// Player clicks on unit
         if (input is Unit u) {
+// Player clicks on unit
 // Player clicks on their own unit
             if (u.manager is PlayerManager) {
                 if (selectedUnit) {
@@ -251,7 +251,14 @@ public class PlayerManager : UnitManager {
                     SelectUnit(u);
                 
             }
-        }
+        } else if (input is Beacon b && b.selectable) {
+            if (selectedUnit && selectedUnit.ValidCommand(b.coord, selectedUnit.selectedEquipment)) 
+                StartCoroutine(selectedUnit.ExecuteAction(b));
+            else {
+                //scenario.SwitchTurns()
+                b.StartCoroutine(b.SelectBeacon(this));
+            }
+        } 
 // Player clicks on square
         else if (input is Tile tile) {
 // Check if square is empty
@@ -548,7 +555,7 @@ public class PlayerManager : UnitManager {
             if (currentGrid && currentGrid.gridElements.Contains(units[i]))
                 currentGrid.RemoveElement(units[i]);
             
-            if (!(floorManager.floorSequence.activePacket.packetType == FloorPacket.PacketType.BOSS && units[i] is Nail))
+            if (!(floorManager.floorSequence.activePacket.packetType == FloorChunk.PacketType.BOSS && units[i] is Nail))
                 units[i].StoreInGrid(newGrid);
                 
             if (units[i].conditions.Contains(Unit.Status.Immobilized))

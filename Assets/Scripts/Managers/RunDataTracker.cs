@@ -126,23 +126,15 @@ public class RunDataTracker : MonoBehaviour {
 
     public void RestartRun() {
         scenario.scenario = ScenarioManager.Scenario.Null;
-        if (ScenarioManager.instance.startCavity == 0) ScenarioManager.instance.startCavity = 1;
-        StartCoroutine(FadeToScene(1));
+// Skip tutorial after completing it on restart
+        if (ScenarioManager.instance.startCavity == 0 && ScenarioManager.instance.floorManager.floorSequence.activePacket.packetType != FloorChunk.PacketType.Tutorial) 
+            ScenarioManager.instance.startCavity = 1;
+        PersistentMenu.instance.StartCoroutine(PersistentMenu.instance.FadeToScene(1));
     }
 
     public void MainMenu() {
         scenario.scenario = ScenarioManager.Scenario.Null;
-        StartCoroutine(FadeToScene(0));
+        PersistentMenu.instance.StartCoroutine(PersistentMenu.instance.FadeToScene(0));
     }
 
-
-    public IEnumerator FadeToScene(int index) {
-        yield return new WaitForSecondsRealtime(0.25f);
-        PersistentMenu.instance.FadeToBlack(true);
-        if (index == 0) {
-            PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.MainMenu, true);
-        }
-        yield return new WaitForSecondsRealtime(1f);
-        SceneManager.LoadScene(index, LoadSceneMode.Single);
-    }
 }

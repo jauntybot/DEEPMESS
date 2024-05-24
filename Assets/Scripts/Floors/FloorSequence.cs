@@ -9,48 +9,49 @@ using UnityEngine.UIElements;
 [System.Serializable]
 public class FloorSequence : ScriptableObject {
 
-    public List<FloorPacket> packets;
-    List<FloorPacket> localPackets;
-    public FloorPacket bossPacket;
-    public void AddPacket(FloorPacket packet) { localPackets.Add(packet); }
-    public FloorPacket activePacket;
+    public List<FloorChunk> packets;
+    [SerializeField] List<FloorChunk> localPackets;
+    public FloorChunk bossPacket;
+    public void AddPacket(FloorChunk packet) { localPackets.Add(packet); }
+    public FloorChunk activePacket;
 
     public int floorsTutorial;
     public Unit elitePrefab, bossPrefab;
-    public FloorPacket.PacketType currentThreshold;
+    public FloorChunk.PacketType currentThreshold;
     public int floorsGot = 0;
-    int hazardFloorsGot;
 
     public void Init(int index) {
-        localPackets = new List<FloorPacket>();
-        foreach (FloorPacket packet in packets) localPackets.Add(packet);
+        localPackets = new List<FloorChunk>();
+        foreach (FloorChunk packet in packets) localPackets.Add(packet);
         activePacket.floors = new List<FloorDefinition>();
         
         floorsGot = 0;
         switch (index) {
-            case 0: currentThreshold = FloorPacket.PacketType.Tutorial; break;
-            case 1: currentThreshold = FloorPacket.PacketType.I; break;
-            case 2: currentThreshold = FloorPacket.PacketType.II; break;
-            case 3: currentThreshold = FloorPacket.PacketType.III; break;
-            case 4: currentThreshold = FloorPacket.PacketType.BOSS; break;
+            case 0: currentThreshold = FloorChunk.PacketType.Tutorial; break;
+            case 1: currentThreshold = FloorChunk.PacketType.I; break;
+            case 2: currentThreshold = FloorChunk.PacketType.II; break;
+            case 3: currentThreshold = FloorChunk.PacketType.III; break;
+            case 4: currentThreshold = FloorChunk.PacketType.BOSS; break;
         }
         activePacket.packetType = currentThreshold;
     }
 
-    public List<FloorPacket> RandomNodes(int count) {
-        List<FloorPacket> options = new();
+    public List<FloorChunk> RandomNodes(int count) {
+        List<FloorChunk> options = new();
         for (int i = localPackets.Count - 1; i >= 0; i--) 
             if (localPackets[i].packetType == currentThreshold) options.Add(localPackets[i]);
 
-        List<FloorPacket> rnd = new();
-        bool hazard = false;
-        for (int c = 0; c < count; c++) {
-            int index = Random.Range(0, options.Count-1);
-            if (options[index].packetMods.Count > 0 && !hazard) {
-                rnd.Add(options[index]);
-                hazard = true;
+        List<FloorChunk> rnd = new();
+        //bool hazard = false;
+        int m = (options.Count < count) ? options.Count : count;
+        for (int c = 0; c < m; c++) {
+            int index = Random.Range(0, options.Count);
+            // if (options[index].packetMods.Count > 0 && !hazard) {
+            //     rnd.Add(options[index]);
+            //     hazard = true;
                 
-            } else rnd.Add(options[index]);
+            // } else 
+            rnd.Add(options[index]);
             
             options.RemoveAt(index);
         }
@@ -58,49 +59,70 @@ public class FloorSequence : ScriptableObject {
         return rnd;
     }
 
-    public void StartPacket(FloorPacket packet) {
+    public void StartPacket(FloorChunk packet) {
 // Replace active packet params manually
         activePacket.packetType = packet.packetType;
-        activePacket.inOrder = packet.inOrder;
+        activePacket.inOrder = true;
         activePacket.minEnemies = packet.minEnemies;
         activePacket.packetLength = packet.packetLength;
-        activePacket.nuggets = packet.nuggets;
-        activePacket.relics = packet.relics;
+        // activePacket.nuggets = packet.nuggets;
+        // activePacket.relics = packet.relics;
 
         activePacket.packetMods = new(packet.packetMods);
-        activePacket.extremeFloors = new(packet.extremeFloors);
+        activePacket.hazardFloors = new(packet.hazardFloors);
         activePacket.eliteSpawn = false;
-        activePacket.eliteRange = new(packet.eliteRange.x,packet.eliteRange.y);
-        activePacket.objectives = new(packet.objectives);
+        activePacket.evtOffset = packet.evtOffset;
+        //activePacket.objectives = new(packet.objectives);
         activePacket.firstFloors = new(packet.firstFloors);
-        activePacket.floors = new(packet.floors);
+        //activePacket.floors = new(packet.floors);
 
 
-        if (packet.packetType != FloorPacket.PacketType.BOSS)
+        if (packet.packetType != FloorChunk.PacketType.BOSS)
             localPackets.Remove(packet);
 
+// Assign hazard floor indexes
+        List<int> hazardIndex = new();
+        if (packet.packetMods.Contains(FloorChunk.PacketMods.Hazard)) {
+            for (int i = 1; i <= packet.packetLength - 1; i++) hazardIndex.Add(i);
+            ShuffleBag<int> rndIndex = new(hazardIndex.ToArray());
+            hazardIndex = new();
+            for (int i = 1; i <= (packet.packetLength - 1)/2; i++) {
+                hazardIndex.Add(rndIndex.Next());
+            }
+        }
+        ShuffleBag<FloorDefinition> rndHazardOrder = new(packet.hazardFloors.ToArray());
+        
+        ShuffleBag<FloorDefinition> rndOrder = new(packet.floors.ToArray());
+        for (int i = 0; i <= packet.packetLength - 2; i++) {
+            if (hazardIndex.Contains(i)) 
+                activePacket.floors.Add(rndHazardOrder.Next());
+            else
+                activePacket.floors.Add(rndOrder.Next());
+        }
+        rndOrder = new(packet.firstFloors.ToArray());
+        activePacket.firstFloors = new List<FloorDefinition> { rndOrder.Next() };
+
         floorsGot = 0;
-        hazardFloorsGot = 0;
     }
 
 // Returns true if threshold is passed
     public bool ThresholdCheck() {  
-        FloorPacket.PacketType prevThreshold = currentThreshold;
+        FloorChunk.PacketType prevThreshold = currentThreshold;
         switch(prevThreshold) {
-            case FloorPacket.PacketType.Tutorial:
-                if (floorsGot >= activePacket.packetLength) currentThreshold = FloorPacket.PacketType.I;
+            case FloorChunk.PacketType.Tutorial:
+                if (floorsGot >= activePacket.packetLength) currentThreshold = FloorChunk.PacketType.I;
             break;
-            case FloorPacket.PacketType.I:
-                if (floorsGot >= activePacket.packetLength) currentThreshold = FloorPacket.PacketType.II;
+            case FloorChunk.PacketType.I:
+                if (floorsGot >= activePacket.packetLength) currentThreshold = FloorChunk.PacketType.II;
             break;
-            case FloorPacket.PacketType.II:
-                if (floorsGot >= activePacket.packetLength) currentThreshold = FloorPacket.PacketType.III;
+            case FloorChunk.PacketType.II:
+                if (floorsGot >= activePacket.packetLength) currentThreshold = FloorChunk.PacketType.III;
             break;
-            case FloorPacket.PacketType.III:
-                if (floorsGot >= activePacket.packetLength) currentThreshold = FloorPacket.PacketType.BOSS;
+            case FloorChunk.PacketType.III:
+                if (floorsGot >= activePacket.packetLength) currentThreshold = FloorChunk.PacketType.BOSS;
             break;
-            case FloorPacket.PacketType.BOSS:
-                if (FloorManager.instance.floorSequence.activePacket.eliteSpawn && !FloorManager.instance.currentFloor.gridElements.Find(u => u is BossUnit)) currentThreshold = FloorPacket.PacketType.BARRIER;
+            case FloorChunk.PacketType.BOSS:
+                if (FloorManager.instance.floorSequence.activePacket.eliteSpawn && !FloorManager.instance.currentFloor.gridElements.Find(u => u is BossUnit)) currentThreshold = FloorChunk.PacketType.BARRIER;
             break;
         }
 
@@ -112,57 +134,53 @@ public class FloorSequence : ScriptableObject {
 
     public FloorDefinition GetFloor(bool first = false) {
 // First floor of packet
-        if (first) {
-            FloorDefinition floor;
-// Boss override
-            if (currentThreshold == FloorPacket.PacketType.BOSS) {
-                int index = activePacket.inOrder ? 0 : Random.Range(0, activePacket.firstFloors.Count);
-                floor = activePacket.floors[index];
-                activePacket.floors.Remove(floor);    
-            } else {
-                int index = activePacket.inOrder ? 0 : Random.Range(0, activePacket.firstFloors.Count);
-                floor = activePacket.firstFloors[index];
-                activePacket.firstFloors.Remove(floor);
-            }
+        FloorDefinition floor;
+        if (first && currentThreshold != FloorChunk.PacketType.BOSS) {
+            floor = activePacket.firstFloors[0];
+            activePacket.firstFloors.Remove(floor);
 
             floorsGot += 1;
             return floor;
 // Middle of packet
         } else {
             int index = 0;
-            FloorDefinition floor = null;
-            if (!activePacket.inOrder) {
-                if (activePacket.packetMods.Contains(FloorPacket.PacketMods.Extreme)) {
-                    int hazardTotal = Mathf.RoundToInt(activePacket.packetLength/2);
-                    if (hazardFloorsGot < hazardTotal) {
-                        int odds = Random.Range(0, hazardTotal - floorsGot - 1);
-                        if (odds <= 0) {
-                            floor = activePacket.extremeFloors[Random.Range(0, activePacket.extremeFloors.Count)];
-                            activePacket.extremeFloors.Remove(floor);
-                            hazardFloorsGot++;
-                        } else {
-                            index = Random.Range(0, activePacket.floors.Count);
-                            floor = activePacket.floors[index];
-                            activePacket.floors.Remove(floor);
-                        }
-                    } else {
-                        index = Random.Range(0, activePacket.floors.Count);
-                        floor = activePacket.floors[index];
-                        activePacket.floors.Remove(floor);
-                    }
-                } else {
-                    index = Random.Range(0, activePacket.floors.Count);
-                    floor = activePacket.floors[index];
-                    activePacket.floors.Remove(floor);
-                }
-            } else {
+//             if (!activePacket.inOrder) {
+//                 if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Hazard)) {
+// // Calculate number of hazard floors, half of chunk
+//                     int hazardTotal = Mathf.RoundToInt(activePacket.packetLength/2);
+//                     if (hazardFloorsGot < hazardTotal) {
+//                         int odds = Random.Range(0, hazardTotal - floorsGot - 1);
+//                         if (odds <= 0) {
+//                             floor = activePacket.hazardFloors[Random.Range(0, activePacket.hazardFloors.Count)];
+//                             activePacket.hazardFloors.Remove(floor);
+//                             hazardFloorsGot++;
+//                         } else {
+//                             index = Random.Range(0, activePacket.floors.Count);
+//                             floor = activePacket.floors[index];
+//                             activePacket.floors.Remove(floor);
+//                         }
+//                     } else {
+//                         index = Random.Range(0, activePacket.floors.Count);
+//                         floor = activePacket.floors[index];
+//                         activePacket.floors.Remove(floor);
+//                     }
+//                 } else {
+//                     index = Random.Range(0, activePacket.floors.Count);
+//                     floor = activePacket.floors[index];
+//                     activePacket.floors.Remove(floor);
+//                 }
+//             } else {
                 floor = activePacket.floors[index];
                 activePacket.floors.Remove(floor);
-            }
+            //}
             
             floorsGot += 1;
-            return floor;
         }
+// Spawn a beacon if floor count is mod 4
+        floor.spawnBeacon = floorsGot%4 == 0;
+        floor.spawnBloatedBulb = !activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite) && floorsGot%3 == 0 && (activePacket.packetMods.Contains(FloorChunk.PacketMods.Hazard) || floorsGot > 4);
+        
+        return floor;
     }
 
 
