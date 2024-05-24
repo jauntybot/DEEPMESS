@@ -11,7 +11,7 @@ public class UpgradeManager : MonoBehaviour {
     PlayerManager pManager;
     AudioSource audioS;
     [SerializeField] SFX selectSFX;
-    [SerializeField] GameObject upgradeScreen, scrapButton, confirmButton, unitUIContainer, nuggetContainer;
+    [SerializeField] GameObject upgradeScreen, scrapButton, confirmButton, unitUIContainer;
     [SerializeField] GameObject godNuggetPrefab;
     //[SerializeField] List<SlagGearData.UpgradePath> nuggets = new();
     public NuggetButton selectedParticle;
@@ -43,23 +43,7 @@ public class UpgradeManager : MonoBehaviour {
     }
 
     public void CollectNugget() {
-        //nuggets.Add(nugget);
-        
-// Instantiate particle UI buttons from PlayerManager
-        nuggetContainer.SetActive(true);
-        for (int i = nuggetContainer.transform.childCount - 1; i >= 0; i--)
-            Destroy(nuggetContainer.transform.GetChild(i).gameObject);
-        // for (int n = 0; n <= nuggets.Count - 1; n++) {
-        //     NuggetButton newPart = Instantiate(godNuggetPrefab, nuggetContainer.transform).GetComponent<NuggetButton>();
-        //     newPart.Init(nuggets[n]);
-        // }
-        foreach (Transform nug in nuggetContainer.transform) {
-            NuggetButton nugUI = nug.GetComponent<NuggetButton>();
-            Button butt = nug.GetComponent<Button>();
-            butt.onClick.AddListener(delegate{SelectParticle(nugUI);});
-        }
-        LayoutRebuilder.ForceRebuildLayoutImmediate(nuggetContainer.GetComponent<RectTransform>());
-        Canvas.ForceUpdateCanvases();
+
     }
 
     public IEnumerator UpgradeSequence() {
@@ -86,8 +70,6 @@ public class UpgradeManager : MonoBehaviour {
                 yield return null;
             }
         }
-        foreach (Transform child in nuggetContainer.transform) 
-            child.GetComponent<Button>().interactable = true;
         
 
         // LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
@@ -99,14 +81,11 @@ public class UpgradeManager : MonoBehaviour {
         }
 
         upgradeScreen.SetActive(false); 
-        nuggetContainer.SetActive(false);
     }
 
     public void SelectParticle(NuggetButton nug) {
         audioS.PlayOneShot(selectSFX.Get());
         selectedParticle = nug;
-        foreach (Transform child in nuggetContainer.transform)
-            child.GetComponent<NuggetButton>().frame.SetActive(false);
         nug.frame.SetActive(true);
 
         //SlagGearData.UpgradePath path = (SlagGearData.UpgradePath)(int)nug.type;

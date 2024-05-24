@@ -25,6 +25,7 @@ public class ScenarioManager : MonoBehaviour {
     [HideInInspector] public GameplayOptionalTooltips gpOptional;
     [HideInInspector] public Relics.RelicManager relicManager;
     public PathManager pathManager;
+    public ObjectiveManager objectiveManager;
     public int startCavity;
     public EnemyManager currentEnemy;
     public PlayerManager player;
@@ -326,7 +327,7 @@ public class ScenarioManager : MonoBehaviour {
             uiManager.ToggleBattleCanvas(false);
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Win));
         }
-        pathManager.ClearObjectives();
+        objectiveManager.ClearObjectives();
         relicManager.ClearRelics();
         yield return new WaitForSecondsRealtime(1.25f);
         StartCoroutine(runDataTracker.UpdateAndDisplay(true, floorManager.floors.Count - 1, player.defeatedEnemies, relicManager.scrapValue));
@@ -349,7 +350,7 @@ public class ScenarioManager : MonoBehaviour {
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Lose));
         }
         yield return StartCoroutine(player.RetrieveNailAnimation());
-        pathManager.ClearObjectives();
+        objectiveManager.ClearObjectives();
         relicManager.ClearRelics();
         StartCoroutine(runDataTracker.UpdateAndDisplay(false, floorManager.floors.Count - 2 >= 0 ? floorManager.floors.Count - 2 : 0, player.defeatedEnemies,  relicManager.scrapValue));
     }

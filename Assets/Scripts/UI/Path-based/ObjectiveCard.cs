@@ -7,8 +7,7 @@ using TMPro;
 public class ObjectiveCard : MonoBehaviour {
 
     public Objective objective;
-    [SerializeField] protected Animator nuggetAnim;
-    [SerializeField] protected TMP_Text objectiveTitle, objectiveText, progressText;
+    [SerializeField] protected TMP_Text objectiveText, progressText;
 
 
     public virtual void Init(Objective _objective) {
@@ -23,13 +22,10 @@ public class ObjectiveCard : MonoBehaviour {
             objective.ClearObjective();
             objective.ObjectiveUpdateCallback -= UpdateCard;
         }
-        Destroy(gameObject);
     }
 
 
     protected virtual void UpdateCard(Objective ob) {
-        if (objectiveTitle)
-            objectiveTitle.text = objective.objectiveTitleString;
         if (objectiveText) {
             objectiveText.text = objective.objectiveString;
             objectiveText.fontMaterial.color = Color.white;
@@ -38,8 +34,5 @@ public class ObjectiveCard : MonoBehaviour {
             progressText.text = "("+objective.progress+"/"+objective._goal+")";
             progressText.fontMaterial.color = Color.white;
         }
-        
     }
-
-
 }

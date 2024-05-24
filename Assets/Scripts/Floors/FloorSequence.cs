@@ -116,9 +116,6 @@ public class FloorSequence : ScriptableObject {
                 if (floorsGot >= activePacket.packetLength) currentThreshold = FloorChunk.PacketType.II;
             break;
             case FloorChunk.PacketType.II:
-                if (floorsGot >= activePacket.packetLength) currentThreshold = FloorChunk.PacketType.III;
-            break;
-            case FloorChunk.PacketType.III:
                 if (floorsGot >= activePacket.packetLength) currentThreshold = FloorChunk.PacketType.BOSS;
             break;
             case FloorChunk.PacketType.BOSS:

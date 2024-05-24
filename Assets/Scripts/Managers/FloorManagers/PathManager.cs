@@ -13,8 +13,7 @@ public class PathManager : MonoBehaviour {
     FloorSequence floorSequence;
     [SerializeField] UpgradeManager upgradeManager;
     [SerializeField] RelicManager relicManager;
-    
-    [SerializeField] ObjectiveTracker tracker;
+
 
     List<PathCard> activeCards;
     [HideInInspector] public PathCard selectedPathCard;
@@ -23,9 +22,7 @@ public class PathManager : MonoBehaviour {
     [SerializeField] GameObject pathCardPrefab, pathChoiceContainer;
     [HideInInspector] public bool choosingPath = false;
     
-    [Header("Serialized Objective Pools")]
-    [SerializeField] List<Objective> packetIObjectives;
-    [SerializeField] List<Objective> packetIIObjectives, packetIIIObjectives;
+
     [SerializeField] List<Sprite> rewardSprites;
     
     [Header("Node Video Player")]
@@ -42,7 +39,6 @@ public class PathManager : MonoBehaviour {
 
     void Start() {
         floorSequence = FloorManager.instance.floorSequence;
-        ClearObjectives();
         objectiveDiscount = 0;
         clipIndex = ScenarioManager.instance.startCavity-1;
         if (clipIndex < 0) clipIndex = 0;
@@ -67,35 +63,18 @@ public class PathManager : MonoBehaviour {
         switch(floorSequence.currentThreshold) {
             case FloorChunk.PacketType.I: rnd = 3; break;
             case FloorChunk.PacketType.II: rnd = 3; break;
-            case FloorChunk.PacketType.III: rnd = 3; break;
             case FloorChunk.PacketType.BOSS: rnd = 1; break;
         }
         List<FloorChunk> randomPackets = floorSequence.RandomNodes(rnd);
         
 // Initialize PathCards
-        int totalObjectives = 0;
         for (int i = 0; i <= randomPackets.Count - 1; i++) {
             PathCard pc = Instantiate(pathCardPrefab, pathCardContainer).GetComponent<PathCard>();
             pc.Init(this, randomPackets[i]);
             //totalObjectives += randomPackets[i].bonusNuggetObjectives + randomPackets[i].bonusRelicObjectives;
             activeCards.Add(pc);
         }
-
-// Assign random objectives based on packet, prevents duplicates
-        List<Objective> objectives = GetObjectives(totalObjectives);
-        for (int i = 0; i <= activeCards.Count - 1; i++) {
-            List<Objective> packetObjs = new();
-            // for (int o = randomPackets[i].bonusNuggetObjectives - 1; o >= 0; o--) {
-            //     packetObjs.Add(objectives[0].Init(true, objectiveDiscount));
-            //     objectives.RemoveAt(0);
-            // }
-            // for (int o = randomPackets[i].bonusRelicObjectives - 1; o >= 0; o--) {
-            //     packetObjs.Add(objectives[0].Init(false, objectiveDiscount));
-            //     objectives.RemoveAt(0);
-            // }
-            activeCards[i].AssignObjectives(packetObjs);
-        }
-        
+       
         LayoutRebuilder.ForceRebuildLayoutImmediate(pathCardContainer.GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
         yield return null;
@@ -123,17 +102,11 @@ public class PathManager : MonoBehaviour {
         yield return null;
         
         float t = 0;
-// Destroy other path nodes and unsub objectives
+// Destroy other path nodes
         activeCards = new() { selected };
         for (int i = pathCardContainer.childCount - 1; i >= 0; i--) {
             PathCard c = pathCardContainer.GetChild(i).GetComponent<PathCard>();
             if (c == selected) continue;
-            foreach(Transform child in c.bonusObjContainer) {
-                BonusObjectiveCard o = child.GetComponent<BonusObjectiveCard>();
-                if (o)
-                    o.Unsub();
-            }
-            //card.transform.parent = null;
             c.GetComponent<Animator>().SetBool("Del", true);
             c.GetComponent<Animator>().SetTrigger("SlideOut");
             t = 0; while (t < 0.1f) { t += Time.deltaTime; yield return null; }
@@ -180,12 +153,12 @@ public class PathManager : MonoBehaviour {
         //     tracker.gameObject.SetActive(true);
         //     SubscribeTracker(selected.floorPacket.objectives);
         // } else
-        tracker.gameObject.SetActive(false);
+        //tracker.gameObject.SetActive(false);
         
         choosingPath = false;
     }
 
-    public IEnumerator PathRewardSequence() {
+    public IEnumerator BeaconObjectiveSequence() {
         // foreach (Objective ob in floorSequence.activePacket.objectives)
         //     ob.ProgressCheck(true);
         yield return null;
@@ -264,47 +237,14 @@ public class PathManager : MonoBehaviour {
 //         ClearObjectives();
     }
 
-    public void ClearObjectives() {
-        foreach (Transform child in pathCardContainer) {
-            PathCard card = child.GetComponent<PathCard>();
-            card.UnsubObjectives();
-        }
-        SubscribeTracker();
-    }
-    
-    void SubscribeTracker(List<Objective> objs = null) {
-        if (objs != null)
-            tracker.AssignObjectives(objs, rewardSprites);
-        else {
-            tracker.UnsubObjectives();
-        }
-    }
+
+
 
     public void EndPathSequence() {
         choosingPath = false;
     }
 
-    int packetCount = 0;
-    List<Objective> GetObjectives(int count) {
-         List<Objective> packetObjectives;
-        switch(ScenarioManager.instance.startCavity + packetCount) {
-            default:
-            case 1: packetObjectives = packetIObjectives; break;
-            case 2: packetObjectives = packetIIObjectives; break;
-            case 3: packetObjectives = packetIIIObjectives; break;
-        }
 
-// Randomly assign objectives
-        ShuffleBag<Objective> rndBag = new();
-        List<Objective> rolledObjectives = new();
-        for (int i = packetObjectives.Count - 1; i >= 0; i--)
-            rndBag.Add(packetObjectives[i]);
-        for (int c = 0; c <= count; c++){ 
-            rolledObjectives.Add(rndBag.Next());
-        }
-        packetCount++;
-        return rolledObjectives;
-    }
 
     public void SelectCard(PathCard selected) {
         if (selectedPathCard)

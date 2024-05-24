@@ -27,10 +27,6 @@ public class PathCard : MonoBehaviour {
 
         floorCount.text = floorPacket.packetLength.ToString();
 
-        // for (int i = floorPacket.nuggets - 1; i >= 0; i--) 
-        //     Instantiate(nuggetRewardPrefab, rewardContainer);
-        // for (int i = floorPacket.relics - 1; i >= 0; i--) 
-        //     Instantiate(relicRewardPrefab, rewardContainer);
         for (int i = floorPacket.packetMods.Count - 1; i >= 0; i--) {
             hazardsContainer.gameObject.SetActive(true);
             GameObject prefab;
@@ -57,25 +53,25 @@ public class PathCard : MonoBehaviour {
         subcardContainer.gameObject.GetComponent<VerticalLayoutGroup>().spacing = 0;
     }
 
-    public void AssignObjectives(List<Objective> objs) {
-        for (int i = 0; i <= objs.Count - 1; i++) {
-            BonusObjectiveCard card = Instantiate(bonusObjPrefab, bonusObjContainer).GetComponent<BonusObjectiveCard>();
-            card.Init(objs[i]);
-        }
-        //floorPacket.objectives = objs;
+    // public void AssignObjectives(List<Objective> objs) {
+    //     for (int i = 0; i <= objs.Count - 1; i++) {
+    //         BonusObjectiveCard card = Instantiate(bonusObjPrefab, bonusObjContainer).GetComponent<BonusObjectiveCard>();
+    //         card.Init(objs[i]);
+    //     }
+    //     //floorPacket.objectives = objs;
 
-        LayoutRebuilder.ForceRebuildLayoutImmediate(bonusObjContainer.GetComponent<RectTransform>());
-        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
-        Canvas.ForceUpdateCanvases();
-    }
+    //     LayoutRebuilder.ForceRebuildLayoutImmediate(bonusObjContainer.GetComponent<RectTransform>());
+    //     LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+    //     Canvas.ForceUpdateCanvases();
+    // }
 
-    public void UnsubObjectives() {
-        foreach (Transform child in bonusObjContainer) {
-            BonusObjectiveCard card = child.GetComponent<BonusObjectiveCard>();
-            if (card)
-                card.Unsub();
-        }
-    }
+    // public void UnsubObjectives() {
+    //     foreach (Transform child in bonusObjContainer) {
+    //         BonusObjectiveCard card = child.GetComponent<BonusObjectiveCard>();
+    //         if (card)
+    //             card.Unsub();
+    //     }
+    // }
 
     public void SelectCard() {
         if (selectable) {

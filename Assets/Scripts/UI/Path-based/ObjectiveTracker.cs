@@ -8,7 +8,9 @@ public class ObjectiveTracker : MonoBehaviour {
     List<Objective> activeObjectives;
     [SerializeField] public GameObject objectiveCardPrefab, objectiveCardParent;
 
-    public void AssignObjectives(List<Objective> _obs, List<Sprite> rewardSprites) {
+
+
+    public void AssignObjectives(List<Objective> _obs) {
         activeObjectives = _obs;
         
         for (int i = objectiveCardParent.transform.childCount - 1; i >= 0; i--) {
@@ -31,5 +33,6 @@ public class ObjectiveTracker : MonoBehaviour {
             card.Unsub();
         }
     }
+
 
 }

@@ -7,13 +7,6 @@ public class ObjectiveTrackerCard : ObjectiveCard {
 
     [SerializeField] Color successColor, failColor;
 
-    public override void Init(Objective _objective) {
-        objective = _objective;
-        objective.ObjectiveUpdateCallback += UpdateCard;
-
-        UpdateCard(objective);
-    }
-
     protected override void UpdateCard(Objective ob) {
         base.UpdateCard(ob);
 
@@ -25,15 +18,18 @@ public class ObjectiveTrackerCard : ObjectiveCard {
             else {
                 color = failColor;
                 style = TMPro.FontStyles.Strikethrough;
-                nuggetAnim.GetComponent<Image>().color = new Color (0.75f, 0.75f, 0.75f, 1);
             }
-        } else 
-            nuggetAnim.GetComponent<Image>().color = Color.white;
+        }
 
         
         objectiveText.fontStyle = style;
         progressText.fontStyle = style;
         objectiveText.color = color;
         progressText.color = color;
+    }
+
+    public override void Unsub() {
+        base.Unsub();
+        Destroy(gameObject);
     }
 }

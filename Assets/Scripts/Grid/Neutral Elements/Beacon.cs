@@ -13,6 +13,7 @@ public class Beacon : GridElement {
     }
 
     public IEnumerator SelectBeacon(PlayerManager pm) {
+        yield return pm.scenario.objectiveManager.StartCoroutine(pm.scenario.objectiveManager.ObjectiveSequence());
         yield return pm.StartCoroutine(pm.upgradeManager.UpgradeSequence());
         StartCoroutine(DestroySequence());
     }

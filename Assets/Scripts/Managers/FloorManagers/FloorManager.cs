@@ -729,6 +729,7 @@ public class FloorManager : MonoBehaviour {
 //             } else
             
             yield return scenario.pathManager.PathSequence(); 
+            yield return scenario.objectiveManager.ObjectiveSequence();
 
             if (floorSequence.currentThreshold == FloorChunk.PacketType.BOSS) {
                 floorSequence.StartPacket(floorSequence.bossPacket);

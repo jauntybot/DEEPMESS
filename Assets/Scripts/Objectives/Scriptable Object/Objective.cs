@@ -7,19 +7,18 @@ public class Objective : ScriptableObject {
 
     public string objectiveTitleString;
     public string objectiveString;
+    public FloorChunk.PacketType chunk;
     public int progress, goal;
     public int _goal;
     public enum Operator { OrMore, LessThanOrEqual }
     public Operator operation;
-    public bool nuggetReward;
     public bool resolved, succeeded;
     public delegate void OnObjectiveCondition(Objective objective);
     public event OnObjectiveCondition ObjectiveUpdateCallback;
 
 
-    public virtual Objective Init(bool reward, int p = 0) {
+    public virtual Objective Init(int p = 0) {
         Restart(p);
-        nuggetReward = reward;
         return this;
     }
 
