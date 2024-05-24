@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5bb49c864413fca4baebb688c431b039, type: 3}
-  m_Name: P1 H1
+  m_Name: Chunk 1 Hazard
   m_EditorClassIdentifier: 
   packetType: 1
-  packetLength: 4
+  packetLength: 10
   inOrder: 0
   firstFloors:
   - {fileID: 11400000, guid: 0beb7124178a741c9a62cf9d24015e17, type: 2}
@@ -38,17 +38,11 @@ MonoBehaviour:
   minEnemies: 3
   eliteSpawn: 0
   packetMods: 00000000
-  eliteRange: {x: 0, y: 0}
-  extremeFloors:
-  - {fileID: 11400000, guid: c233b0ee3ef4f49069056cea0d7f3238, type: 2}
-  - {fileID: 11400000, guid: 625cd2545eb0349028a5ecd0f688d981, type: 2}
-  - {fileID: 11400000, guid: 561fc91499a084ccda02efd29f89672a, type: 2}
-  - {fileID: 11400000, guid: 74b6ca577a7634ba2a01f80489237c28, type: 2}
-  - {fileID: 11400000, guid: 8a1fdd8b5482845378d5fae317793092, type: 2}
+  evtOffset: 0
+  hazardFloors:
   - {fileID: 11400000, guid: e83353b71f15442b78cd8cd24e6705b7, type: 2}
-  nuggets: 2
-  relics: 0
-  bonusNuggetObjectives: 0
-  bonusRelicObjectives: 1
-  objectives:
-  - {fileID: 11400000, guid: b48b77f2ee36737429a764e7f3572301, type: 2}
+  - {fileID: 11400000, guid: 8a1fdd8b5482845378d5fae317793092, type: 2}
+  - {fileID: 11400000, guid: 74b6ca577a7634ba2a01f80489237c28, type: 2}
+  - {fileID: 11400000, guid: 561fc91499a084ccda02efd29f89672a, type: 2}
+  - {fileID: 11400000, guid: 625cd2545eb0349028a5ecd0f688d981, type: 2}
+  - {fileID: 11400000, guid: c233b0ee3ef4f49069056cea0d7f3238, type: 2}
