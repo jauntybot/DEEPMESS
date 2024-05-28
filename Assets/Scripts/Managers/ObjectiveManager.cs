@@ -1,21 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ObjectiveManager : MonoBehaviour {
 
     ScenarioManager scenario;
     
     [SerializeField] GameObject objectiveScreen;
-    [SerializeField] List<ObjectiveCard> objectiveCards;
+    [SerializeField] List<ObjectiveBeaconCard> objectiveCards;
+    [SerializeField] List<Objective> activeObjectives;
 
     [Header("Serialized Objective Pools")]
     [SerializeField] List<Objective> serializedObjectives;
     ShuffleBag<Objective> objectivePoolC1, objectivePoolC2;
 
-    List<Objective> activeObjectives;
 
-            
+    [SerializeField] NuggetDisplay nuggets;
     [SerializeField] ObjectiveTracker tracker;
 
     void Start() {
@@ -23,6 +24,8 @@ public class ObjectiveManager : MonoBehaviour {
         ClearObjectives();
         objectiveScreen.SetActive(false);
         activeObjectives = new();
+        objectivePoolC1 = new();
+        objectivePoolC2 = new();
         foreach (Objective ob in serializedObjectives) {
             if (ob.chunk == FloorChunk.PacketType.I) objectivePoolC1.Add(ob);
             if (ob.chunk == FloorChunk.PacketType.II) objectivePoolC2.Add(ob);
@@ -32,13 +35,23 @@ public class ObjectiveManager : MonoBehaviour {
     bool reviewing;
     public IEnumerator ObjectiveSequence() {
         reviewing = true;
+        
         if (activeObjectives.Count == 0) {
+            activeObjectives = new List<Objective> {null, null, null};
+            for (int i = 0; i <= objectiveCards.Count - 1; i++) {
+                RollObjectiveCard(i);
+            }
+            objectiveScreen.SetActive(true);
+        } else {
+            objectiveScreen.SetActive(true);
+            yield return new WaitForSecondsRealtime(0.25f);
             for (int i = 0; i <= activeObjectives.Count - 1; i++) {
-                RollObjectiveCard(i, scenario.floorManager.floorSequence.currentThreshold);
+                yield return new WaitForSecondsRealtime(0.25f);
+                objectiveCards[i].UpdateCard(objectiveCards[i].objective);
+                //objectiveCards[i].UpdateCard(activeObjectives[i]);
             }
         }
         
-        objectiveScreen.SetActive(true);
 
 
         while (reviewing) yield return null;
@@ -47,14 +60,54 @@ public class ObjectiveManager : MonoBehaviour {
         objectiveScreen.SetActive(false);
     }
 
-    public void RollObjectiveCard(int index, FloorChunk.PacketType chunk) {
+    public void RollObjectiveCard(int index) {
         Objective rolled;
-        switch(chunk) {
+        ShuffleBag<Objective> bag;
+        switch(scenario.floorManager.floorSequence.currentThreshold) {
             default:
-            case FloorChunk.PacketType.I: rolled = objectivePoolC1.Next(); break;
-            case FloorChunk.PacketType.II: rolled = objectivePoolC2.Next(); break;
+            case FloorChunk.PacketType.I: bag = objectivePoolC1; break;
+            case FloorChunk.PacketType.II: bag = objectivePoolC2; break;
         }
+        rolled = bag.Next(); 
+        bag.Remove(rolled); 
+        Debug.Log("objectives remaining: " + bag.Count);
+        if (bag.Count == 0) {
+            foreach (ObjectiveBeaconCard c in objectiveCards) c.DisableButton();
+        }
+
+        rolled = rolled.Init();
+        objectiveCards[index].Unsub();
+        activeObjectives[index] = rolled;
         objectiveCards[index].Init(rolled);
+    }
+
+    public void RollObjectiveCard(ObjectiveBeaconCard card, bool collect) {
+        Objective rolled;
+        ShuffleBag<Objective> bag;
+        switch(scenario.floorManager.floorSequence.currentThreshold) {
+            default:
+            case FloorChunk.PacketType.I: bag = objectivePoolC1; break;
+            case FloorChunk.PacketType.II: bag = objectivePoolC2; break;
+        }
+        rolled = bag.Next(); 
+        bag.Remove(rolled); 
+        if (bag.Count == 0) {
+            foreach (ObjectiveBeaconCard c in objectiveCards) c.DisableButton();
+        }
+
+        if (collect) {
+            scenario.player.collectedNuggets++;
+            nuggets.CollectNugget();
+        }
+
+        rolled = rolled.Init();
+        card.Unsub();
+        int index = objectiveCards.IndexOf(card);
+        activeObjectives[index] = rolled;
+        objectiveCards[index].Init(rolled);
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(objectiveCards[0].transform.parent.GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
     }
     
     public void ClearObjectives() {
@@ -70,7 +123,9 @@ public class ObjectiveManager : MonoBehaviour {
         if (objs != null)
             tracker.AssignObjectives(objs);
         else {
-            tracker.UnsubObjectives();
+            for (int i = 0; i <= activeObjectives.Count - 1; i++) {
+                tracker.UnsubObjective(i);
+            }
         }
     }
 

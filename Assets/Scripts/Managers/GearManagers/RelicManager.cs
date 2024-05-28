@@ -43,7 +43,6 @@ namespace Relics {
         }
 
         public void CollectRelic(RelicData data) {
-            Debug.Log("Relic collected");
             Relic relic = Instantiate(relicPrefab, relicContainer).GetComponent<Relic>();
             relic.Init(data);
             collectedRelics.Add(relic);

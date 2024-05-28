@@ -28,7 +28,7 @@ public class PlayerManager : UnitManager {
     public delegate void OnPlayerAction(PlayerManager player);
     public virtual event OnPlayerAction UndoClearCallback;
 
-    //public List<SlagGearData.UpgradePath> collectedParticles = new();
+    public int collectedNuggets;
 
     [Header("PREFABS")]
     [SerializeField] public GameObject nailPrefab;
@@ -90,6 +90,7 @@ public class PlayerManager : UnitManager {
         pc.Init();
 
         reviveTo = 1;
+        collectedNuggets = 0;
     }
 
 // Overriden functionality

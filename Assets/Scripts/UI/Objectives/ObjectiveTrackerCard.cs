@@ -7,7 +7,7 @@ public class ObjectiveTrackerCard : ObjectiveCard {
 
     [SerializeField] Color successColor, failColor;
 
-    protected override void UpdateCard(Objective ob) {
+    public override void UpdateCard(Objective ob) {
         base.UpdateCard(ob);
 
         TMPro.FontStyles style = TMPro.FontStyles.Normal;

@@ -14,7 +14,6 @@ namespace Relics {
         public void Init(RelicData _data) {
             data = _data;
             data.Init();
-            Debug.Log("relic init");
 
             relicSprite = GetComponent<Image>();
             relicSprite.sprite = data.sprite;

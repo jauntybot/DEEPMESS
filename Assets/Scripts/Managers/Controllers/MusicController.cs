@@ -71,7 +71,6 @@ public class MusicController : MonoBehaviour {
 
         audioSources[sourceIndex].clip = stateTracks[stateTrackIndex].trackAudioClip;
         audioSources[sourceIndex].PlayScheduled(loopPt);
-        Debug.Log("Playing: " + stateTracks[stateTrackIndex]);
 
         trackDur = (double)stateTracks[stateTrackIndex].trackAudioClip.samples / stateTracks[stateTrackIndex].trackAudioClip.frequency;
         loopPt = loopPt + trackDur;

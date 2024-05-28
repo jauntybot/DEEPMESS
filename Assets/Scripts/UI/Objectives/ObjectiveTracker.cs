@@ -27,11 +27,10 @@ public class ObjectiveTracker : MonoBehaviour {
         Canvas.ForceUpdateCanvases();
     }
 
-    public void UnsubObjectives() {
-        foreach(Transform child in objectiveCardParent.transform) {
-            ObjectiveCard card = child.GetComponent<ObjectiveCard>();
-            card.Unsub();
-        }
+    public void UnsubObjective(int index) {
+        ObjectiveCard card = objectiveCardParent.transform.GetChild(index).GetComponent<ObjectiveCard>();
+        card.Unsub();
+        
     }
 
 

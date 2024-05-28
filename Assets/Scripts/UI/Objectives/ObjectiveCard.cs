@@ -19,13 +19,12 @@ public class ObjectiveCard : MonoBehaviour {
 
     public virtual void Unsub() {
         if (objective) {
-            objective.ClearObjective();
+            //objective.ClearObjective();
             objective.ObjectiveUpdateCallback -= UpdateCard;
         }
     }
 
-
-    protected virtual void UpdateCard(Objective ob) {
+    public virtual void UpdateCard(Objective ob) {
         if (objectiveText) {
             objectiveText.text = objective.objectiveString;
             objectiveText.fontMaterial.color = Color.white;
@@ -34,5 +33,8 @@ public class ObjectiveCard : MonoBehaviour {
             progressText.text = "("+objective.progress+"/"+objective._goal+")";
             progressText.fontMaterial.color = Color.white;
         }
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
     }
 }

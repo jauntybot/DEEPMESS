@@ -156,7 +156,10 @@ public class Grid : MonoBehaviour {
 // Final check there is a valid coordd to spawn
             if (spawns.Count > 0) {
                 Vector2 coord = spawns.Next();
-                foreach (GridElement ge in CoordContents(coord)) ge.StartCoroutine(ge.DestroySequence());
+                foreach (GridElement ge in CoordContents(coord)) {
+                    RemoveElement(ge);
+                    Destroy(ge.gameObject);
+                }
                 GridElement neutralGE = Instantiate(beaconPrefab, this.transform).GetComponent<GridElement>();
                 neutralGE.transform.parent = neutralGEContainer.transform;
 
