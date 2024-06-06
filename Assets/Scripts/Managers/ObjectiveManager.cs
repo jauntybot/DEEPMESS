@@ -16,7 +16,8 @@ public class ObjectiveManager : MonoBehaviour {
     [SerializeField] List<Objective> serializedObjectives;
     ShuffleBag<Objective> objectivePoolC1, objectivePoolC2;
 
-
+    AudioSource audioSource;
+    [SerializeField] SFX ginoSFX;
     [SerializeField] NuggetDisplay nuggets;
     [SerializeField] ObjectiveTracker tracker;
 
@@ -31,13 +32,19 @@ public class ObjectiveManager : MonoBehaviour {
             if (ob.chunk == FloorChunk.PacketType.I) objectivePoolC1.Add(ob);
             if (ob.chunk == FloorChunk.PacketType.II) objectivePoolC2.Add(ob);
         }
+
+        audioSource = GetComponent<AudioSource>();
+        audioSource.outputAudioMixerGroup = ginoSFX.outputMixerGroup;
     }
 
     bool reviewing;
     public IEnumerator ObjectiveSequence() {
         reviewing = true;
         nuggets.UpdateNuggetCount();
+        nuggets.gameObject.SetActive(true);
         
+        audioSource.PlayOneShot(ginoSFX.Get());
+
         if (activeObjectives.Count == 0) {
             activeObjectives = new List<Objective> {null, null, null};
             for (int i = 0; i <= objectiveCards.Count - 1; i++) {

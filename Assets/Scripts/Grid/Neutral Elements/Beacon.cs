@@ -20,6 +20,8 @@ public class Beacon : Unit {
         yield return ScenarioManager.instance.objectiveManager.StartCoroutine(ScenarioManager.instance.objectiveManager.ObjectiveSequence());
         yield return new WaitForSecondsRealtime(0.5f);
         yield return ScenarioManager.instance.player.StartCoroutine(ScenarioManager.instance.player.upgradeManager.UpgradeSequence());
+        PlaySound(dmgdSFX); // Placeholder param for call down SFX
+        yield return new WaitForSecondsRealtime(0.75f);
         yield return FloorManager.instance.StartCoroutine(FloorManager.instance.TransitionToSlimeHub(false));
         ScenarioManager.instance.currentTurn = ScenarioManager.Turn.Player;
         StartCoroutine(DestroySequence());

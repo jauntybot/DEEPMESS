@@ -7,6 +7,7 @@ public class Shield : MonoBehaviour {
     [HideInInspector] public Unit unit;
     public ShieldData data;
     public SpriteRenderer gfx;
+    [SerializeField] SFX destroySFX;
     Animator anim;
     public bool buoyant, thorns, liveWired, aerodynamics, healing;
 
@@ -28,6 +29,7 @@ public class Shield : MonoBehaviour {
     }
 
     public void DestroySelf(GridElement source = null) {
+        unit.PlaySound(destroySFX);
         if (data.activeShields.Contains(this))
             data.activeShields.Remove(this);
         anim.SetTrigger("Destroy");

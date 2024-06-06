@@ -13,6 +13,7 @@ public class ScratchOffCard : MonoBehaviour {
     [SerializeField] GameObject scratchPrefab;
     [SerializeField] Transform scratchLayout;
     List<ScratchUpgrade> scratches;
+    [SerializeField] AudioSource scratchAudio;
 
     public void BuildCard(UpgradeManager m, List<GearUpgrade> upgrades) {
         manager = m;
@@ -35,6 +36,7 @@ public class ScratchOffCard : MonoBehaviour {
     }
 
     public IEnumerator ScratchAnim() {
+        scratchAudio.Play();
         for (int i = scratchLayout.childCount - 1; i >= 0; i--) {
             yield return new WaitForSecondsRealtime(0.25f);
             ScratchUpgrade upgrade = scratchLayout.GetChild(i).GetComponent<ScratchUpgrade>();

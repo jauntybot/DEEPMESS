@@ -62,8 +62,10 @@ namespace Relics {
             
             queuing = false;
 
-            onFloorQueue.Dequeue().SetTrigger("Collect");
-            yield return new WaitForSecondsRealtime(1.4f);
+            Animator anim = onFloorQueue.Dequeue();
+            anim.SetTrigger("Collect");
+            anim.GetComponent<AudioSource>().Play();
+            yield return new WaitForSecondsRealtime(1.75f);
             yield return StartCoroutine(PresentRelic());
             if (relicQueue.Count > 0) StartCoroutine(relicQueue.Dequeue());
         }

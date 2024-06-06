@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.Rendering.LookDev;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TooltipSystem : MonoBehaviour {
 
@@ -11,6 +11,8 @@ public class TooltipSystem : MonoBehaviour {
     public UpgradeTooltip tooltipUpgrade, tooltipUpgradeCompare;
     [SerializeField] GameObject upgradeContext;
     [SerializeField] TMP_Text contextText;
+    [SerializeField] Image[] contextImages;
+    [SerializeField] Sprite[] contextIcons;
     public Transform upgradeContainer;
     public static TooltipTrigger activeTrigger;
     static UpgradeTooltipTrigger selectedUpgrade;
@@ -34,8 +36,18 @@ public class TooltipSystem : MonoBehaviour {
         instance.tooltipUpgrade.SetText(trigger.content, trigger.header, trigger.slotTooltip? trigger.gearIcon : trigger.upgradeIcon);
         instance.tooltipUpgrade.transform.GetChild(0).gameObject.SetActive(true);
         instance.upgradeContext.SetActive(trigger.slottable && trigger.slotTooltip && selectedUpgrade != null);
-        if (trigger.slottable && trigger.slotTooltip && selectedUpgrade != null) 
+        if (trigger.slottable && trigger.slotTooltip && selectedUpgrade != null) {
             instance.tooltipUpgradeCompare.SetText(selectedUpgrade.content, selectedUpgrade.header, selectedUpgrade.gearIcon);
+            if (trigger.header != "Empty") {
+                instance.contextText.text = "REPLACE";
+                foreach (Image i in instance.contextImages) 
+                    i.sprite = instance.contextIcons[1];
+            } else {
+                instance.contextText.text = "EQUIP";
+                foreach (Image i in instance.contextImages) 
+                    i.sprite = instance.contextIcons[0];
+            }
+        }
 
         instance.tooltipUpgradeCompare.transform.GetChild(0).gameObject.SetActive(trigger.slottable && trigger.slotTooltip && selectedUpgrade != null);
     }

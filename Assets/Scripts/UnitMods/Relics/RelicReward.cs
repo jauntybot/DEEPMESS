@@ -9,9 +9,7 @@ public class RelicReward : MonoBehaviour {
     Relics.RelicData data;
     [SerializeField] Image image;
     [SerializeField] TMP_Text nameTMP, descriptionTMP;
-
     
-
     public bool take;
     bool deciding;
 
@@ -20,6 +18,7 @@ public class RelicReward : MonoBehaviour {
         data = relic;
 
         transform.GetChild(0).gameObject.SetActive(true);
+        GetComponent<AudioSource>().Play();
 
         image.sprite = relic.sprite;
         nameTMP.text = relic.name;

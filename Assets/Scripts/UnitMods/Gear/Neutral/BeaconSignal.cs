@@ -19,13 +19,13 @@ public class BeaconSignal : GearData {
     public override IEnumerator UseGear(GridElement user, GridElement target = null) {
         Beacon b = (Beacon)user;
         b.manager.DeselectUnit();
-
         
-        yield return new WaitForSecondsRealtime(0.5f);
+        yield return base.UseGear(user, target);
+
+        yield return new WaitForSecondsRealtime(1.25f);
         b.StartCoroutine(b.SelectBeacon());
 
         
-        yield return base.UseGear(user, target);
     }
 
 }

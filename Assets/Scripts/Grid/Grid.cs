@@ -134,6 +134,10 @@ public class Grid : MonoBehaviour {
 
                 neutralGE.StoreInGrid(this);
                 neutralGE.UpdateElement(spawn.coord);
+
+                if (neutralGE is BloatedBulb) {
+                    neutralGE.ElementDestroyed += ScenarioManager.instance.RewardOnKill;
+                }
             }
         }
 

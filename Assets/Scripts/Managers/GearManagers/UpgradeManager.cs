@@ -56,7 +56,6 @@ public class UpgradeManager : MonoBehaviour {
     public IEnumerator UpgradeSequence() {
         upgrading = true;
         nuggetDisplay.UpdateNuggetCount();
-        nuggetDisplay.gameObject.SetActive(false);
 
         CancelDiscard();
 
@@ -69,6 +68,7 @@ public class UpgradeManager : MonoBehaviour {
         while (upgrading) yield return null;
 
         if (activeCard) Destroy(activeCard.gameObject);
+        nuggetDisplay.gameObject.SetActive(false);
         upgradeScreen.SetActive(false); 
     }
 
@@ -113,7 +113,6 @@ public class UpgradeManager : MonoBehaviour {
                 }
             }
         }
-        nuggetDisplay.gameObject.SetActive(true);
 
         confirmButton.GetComponentInChildren<TMPro.TMP_Text>().text = "HANG UP";
         confirmButton.onClick.RemoveAllListeners();
@@ -130,7 +129,7 @@ public class UpgradeManager : MonoBehaviour {
     public void SelectUpgrade(GearUpgrade upgrade, UpgradeTooltipTrigger trigger) {
         TooltipSystem.SelectUpgrade(trigger);
         foreach (UnitUpgradeUI ui in unitUpgradeUIs) {
-            if (ui.gear.GetType() == upgrade.modifiedGear.GetType()) {
+            if (upgrade != null && ui.gear.GetType() == upgrade.modifiedGear.GetType()) {
                 ui.SelectUpgrade(upgrade);
             } else {
                 ui.SelectUpgrade();
@@ -158,7 +157,6 @@ public class UpgradeManager : MonoBehaviour {
             timer += Time.deltaTime;
         }
         rect.anchorMin = new Vector2(0.5f, rect.anchorMin.y);
-        SelectUpgrade(null, null);
     }
 
     public void HPPurchased() {
@@ -181,6 +179,7 @@ public class UpgradeManager : MonoBehaviour {
     }
 
     public void EndUpgradeSequence() {
+        SelectUpgrade(null, null);
         upgrading = false;
     }
 
