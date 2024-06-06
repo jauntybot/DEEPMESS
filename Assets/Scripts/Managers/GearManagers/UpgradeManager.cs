@@ -8,131 +8,176 @@ using Relics;
 
 public class UpgradeManager : MonoBehaviour {
 
-    PlayerManager pManager;
-    AudioSource audioS;
     [SerializeField] SFX selectSFX;
-    [SerializeField] GameObject upgradeScreen, scrapButton, confirmButton, unitUIContainer;
-    [SerializeField] GameObject godNuggetPrefab;
-    //[SerializeField] List<SlagGearData.UpgradePath> nuggets = new();
-    public NuggetButton selectedParticle;
+    [SerializeField] Button confirmButton;
+    [SerializeField] GameObject confirmDiscard;
+    [SerializeField] GameObject upgradeScreen, unitUIContainer;
+    [SerializeField] GameObject unitUIPrefab;
+    public NuggetDisplay nuggetDisplay;
 
-
-    [SerializeField] GameObject unitUpgradeUIPrefab;
-    [SerializeField] List<UnitUpgradeUI> unitUpgradeUIs = new();
+    Dictionary<SlagGearData, Dictionary<int, ShuffleBag<GearUpgrade>>> upgradePool;
+    [SerializeField] GameObject scratchOffPrefab;
+    ScratchOffCard activeCard;
+    
+    List<UnitUpgradeUI> unitUpgradeUIs = new();
     
     bool upgrading;
 
 
     public void Init(List<Unit> _units, PlayerManager _pManager) {
-        audioS = GetComponent<AudioSource>();
-        unitUIContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+        
+        upgradePool = new();
 
-        scrapButton.SetActive(false);
+        for (int i = 0; i <= _units.Count - 1; i++) {
+            if (_units[i] is PlayerUnit pu) {
+                ShuffleBag<GearUpgrade> lvl1Bag = new();
+                ShuffleBag<GearUpgrade> lvl2Bag = new();
 
-        for (int i = unitUIContainer.transform.childCount - 1; i >= 0; i--)
-            Destroy(unitUIContainer.transform.GetChild(i).gameObject);
-        foreach (Unit unit in _units) {
-            if (unit is PlayerUnit pu) {
-                UnitUpgradeUI ui = Instantiate(unitUpgradeUIPrefab, unitUIContainer.transform).GetComponent<UnitUpgradeUI>();
+                SlagGearData gear = (SlagGearData)pu.equipment[1];
+                foreach (GearUpgrade gu in gear.upgrades) {
+                    if (gu.ugpradeLevel == 1) {
+                        lvl1Bag.Add(gu);
+                    } else if (gu.ugpradeLevel == 2) {
+                        lvl2Bag.Add(gu);
+                    }
+                }
+                Dictionary<int, ShuffleBag<GearUpgrade>> dict = new() { { 1, lvl1Bag }, { 2, lvl2Bag }  };
+                upgradePool.Add(gear, dict);
+
+                UnitUpgradeUI ui = Instantiate(unitUIPrefab, unitUIContainer.transform).GetComponent<UnitUpgradeUI>();
                 ui.Initialize(pu, this);
                 unitUpgradeUIs.Add(ui);
             }
         }
-
-        pManager = _pManager;      
     }
 
-    public void CollectNugget() {
-
-    }
+    bool cont = false;
 
     public IEnumerator UpgradeSequence() {
         upgrading = true;
+        nuggetDisplay.UpdateNuggetCount();
+        nuggetDisplay.gameObject.SetActive(false);
+
+        CancelDiscard();
+
+        RectTransform rect = unitUIContainer.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.6f, rect.anchorMin.y);
         
         upgradeScreen.SetActive(true);
-        ConfirmCheck();
-        LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
-        Canvas.ForceUpdateCanvases();
-        yield return null;
-        unitUIContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
-        
-        foreach(UnitUpgradeUI ui in unitUpgradeUIs) {
+        yield return StartCoroutine(ScratchOffSequence());
 
-            Animator anim = ui.transform.GetComponent<Animator>();
-            anim.SetTrigger("SlideIn");
-            yield return null;
-            if (ui.hpPips)
-                ui.hpPips.UpdatePips();
+        while (upgrading) yield return null;
 
-            float t = 0;
-            while (t <= 0.125f) {
-                t += Time.deltaTime;
-                yield return null;
-            }
-        }
-        
-
-        // LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
-        // Canvas.ForceUpdateCanvases();
-
-        while (upgrading) {
-
-            yield return null;
-        }
-
+        if (activeCard) Destroy(activeCard.gameObject);
         upgradeScreen.SetActive(false); 
     }
 
-    public void SelectParticle(NuggetButton nug) {
-        audioS.PlayOneShot(selectSFX.Get());
-        selectedParticle = nug;
-        nug.frame.SetActive(true);
+    IEnumerator ScratchOffSequence() {
+        if (activeCard != null) Destroy(activeCard.gameObject);
 
-        //SlagGearData.UpgradePath path = (SlagGearData.UpgradePath)(int)nug.type;
-        // foreach (UnitUpgradeUI ui in unitUpgradeUIs) {
-        //     ui.UpdateModifier(path);
-        // }
-
-        scrapButton.SetActive(true);
-
-        LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
-        Canvas.ForceUpdateCanvases();
-    }
-
-    public void ApplyParticle() {
-        //nuggets.Remove(selectedParticle.type);
-        Destroy(selectedParticle.gameObject);
-        foreach(UnitUpgradeUI ui in unitUpgradeUIs)
-            ui.ClearModifier();
-
-        scrapButton.SetActive(false);
+        List<GearUpgrade> rolledUpgrades = new();
+        foreach (KeyValuePair<SlagGearData, Dictionary<int, ShuffleBag<GearUpgrade>>> entry in upgradePool) {
+            rolledUpgrades.Add(DrawUpgradeOfLevel(entry.Key, 1));
+        }
         
-        RelicManager.instance.scrapValue += 33;
 
-        LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
-        Canvas.ForceUpdateCanvases();
-        ConfirmCheck();
+        ScratchOffCard card = Instantiate(scratchOffPrefab, upgradeScreen.transform).GetComponent<ScratchOffCard>();
+        card.BuildCard(this, rolledUpgrades);
+        activeCard = card;
+
+        confirmButton.GetComponentInChildren<TMPro.TMP_Text>().text = "SCRATCH";
+        confirmButton.onClick.RemoveAllListeners();
+        confirmButton.onClick.AddListener(card.ScratchCard);
+        confirmButton.onClick.AddListener(ScratchContinue);
+        confirmButton.gameObject.SetActive(true);
+        cont = false;
+
+        
+        while (upgrading && !cont) yield return null;
+        if (upgrading) {
+            yield return new WaitForSecondsRealtime(2f);
+            
+            foreach(UnitUpgradeUI ui in unitUpgradeUIs) {
+                ui.hpSlot.UpdateSlot(!ui.hpSlot.filled);
+
+                Animator anim = ui.transform.GetComponent<Animator>();
+                anim.SetTrigger("SlideIn");
+                yield return null;
+                if (ui.hpPips)
+                    ui.hpPips.UpdatePips();
+
+                float t = 0;
+                while (t <= 0.125f) {
+                    t += Time.deltaTime;
+                    yield return null;
+                }
+            }
+        }
+        nuggetDisplay.gameObject.SetActive(true);
+
+        confirmButton.GetComponentInChildren<TMPro.TMP_Text>().text = "HANG UP";
+        confirmButton.onClick.RemoveAllListeners();
+        confirmButton.onClick.AddListener(DiscardScratchOff);
+        confirmButton.gameObject.SetActive(true);
     }
 
-    public void ScrapParticle() {
-        //nuggets.Remove(selectedParticle.type);
-        Destroy(selectedParticle.gameObject);
-        foreach (UnitUpgradeUI ui in unitUpgradeUIs) 
-            ui.ClearModifier();
-
-        scrapButton.SetActive(false);
-
-
-        LayoutRebuilder.ForceRebuildLayoutImmediate(unitUIContainer.GetComponent<RectTransform>());
-        Canvas.ForceUpdateCanvases();
-        ConfirmCheck();
+    GearUpgrade DrawUpgradeOfLevel(SlagGearData gear, int lvl) {
+        GearUpgrade gu = upgradePool[gear][lvl].Next();
+        //upgradePool[gear][lvl].Remove(gu);
+        return gu;
     }
 
-    void ConfirmCheck() {
-        // if (nuggets.Count <= 0)
-        //     confirmButton.SetActive(true);
-        // else
-            confirmButton.SetActive(true);
+    public void SelectUpgrade(GearUpgrade upgrade, UpgradeTooltipTrigger trigger) {
+        TooltipSystem.SelectUpgrade(trigger);
+        foreach (UnitUpgradeUI ui in unitUpgradeUIs) {
+            if (ui.gear.GetType() == upgrade.modifiedGear.GetType()) {
+                ui.SelectUpgrade(upgrade);
+            } else {
+                ui.SelectUpgrade();
+            }
+        }
+    }
+
+    public void ApplyUpgrade(GearUpgrade gu) {
+        StartCoroutine(FinishScratchOff());
+        confirmButton.onClick.RemoveAllListeners();
+        confirmButton.onClick.AddListener(EndUpgradeSequence);
+        upgradePool[gu.modifiedGear][gu.ugpradeLevel].Remove(gu);
+    }
+
+    IEnumerator FinishScratchOff() {
+        if (activeCard) activeCard.DestroyCard();
+        yield return new WaitForSecondsRealtime(0.5f);
+
+        RectTransform rect = unitUIContainer.GetComponent<RectTransform>();
+        float timer = 0;
+        while (timer <= 0.25f) {
+            rect.anchorMin = new Vector2(Mathf.Lerp(0.6f, 0.5f, timer/0.25f), rect.anchorMin.y);
+            rect.anchorMax = new Vector2(Mathf.Lerp(0.6f, 0.5f, timer/0.25f), rect.anchorMin.y);
+            yield return null;
+            timer += Time.deltaTime;
+        }
+        rect.anchorMin = new Vector2(0.5f, rect.anchorMin.y);
+        SelectUpgrade(null, null);
+    }
+
+    public void HPPurchased() {
+        foreach (UnitUpgradeUI ui in unitUpgradeUIs) {
+            ui.hpSlot.UpdateSlot(false);
+        }
+    }
+
+    void ScratchContinue() {
+        cont = true;
+        confirmButton.gameObject.SetActive(false);
+    }
+
+    public void DiscardScratchOff() {
+        confirmDiscard.SetActive(true);
+    }
+
+    public void CancelDiscard() {
+        confirmDiscard.SetActive(false);
     }
 
     public void EndUpgradeSequence() {

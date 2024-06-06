@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class NeutralElementTooltip : Tooltip
-{
+public class NeutralElementTooltip : Tooltip {
 
     public Image tilePreview;
     public Animator tilePreviewAnim;

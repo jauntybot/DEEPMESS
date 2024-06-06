@@ -55,6 +55,7 @@ MonoBehaviour:
   gpOptional: {fileID: 0}
   relicManager: {fileID: 0}
   pathManager: {fileID: 0}
+  objectiveManager: {fileID: 0}
   startCavity: 0
   currentEnemy: {fileID: 0}
   player: {fileID: 395662737843368441}
@@ -63,6 +64,8 @@ MonoBehaviour:
   scenario: 0
   currentTurn: 0
   prevTurn: 0
+  relicQueue: 0
+  queuing: 0
   tackleChance: 0
 --- !u!114 &395662736343092654
 MonoBehaviour:
@@ -78,7 +81,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floorPrefab: {fileID: 6704683991807647169, guid: 9e7d44ff36d68a84c95a170d48d95eaf, type: 3}
   floorParent: {fileID: 395662737085027715}
-  floorSequence: {fileID: 11400000, guid: 735b58861e25cc94ca785cbd0bb8c35a, type: 2}
+  floorSequence: {fileID: 11400000, guid: 3bc5b6d83858b4e64bb483a13cca21e9, type: 2}
   tutorial: {fileID: 0}
   gridHightlightOverride: 0
   currentFloor: {fileID: 0}
@@ -195,6 +198,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 395662737085027715}
+  - component: {fileID: 5874300581984065389}
   m_Layer: 0
   m_Name: Floors
   m_TagString: Untagged
@@ -217,6 +221,20 @@ Transform:
   m_Father: {fileID: 395662736343092640}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5874300581984065389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 395662737085027716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b850d124d92f3945b0abedf8ebd0b8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alpha: 1
+  exclude: 0
 --- !u!1 &395662738020585123
 GameObject:
   m_ObjectHideFlags: 0

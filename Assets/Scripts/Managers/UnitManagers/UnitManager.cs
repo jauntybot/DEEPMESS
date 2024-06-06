@@ -7,13 +7,14 @@ using UnityEngine;
 public class UnitManager : MonoBehaviour {
 
 // Global refs
-    [SerializeField]
     public Grid currentGrid;
     protected FloorManager floorManager;
-    [HideInInspector] public ScenarioManager scenario;
+    
+    [HideInInspector] 
+    public ScenarioManager scenario;
 
     [Header("UNIT MANAGER")]
-    public GameObject unitParent;
+    public Transform unitParent;
     public List<Unit> units = new();    
     public Unit selectedUnit;
     public bool unitActing = false;
@@ -35,7 +36,7 @@ public class UnitManager : MonoBehaviour {
 
 // Create a new unit from prefab index, update its GridElement
     public virtual Unit SpawnUnit(Unit unit, Vector2 coord) {
-        Unit u = Instantiate(unit.gameObject, unitParent.transform).GetComponent<Unit>();
+        Unit u = Instantiate(unit.gameObject, unitParent).GetComponent<Unit>();
 
         units.Add(u);
         SubscribeElement(u);
@@ -54,7 +55,7 @@ public class UnitManager : MonoBehaviour {
     }
 
     public virtual Unit SpawnUnit(Unit unit) {
-        Unit u = Instantiate(unit.gameObject, unitParent.transform).GetComponent<Unit>();
+        Unit u = Instantiate(unit.gameObject, unitParent).GetComponent<Unit>();
 
         units.Add(u);
         SubscribeElement(u);

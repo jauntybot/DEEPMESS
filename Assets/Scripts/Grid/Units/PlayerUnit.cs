@@ -8,7 +8,6 @@ using UnityEngine.UI;
 
 public class PlayerUnit : Unit {
 
-
     public PlayerManager pManager;
     public enum AnimState { Idle, Hammer, Disabled };
     public AnimState prevAnimState, animState;

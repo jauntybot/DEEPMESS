@@ -4,12 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class EquipmentButton : MonoBehaviour {
-    GameUnitUI ui;
+    UnitGameUI ui;
     public GearData data;
     public enum EquipType { PerFloor, Hammer, Bulb };
     public Animator subAnim;
     [HideInInspector] public EquipType equipType;
-    [HideInInspector] public PlayerUnit unit;
+    [HideInInspector] public Unit unit;
     
     public Button button;
     [SerializeField] Image icon;
@@ -18,21 +18,21 @@ public class EquipmentButton : MonoBehaviour {
     public event OnEquipmentUpdate EquipmentSelected;
 
 
-    TooltipEquipmentTrigger tooltip;
+    GearTooltipTrigger tooltip;
     public bool selected;
     
 
-    public void Initialize(GameUnitUI _ui, GearData d, GridElement ge) {
+    public void Initialize(UnitGameUI _ui, GearData d, GridElement ge) {
         ui = _ui;
         data = d;
         if (d is SlagGearData && d is not HammerData) equipType = EquipType.PerFloor;
         else if (d is HammerData) equipType = EquipType.Hammer;
         else if (d is BulbEquipmentData) equipType = EquipType.Bulb;
-        unit = (PlayerUnit)ge;
+        unit = (Unit)ge;
         EquipmentSelected += unit.UpdateAction;
         if (icon)
             icon.sprite = data.icon;
-        tooltip = GetComponentInChildren<TooltipEquipmentTrigger>();
+        tooltip = GetComponentInChildren<GearTooltipTrigger>();
         if (tooltip)
             tooltip.Initialize(d);
 

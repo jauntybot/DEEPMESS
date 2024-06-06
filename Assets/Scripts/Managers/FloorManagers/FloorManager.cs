@@ -154,7 +154,7 @@ public class FloorManager : MonoBehaviour {
         floorCount += dir;
         UpdateFloorCounter();
 
-        if (floors.Count - 1 >= currentFloor.transform.GetSiblingIndex() + dir) // Checks if there is a floor in the direction transitioning
+        if (floors.Count - 1 >= currentFloor.transform.GetSiblingIndex() + dir && currentFloor.transform.GetSiblingIndex() + dir >= 0) // Checks if there is a floor in the direction transitioning
             toFloor = floors[currentFloor.transform.GetSiblingIndex() + dir];
 // Block player from selecting units
         scenario.player.ToggleUnitSelectability(dir == -1);
@@ -199,7 +199,7 @@ public class FloorManager : MonoBehaviour {
             currentFloor.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = Mathf.Lerp(currFromA, currToA, timer/transitionDur);
             
             if (parallax)
-                parallax.ScrollParallax(down ? -1 : 1);
+                parallax.ScrollParallax(Time.deltaTime * (down ? -1 : 1));
 // Coroutine/animation lerp yield
             yield return null;
             timer += Time.deltaTime;
@@ -222,6 +222,54 @@ public class FloorManager : MonoBehaviour {
         }           
     }
     
+
+    public IEnumerator TransitionToSlimeHub(bool up) {
+        //yield return StartCoroutine(TransitionFloors(!up, false));
+        float timer = 0f;
+        Vector3 origin = floorParent.transform.position;
+        NestedFadeGroup.NestedFadeGroup fade = floorParent.GetComponent<NestedFadeGroup.NestedFadeGroup>();
+        scenario.player.GridMouseOver(new Vector2(-32, -32), false);
+        
+        EnemyManager enemy = (EnemyManager)currentFloor.enemy;
+        if (!up) {
+            parallax.gameObject.SetActive(true);
+        } else {
+            foreach(Transform spawn in enemy.spawnParent) 
+                spawn.gameObject.SetActive(false);
+        }
+
+        int sign = up ? 1 : -1;
+        bool toggle = false;
+        while (timer <= 2f) {
+            parallax.ScrollParallax(Time.deltaTime * Mathf.Lerp(0, 5 * sign, timer/2f));
+            
+            parallax.GetComponent<SpriteRenderer>().material.SetFloat("_Alpha", Mathf.Lerp(up? 1 : 0, up? 0 : 1, up? timer-1.9f/2 : timer/0.1f));
+            parallax.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = Mathf.Lerp(up? 1 : 0, up? 0 : 1, up? timer-1.9f/2 : timer/0.1f);
+            parallax.slimeHub.transform.position = new Vector3(0, Mathf.Lerp(up? 1.5f : -0.5f, up? -0.5f : 1.5f, up? timer-1.9f/2 : timer/0.25f));
+
+            floorParent.transform.position = new Vector3(origin.x, Mathf.Lerp(origin.y, up? origin.y - 18 : origin.y + 18, up? timer/0.5f : timer-1.9f/2f));
+            fade.AlphaSelf = Mathf.Lerp(up? 1 : 0, up? 0 : 1, up? timer/0.25f : timer-1.75f/2f);
+            
+            if (!toggle && timer >= 1.0f) {
+                toggle = true;
+                parallax.slimeHub.SetActive(up);
+            }
+
+            yield return null;
+            timer += Time.deltaTime;
+        }
+        parallax.GetComponent<SpriteRenderer>().material.SetFloat("_Alpha", up? 0 : 1);
+        parallax.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = up? 0 : 1;
+
+        floorParent.transform.position = new Vector3(origin.x, origin.y - sign * 18);
+        fade.AlphaSelf = up? 0 : 1;
+
+        parallax.gameObject.SetActive(!up);
+        if (!up) {
+            foreach(Transform spawn in enemy.spawnParent) 
+                spawn.gameObject.SetActive(true);
+        }
+    }
 
     // Function that hides units when previewing the next floor -- MOVE TO UNIT FUNCTIONALITY
     Dictionary<Unit, bool> targetedDict = new();
@@ -353,6 +401,9 @@ public class FloorManager : MonoBehaviour {
     }
 
     public IEnumerator DescendUnits(List<GridElement> units, EnemyManager enemy = null, bool hardLand = false) {
+        Beacon b = (Beacon)units.Find(ge => ge is Beacon);
+        if (b) units.Remove(b);
+
         UpdateFloorCounter();
         Coroutine drop = StartCoroutine(DropUnits(units, hardLand));
 
@@ -533,6 +584,7 @@ public class FloorManager : MonoBehaviour {
                 if (u.coord == spawn && u is not Nail) validCoord = false;
             }
 
+            if (currentFloor.gridElements.Find(ge => ge.coord == spawn) is Beacon) validCoord = false;
             if (currentFloor.tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false;
             if (currentFloor.tiles.Find(sqr => sqr.coord == spawn) is TileBulb) validCoord = false;
             if (!currentFloor.enemy.units.Find(u => u.coord == spawn) && tries > 0) {

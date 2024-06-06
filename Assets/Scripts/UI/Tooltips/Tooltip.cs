@@ -4,8 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class Tooltip : MonoBehaviour
-{
+public class Tooltip : MonoBehaviour {
     public enum Alignment { ToCursor, CenterScreen, Fixed };
     public Alignment align;
 

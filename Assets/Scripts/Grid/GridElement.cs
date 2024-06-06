@@ -47,6 +47,7 @@ public class GridElement : MonoBehaviour {
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
         //coord = new Vector2(-32, -32);
+        gfxAnim = gfx[0].GetComponent<Animator>();
 
         hpCurrent = hpMax;
         energyCurrent = energyMax;

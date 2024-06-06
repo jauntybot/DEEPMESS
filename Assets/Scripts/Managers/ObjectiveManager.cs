@@ -8,6 +8,7 @@ public class ObjectiveManager : MonoBehaviour {
     ScenarioManager scenario;
     
     [SerializeField] GameObject objectiveScreen;
+    [SerializeField] Animator ginosAnim;
     [SerializeField] List<ObjectiveBeaconCard> objectiveCards;
     [SerializeField] List<Objective> activeObjectives;
 
@@ -35,20 +36,20 @@ public class ObjectiveManager : MonoBehaviour {
     bool reviewing;
     public IEnumerator ObjectiveSequence() {
         reviewing = true;
+        nuggets.UpdateNuggetCount();
         
         if (activeObjectives.Count == 0) {
             activeObjectives = new List<Objective> {null, null, null};
             for (int i = 0; i <= objectiveCards.Count - 1; i++) {
-                RollObjectiveCard(i);
+                objectiveCards[i].Reroll();
+                objectiveCards[i].DisableButton();
             }
             objectiveScreen.SetActive(true);
         } else {
             objectiveScreen.SetActive(true);
             yield return new WaitForSecondsRealtime(0.25f);
             for (int i = 0; i <= activeObjectives.Count - 1; i++) {
-                yield return new WaitForSecondsRealtime(0.25f);
                 objectiveCards[i].UpdateCard(objectiveCards[i].objective);
-                //objectiveCards[i].UpdateCard(activeObjectives[i]);
             }
         }
         
@@ -57,7 +58,7 @@ public class ObjectiveManager : MonoBehaviour {
         while (reviewing) yield return null;
 
         SubscribeTracker(activeObjectives);
-        objectiveScreen.SetActive(false);
+        ginosAnim.SetTrigger("Disappear");
     }
 
     public void RollObjectiveCard(int index) {
@@ -70,7 +71,7 @@ public class ObjectiveManager : MonoBehaviour {
         }
         rolled = bag.Next(); 
         bag.Remove(rolled); 
-        Debug.Log("objectives remaining: " + bag.Count);
+
         if (bag.Count == 0) {
             foreach (ObjectiveBeaconCard c in objectiveCards) c.DisableButton();
         }

@@ -60,7 +60,7 @@ public class GearData : ScriptableObject {
             manager.undoableMoves = new Dictionary<Unit, Vector2>();
             manager.undoOrder = new List<Unit>();
         }
-        user.elementCanvas.UpdateStatsDisplay();
+        if (user.elementCanvas) user.elementCanvas.UpdateStatsDisplay();
         
         user.PlaySound(useSFX);
 

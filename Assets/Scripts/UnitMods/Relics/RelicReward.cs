@@ -10,8 +10,11 @@ public class RelicReward : MonoBehaviour {
     [SerializeField] Image image;
     [SerializeField] TMP_Text nameTMP, descriptionTMP;
 
+    
+
     public bool take;
     bool deciding;
+
     public IEnumerator RewardSequence(Relics.RelicData relic) {
         deciding = true;
         data = relic;

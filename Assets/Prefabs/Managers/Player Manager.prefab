@@ -216,13 +216,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04091ec7abeb93c47a277c4576991a5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentGrid: {fileID: 0}
-  scenario: {fileID: 0}
-  unitParent: {fileID: 7493072997588697754}
+  unitParent: {fileID: 7493072997588697753}
   units: []
   selectedUnit: {fileID: 0}
   unitActing: 0
   unitDescentPreview: {fileID: 4667224458327339558, guid: ea5797a6c092dd648bd71d4f3fb8d6cc, type: 3}
+  reviveTo: 0
   pc: {fileID: 0}
   unitPrefabs:
   - {fileID: 7182560657884744695, guid: a7c1b613980b64f07a381f93068afd15, type: 3}
@@ -238,7 +237,7 @@ MonoBehaviour:
   contextuals: {fileID: 7493072995628922177}
   lastHoveredCoord: {x: 0, y: 0}
   defeatedEnemies: 0
-  collectedParticles: 
+  collectedNuggets: 0
   nailPrefab: {fileID: 2911188987296525511, guid: 3c53f14dfc3e6174e874415021915958, type: 3}
   hammerPrefab: {fileID: 3955549777479365904, guid: a8ad447d87fd54d3284fc69a0b042b16, type: 3}
   slimeArmAnim: {fileID: 0}
@@ -286,6 +285,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   highlightAnim: {fileID: 0}
+  blinking: 0
 --- !u!114 &7493072995628922178
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -12,8 +12,12 @@ public class NuggetDisplay : MonoBehaviour {
     }
 
     public void CollectNugget() {
-        countTMP.text = ScenarioManager.instance.player.collectedNuggets.ToString();
         anim.SetTrigger("Collect");
+        UpdateNuggetCount();
+    }
+
+    public void UpdateNuggetCount() {
+        countTMP.text = ScenarioManager.instance.player.collectedNuggets.ToString();
     }
 
 }

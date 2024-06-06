@@ -9,7 +9,7 @@ public class EnemyManager : UnitManager {
     [SerializeField] Unit defaultUnit;
     public List<Unit> unitsToAct = new();
     [SerializeField] List<GridElement> pendingUnits = new();
-    [SerializeField] Transform spawnParent;
+    public Transform spawnParent;
     public List<GameObject> pendingPreviews = new();
     protected Coroutine actingUnitCo;
 

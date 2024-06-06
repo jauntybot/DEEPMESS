@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class PauseMenu : MonoBehaviour {
     
     [SerializeField] Button abandonButton;
-    [SerializeField] GameObject mainDirectory, helpMenu;
+    [SerializeField] GameObject mainDirectory, options, helpMenu, quitPanel, abandonPanel;
     void OnEnable() {
         Time.timeScale = 0;
     }
@@ -21,16 +21,44 @@ public class PauseMenu : MonoBehaviour {
         gameObject.SetActive(false);        
     }
 
-    public void HelpButton(bool state) {
-        mainDirectory.SetActive(!state);
-        helpMenu.SetActive(state);
+    public void Options(bool toFrom) {
+        mainDirectory.SetActive(!toFrom);
+        options.SetActive(toFrom);
     }
 
-    public void AbandonButton() {
-        Time.timeScale = 1;
-        ScenarioManager.instance.StartCoroutine(ScenarioManager.instance.Lose());
-        gameObject.SetActive(false);   
+    public void HelpButton(bool toFrom) {
+        mainDirectory.SetActive(!toFrom);
+        helpMenu.SetActive(toFrom);
     }
 
+    public void QuitButton(bool toFrom) {
+        mainDirectory.SetActive(!toFrom);
+        quitPanel.SetActive(toFrom);
+    }
+
+    public void AbandonButton(bool toFrom) {
+        mainDirectory.SetActive(!toFrom);
+        abandonPanel.SetActive(toFrom);
+    }
+
+    public void AbandonRun() {
+        ResumeButton();
+
+        ScenarioManager.instance.StartCoroutine(ScenarioManager.instance.Lose());        
+    }
+
+    public void QuitToMainMenu() {
+        ResumeButton();
+        PersistentDataManager.instance.SaveRun();
+        QuitButton(false);
+
+        
+        PersistentMenu.instance.StartCoroutine(PersistentMenu.instance.FadeToScene(0));
+    }
+
+    public void QuitToDesktop() {
+        ResumeButton();
+        PersistentDataManager.instance.SaveRun();
+    }
 
 }

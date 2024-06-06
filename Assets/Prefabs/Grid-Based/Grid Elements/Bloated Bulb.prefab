@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5990902718100683507}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.125, z: 0}
+  m_LocalPosition: {x: 0, y: 0.6, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: -1674473361
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: ffa9dae366eb2b04ba1f5f111873eb51, type: 3}
+  m_Sprite: {fileID: 714997242, guid: 671e5e29fc47b2745a24462b63b03965, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -96,7 +96,7 @@ Animator:
   m_GameObject: {fileID: 5990902718100683507}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 47980a17770e6f94784b32a7e7d1c5a2, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -214,19 +214,20 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.08895308, y: 0.30457807}
-      - {x: 0.16020769, y: 0.34269828}
-      - {x: 0.2943931, y: 0.4397288}
-      - {x: 0.40794066, y: 0.7007537}
-      - {x: 0.39270002, y: 1.0107701}
-      - {x: 0.2703225, y: 1.2331684}
-      - {x: 0.14190912, y: 1.3071709}
-      - {x: 0.001977861, y: 1.3377802}
-      - {x: -0.17503373, y: 1.2972255}
-      - {x: -0.28360605, y: 1.2012798}
-      - {x: -0.4152081, y: 0.9291698}
-      - {x: -0.4089521, y: 0.6695087}
-      - {x: -0.28317994, y: 0.42380726}
+    - - {x: 0.0043625683, y: 0.15088168}
+      - {x: 0.16020769, y: 0.18900195}
+      - {x: 0.28890395, y: 0.28054327}
+      - {x: 0.40794066, y: 0.54156816}
+      - {x: 0.39270002, y: 0.829628}
+      - {x: 0.2631207, y: 1.0689746}
+      - {x: 0.1440719, y: 1.150831}
+      - {x: -0.00629808, y: 1.1699419}
+      - {x: -0.16818598, y: 1.1401706}
+      - {x: -0.28481686, y: 1.0502133}
+      - {x: -0.40436748, y: 0.77861476}
+      - {x: -0.39874062, y: 0.49552643}
+      - {x: -0.26623404, y: 0.27428946}
+      - {x: -0.13497272, y: 0.17679524}
 --- !u!82 &4725770806878504000
 AudioSource:
   m_ObjectHideFlags: 0

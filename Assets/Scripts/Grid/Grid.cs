@@ -8,6 +8,7 @@ using UnityEngine.U2D;
 // Stores all Grid Elements that are created
 
 [RequireComponent(typeof(AudioSource))]
+[System.Serializable]
 public class Grid : MonoBehaviour {
     
     FloorManager floorManager;
@@ -16,8 +17,8 @@ public class Grid : MonoBehaviour {
     public UnitManager enemy;
     public GameObject gridContainer, neutralGEContainer;
     [SerializeField] GameObject chessNotation;
-    [SerializeField] GameObject enemyPrefab;
-    [SerializeField] GameObject tilePrefab, beaconPrefab, bulbPrefab, selectedCursor;
+    [SerializeField] protected GameObject enemyPrefab;
+    [SerializeField] protected GameObject tilePrefab, beaconPrefab, bulbPrefab, selectedCursor;
     public bool overrideHighlight;
     
 
@@ -44,7 +45,7 @@ public class Grid : MonoBehaviour {
     }
 
 // loop through grid x,y, generate Tile grid elements, update them and add to list
-    public void GenerateGrid(int i) {
+    public virtual void GenerateGrid(int i) {
         List<Vector2> altTiles = new();
 
         foreach (FloorDefinition.Spawn spawn in lvlDef.initSpawns) {
@@ -118,6 +119,13 @@ public class Grid : MonoBehaviour {
                 }
                 else if (u is Nail) {
                     nailSpawns.Add(spawn.coord);
+                } else if (u is Beacon) {
+                    Unit beacon = Instantiate(spawn.asset.prefab, this.transform).GetComponent<Unit>();
+                    beacon.transform.parent = neutralGEContainer.transform;
+
+                    beacon.manager = player;
+                    beacon.StoreInGrid(this);
+                    beacon.UpdateElement(spawn.coord);
                 }
 // Spawn a Neutral Grid Element
             } else if (ge is not Tile) {
@@ -160,11 +168,12 @@ public class Grid : MonoBehaviour {
                     RemoveElement(ge);
                     Destroy(ge.gameObject);
                 }
-                GridElement neutralGE = Instantiate(beaconPrefab, this.transform).GetComponent<GridElement>();
-                neutralGE.transform.parent = neutralGEContainer.transform;
+                Unit beacon = Instantiate(beaconPrefab, this.transform).GetComponent<Unit>();
+                beacon.transform.parent = neutralGEContainer.transform;
 
-                neutralGE.StoreInGrid(this);
-                neutralGE.UpdateElement(coord);
+                beacon.manager = player;
+                beacon.StoreInGrid(this);
+                beacon.UpdateElement(coord);
             }
         }
 // Bloated Bulb spawning
@@ -294,7 +303,7 @@ public class Grid : MonoBehaviour {
         Dictionary<GridElement, Vector2> affected = new();
         Tile tile = tiles.Find(t => t.coord == coord);
         affected.Add(tile, tile.transform.position);
-        if (tile.anim) tile.anim.SetTrigger("Collapse");
+        tile.gfxAnim.SetTrigger("Collapse");
         foreach (GridElement ge in CoordContents(coord)) {
             affected.Add(ge, ge.transform.position);
             //if (ge is Wall w) w.StartCoroutine(w.DestroyElement());

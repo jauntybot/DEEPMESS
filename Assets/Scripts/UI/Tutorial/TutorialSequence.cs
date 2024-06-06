@@ -75,13 +75,13 @@ public class TutorialSequence : MonoBehaviour {
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().interactable = false;
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().enabled = false;
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Animator>().SetBool("Tut", true);
-        scenario.player.units[0].ui.equipButtons[0].GetComponent<TooltipEquipmentTrigger>().enabled = false;
+        scenario.player.units[0].ui.equipButtons[0].GetComponent<GearTooltipTrigger>().enabled = false;
         
         scenario.player.units[1].EnableSelection(false);
         scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().interactable = false;
         scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().enabled = false;
         scenario.player.units[1].ui.equipButtons[0].GetComponent<Animator>().SetBool("Tut", true);
-        scenario.player.units[1].ui.equipButtons[0].GetComponent<TooltipEquipmentTrigger>().enabled = false;
+        scenario.player.units[1].ui.equipButtons[0].GetComponent<GearTooltipTrigger>().enabled = false;
         
         scenario.player.units[2].EnableSelection(false);
         scenario.player.units.RemoveAt(1); scenario.player.units.RemoveAt(1);
@@ -418,10 +418,10 @@ public class TutorialSequence : MonoBehaviour {
 
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Button>().enabled = true;
         scenario.player.units[0].ui.equipButtons[0].GetComponent<Animator>().SetBool("Tut", false);
-        scenario.player.units[0].ui.equipButtons[0].GetComponent<TooltipEquipmentTrigger>().enabled = true;
+        scenario.player.units[0].ui.equipButtons[0].GetComponent<GearTooltipTrigger>().enabled = true;
         scenario.player.units[1].ui.equipButtons[0].GetComponent<Button>().enabled = true;
         scenario.player.units[1].ui.equipButtons[0].GetComponent<Animator>().SetBool("Tut", false);
-        scenario.player.units[1].ui.equipButtons[0].GetComponent<TooltipEquipmentTrigger>().enabled = true;
+        scenario.player.units[1].ui.equipButtons[0].GetComponent<GearTooltipTrigger>().enabled = true;
     }
 
     public IEnumerator EnemyBehavior() {

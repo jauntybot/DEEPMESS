@@ -32,8 +32,7 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             TooltipSystem.Hide();
     }
 
-    public virtual void OnPointerExit(PointerEventData eventData)
-    {
+    public virtual void OnPointerExit(PointerEventData eventData) {
         TooltipSystem.Hide();
     }
 }

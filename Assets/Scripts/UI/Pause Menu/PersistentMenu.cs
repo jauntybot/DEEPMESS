@@ -17,9 +17,8 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     [SerializeField] AudioMixer mixer;
     [SerializeField] Slider musicSlider, sfxSlider;
     [SerializeField] TMP_Dropdown resolutionsDropdown;
-
+    [SerializeField] Toggle cutsceneToggle;
     [SerializeField] GameObject menuButton;
-    [SerializeField] TMP_Text tooltipText;
     [SerializeField] GameObject menuButtons;
     public Animator fadeToBlack;
     public int startCavity;
@@ -44,6 +43,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         musicController = GetComponentInChildren<MusicController>();
         musicSlider.onValueChanged.AddListener(SetMusicVolume);
         sfxSlider.onValueChanged.AddListener(SetSFXVolume);
+        cutsceneToggle.onValueChanged.AddListener(CutsceneToggle);
         
         ConfigureResolutionDropdown();
         // musicSlider.value = 5f;
@@ -97,6 +97,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     public void LoadUser(UserData user) {
         musicSlider.value = user.musicVol;
         sfxSlider.value = user.sfxVol;
+        cutsceneToggle.isOn = user.cutsceneSkip;
         
         SetResolution(user.resolutionIndex);
         SetMusicVolume(user.musicVol);
@@ -108,6 +109,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         user.musicVol = musicSlider.value;
         user.sfxVol = sfxSlider.value;
         user.resolutionIndex = currentResolutionIndex;
+        user.cutsceneSkip = cutsceneToggle.isOn;
     }
 
     
@@ -116,13 +118,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     }
 
     public void SaveRun(ref RunData run) {
-        RunData data = new RunData(scenario.floorManager.currentFloor.lvlDef, scenario.floorManager.floorSequence.activePacket, scenario.player.units, scenario.relicManager.collectedRelics);
-        
-        run.currentFloor = scenario.floorManager.currentFloor.lvlDef;
-        run.activeChunk = scenario.floorManager.floorSequence.activePacket;
-
-        run.gear1 = (SlagGearData)scenario.player.units[0].equipment[1];
-        run.gear1Upgrades = run.gear1.upgrades;
+        run = new RunData(scenario.floorManager.currentFloor, scenario.floorManager.floorSequence.activePacket);
     }
 
     // void GetFPS() {
@@ -174,13 +170,16 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     }
 
     public IEnumerator FadeToScene(int index) {
+        Time.timeScale = 1f;
         yield return new WaitForSecondsRealtime(0.25f);
         fadeToBlack.SetBool("Fade", true);
         if (index == 0) {
             PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.MainMenu, true);
         }
         yield return new WaitForSecondsRealtime(1f);
+        Time.timeScale = 1f;
         SceneManager.LoadScene(index, LoadSceneMode.Single);
+        Time.timeScale = 1f;
     }
 
     public void FadeToBlack(bool state) {
@@ -190,6 +189,10 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     void MainMenuPause() {
         pauseMenu.gameObject.SetActive(true);
         pauseMenu.Anbandonable(false);
+    }
+
+    void CutsceneToggle(bool toggle) {
+
     }
 
     void SetMusicVolume(System.Single vol) {

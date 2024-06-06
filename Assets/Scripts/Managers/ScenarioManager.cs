@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 // Class that manages the game state during battles
 
@@ -38,9 +39,10 @@ public class ScenarioManager : MonoBehaviour {
     public Scenario scenario;
     public enum Turn { Null, Player, Enemy, Descent, Cascade, Event, Loadout, }
     public Turn currentTurn, prevTurn;
-    [SerializeField] int relicQueue = 0; 
-    [SerializeField] Coroutine relicQueueCo;
+
+
     [SerializeField] bool queuing;
+
 
 // RELIC PARAMS - DELETE
     [HideInInspector] public int tackleChance;
@@ -71,15 +73,14 @@ public class ScenarioManager : MonoBehaviour {
             gpOptional.Initialize();
         }
         
-        relicQueueCo = null;
-        relicQueue = 0;
-        
         tackleChance = 0;
 
         yield return null;
 
-        if (startCavity != 0)
+        if (startCavity != 0) {
             floorManager.StartCoroutine(floorManager.TransitionPackets());
+            objectiveManager.ClearObjectives();
+        }
         else 
             StartCoroutine(FirstTurn());
     }
@@ -294,25 +295,7 @@ public class ScenarioManager : MonoBehaviour {
     }
 
     public void RewardOnKill(GridElement ge) {
-        QueueRelicReward();
-    }
-
-    public void QueueRelicReward() {
-        relicQueue++;
-        //if (relicQueueCo == null) relicQueueCo = StartCoroutine(PresentRelicWhenIdle());
-// Same as above
-        relicQueueCo ??= StartCoroutine(PresentRelicWhenIdle());
-    }
-
-    public IEnumerator PresentRelicWhenIdle() {
-        queuing = true;
-        while (currentTurn != Turn.Player) yield return null;
-        yield return new WaitForSecondsRealtime(0.2f);
-        while (player.unitActing) yield return null;
-        relicQueue--;
-        queuing = false;
-        yield return relicManager.StartCoroutine(relicManager.PresentRelic());
-        if (relicQueue > 0) relicQueueCo = StartCoroutine(PresentRelicWhenIdle());
+        relicManager.QueueRelicReward(ge);
     }
 
     public IEnumerator FinalDrop() {

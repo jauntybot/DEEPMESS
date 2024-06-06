@@ -27,7 +27,6 @@ public class MusicController : MonoBehaviour {
     public void SwitchMusicState(MusicState state, bool fade) {
         loop = false;
         StartCoroutine(UpdateTracklist(state, fade));
-        Debug.Log("Switch music state");
     }
 
     public IEnumerator UpdateTracklist(MusicState targetState, bool fade) { 
@@ -82,15 +81,12 @@ public class MusicController : MonoBehaviour {
         AudioSource prevSource = audioSources[sourceIndex];
         float prevVol = prevSource.volume;
         if (fade) {
-            Debug.Log("Fade start");
             float timer = 0;
-            while (timer < 1.5f) {
-                Debug.Log(prevSource.name + ", " + prevSource.volume); 
+            while (timer < 1.5f) {   
                 prevSource.volume = prevVol - fadeOut.Evaluate(timer / 1.5f);
                 yield return new WaitForSecondsRealtime(1/Util.fps);
                 timer += Time.deltaTime;
             }
-            Debug.Log("Fade done");
         }
         prevSource.Stop();
         prevSource.volume = prevVol;

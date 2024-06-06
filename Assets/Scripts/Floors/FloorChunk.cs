@@ -11,6 +11,7 @@ public class FloorChunk : ScriptableObject {
     public PacketType packetType;
     public int packetLength;
     public bool inOrder;
+    
     public List<FloorDefinition> firstFloors;
     public List<FloorDefinition> floors;
     public int minEnemies;

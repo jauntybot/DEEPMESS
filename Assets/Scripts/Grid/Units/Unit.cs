@@ -6,7 +6,8 @@ public class Unit : GridElement {
 
     public override event OnElementUpdate ElementDestroyed;
 
-    [HideInInspector] public UnitManager manager;
+    [HideInInspector]
+    public UnitManager manager;
 
     [Header("Unit")]
     [SerializeField] DescentVFX descentVFX;
@@ -28,7 +29,7 @@ public class Unit : GridElement {
     public int attackMod;
 
     [Header("UNIT UI/UX")]
-    public GameUnitUI ui;
+    public UnitGameUI ui;
     public Sprite portrait;
 
     [Header("UNIT AUDIO")]
@@ -45,7 +46,7 @@ public class Unit : GridElement {
         
         hpCurrent = hpMax;
         energyCurrent = energyMax;
-// Create GameUnitUI through UIManager before element canvas init
+// Create UnitGameUI through UIManager before element canvas init
         UIManager.instance.UpdatePortrait(this, false);
 
         elementCanvas = GetComponentInChildren<ElementCanvas>();

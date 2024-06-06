@@ -17,7 +17,6 @@ public class Tile : GridElement {
     [SerializeField] GameObject highlight;
     [SerializeField] List<Sprite> rndSprite;
 
-    public Animator anim;
 
 // Initialize refs
     protected virtual void Awake() {
@@ -26,7 +25,7 @@ public class Tile : GridElement {
         if (rndSprite.Count > 0)
             gfx[0].sprite = rndSprite[Random.Range(0,rndSprite.Count)];
         if (gfx[0].GetComponent<Animator>())
-            anim = gfx[0].GetComponent<Animator>();
+            gfxAnim = gfx[0].GetComponent<Animator>();
 
     }
 
@@ -70,9 +69,9 @@ public class Tile : GridElement {
                 sr.color = blackColor;
         }
 // Offset tile animation to break up the grid
-        if (anim != null) {
-            string name = anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
-            anim.Play(name, 0, Util.Remap(8 + (int)coord.x - (int)coord.y, 1, 15, 1, 18));
+        if (gfxAnim != null) {
+            string name = gfxAnim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+            gfxAnim.Play(name, 0, Util.Remap(8 + (int)coord.x - (int)coord.y, 1, 15, 1, 22));
         }
     }
 }

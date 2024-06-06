@@ -256,8 +256,9 @@ public class PlayerManager : UnitManager {
             if (selectedUnit && selectedUnit.ValidCommand(b.coord, selectedUnit.selectedEquipment)) 
                 StartCoroutine(selectedUnit.ExecuteAction(b));
             else {
+                if (selectedUnit) DeselectUnit();
                 //scenario.SwitchTurns()
-                b.StartCoroutine(b.SelectBeacon(this));
+                SelectUnit(b);
             }
         } 
 // Player clicks on square
@@ -422,6 +423,8 @@ public class PlayerManager : UnitManager {
                     u.UpdateAction(u.selectedEquipment, u.moveMod);
                 }
             } else if (u is EnemyUnit) {
+                
+            } else if (u is Beacon b) {
                 
             }
             prevCursorTargetState = true;

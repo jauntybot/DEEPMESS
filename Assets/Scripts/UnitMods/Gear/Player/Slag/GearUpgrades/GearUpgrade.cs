@@ -9,7 +9,7 @@ public class GearUpgrade : ScriptableObject {
     new public string name;
     public int ugpradeLevel = 1;
     public string description;
-    [SerializeField] protected SlagGearData modifiedGear;
+    public SlagGearData modifiedGear;
 
     public virtual void EquipDequip(bool equip) {}
 

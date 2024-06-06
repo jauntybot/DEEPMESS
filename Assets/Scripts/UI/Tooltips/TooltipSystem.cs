@@ -1,13 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 
 public class TooltipSystem : MonoBehaviour {
 
     public static TooltipSystem instance;
     public Tooltip tooltipBL, tooltipTR, tooltipHover;
+    public UpgradeTooltip tooltipUpgrade, tooltipUpgradeCompare;
+    [SerializeField] GameObject upgradeContext;
+    [SerializeField] TMP_Text contextText;
     public Transform upgradeContainer;
     public static TooltipTrigger activeTrigger;
+    static UpgradeTooltipTrigger selectedUpgrade;
 
     public void Awake() {
         instance = this;
@@ -17,6 +23,21 @@ public class TooltipSystem : MonoBehaviour {
         activeTrigger = trigger;
         instance.tooltipHover.SetText(trigger.content, trigger.header, false);
         instance.tooltipHover.transform.GetChild(0).gameObject.SetActive(true);
+    }
+
+    public static void SelectUpgrade(UpgradeTooltipTrigger upgrade = null) {
+        selectedUpgrade = upgrade;
+    }
+
+    public static void ShowUpgradeHover(UpgradeTooltipTrigger trigger) {
+        activeTrigger = trigger;
+        instance.tooltipUpgrade.SetText(trigger.content, trigger.header, trigger.slotTooltip? trigger.gearIcon : trigger.upgradeIcon);
+        instance.tooltipUpgrade.transform.GetChild(0).gameObject.SetActive(true);
+        instance.upgradeContext.SetActive(trigger.slottable && trigger.slotTooltip && selectedUpgrade != null);
+        if (trigger.slottable && trigger.slotTooltip && selectedUpgrade != null) 
+            instance.tooltipUpgradeCompare.SetText(selectedUpgrade.content, selectedUpgrade.header, selectedUpgrade.gearIcon);
+
+        instance.tooltipUpgradeCompare.transform.GetChild(0).gameObject.SetActive(trigger.slottable && trigger.slotTooltip && selectedUpgrade != null);
     }
 
     public static void ShowTR(TooltipTrigger trigger) {
@@ -40,36 +61,15 @@ public class TooltipSystem : MonoBehaviour {
         instance.tooltipBL.SetText(trigger.content, trigger.header, false, list);
         instance.tooltipBL.transform.GetChild(0).gameObject.SetActive(true);
 
-        if (trigger is TooltipEquipmentTrigger tr) {
+        if (trigger is GearTooltipTrigger tr) {
             if (tr.equip is SlagGearData data ) { //&& data.orderedUpgrades.Count > 0
                 instance.upgradeContainer.gameObject.SetActive(true);
-                int  shunt = 0, scab = 0, sludge = 0;
-                for (int i = 0; i < 3; i++) {
-                    // if (i <= data.orderedUpgrades.Count - 1) {
-                    //     instance.upgradeContainer.GetChild(i).gameObject.SetActive(true);
-                    //     UpgradeTooltip tt = instance.upgradeContainer.GetChild(i).GetComponent<UpgradeTooltip>();
-                    //     string no = data.upgrades[data.orderedUpgrades[i]] == 1 ? "I" : "II";
-                    //     string body = "";
-                    //     int nug = 0;
-                    //     switch (data.orderedUpgrades[i]) {
-                    //         case SlagGearData.UpgradePath.Shunt:
-                    //             body = data.upgradeStrings.powerStrings[shunt];
-                    //             shunt++;
-                    //         break;
-                    //         case SlagGearData.UpgradePath.Scab:
-                    //             body = data.upgradeStrings.specialStrings[scab];
-                    //             nug = 1;
-                    //             scab++;
-                    //         break;
-                    //         case SlagGearData.UpgradePath.Sludge:
-                    //             body = data.upgradeStrings.unitStrings[sludge];
-                    //             nug = 2;
-                    //             sludge++;
-                    //         break;
-                    //     }
-                    //     //data.orderedUpgrades[i].ToString() + " " + no
-                    //     tt.SetText(body, "", false, nug);
-                    // } else
+                for (int i = 0; i <= data.slottedUpgrades.Count - 1; i++) {
+                    if (data.slottedUpgrades[i] != null) {
+                        instance.upgradeContainer.GetChild(i).gameObject.SetActive(true);
+                        UpgradeTooltip tt = instance.upgradeContainer.GetChild(i).GetComponent<UpgradeTooltip>();
+                        tt.SetText(data.slottedUpgrades[i].description, data.slottedUpgrades[i].name, data.slottedUpgrades[i].icon);
+                    } else
                         instance.upgradeContainer.GetChild(i).gameObject.SetActive(false);
                 }
             } else 
@@ -79,9 +79,12 @@ public class TooltipSystem : MonoBehaviour {
 
     public static void Hide() {
         instance.tooltipBL.transform.GetChild(0).gameObject.SetActive(false);
+        instance.upgradeContainer.gameObject.SetActive(false);
         instance.tooltipTR.transform.GetChild(0).gameObject.SetActive(false);
         instance.tooltipHover.transform.GetChild(0).gameObject.SetActive(false);
-        instance.upgradeContainer.gameObject.SetActive(false);
+        instance.tooltipUpgrade.transform.GetChild(0).gameObject.SetActive(false);
+        instance.tooltipUpgradeCompare.transform.GetChild(0).gameObject.SetActive(false);
+        instance.upgradeContext.SetActive(false);
         activeTrigger = null;
     }
 

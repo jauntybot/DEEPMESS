@@ -15,7 +15,7 @@ public class ObjectiveBeaconCard : ObjectiveCard {
         button.onClick.RemoveAllListeners();
         button.interactable = true;
         if (ob.succeeded) {
-            anim.SetTrigger("Reward");
+            anim.SetTrigger("Score");
             buttonTMP.text = "COLLECT";
             button.onClick.AddListener(Collect);
         } else {
@@ -35,11 +35,11 @@ public class ObjectiveBeaconCard : ObjectiveCard {
     }
 
     public virtual void Collect() {
-        anim.SetTrigger("Collect");
         Reroll(true);
     }
     
     public virtual void Reroll() {
+        anim.SetTrigger("Reroll");
         GetComponentInParent<ObjectiveManager>().RollObjectiveCard(this, false);
         DisableButton();
     }

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 
 namespace Relics {
-
+    [System.Serializable]    
     public class Relic : MonoBehaviour {
 
         RelicData data;

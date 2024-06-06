@@ -23,7 +23,7 @@ public class UIManager : MonoBehaviour {
     [Header("Game UIs")]
     [SerializeField] Transform unitGameUIParent;
     [SerializeField] GameObject unitGameUIPrefab;
-    public List<GameUnitUI> unitGameUIs = new();
+    public List<UnitGameUI> unitGameUIs = new();
 
     [Header("Overviews")]
     [SerializeField] Transform overviewParent;
@@ -56,17 +56,17 @@ public class UIManager : MonoBehaviour {
     }
 
     public void UpdatePortrait(Unit u = null, bool active = true) {
-        foreach (GameUnitUI ui in unitGameUIs) ui.ToggleUnitPanel(false);
+        foreach (UnitGameUI ui in unitGameUIs) ui.ToggleUnitPanel(false);
     
-        GameUnitUI unitUI = unitGameUIs.Find(p => p.unit == u);
+        UnitGameUI unitUI = unitGameUIs.Find(p => p.unit == u);
         if (unitUI == null && u != null) { unitUI = CreateUnitUI(u); }
         if (unitUI) unitUI.ToggleUnitPanel(active);
     }
 
-    public GameUnitUI CreateUnitUI(Unit u) {
+    public UnitGameUI CreateUnitUI(Unit u) {
 
-        GameUnitUI ui = Instantiate(unitGameUIPrefab, unitGameUIParent).GetComponent<GameUnitUI>();
-        u.ui = (GameUnitUI)ui.Initialize(u, overviewParent, overviewLayoutParent);
+        UnitGameUI ui = Instantiate(unitGameUIPrefab, unitGameUIParent).GetComponent<UnitGameUI>();
+        u.ui = (UnitGameUI)ui.Initialize(u, overviewParent, overviewLayoutParent);
         if (u is Nail) {
             u.ui.overview = nailOverview.Initialize(u, nailOverview.transform.parent);
         }
