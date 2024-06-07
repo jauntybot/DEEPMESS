@@ -10,14 +10,18 @@ public class ScratchOffCard : MonoBehaviour {
 
     UpgradeManager manager;
     Animator anim;
+    [SerializeField] Sprite[] bgSprites;
     [SerializeField] GameObject scratchPrefab;
     [SerializeField] Transform scratchLayout;
     List<ScratchUpgrade> scratches;
     [SerializeField] AudioSource scratchAudio;
 
-    public void BuildCard(UpgradeManager m, List<GearUpgrade> upgrades) {
+    public void BuildCard(UpgradeManager m, List<GearUpgrade> upgrades, int cardLvl) {
         manager = m;
         anim = GetComponent<Animator>();
+        
+        GetComponent<Image>().sprite = bgSprites[cardLvl-1];
+
         scratches = new();
         if (upgrades.Count / 3 > 1) scratchLayout.GetComponent<GridLayoutGroup>().constraintCount = 2;
         for (int i = 0; i <= upgrades.Count - 1; i++) {
@@ -37,7 +41,7 @@ public class ScratchOffCard : MonoBehaviour {
 
     public IEnumerator ScratchAnim() {
         scratchAudio.Play();
-        for (int i = scratchLayout.childCount - 1; i >= 0; i--) {
+        for (int i = 0; i <= scratchLayout.childCount - 1; i++) {
             yield return new WaitForSecondsRealtime(0.25f);
             ScratchUpgrade upgrade = scratchLayout.GetChild(i).GetComponent<ScratchUpgrade>();
             upgrade.ScratchOff();

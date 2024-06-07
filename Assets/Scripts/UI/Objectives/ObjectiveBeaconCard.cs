@@ -45,6 +45,7 @@ public class ObjectiveBeaconCard : ObjectiveCard {
     }
     
     public virtual void Reroll(bool collect = false) {
+        anim.SetTrigger("Reroll");
         GetComponentInParent<ObjectiveManager>().RollObjectiveCard(this, collect);
         DisableButton();
     }

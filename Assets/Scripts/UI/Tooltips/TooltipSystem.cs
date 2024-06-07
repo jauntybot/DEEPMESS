@@ -33,7 +33,7 @@ public class TooltipSystem : MonoBehaviour {
 
     public static void ShowUpgradeHover(UpgradeTooltipTrigger trigger) {
         activeTrigger = trigger;
-        instance.tooltipUpgrade.SetText(trigger.content, trigger.header, trigger.slotTooltip? trigger.gearIcon : trigger.upgradeIcon);
+        instance.tooltipUpgrade.SetText(trigger.content, trigger.header, (trigger.slotTooltip || trigger.cardTooltip)? trigger.gearIcon : trigger.upgradeIcon);
         instance.tooltipUpgrade.transform.GetChild(0).gameObject.SetActive(true);
         instance.upgradeContext.SetActive(trigger.slottable && trigger.slotTooltip && selectedUpgrade != null);
         if (trigger.slottable && trigger.slotTooltip && selectedUpgrade != null) {

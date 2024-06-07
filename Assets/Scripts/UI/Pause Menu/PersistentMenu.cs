@@ -19,7 +19,6 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     [SerializeField] TMP_Dropdown resolutionsDropdown;
     [SerializeField] Toggle cutsceneToggle;
     [SerializeField] GameObject menuButton;
-    [SerializeField] GameObject menuButtons;
     public Animator fadeToBlack;
     public int startCavity;
 
@@ -144,11 +143,11 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
             relicDropdown.value = 0;
             relicDropdown.RefreshShownValue();
 
-            menuButtons.SetActive(true);
+            menuButton.SetActive(true);
         }
 // Initialize the MainMenuManager
         else if (MainMenuManager.instance) {
-            menuButtons.SetActive(false);
+            menuButton.SetActive(false);
             MainMenuManager.instance.optionsButton.onClick.AddListener(MainMenuPause);
             if (upcomingCurrency > 0) MainMenuManager.instance.StartCoroutine(MainMenuManager.instance.WhatsToCome(upcomingCurrency));
             else MainMenuManager.instance.Init();

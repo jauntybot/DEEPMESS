@@ -175,7 +175,10 @@ public class FloorSequence : ScriptableObject {
         }
 // Spawn a beacon if floor count is mod 4
         floor.spawnBeacon = floorsGot%4 == 0;
-        floor.spawnBloatedBulb = !activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite) && floorsGot%3 == 0 && (activePacket.packetMods.Contains(FloorChunk.PacketMods.Hazard) || floorsGot > 4);
+        if (!activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite) && floorsGot%3 == 0 && 
+        ((activePacket.packetMods.Contains(FloorChunk.PacketMods.Hazard) && ((currentThreshold == FloorChunk.PacketType.I && floorsGot >= 4) || currentThreshold == FloorChunk.PacketType.II)) ||
+        (floorsGot >= 4 && floorsGot <= 8)))
+            floor.spawnBloatedBulb = true;
         
         return floor;
     }

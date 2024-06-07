@@ -8,6 +8,7 @@ public class GearUpgrade : ScriptableObject {
     public Sprite icon;
     new public string name;
     public int ugpradeLevel = 1;
+    [TextArea]
     public string description;
     public SlagGearData modifiedGear;
 

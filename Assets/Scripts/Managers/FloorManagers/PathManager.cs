@@ -17,7 +17,6 @@ public class PathManager : MonoBehaviour {
 
     List<PathCard> activeCards;
     [HideInInspector] public PathCard selectedPathCard;
-    [SerializeField] TMP_Text sequenceTitle;
     [SerializeField] Transform pathCardContainer;
     [SerializeField] GameObject pathCardPrefab, pathChoiceContainer;
     [HideInInspector] public bool choosingPath = false;
@@ -51,7 +50,6 @@ public class PathManager : MonoBehaviour {
         layout.enabled = true;
         choosingPath = true;
         pathChoiceContainer.SetActive(true);
-        sequenceTitle.text = "CHOOSE A PATH";
         activeCards = new();
         float t  = 0;
 
@@ -170,10 +168,10 @@ public class PathManager : MonoBehaviour {
 
     public void SelectCard(PathCard selected) {
         if (selectedPathCard)
-            selectedPathCard.StartCoroutine(selectedPathCard.ExpandAnimation(false));
+            selectedPathCard.selectButton.gameObject.SetActive(false);
         if (selectedPathCard != selected) {
             selectedPathCard = selected;
-            selectedPathCard.StartCoroutine(selectedPathCard.ExpandAnimation(true));
+            selectedPathCard.selectButton.gameObject.SetActive(true);
         } else 
             selectedPathCard = null;
     }

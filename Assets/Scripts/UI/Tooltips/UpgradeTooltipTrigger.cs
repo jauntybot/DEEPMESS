@@ -11,7 +11,7 @@ public class UpgradeTooltipTrigger : TooltipTrigger {
     public Sprite gearIcon;
     public Sprite upgradeIcon;
     public int lvl;
-    public bool slotTooltip;
+    public bool slotTooltip, cardTooltip;
     [HideInInspector] public bool slottable;
 
     public void Initialize(GearUpgrade _upgrade) {

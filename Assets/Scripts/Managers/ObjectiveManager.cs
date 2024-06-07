@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,11 +11,12 @@ public class ObjectiveManager : MonoBehaviour {
     [SerializeField] GameObject objectiveScreen;
     [SerializeField] Animator ginosAnim;
     [SerializeField] List<ObjectiveBeaconCard> objectiveCards;
+    List<int> objectiveIndices;
     [SerializeField] List<Objective> activeObjectives;
 
     [Header("Serialized Objective Pools")]
     [SerializeField] List<Objective> serializedObjectives;
-    ShuffleBag<Objective> objectivePoolC1, objectivePoolC2;
+    ShuffleBag<Objective> objectivePoolC1, objectivePoolC2, objectivePoolC3;
 
     AudioSource audioSource;
     [SerializeField] SFX ginoSFX;
@@ -26,11 +28,14 @@ public class ObjectiveManager : MonoBehaviour {
         ClearObjectives();
         objectiveScreen.SetActive(false);
         activeObjectives = new();
+        objectiveIndices = new() { 0, 0, 0 };
         objectivePoolC1 = new();
         objectivePoolC2 = new();
+        objectivePoolC3 = new();
         foreach (Objective ob in serializedObjectives) {
             if (ob.chunk == FloorChunk.PacketType.I) objectivePoolC1.Add(ob);
             if (ob.chunk == FloorChunk.PacketType.II) objectivePoolC2.Add(ob);
+            if (ob.chunk == FloorChunk.PacketType.III) objectivePoolC3.Add(ob);
         }
 
         audioSource = GetComponent<AudioSource>();
@@ -38,7 +43,7 @@ public class ObjectiveManager : MonoBehaviour {
     }
 
     bool reviewing;
-    public IEnumerator ObjectiveSequence() {
+    public IEnumerator ObjectiveSequence(bool beacon) {
         reviewing = true;
         nuggets.UpdateNuggetCount();
         nuggets.gameObject.SetActive(true);
@@ -59,10 +64,10 @@ public class ObjectiveManager : MonoBehaviour {
                 objectiveCards[i].UpdateCard(objectiveCards[i].objective);
             }
         }
-        
-
 
         while (reviewing) yield return null;
+
+        if (!beacon) nuggets.gameObject.SetActive(false);
 
         SubscribeTracker(activeObjectives);
         ginosAnim.SetTrigger("Disappear");
@@ -70,12 +75,12 @@ public class ObjectiveManager : MonoBehaviour {
 
     public void RollObjectiveCard(int index) {
         Objective rolled;
-        ShuffleBag<Objective> bag;
-        switch(scenario.floorManager.floorSequence.currentThreshold) {
-            default:
-            case FloorChunk.PacketType.I: bag = objectivePoolC1; break;
-            case FloorChunk.PacketType.II: bag = objectivePoolC2; break;
-        }
+        objectiveIndices[index]++;
+
+        ShuffleBag<Objective> bag = objectivePoolC1;
+        if (objectiveIndices[index] > 1 && objectiveIndices[index] <= 3) bag = objectivePoolC2; 
+        else if (objectiveIndices[index] > 3) bag = objectivePoolC3; 
+        
         rolled = bag.Next(); 
         bag.Remove(rolled); 
 
@@ -98,7 +103,7 @@ public class ObjectiveManager : MonoBehaviour {
             case FloorChunk.PacketType.II: bag = objectivePoolC2; break;
         }
         rolled = bag.Next(); 
-        bag.Remove(rolled); 
+        //bag.Remove(rolled); 
         if (bag.Count == 0) {
             foreach (ObjectiveBeaconCard c in objectiveCards) c.DisableButton();
         }

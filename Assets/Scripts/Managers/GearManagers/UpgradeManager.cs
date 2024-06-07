@@ -75,14 +75,19 @@ public class UpgradeManager : MonoBehaviour {
     IEnumerator ScratchOffSequence() {
         if (activeCard != null) Destroy(activeCard.gameObject);
 
+        int cardLvl = 1;
+        if (FloorManager.instance.floorSequence.currentThreshold == FloorChunk.PacketType.I && FloorManager.instance.floorSequence.floorsGot >= 10 ||
+        FloorManager.instance.floorSequence.currentThreshold == FloorChunk.PacketType.II && FloorManager.instance.floorSequence.floorsGot >= 7)
+            cardLvl = 2;
+
         List<GearUpgrade> rolledUpgrades = new();
         foreach (KeyValuePair<SlagGearData, Dictionary<int, ShuffleBag<GearUpgrade>>> entry in upgradePool) {
-            rolledUpgrades.Add(DrawUpgradeOfLevel(entry.Key, 1));
+            rolledUpgrades.Add(DrawUpgradeOfLevel(entry.Key, cardLvl));
         }
         
 
         ScratchOffCard card = Instantiate(scratchOffPrefab, upgradeScreen.transform).GetComponent<ScratchOffCard>();
-        card.BuildCard(this, rolledUpgrades);
+        card.BuildCard(this, rolledUpgrades, cardLvl);
         activeCard = card;
 
         confirmButton.GetComponentInChildren<TMPro.TMP_Text>().text = "SCRATCH";

@@ -42,21 +42,23 @@ public class PauseMenu : MonoBehaviour {
     }
 
     public void AbandonRun() {
+        AbandonButton(false);
         ResumeButton();
 
         ScenarioManager.instance.StartCoroutine(ScenarioManager.instance.Lose());        
     }
 
     public void QuitToMainMenu() {
+        QuitButton(false);
         ResumeButton();
         PersistentDataManager.instance.SaveRun();
-        QuitButton(false);
 
         
         PersistentMenu.instance.StartCoroutine(PersistentMenu.instance.FadeToScene(0));
     }
 
     public void QuitToDesktop() {
+        QuitButton(false);
         ResumeButton();
         PersistentDataManager.instance.SaveRun();
     }
