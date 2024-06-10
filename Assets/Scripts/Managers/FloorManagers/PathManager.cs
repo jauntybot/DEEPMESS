@@ -62,7 +62,7 @@ public class PathManager : MonoBehaviour {
         int rnd = 2;
         switch(floorSequence.currentThreshold) {
             case FloorChunk.PacketType.I: rnd = 3; break;
-            case FloorChunk.PacketType.II: rnd = 3; break;
+            case FloorChunk.PacketType.II: rnd = 4; break;
             case FloorChunk.PacketType.BOSS: rnd = 1; break;
         }
         List<FloorChunk> randomPackets = floorSequence.RandomNodes(rnd);

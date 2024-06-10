@@ -176,10 +176,22 @@ public class FloorSequence : ScriptableObject {
 // Spawn a beacon if floor count is mod 4
         floor.spawnBeacon = floorsGot%4 == 0;
         if (!activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite) && floorsGot%3 == 0 && 
-        ((activePacket.packetMods.Contains(FloorChunk.PacketMods.Hazard) && ((currentThreshold == FloorChunk.PacketType.I && floorsGot >= 4) || currentThreshold == FloorChunk.PacketType.II)) ||
+        (((activePacket.packetMods.Contains(FloorChunk.PacketMods.Hazard) || activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme)) && ((currentThreshold == FloorChunk.PacketType.I && floorsGot >= 4) || currentThreshold == FloorChunk.PacketType.II)) ||
         (floorsGot >= 4 && floorsGot <= 8)))
             floor.spawnBloatedBulb = true;
-        
+        else
+            floor.spawnBloatedBulb = false;
+        if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite) && floorsGot%3 == 0 && 
+        ((currentThreshold == FloorChunk.PacketType.I && floorsGot >= 4) || currentThreshold == FloorChunk.PacketType.II) ||
+        (floorsGot >= 4 && floorsGot <= 8))
+            floor.spawnElite = true;
+        else
+            floor.spawnElite = false;
+        if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme) && floorsGot == 5)
+            floor.spawnElite = true;
+        else
+            floor.spawnElite = false;
+
         return floor;
     }
 

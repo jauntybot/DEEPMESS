@@ -363,15 +363,6 @@ public class FloorManager : MonoBehaviour {
                 
                 yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, scen));
                 yield return new WaitForSecondsRealtime(0.25f);
-// Check for tutorial tooltip triggers
-                if (floorSequence.activePacket.packetType != FloorChunk.PacketType.Tutorial) {
-                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.gpOptional.bulbEncountered)
-                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.TileBulb());
-                    if (currentFloor.gridElements.Find(ge => ge is Beacon) && !scenario.gpOptional.beaconEncountered)
-                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Beacon());
-                    if (currentFloor.lvlDef.spawnBloatedBulb && !scenario.gpOptional.bloatedBulbEncountered)
-                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.BloatedBulb());
-                }
 
 // Yield for cascade sequence
                 // if (cascade) {
@@ -384,6 +375,15 @@ public class FloorManager : MonoBehaviour {
                 yield return StartCoroutine(DescendUnits(floors[currentFloor.transform.GetSiblingIndex() -1].gridElements, enemy));
                 
                 if (currentFloor.index+1 == floorSequence.activePacket.packetLength) scenario.player.nail.barkBox.Bark(BarkBox.BarkType.FinalFloor);
+// Check for tutorial tooltip triggers
+                if (floorSequence.activePacket.packetType != FloorChunk.PacketType.Tutorial) {
+                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.gpOptional.bulbEncountered)
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.TileBulb());
+                    if (currentFloor.gridElements.Find(ge => ge is Beacon) && !scenario.gpOptional.beaconEncountered)
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Beacon());
+                    if (currentFloor.gridElements.Find(ge => ge is BloatedBulb) && !scenario.gpOptional.bloatedBulbEncountered)
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.BloatedBulb());
+                }
 
                 StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
             } else {
@@ -420,8 +420,8 @@ public class FloorManager : MonoBehaviour {
         }
 
 // Spawns elite
-        if (floorSequence.activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite)) {
-            if (floorCount%3 == 0) {
+        if (floorSequence.activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite) || floorSequence.activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme)) {
+            if (currentFloor.lvlDef.spawnElite) {
                 yield return new WaitForSecondsRealtime(0.75f);
                 yield return StartCoroutine(SpawnBoss(floorSequence.elitePrefab, true));
             }

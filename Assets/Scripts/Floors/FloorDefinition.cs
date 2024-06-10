@@ -15,6 +15,7 @@ public class FloorDefinition : ScriptableObject {
     public List<Spawn> initSpawns = new();
     [HideInInspector] public bool spawnBeacon = false;
     [HideInInspector] public bool spawnBloatedBulb = false;
+    [HideInInspector] public bool spawnElite = false;
 
 
     //public List<UpgradeData> upgradeTable;
