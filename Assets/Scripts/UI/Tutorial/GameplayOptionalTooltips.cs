@@ -14,7 +14,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
     public Animator screenFade;
     [SerializeField] RuntimeAnimatorController anvilAnim, bigThrowAnim, basophicAnim, reviveAnim, bulbAnim;
     public bool bulbEncountered = false, deathReviveEncountered = false, basophicEncountered = false, prebossEncountered = false, bossEncountered = false,
-        vacuoleEncountered = true, pathsEncountered = false, rewardsEncountered = false;
+        vacuoleEncountered = true, pathsEncountered = false, objectivesEncountered = false, bloatedBulbEncountered = false, beaconEncountered = false, beaconObjectivesEncountered = false, beaconScratchOffEncountered = false;
 
     void Awake() {
         if (GameplayOptionalTooltips.instance) {
@@ -52,7 +52,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
         while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
             yield return null;
         }
-        yield return new WaitForSecondsRealtime(0.25f);
+        yield return new WaitForSecondsRealtime(1.25f);
         screenFade.gameObject.SetActive(true);
 
         header = "BULBS";
@@ -68,11 +68,17 @@ public class GameplayOptionalTooltips : MonoBehaviour
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 
-    public IEnumerator Rewards() {
-        rewardsEncountered = true;
+    public IEnumerator BloatedBulb() {
+        bloatedBulbEncountered = true;
 
-        header = "OBJECTIVES";
-        body = "Nice getting through that, squish. Use any <b>" + ColorToRichText("Nuggets", keyColor) + "</b> you bag to power up and take any <b>" + ColorToRichText("Relics", keyColor) + "</b> to tweak our excavation in wild ways.";
+        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
+            yield return null;
+        }
+        yield return new WaitForSecondsRealtime(1.25f);
+        screenFade.gameObject.SetActive(true);
+
+        header = "BLOATED BULB";
+        body = "Woah squish, that's a big bulb! Why don't you <b>" + ColorToRichText("crack it open", keyColor) + "</b> and see what's inside?";
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -81,6 +87,73 @@ public class GameplayOptionalTooltips : MonoBehaviour
         }
 
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    public IEnumerator Beacon() {
+        beaconEncountered = true;
+        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
+            yield return null;
+        }
+        yield return new WaitForSecondsRealtime(1.25f);
+        screenFade.gameObject.SetActive(true);
+
+        header = "BEACON";
+        body = "Nice catch, squish. That there is one of my direct lines. Why don't youse <b>" + ColorToRichText("give me a ring", keyColor) + "</b>?";
+        tooltip.SetText(body, header, true, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    public IEnumerator Objectives() {
+        objectivesEncountered = true;
+
+        header = "TASKS";
+        body = "Yo, squish! Hold up a sec, I got a list for ya. Knock these out, and I'll toss some <b>" + ColorToRichText("slime bucks", keyColor) + "</b> your way for the hustle.";
+        tooltip.SetText(body, header, true, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+
+    public IEnumerator BeaconObjectives() {
+        beaconObjectivesEncountered = true;
+
+        header = "TASKS";
+        body = "Keep me updated on your progress—<b>" + ColorToRichText("cash in", keyColor) + "</b> completed tasks or " + ColorToRichText("switch 'em out", keyColor) + "</b> if ya want.";
+        tooltip.SetText(body, header, true, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    public IEnumerator BeaconScratchOff() {
+        beaconScratchOffEncountered = true;
+
+        header = "TASKS";
+        body = "Ey, I got a <b>" + ColorToRichText("lotto card", keyColor) + "</b> here just for youse. Give it a scratch and see what's cookin', then <b>" + ColorToRichText("take your pick of the goods.", keyColor) + "</b>";
+        tooltip.SetText(body, header, true, true);
+
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+            
+        }
+
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+
     }
 
     void StartDeathTut(GridElement blank) {

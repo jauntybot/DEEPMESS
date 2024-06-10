@@ -44,7 +44,7 @@ public class TutorialSequence : MonoBehaviour {
     [Header("Gameplay Optional Tooltips")]
     bool enemyBehavior = false;
     public bool hittingEnemies = false, enemySpawnEncountered = false, undoEncountered = false, nailDamageEncountered = false, bloodEncountered = false, 
-        objectivesEncountered = false, collisionEncountered = false, slotsEncountered = false, sequenceEnd = false;
+        collisionEncountered = false, slotsEncountered = false, sequenceEnd = false;
 
 
     public void Initialize(ScenarioManager manager) {
@@ -742,7 +742,6 @@ public class TutorialSequence : MonoBehaviour {
             nailDamageEncountered &&
             undoEncountered && 
             enemySpawnEncountered &&
-            objectivesEncountered &&
             bloodEncountered &&
             slotsEncountered)
             Debug.Log("Tutorial finished");

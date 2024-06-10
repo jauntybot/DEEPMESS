@@ -45,6 +45,8 @@ public class ObjectiveManager : MonoBehaviour {
     bool reviewing;
     public IEnumerator ObjectiveSequence(bool beacon) {
         reviewing = true;
+        if (beacon && !scenario.gpOptional.beaconObjectivesEncountered) yield return scenario.gpOptional.StartCoroutine(scenario.gpOptional.BeaconObjectives());
+
         nuggets.UpdateNuggetCount();
         nuggets.gameObject.SetActive(true);
         

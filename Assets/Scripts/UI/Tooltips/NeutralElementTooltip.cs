@@ -55,7 +55,9 @@ public class NeutralElementTooltip : Tooltip {
             if (ge is Wall) {
                 SetText("Blocks movement, damages if landed on. Can be destroyed.", "WALL");
             } else if (ge is Beacon) {
-                SetText("Click to activate. Sends an upgrade request to the Slime Hub.", "BEACON");
+                SetText("Direct line to Gino.", "BEACON");
+            } else if (ge is BloatedBulb) {
+                SetText("Releases god thought when destroyed.", "BLOATED BULB");
             } else if (ge is Tile t) {
                 if (ge is TileBulb) {
                     SetText("Contains a bulb.", "BULB", false, new List<RuntimeAnimatorController>{ bulbAnim });

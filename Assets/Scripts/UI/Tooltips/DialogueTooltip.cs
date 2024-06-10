@@ -9,10 +9,11 @@ public class DialogueTooltip : Tooltip {
     [SerializeField] DialogueTypewriter tw;
     [SerializeField] Button clickToSkip;
     [SerializeField] Animator clickToSkipAnim;
-    [SerializeField] SFX nailSpeak;
-    
+    [SerializeField] SFX nailSpeak, ginoSpeak;
+    [SerializeField] RuntimeAnimatorController nailAnim, ginoAnim;
     Animator anim;
     AudioSource audioSource;
+    [SerializeField] Animator portraitAnim;
 
     void Start() {
         audioSource = GetComponent<AudioSource>();
@@ -25,7 +26,7 @@ public class DialogueTooltip : Tooltip {
         anchor.anchoredPosition = Vector2.zero;
     }
 
-    public override void SetText(string content, string header = "", bool skip = false,  List<RuntimeAnimatorController> gif = null) {
+    public virtual void SetText(string content, string header = "", bool skip = false, bool gino = false, List<RuntimeAnimatorController> gif = null) {
         base.SetText(content, header, clickToSkip, gif);
         if (tw)
             tw.StartCoroutine(tw.Typerwrite(content));
@@ -33,7 +34,13 @@ public class DialogueTooltip : Tooltip {
         if (anim) {
             anim.SetTrigger("AnimIn");
         }
-        PlaySound(nailSpeak);
+        
+        PlaySound(gino? ginoSpeak : nailSpeak);
+        portraitAnim.runtimeAnimatorController = gino ? ginoAnim : nailAnim;
+
+        portraitAnim.GetComponent<RectTransform>().anchoredPosition = gino? new(77, -95) : new(40, -120);
+        portraitAnim.GetComponent<RectTransform>().sizeDelta = gino? new(200, 200) : new(235, 235);
+
         if (skip)     
             StartCoroutine(WaitForClick());
 

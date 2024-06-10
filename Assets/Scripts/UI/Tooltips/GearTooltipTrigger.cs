@@ -143,7 +143,7 @@ public class GearTooltipTrigger : TooltipTrigger {
     }
 
     void Beacon() {
-        header = "Call Home";
-        content = "One time use. Call home to complete objectives and claim rewards. Beacon destroys self after.";
+        header = "Call Gino";
+        content = "Call in to complete objectives and claim rewards. One call per beacon.";
     }
 }

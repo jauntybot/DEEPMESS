@@ -120,6 +120,7 @@ public class ScenarioManager : MonoBehaviour {
             
             yield return StartCoroutine(floorManager.DescendUnits(units));
             if (floorManager.floorSequence.activePacket.packetType == FloorChunk.PacketType.BOSS && !floorManager.floorSequence.activePacket.eliteSpawn) {
+                floorManager.floorSequence.activePacket.eliteSpawn = true;
                 yield return new WaitForSecondsRealtime(0.75f);
                 yield return StartCoroutine(floorManager.SpawnBoss(floorManager.floorSequence.bossPrefab));
             } 

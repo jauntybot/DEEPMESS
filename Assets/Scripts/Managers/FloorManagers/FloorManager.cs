@@ -367,6 +367,10 @@ public class FloorManager : MonoBehaviour {
                 if (floorSequence.activePacket.packetType != FloorChunk.PacketType.Tutorial) {
                     if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.gpOptional.bulbEncountered)
                         scenario.gpOptional.StartCoroutine(scenario.gpOptional.TileBulb());
+                    if (currentFloor.gridElements.Find(ge => ge is Beacon) && !scenario.gpOptional.beaconEncountered)
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Beacon());
+                    if (currentFloor.lvlDef.spawnBloatedBulb && !scenario.gpOptional.bloatedBulbEncountered)
+                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.BloatedBulb());
                 }
 
 // Yield for cascade sequence
@@ -630,58 +634,7 @@ public class FloorManager : MonoBehaviour {
         nail.transform.parent = nail.manager.transform;
     }
 
-    public IEnumerator DropParticle() {
-
-        GodParticleGE particle = Instantiate(godParticlePrefab).GetComponent<GodParticleGE>();
-        particle.Init();
-        particle.transform.parent = currentFloor.neutralGEContainer.transform;
-
-        particle.StoreInGrid(currentFloor);
-        
-        bool validCoord = false;
-        Vector2 spawn = Vector2.zero;
-
-// Find a valid coord that a player unit is not in
-        while (!validCoord) {
-            validCoord = true;
-            spawn = new Vector2(UnityEngine.Random.Range(1,6), UnityEngine.Random.Range(1,6));
-                
-            foreach(Unit u in scenario.player.units) {
-                if (u.coord == spawn) validCoord = false;
-            }
-
-            if (currentFloor.tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false;
-            if (currentFloor.tiles.Find(sqr => sqr.coord == spawn) is TileBulb) validCoord = false;
-        }
-        
-        particle.transform.position = particle.grid.PosFromCoord(spawn);
-        particle.UpdateSortOrder(spawn);
-        particle.coord = spawn;
-
-        GridElement subElement = null;
-        foreach (GridElement ge in currentFloor.CoordContents(particle.coord)) subElement = ge;
-
-        Vector3 to = currentFloor.PosFromCoord(spawn);
-        Vector3 from = to + new Vector3(0, floorOffset*2, 0);
-        float timer = 0;
-        NestedFadeGroup.NestedFadeGroup fade = particle.GetComponent<NestedFadeGroup.NestedFadeGroup>();
-        //particle.airTraillVFX.SetActive(true);
-
-        while (timer <= unitDropDur) {
-            particle.transform.localPosition = Vector3.Lerp(from, to, dropCurve.Evaluate(timer/unitDropDur));
-            fade.AlphaSelf = Mathf.Lerp(0, 1, timer/(unitDropDur/3));
-            yield return null;
-            timer += Time.deltaTime;
-        }
-
-        //particle.DescentVFX(currentFloor.tiles.Find(sqr => sqr.coord == particle.coord), subElement);
-        particle.transform.position = to;
-        particle.StoreInGrid(currentFloor);
-        fade.AlphaSelf = 1;
-    }
-
     public IEnumerator SpawnBoss(Unit u, bool relic = false) {
-        floorSequence.activePacket.eliteSpawn = true;
         bool validCoord = false;
         Vector2 spawn = Vector2.zero;
         while (!validCoord) {
@@ -717,6 +670,7 @@ public class FloorManager : MonoBehaviour {
 
         unit.PlaySound(unit.landingSFX);
     
+        scenario.currentEnemy.UpdateTurnOrder();
         if (floorSequence.currentThreshold == FloorChunk.PacketType.BOSS) 
             scenario.gpOptional.StartCoroutine(scenario.gpOptional.Boss());        
     }
@@ -764,31 +718,20 @@ public class FloorManager : MonoBehaviour {
 
         uiManager.ToggleBattleCanvas(false);
 
-//         if (floorSequence.currentThreshold != FloorChunk.PacketType.Tutorial) {
-// // Path reward + Upgrade sequence
-//             if (currentFloor != null && floorSequence.currentThreshold != FloorChunk.PacketType.I && floorSequence.currentThreshold != FloorChunk.PacketType.BARRIER) {
-//                 if (tutorial.isActiveAndEnabled && !tutorial.sequenceEnd) yield return tutorial.StartCoroutine(tutorial.TutorialEnd());
-//                 if (!scenario.gpOptional.rewardsEncountered) yield return scenario.gpOptional.StartCoroutine(scenario.gpOptional.Rewards());
-//                 yield return scenario.pathManager.PathRewardSequence();
-//                 yield return scenario.player.upgradeManager.StartCoroutine(scenario.player.upgradeManager.UpgradeSequence());
-//             }
-// // Objective assign sequence
-//             if (floorSequence.currentThreshold != FloorChunk.PacketType.BOSS && floorSequence.currentThreshold != FloorChunk.PacketType.BARRIER) {
-//                 if (!scenario.gpOptional.pathsEncountered) {
-                    
-//                     yield return StartCoroutine(scenario.gpOptional.Paths());
-//                 }
-//             } else
-            
+        if (floorSequence.currentThreshold != FloorChunk.PacketType.Tutorial && tutorial.isActiveAndEnabled && !tutorial.sequenceEnd) yield return tutorial.StartCoroutine(tutorial.TutorialEnd());            
+            if (!scenario.gpOptional.pathsEncountered) 
+                yield return StartCoroutine(scenario.gpOptional.Paths());
             yield return scenario.pathManager.PathSequence(); 
-            yield return scenario.objectiveManager.ObjectiveSequence(false);
+            if (floorSequence.currentThreshold == FloorChunk.PacketType.I) {
+                yield return GameplayOptionalTooltips.instance.StartCoroutine(GameplayOptionalTooltips.instance.Objectives());
+                yield return scenario.objectiveManager.ObjectiveSequence(false);
+            }
 
             if (floorSequence.currentThreshold == FloorChunk.PacketType.BOSS) {
                 floorSequence.StartPacket(floorSequence.bossPacket);
                 if (!scenario.gpOptional.prebossEncountered)
                     yield return StartCoroutine(scenario.gpOptional.Preboss());
                 uiManager.ToggleObjectiveTracker(false);
-            //}
         }
 
 // Lerp units offscreen

@@ -56,6 +56,10 @@ public class EnemyManager : UnitManager {
     void CountDefeatedEnemy(GridElement ge) {
 
         scenario.player.defeatedEnemies++;
+        UpdateTurnOrder();
+    }
+
+    public void UpdateTurnOrder() {
         for (int i = 0; i <= units.Count - 1; i++)
             units[i].elementCanvas.UpdateTurnOrder(units.Count - i);
     }
