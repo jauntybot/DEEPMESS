@@ -30,11 +30,6 @@ public class UIManager : MonoBehaviour {
     [SerializeField] Transform overviewLayoutParent;
     [SerializeField] UnitOverview nailOverview;
 
-    [Header("Loadouts")]
-    [SerializeField] LoadoutManager loadoutManager;
-
-    [SerializeField] Transform loadoutBG, loadoutPanel;
-
     [Header("UI AUDIO")]
     [SerializeField] public SFX peekBelowSFX;
     [SerializeField] public SFX peekAboveSFX, genSelectSFX, genDeselectSFX;

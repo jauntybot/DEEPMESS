@@ -18,4 +18,8 @@ public class MetaDisplay : MonoBehaviour {
         floorNumberText.text = floorsGot + "/" + currentMax;
     }
 
+    public void UpdateCurrentFloor(int floorsGot) {
+        floorNumberText.text = floorsGot + "/?";
+    }
+
 }
