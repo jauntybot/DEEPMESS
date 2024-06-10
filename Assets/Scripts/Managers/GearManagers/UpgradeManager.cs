@@ -11,8 +11,10 @@ public class UpgradeManager : MonoBehaviour {
     [SerializeField] SFX selectSFX;
     [SerializeField] Button confirmButton;
     [SerializeField] GameObject confirmDiscard;
+    [SerializeField] DialogueTooltip discardTooltip;
     [SerializeField] GameObject upgradeScreen, unitUIContainer;
     [SerializeField] GameObject unitUIPrefab;
+    [SerializeField] Color keyColor;
     public NuggetDisplay nuggetDisplay;
 
     Dictionary<SlagGearData, Dictionary<int, ShuffleBag<GearUpgrade>>> upgradePool;
@@ -179,15 +181,23 @@ public class UpgradeManager : MonoBehaviour {
 
     public void DiscardScratchOff() {
         confirmDiscard.SetActive(true);
+        discardTooltip.transform.parent.SetAsLastSibling();
+        discardTooltip.transform.parent.gameObject.SetActive(true);
+        discardTooltip.SetText("Yo, hold up! You ain't grabbin' your loot? <b>" + ColorToRichText("Once ya bounce, this phone's gone", keyColor) + "</b>—your call pal.");
     }
 
     public void CancelDiscard() {
         confirmDiscard.SetActive(false);
+        discardTooltip.gameObject.SetActive(false);
     }
 
     public void EndUpgradeSequence() {
         SelectUpgrade(null, null);
         upgrading = false;
+    }
+
+    static string ColorToRichText(string str, Color color) {
+        return "<color=#" + ColorUtility.ToHtmlStringRGB(color) + ">" + str + "</color>";
     }
 
 }

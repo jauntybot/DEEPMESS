@@ -144,7 +144,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
         beaconScratchOffEncountered = true;
 
         header = "TASKS";
-        body = "Ey, I got a <b>" + ColorToRichText("lotto card", keyColor) + "</b> here just for youse. Give it a scratch and see what's cookin', then <b>" + ColorToRichText("take your pick of the goods.", keyColor) + "</b>";
+        body = "Ey, I got a <b>" + ColorToRichText("lotto card", keyColor) + "</b> here just for youse. Give it a scratch and see what's cookin', then <b>" + ColorToRichText("take your pick of the goodies.", keyColor) + "</b>";
         tooltip.SetText(body, header, true, true);
 
         while (!tooltip.skip) {
@@ -248,7 +248,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
     }
 
 
-    public static string ColorToRichText(string str, Color color) {
+    static string ColorToRichText(string str, Color color) {
         return "<color=#" + ColorUtility.ToHtmlStringRGB(color) + ">" + str + "</color>";
     }
 

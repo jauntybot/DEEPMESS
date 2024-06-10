@@ -159,10 +159,12 @@ public class Grid : MonoBehaviour {
                     validCoord = true;
                         
                     spawn = spawns.Next();
+                    spawns.Remove(spawn);
                     if (tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Bile) validCoord = false;
+                    if (tiles.Find(sqr => sqr.coord == spawn).tileType == Tile.TileType.Blood) validCoord = false;
                     if (tiles.Find(sqr => sqr.coord == spawn) is TileBulb) validCoord = false;
-                    if (enemy.units.Find(u => u.coord == spawn) ) validCoord = false;
-                    if (player.units.Find(u => u.coord == spawn) ) validCoord = false;
+                    if (enemy.units.Find(u => u.coord == spawn)) validCoord = false;
+                    if (player.units.Find(u => u.coord == spawn)) validCoord = false;
                 }
             }
 // Final check there is a valid coordd to spawn

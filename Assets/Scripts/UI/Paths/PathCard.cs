@@ -12,7 +12,7 @@ public class PathCard : MonoBehaviour {
     public FloorChunk floorPacket;
 
     public Transform hazardsContainer;
-    [SerializeField] GameObject extremeTagPrefab, eliteTagPrefab;
+    [SerializeField] GameObject vanillaTagPrefab, hazardTagPrefab, extremeTagPrefab, eliteTagPrefab;
     [SerializeField] TMP_Text floorCount;
     public Button selectButton;
     bool selectable = true;
@@ -27,20 +27,27 @@ public class PathCard : MonoBehaviour {
 
         floorCount.text = floorPacket.packetLength.ToString();
 
-        for (int i = floorPacket.packetMods.Count - 1; i >= 0; i--) {
-            hazardsContainer.gameObject.SetActive(true);
-            GameObject prefab;
-            switch (floorPacket.packetMods[i]) {
-                default:
-                case FloorChunk.PacketMods.Hazard:
-                    prefab = extremeTagPrefab;
-                break;
-                case FloorChunk.PacketMods.Elite:
-                    prefab = eliteTagPrefab;
-                break;
+        GameObject prefab = null;
+            
+        if (floorPacket.packetMods.Count == 0) {
+            prefab = vanillaTagPrefab;
+        } else {
+            for (int i = floorPacket.packetMods.Count - 1; i >= 0; i--) {
+                switch (floorPacket.packetMods[i]) {
+                    default:
+                    case FloorChunk.PacketMods.Hazard:
+                        prefab = hazardTagPrefab;
+                    break;
+                    case FloorChunk.PacketMods.Elite:
+                        prefab = eliteTagPrefab;
+                    break;
+                    case FloorChunk.PacketMods.Extreme:
+                        prefab = extremeTagPrefab;
+                    break;
+                }
             }
-            Instantiate(prefab, hazardsContainer);
         }
+        Instantiate(prefab, hazardsContainer);
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(hazardsContainer.GetComponent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
