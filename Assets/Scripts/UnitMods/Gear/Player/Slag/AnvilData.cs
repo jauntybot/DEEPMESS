@@ -99,48 +99,9 @@ public class AnvilData : SlagGearData {
         //     unit.transform.position = endPos;
         // }
 
-        // unit.UpdateElement(moveTo);
+        if (unit is PlayerUnit pu && unit.grid.tiles.Find(sqr => sqr.coord == unit.coord) is TileBulb tb && pu.pManager.overrideEquipment == null) {
+            if (!tb.harvested && unit.equipment.Find(e => e is BulbEquipmentData) == null)
+                tb.HarvestBulb(pu);
+        }
     }
-
-    public override void UpgradeGear(GearUpgrade upgrade, int slotIndex) {
-        base.UpgradeGear(upgrade, slotIndex);
-//         if (targetPath ==  UpgradePath.Sludge) {
-// // UNIT TIER I - Upgrade move distance after placing
-//             if (upgrades[targetPath] == 1)
-//                 range = 3;
-// // UNIT TIER II - Upgrade unit base movement
-//             else if (upgrades[targetPath] == 2) {
-//                 slag.moveMod += 1;
-//                 adjacency = AdjacencyType.OfTypeInRange;
-//                 contextDisplay = GridContextuals.ContextDisplay.Parabolic;
-//             }
-//             else {
-//                 range = 1;
-//                 adjacency = AdjacencyType.Diamond;
-//                 contextDisplay = GridContextuals.ContextDisplay.Stepped;
-//             }
-//         } else if (targetPath == UpgradePath.Scab) {
-// // SPECIAL TIER I - Upgrade unit HP
-//             if (upgrades[targetPath] == 1) {
-//                 slag.hpMax += 1;
-//                 slag.elementCanvas.InstantiateMaxPips();
-//                 //slag.ui.overview.hPPips.UpdatePips();
-//                 slag.StartCoroutine(slag.TakeDamage(-1, GridElement.DamageType.Heal));
-//             }
-//         } else if (targetPath == UpgradePath.Shunt) {
-// // POWER TIER II - Upgrade unit HP
-//             if (upgrades[targetPath] == 2) {
-//                 slag.hpMax += 1;
-//                 slag.elementCanvas.InstantiateMaxPips();
-//                 //slag.ui.overview.hPPips.UpdatePips();
-//                 slag.StartCoroutine(slag.TakeDamage(-1, GridElement.DamageType.Heal));
-//             }
-//         }
-    }
-
-// Set unit max HP
-                // slag.hpMax = 3;
-                // if (slag.hpCurrent > slag.hpMax) slag.hpCurrent = slag.hpMax;
-                // slag.elementCanvas.InstantiateMaxPips();
-                // slag.ui.overview.InstantiateMaxPips();
 }
