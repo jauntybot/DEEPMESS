@@ -111,7 +111,6 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         user.cutsceneSkip = cutsceneToggle.isOn;
         user.scatterSkip = scatterToggle.isOn;
     }
-
     
     public void LoadRun(RunData run) {
 

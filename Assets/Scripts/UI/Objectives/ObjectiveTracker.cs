@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class ObjectiveTracker : MonoBehaviour {
 
-    List<Objective> activeObjectives;
+    public List<Objective> activeObjectives;
     [SerializeField] public GameObject objectiveCardPrefab, objectiveCardParent;
 
 
