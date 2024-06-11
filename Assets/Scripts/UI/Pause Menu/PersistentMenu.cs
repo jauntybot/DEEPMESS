@@ -17,7 +17,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     [SerializeField] AudioMixer mixer;
     [SerializeField] Slider musicSlider, sfxSlider;
     [SerializeField] TMP_Dropdown resolutionsDropdown;
-    [SerializeField] Toggle cutsceneToggle;
+    [SerializeField] Toggle cutsceneToggle, scatterToggle;
     [SerializeField] GameObject menuButton;
     public Animator fadeToBlack;
     public int startCavity;
@@ -42,7 +42,6 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         musicController = GetComponentInChildren<MusicController>();
         musicSlider.onValueChanged.AddListener(SetMusicVolume);
         sfxSlider.onValueChanged.AddListener(SetSFXVolume);
-        cutsceneToggle.onValueChanged.AddListener(CutsceneToggle);
         
         ConfigureResolutionDropdown();
         // musicSlider.value = 5f;
@@ -97,6 +96,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         musicSlider.value = user.musicVol;
         sfxSlider.value = user.sfxVol;
         cutsceneToggle.isOn = user.cutsceneSkip;
+        user.scatterSkip = scatterToggle.isOn;
         
         SetResolution(user.resolutionIndex);
         SetMusicVolume(user.musicVol);
@@ -109,8 +109,8 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         user.sfxVol = sfxSlider.value;
         user.resolutionIndex = currentResolutionIndex;
         user.cutsceneSkip = cutsceneToggle.isOn;
+        user.scatterSkip = scatterToggle.isOn;
     }
-
     
     public void LoadRun(RunData run) {
 
@@ -190,9 +190,6 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         pauseMenu.Anbandonable(false);
     }
 
-    void CutsceneToggle(bool toggle) {
-
-    }
 
     void SetMusicVolume(System.Single vol) {
         System.Single map = Util.Remap(vol, 0, 9, .0001f, .5f);

@@ -17,7 +17,7 @@ public class Tooltip : MonoBehaviour {
 
     [SerializeField] protected RectTransform rectTransform;
 
-    public virtual void SetText(string content = "", string header = "", bool clickToSkip = false, List<RuntimeAnimatorController> gif = null) {
+    public virtual void SetText(string content = "", string header = "", List<RuntimeAnimatorController> gif = null) {
         if (string.IsNullOrEmpty(header)) {
             headerField.transform.parent.gameObject.SetActive(false);
             transform.GetChild(0).GetComponent<VerticalLayoutGroup>().padding.top = 5;

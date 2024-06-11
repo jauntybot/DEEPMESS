@@ -202,12 +202,15 @@ public class ScenarioManager : MonoBehaviour {
                 }
                 yield return new WaitForSecondsRealtime(0.625f);
 
-                if (prevTurn == Turn.Descent)
+                bool skip = PersistentDataManager.instance.userData.scatterSkip;
+                if (prevTurn == Turn.Descent && !skip)
                     StartCoroutine(currentEnemy.TakeTurn(true));
-                else {
+                else if (!skip) {
                     if (uiManager.gameObject.activeSelf)
                         yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Antibody));
                     StartCoroutine(currentEnemy.TakeTurn(false));
+                } else if (skip) {
+                    currentEnemy.EndTurn();
                 }
             break;
             case Turn.Player:

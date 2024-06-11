@@ -138,7 +138,7 @@ public class ObjectiveManager : MonoBehaviour {
         if (objs != null)
             tracker.AssignObjectives(objs);
         else {
-            for (int i = 0; i <= activeObjectives.Count - 1; i++) {
+            for (int i = 0; i <= tracker.activeObjectives.Count - 1; i++) {
                 tracker.UnsubObjective(i);
             }
         }

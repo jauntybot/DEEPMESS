@@ -16,7 +16,7 @@ public class NeutralElementTooltip : Tooltip {
     [SerializeField] Sprite wallSprite, boneSprite;
     [SerializeField] RuntimeAnimatorController bloodAnim, bileAnim, bulbAnim;
 
-    public override void SetText(string content = "", string header = "", bool clickToSkip = false, List<RuntimeAnimatorController> gif = null) {
+    public override void SetText(string content = "", string header = "", List<RuntimeAnimatorController> gif = null) {
          transform.GetChild(0).gameObject.SetActive(true);
         
         if (string.IsNullOrEmpty(header)) 
@@ -55,22 +55,22 @@ public class NeutralElementTooltip : Tooltip {
             if (ge is Wall) {
                 SetText("Blocks movement, damages if landed on. Can be destroyed.", "WALL");
             } else if (ge is Beacon) {
-                SetText("Direct line to Gino.", "BEACON");
+                SetText("Direct line to Gino. Can be destroyed.", "BEACON");
             } else if (ge is BloatedBulb) {
                 SetText("Releases god thought when destroyed.", "BLOATED BULB");
             } else if (ge is Tile t) {
                 if (ge is TileBulb) {
-                    SetText("Contains a bulb.", "BULB", false, new List<RuntimeAnimatorController>{ bulbAnim });
+                    SetText("Contains a bulb.", "BULB", new List<RuntimeAnimatorController>{ bulbAnim });
                 } else {
                     switch(t.tileType) {
                         case Tile.TileType.Bone:
                             SetText("No special effect.", "BONE");
                         break;
                         case Tile.TileType.Bile:
-                            SetText("Destroys anything that lands in it.", "BILE", false, new List<RuntimeAnimatorController>{ bileAnim });
+                            SetText("Destroys anything that lands in it.", "BILE", new List<RuntimeAnimatorController>{ bileAnim });
                         break;
                         case Tile.TileType.Blood:
-                            SetText("Prevents Slag action while stopped in.", "BLOOD", false, new List<RuntimeAnimatorController>{ bloodAnim });
+                            SetText("Prevents Slag action while stopped in.", "BLOOD", new List<RuntimeAnimatorController>{ bloodAnim });
                         break;
                     }
                 }

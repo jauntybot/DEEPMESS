@@ -250,7 +250,7 @@ public class TutorialSequence : MonoBehaviour {
 
         header = "STRIKING THE NAIL";
         body = "<b>" + ColorToRichText("Chuck the Hammer straight", keyColor) + "</b> to smack the Nail, then pick the Slag for it to <b>" + ColorToRichText("bounce back", keyColor) + "</b> to." + '\n';
-        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ hittingTheNailAnim });
+        tooltip.SetText(body, header, new List<RuntimeAnimatorController>{ hittingTheNailAnim });
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             
@@ -310,7 +310,7 @@ public class TutorialSequence : MonoBehaviour {
 
         header = "HITTING ENEMIES";
         body = "Now you got two Slags, <b>" + ColorToRichText("share the Hammer", keyColor) + "</b>. Hit that enemy and <b>" + ColorToRichText("bounce the Hammer to the other Slag", keyColor) + "</b>." + '\n';
-        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ hittingEnemiesAnim });
+        tooltip.SetText(body, header, new List<RuntimeAnimatorController>{ hittingEnemiesAnim });
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -407,7 +407,7 @@ public class TutorialSequence : MonoBehaviour {
         tooltip.contentField.GetComponent<RectTransform>().sizeDelta = new Vector2(900, tooltip.contentField.GetComponent<RectTransform>().sizeDelta.y);
         header = "GEAR";
         body = "Each piece of Gear's unique. Check those <b>" + ColorToRichText("buttons", keyColor) + "</b> in the bottom left to get to know your arsenal." + '\n';
-        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ shieldAnim, anvilAnim, bigGrabAnim });
+        tooltip.SetText(body, header, new List<RuntimeAnimatorController>{ shieldAnim, anvilAnim, bigGrabAnim });
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);

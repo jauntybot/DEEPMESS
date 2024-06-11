@@ -50,7 +50,7 @@ namespace Relics {
                 case RelicType.RibbedKeychain:
                     if (evt.data is EnemyAttackData ea) {
                         if (evt.target is EnemyUnit)
-                            ea.dmgMod += ea.dmg;
+                            ea.dmgMod = ea.dmg;
                         else ea.dmgMod = 0;
                     }
     
