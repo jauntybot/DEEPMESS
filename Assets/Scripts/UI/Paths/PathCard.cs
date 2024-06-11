@@ -25,7 +25,7 @@ public class PathCard : MonoBehaviour {
         
         floorPacket = _packet;
 
-        floorCount.text = floorPacket.packetLength.ToString();
+        floorCount.text = _packet.packetType == FloorChunk.PacketType.BOSS? "?" : floorPacket.packetLength.ToString();
 
         GameObject prefab = null;
             

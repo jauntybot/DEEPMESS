@@ -397,11 +397,10 @@ public class FloorManager : MonoBehaviour {
     }
 
     void UpdateFloorCounter(int max = -1) {
-        int cavityOffset = -3;
-        if (scenario.startCavity >= 1) cavityOffset += 3;
-        if (scenario.startCavity >= 2) cavityOffset += 3;
-        if (scenario.startCavity >= 3) cavityOffset += 4;
-        uiManager.metaDisplay.UpdateCurrentFloor(floorCount, max);
+        if (floorSequence.currentThreshold != FloorChunk.PacketType.BOSS)
+            uiManager.metaDisplay.UpdateCurrentFloor(floorCount, max);
+        else 
+            uiManager.metaDisplay.UpdateCurrentFloor(floorCount);
     }
 
     public IEnumerator DescendUnits(List<GridElement> units, EnemyManager enemy = null, bool hardLand = false) {

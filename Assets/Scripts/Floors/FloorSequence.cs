@@ -65,14 +65,12 @@ public class FloorSequence : ScriptableObject {
         activePacket.inOrder = true;
         activePacket.minEnemies = packet.minEnemies;
         activePacket.packetLength = packet.packetLength;
-        // activePacket.nuggets = packet.nuggets;
-        // activePacket.relics = packet.relics;
 
         activePacket.packetMods = new(packet.packetMods);
         activePacket.hazardFloors = new(packet.hazardFloors);
         activePacket.eliteSpawn = false;
         activePacket.evtOffset = packet.evtOffset;
-        //activePacket.objectives = new(packet.objectives);
+
         activePacket.firstFloors = new(packet.firstFloors);
         //activePacket.floors = new(packet.floors);
 
@@ -132,6 +130,8 @@ public class FloorSequence : ScriptableObject {
     public FloorDefinition GetFloor(bool first = false) {
 // First floor of packet
         FloorDefinition floor;
+        if (activePacket.floors.Count == 0 && activePacket.packetType == FloorChunk.PacketType.BOSS)
+            StartPacket(bossPacket);
         if (first && currentThreshold != FloorChunk.PacketType.BOSS) {
             floor = activePacket.firstFloors[0];
             activePacket.firstFloors.Remove(floor);
