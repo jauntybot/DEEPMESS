@@ -13,6 +13,7 @@ public class EnemyManager : UnitManager {
     public List<GameObject> pendingPreviews = new();
     protected Coroutine actingUnitCo;
 
+
     [Header ("RELIC REFS - REMOVE")]
     [SerializeField] Unit tacklePrefab;
 
@@ -77,7 +78,7 @@ public class EnemyManager : UnitManager {
     }
 
 
-    public virtual IEnumerator TakeTurn(bool scatter) {
+    public virtual IEnumerator TakeTurn(bool _scatter) {
 // Reset manager and units for turn
         foreach(Unit u in units) {
             u.energyCurrent = u.energyMax;
@@ -111,9 +112,9 @@ public class EnemyManager : UnitManager {
                 break;
 
 // Yield to selected acting EnemyUnit coroutine
-            if (unitsToAct[0] is EnemyUnit enemy && !(unitsToAct[0] is EnemyStaticUnit && scatter)) {
+            if (unitsToAct[0] is EnemyUnit enemy && !(unitsToAct[0] is EnemyStaticUnit && _scatter)) {
                 SelectUnit(enemy);
-                StartCoroutine(scatter ? enemy.ScatterTurn() : enemy.CalculateAction());
+                StartCoroutine(_scatter ? enemy.ScatterTurn() : enemy.CalculateAction());
                 unitActing = true;
 
                 while (unitActing) {

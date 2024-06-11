@@ -23,7 +23,8 @@ public class FloorDefinitionEditor : Editor
         if (arg.atlas) {
             if (GUILayout.Button("Open FloorEditor"))
                 FloorEditor.Init(arg);
-            EditorList.Show(tar.FindProperty("initSpawns"));
+            //EditorList.Show(tar.FindProperty("initSpawns"));
+            EditorGUILayout.LabelField(arg.spawnElite?"spawn" : "no spawn");
             
         } else {
             EditorGUILayout.HelpBox("Serialize a FloorAtlas to open FloorEditor.", MessageType.Warning);

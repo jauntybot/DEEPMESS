@@ -179,16 +179,19 @@ public class UpgradeManager : MonoBehaviour {
         confirmButton.gameObject.SetActive(false);
     }
 
+    bool confirming = false;
     public void DiscardScratchOff() {
+        
         confirmDiscard.SetActive(true);
         discardTooltip.transform.parent.SetAsLastSibling();
-        discardTooltip.transform.parent.gameObject.SetActive(true);
-        discardTooltip.SetText("Yo, hold up! You ain't grabbin' your loot? <b>" + ColorToRichText("Once ya bounce, this phone's gone", keyColor) + "</b>—your call pal.");
+        discardTooltip.transform.GetChild(0).gameObject.SetActive(true);
+        
+        discardTooltip.SetText("Yo, hold up! You ain't grabbin' your loot? <b>" + ColorToRichText("Once ya bounce, this phone's gone", keyColor) + "</b>-your call pal.", "You sure?", false, true);
     }
 
     public void CancelDiscard() {
         confirmDiscard.SetActive(false);
-        discardTooltip.gameObject.SetActive(false);
+        discardTooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 
     public void EndUpgradeSequence() {

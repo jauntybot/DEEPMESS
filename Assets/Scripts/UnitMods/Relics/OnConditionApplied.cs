@@ -13,6 +13,16 @@ namespace Relics {
         public override void Init() {
             ObjectiveEventManager.AddListener<UnitConditionEvent>(ConditionApplied);
             base.Init();
+            switch(relicType) {
+                default:break;
+                case RelicType.ScytheCells:
+                    ScenarioManager scenario = ScenarioManager.instance;
+                    foreach(Unit u in scenario.currentEnemy.units) {
+                        if (u.conditions.Contains(Unit.Status.Restricted)) 
+                            u.ApplyCondition(Unit.Status.Weakened);
+                    }
+                break;
+            }
         }
 
          protected virtual void ConditionApplied(UnitConditionEvent evt) {

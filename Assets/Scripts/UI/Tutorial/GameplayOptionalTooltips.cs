@@ -57,7 +57,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
 
         header = "BULBS";
         body = "<b>" + ColorToRichText("Bulbs", keyColor) + "</b>, handy munchies for your Slags. Step on them to grab, 1 per Slag. <b>" + ColorToRichText("Bulbs are a free action", keyColor) + "</b>, so don't hoard them." + '\n';
-        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ bulbAnim });
+        tooltip.SetText(body, header, true, false, new List<RuntimeAnimatorController>{ bulbAnim });
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
@@ -86,6 +86,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
             
         }
 
+        screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 
@@ -106,6 +107,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
             
         }
 
+        screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 
@@ -180,7 +182,7 @@ public class GameplayOptionalTooltips : MonoBehaviour
 
         header = "SLAG REVIVE";
         body = "Slags get <b>" + ColorToRichText("downed", keyColor) + "</b>, no biggie. Hammer the downed one to <b>" + ColorToRichText("revive", keyColor) + "</b> or let 'em nap. Your call, squish." + '\n';
-        tooltip.SetText(body, header, true, new List<RuntimeAnimatorController>{ reviveAnim });
+        tooltip.SetText(body, header, true, false, new List<RuntimeAnimatorController>{ reviveAnim });
 
         while (!tooltip.skip) 
             yield return new WaitForSecondsRealtime(1/Util.fps);   

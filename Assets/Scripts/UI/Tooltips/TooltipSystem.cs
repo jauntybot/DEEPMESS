@@ -23,7 +23,7 @@ public class TooltipSystem : MonoBehaviour {
 
     public static void ShowHover(TooltipTrigger trigger) {
         activeTrigger = trigger;
-        instance.tooltipHover.SetText(trigger.content, trigger.header, false);
+        instance.tooltipHover.SetText(trigger.content, trigger.header);
         instance.tooltipHover.transform.GetChild(0).gameObject.SetActive(true);
     }
 
@@ -59,7 +59,7 @@ public class TooltipSystem : MonoBehaviour {
         }
         
         activeTrigger = trigger;
-        instance.tooltipTR.SetText(trigger.content, trigger.header, false, list);
+        instance.tooltipTR.SetText(trigger.content, trigger.header, list);
         instance.tooltipTR.transform.GetChild(0).gameObject.SetActive(true);
     }
 
@@ -70,7 +70,7 @@ public class TooltipSystem : MonoBehaviour {
         }
 
         activeTrigger = trigger;
-        instance.tooltipBL.SetText(trigger.content, trigger.header, false, list);
+        instance.tooltipBL.SetText(trigger.content, trigger.header, list);
         instance.tooltipBL.transform.GetChild(0).gameObject.SetActive(true);
 
         if (trigger is GearTooltipTrigger tr) {

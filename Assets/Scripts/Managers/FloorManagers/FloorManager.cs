@@ -397,7 +397,7 @@ public class FloorManager : MonoBehaviour {
     }
 
     void UpdateFloorCounter(int max = -1) {
-        if (floorSequence.currentThreshold != FloorChunk.PacketType.BOSS)
+        if (floorSequence.activePacket.packetType != FloorChunk.PacketType.BOSS)
             uiManager.metaDisplay.UpdateCurrentFloor(floorCount, max);
         else 
             uiManager.metaDisplay.UpdateCurrentFloor(floorCount);
@@ -419,12 +419,11 @@ public class FloorManager : MonoBehaviour {
         }
 
 // Spawns elite
-        if (floorSequence.activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite) || floorSequence.activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme)) {
-            if (currentFloor.lvlDef.spawnElite) {
-                yield return new WaitForSecondsRealtime(0.75f);
-                yield return StartCoroutine(SpawnBoss(floorSequence.elitePrefab, true));
-            }
+        if (currentFloor.lvlDef.spawnElite) {
+            yield return new WaitForSecondsRealtime(0.75f);
+            yield return StartCoroutine(SpawnBoss(floorSequence.elitePrefab, true));
         }
+        
 
         scenario.player.DescendGrids(currentFloor);
         currentFloor.LockGrid(false);

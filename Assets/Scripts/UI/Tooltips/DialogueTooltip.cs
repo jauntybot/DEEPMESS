@@ -15,7 +15,7 @@ public class DialogueTooltip : Tooltip {
     AudioSource audioSource;
     [SerializeField] Animator portraitAnim;
 
-    void Start() {
+    void Awake() {
         audioSource = GetComponent<AudioSource>();
         anim = GetComponent<Animator>();
         tw = contentField.GetComponent<DialogueTypewriter>();
@@ -26,8 +26,8 @@ public class DialogueTooltip : Tooltip {
         anchor.anchoredPosition = Vector2.zero;
     }
 
-    public virtual void SetText(string content, string header = "", bool skip = false, bool gino = false, List<RuntimeAnimatorController> gif = null) {
-        base.SetText(content, header, clickToSkip, gif);
+    public virtual void SetText(string content, string header = "", bool _skip = false, bool gino = false, List<RuntimeAnimatorController> gif = null) {
+        base.SetText(content, header, gif);
         if (tw)
             tw.StartCoroutine(tw.Typerwrite(content));
 
@@ -41,7 +41,7 @@ public class DialogueTooltip : Tooltip {
         portraitAnim.GetComponent<RectTransform>().anchoredPosition = gino? new(77, -95) : new(40, -120);
         portraitAnim.GetComponent<RectTransform>().sizeDelta = gino? new(200, 200) : new(235, 235);
 
-        if (skip)     
+        if (_skip)     
             StartCoroutine(WaitForClick());
 
         
