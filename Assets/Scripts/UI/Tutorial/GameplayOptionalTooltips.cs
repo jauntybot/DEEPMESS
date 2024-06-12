@@ -144,7 +144,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
     public IEnumerator BeaconScratchOff() {
         beaconScratchOffEncountered = true;
 
-        header = "TASKS";
+        header = "LUCKY LIXXX";
         body = "Ey, I got a <b>" + ColorToRichText("lotto card", keyColor) + "</b> here just for youse. Give it a scratch and see what's cookin', then <b>" + ColorToRichText("take your pick of the goodies.", keyColor) + "</b>";
         tooltip.SetText(body, header, true, true);
 
@@ -225,7 +225,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
 
     public IEnumerator BossSlain() {        
         screenFade.gameObject.SetActive(true);
-        
+
         header = "NAIL INCOMING";
         body = "Cracked the big guy! <b>" + ColorToRichText("Brace yourself", keyColor) + "</b>, massive impact incoming!" + '\n';
         tooltip.SetText(body, header, true);

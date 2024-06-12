@@ -143,12 +143,14 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
             relicDropdown.value = 0;
             relicDropdown.RefreshShownValue();
 
+            pauseMenu.ToggleOptionsBack(false);
             menuButton.SetActive(true);
         }
 // Initialize the MainMenuManager
         else if (MainMenuManager.instance) {
             menuButton.SetActive(false);
             MainMenuManager.instance.optionsButton.onClick.AddListener(MainMenuPause);
+            pauseMenu.ToggleOptionsBack(true);
             if (upcomingCurrency > 0) MainMenuManager.instance.StartCoroutine(MainMenuManager.instance.WhatsToCome(upcomingCurrency));
             else MainMenuManager.instance.Init();
         }
@@ -187,7 +189,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
 
     void MainMenuPause() {
         pauseMenu.gameObject.SetActive(true);
-        pauseMenu.Anbandonable(false);
+        pauseMenu.Options(true);
     }
 
 
