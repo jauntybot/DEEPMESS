@@ -422,6 +422,7 @@ public class FloorManager : MonoBehaviour {
         if (currentFloor.lvlDef.spawnElite) {
             yield return new WaitForSecondsRealtime(0.75f);
             yield return StartCoroutine(SpawnBoss(floorSequence.elitePrefab, true));
+            currentFloor.lvlDef.spawnElite = false;
         }
         
 
@@ -716,25 +717,25 @@ public class FloorManager : MonoBehaviour {
 
         uiManager.ToggleBattleCanvas(false);
 
-        if (floorSequence.currentThreshold != FloorChunk.PacketType.Tutorial && tutorial.isActiveAndEnabled && !tutorial.sequenceEnd) yield return tutorial.StartCoroutine(tutorial.TutorialEnd());            
-            if (!scenario.gpOptional.pathsEncountered) 
-                yield return StartCoroutine(scenario.gpOptional.Paths());
-            yield return scenario.pathManager.PathSequence(); 
-            if (floorSequence.currentThreshold == FloorChunk.PacketType.I) {
-                yield return GameplayOptionalTooltips.instance.StartCoroutine(GameplayOptionalTooltips.instance.Objectives());
-                yield return scenario.objectiveManager.ObjectiveSequence(false);
-            }
+        if (floorSequence.currentThreshold != FloorChunk.PacketType.BARRIER) {
+            if (floorSequence.currentThreshold != FloorChunk.PacketType.Tutorial && tutorial.isActiveAndEnabled && !tutorial.sequenceEnd) yield return tutorial.StartCoroutine(tutorial.TutorialEnd());            
+                if (!scenario.gpOptional.pathsEncountered) 
+                    yield return StartCoroutine(scenario.gpOptional.Paths());
+                yield return scenario.pathManager.PathSequence(); 
+                if (floorSequence.currentThreshold == FloorChunk.PacketType.I) {
+                    yield return GameplayOptionalTooltips.instance.StartCoroutine(GameplayOptionalTooltips.instance.Objectives());
+                    yield return scenario.objectiveManager.ObjectiveSequence(false);
+                }
 
-            if (floorSequence.currentThreshold == FloorChunk.PacketType.BOSS) {
-                floorSequence.StartPacket(floorSequence.bossPacket);
-                if (!scenario.gpOptional.prebossEncountered)
-                    yield return StartCoroutine(scenario.gpOptional.Preboss());
-                uiManager.ToggleObjectiveTracker(false);
-        }
+                if (floorSequence.currentThreshold == FloorChunk.PacketType.BOSS) {
+                    floorSequence.StartPacket(floorSequence.bossPacket);
+                    if (!scenario.gpOptional.prebossEncountered)
+                        yield return StartCoroutine(scenario.gpOptional.Preboss());
+                    uiManager.ToggleObjectiveTracker(false);
+            }
 
 // Lerp units offscreen
         scenario.player.nail.PlaySound(cavityTransition);
-        if (floorSequence.currentThreshold != FloorChunk.PacketType.BARRIER) {
             StopCoroutine(floating);
             timer = 0;
             Vector3 startPos = transitionParent.transform.position;
@@ -797,8 +798,6 @@ public class FloorManager : MonoBehaviour {
         } else {
             StartCoroutine(scenario.Win());
             while (scenario.scenario == ScenarioManager.Scenario.EndState) {
-                if (parallax)
-                    parallax.ScrollParallax(Time.deltaTime * -1);
                 yield return null;
             }
         }

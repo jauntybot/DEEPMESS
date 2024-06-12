@@ -31,10 +31,6 @@ namespace Relics {
             }
         }
 
-        public override void UnsubRelic() {
-            base.UnsubRelic();
-            ObjectiveEventManager.RemoveListener<GridElementDestroyedEvent>(OnElementDestroyed);
-        }
 
         public virtual IEnumerator Detonate(Unit u, int dmg) {
             u.StartCoroutine(ExplosionVFX(u));
@@ -91,6 +87,10 @@ namespace Relics {
                 GameObject g = Instantiate(prefab, u.grid.PosFromCoord(c), Quaternion.identity);
                 g.GetComponentInChildren<SpriteRenderer>().sortingOrder = u.grid.SortOrderFromCoord(c);
             }
+        }
+        public override void UnsubRelic() {
+            base.UnsubRelic();
+            ObjectiveEventManager.RemoveListener<GridElementDestroyedEvent>(OnElementDestroyed);
         }
 
     }

@@ -38,6 +38,10 @@ public class Unit : GridElement {
 // Functions that will change depending on the class they're inherited from
 #region Inherited Functionality
 
+    protected virtual void Awake() {
+        if (conditionDisplay) conditionDisplay.Init(this);
+    }
+
     protected override void Start() {
 // Exposed base.Start functionality
         audioSource = GetComponent<AudioSource>();
@@ -56,7 +60,6 @@ public class Unit : GridElement {
             gfxAnim = gfx[0].GetComponent<Animator>();
             gfxAnim.keepAnimatorStateOnDisable = true;
         }
-        if (conditionDisplay) conditionDisplay.Init(this);
 
 
 // Initialize equipment from prefab

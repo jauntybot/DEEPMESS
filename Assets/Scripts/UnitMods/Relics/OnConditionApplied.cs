@@ -36,6 +36,12 @@ namespace Relics {
                 break;
             }
         }
+
+        public override void UnsubRelic() {
+            base.UnsubRelic();
+            ObjectiveEventManager.RemoveListener<UnitConditionEvent>(ConditionApplied);
+        }
+
     }
 }
 

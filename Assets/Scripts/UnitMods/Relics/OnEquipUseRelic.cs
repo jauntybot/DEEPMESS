@@ -66,5 +66,10 @@ namespace Relics {
             }
 
         }
+
+        public override void UnsubRelic() {
+            base.UnsubRelic();
+            ObjectiveEventManager.RemoveListener<OnEquipmentUse>(OnEquipmentUse);
+        }
     }
 }
