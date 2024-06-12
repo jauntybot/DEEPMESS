@@ -526,11 +526,13 @@ public class FloorManager : MonoBehaviour {
             // }
         }
         // Time.timeScale = 1;
+        unit.transform.parent = unit.manager.unitParent.transform;
         unit.DescentVFX(currentFloor.tiles.Find(sqr => sqr.coord == unit.coord), subElement);
         unit.transform.position = to;
         unit.StoreInGrid(currentFloor);
         unit.UpdateElement(unit.coord);
         fade.AlphaSelf = 1;
+        
 
         unit.PlaySound(unit.landingSFX);
         if (unit.gfxAnim)
@@ -556,8 +558,6 @@ public class FloorManager : MonoBehaviour {
                     cos.RemoveAt(i);
             }
         }
-        if (unit != null)
-            unit.transform.parent = unit.manager.unitParent.transform;
     }
 
 // Coroutine for descending the nail at a regulated random position
