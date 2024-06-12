@@ -6,15 +6,11 @@ using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour {
     
-    [SerializeField] Button abandonButton;
+    [SerializeField] Button optionsBack;
     [SerializeField] GameObject mainDirectory, options, helpMenu, quitPanel, abandonPanel;
     void OnEnable() {
         Time.timeScale = 0;
     }
-
-    public void Anbandonable(bool state) {
-        abandonButton.gameObject.SetActive(state);
-     }
 
     public void ResumeButton() {   
         Time.timeScale = 1;
@@ -46,6 +42,14 @@ public class PauseMenu : MonoBehaviour {
         ResumeButton();
 
         ScenarioManager.instance.StartCoroutine(ScenarioManager.instance.Lose());        
+    }
+
+    public void ToggleOptionsBack(bool mainMenu) {
+        optionsBack.onClick.RemoveAllListeners();
+        optionsBack.onClick.AddListener(delegate { Options(false); });
+        if (mainMenu) {
+            optionsBack.onClick.AddListener(ResumeButton);
+        }
     }
 
     public void QuitToMainMenu() {

@@ -64,7 +64,7 @@ public class UnitUpgradeUI : UnitUI {
         unit.StartCoroutine(unit.TakeDamage(-1, GridElement.DamageType.Heal));
         upgrade.HPPurchased();
         PlayerManager pm = (PlayerManager)unit.manager;
-        pm.collectedNuggets-=2;
+        pm.collectedNuggets-=3;
         upgrade.nuggetDisplay.UpdateNuggetCount();
     }
 }

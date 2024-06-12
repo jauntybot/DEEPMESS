@@ -15,7 +15,7 @@ public class HPUpgradeSlot : UpgradeSlot {
 
 
     public virtual void UpdateSlot(bool state = true) {
-        selectable = state && ScenarioManager.instance.player.collectedNuggets >= 2;
+        selectable = state && ScenarioManager.instance.player.collectedNuggets >= 3;
 
         selection.SetActive(!filled && selectable);
         actionPreview.gameObject.SetActive(filled || selectable);
