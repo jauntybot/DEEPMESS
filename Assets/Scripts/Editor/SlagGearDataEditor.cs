@@ -37,10 +37,8 @@ public class SlagGearDataEditor : Editor {
             EditorGUI.BeginChangeCheck();
             upgradeIndex = EditorGUILayout.Popup("Upgrade", upgradeIndex, options);
             if (EditorGUI.EndChangeCheck())
-            {
                 selectedGear = upgrades[options[upgradeIndex]];
-                Debug.Log(options[upgradeIndex]);
-            }
+            
             GUILayout.BeginHorizontal();
             for (int x = 0; x <= 2; x++) {
                 string slot;

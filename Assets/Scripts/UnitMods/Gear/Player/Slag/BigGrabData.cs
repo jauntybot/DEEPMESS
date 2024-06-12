@@ -55,7 +55,8 @@ public class BigGrabData : SlagGearData {
 
     public override void UntargetEquipment(GridElement user) {
         base.UntargetEquipment(user);
-        if (multiselect && firstTarget) {
+        if (firstTarget) {
+            user.grid.AddElement(firstTarget);
             firstTarget.UpdateElement(firstTarget.coord);
             firstTarget = null;
         }
@@ -70,11 +71,13 @@ public class BigGrabData : SlagGearData {
             Unit unit = (Unit)user;
             unit.grid.DisableGridHighlight();
             Vector2 dir = user.coord - target.coord;
+            target.grid.RemoveElement(target);
 
 // Nested TargetEquipment functionality inside of first UseGear
             List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range, this);
+            validCoords.Add(target.coord);
 
-// SPECIAL TIER I -- Throw backwards
+// Remove orthagonal adjacencies
             if (!flexibleSlime) {
                 if (dir.x != 0) {
                     int sign = (int)Mathf.Sign(dir.x);
@@ -144,7 +147,7 @@ public class BigGrabData : SlagGearData {
     public IEnumerator GrabUnit(Unit grabber, GridElement grabbed) {
         Vector3 origin = grabber.grid.PosFromCoord(grabber.coord);
         Vector3 target = grabbed.grid.PosFromCoord(grabbed.coord);
-        Vector3 dif = target + (origin - target)/2;
+        Vector3 dif = origin + (origin - target).normalized/2;
         float timer = 0;
         while (timer < animDur/2) {
 
@@ -153,6 +156,9 @@ public class BigGrabData : SlagGearData {
             yield return null;
             timer += Time.deltaTime;
         }
+        grabbed.transform.position = dif;
+        foreach (SpriteRenderer sr in grabbed.gfx)
+            sr.sortingOrder = grabber.grid.SortOrderFromCoord(grabber.coord)+1;
 
     }
 
@@ -189,10 +195,12 @@ public class BigGrabData : SlagGearData {
             eu.ApplyCondition(Unit.Status.Stunned);
             if (maim) eu.moveMod = -1;
         }
+
         
 // Deal damage on throw
         if (impact) cos.Add(thrown.StartCoroutine(thrown.TakeDamage(1, GridElement.DamageType.Fall, thrower, this)));
 
+        thrower.grid.AddElement(thrown);
 
         if (thrown is Unit u2)
             u2.UpdateElement(coord, thrower, this);
@@ -205,32 +213,4 @@ public class BigGrabData : SlagGearData {
         }
     }
 
-    public override void UpgradeGear(GearUpgrade upgrade, int slotIndex) {
-        base.UpgradeGear(upgrade, slotIndex);
-    //     if (targetPath ==  UpgradePath.Sludge) {
-    //         if (upgrades[targetPath] == 1) {
-    //             slag.hpMax ++;
-    //             slag.elementCanvas.InstantiateMaxPips();
-    //             //slag.ui.overview.hPPips.UpdatePips();
-    //             slag.StartCoroutine(slag.TakeDamage(-1, GridElement.DamageType.Heal));
-    //         }
-    //     } else if (targetPath == UpgradePath.Shunt) {
-    //         if (upgrades[targetPath] == 0) {
-    //             foreach (GridElement ge in upgradeTargets) {
-    //                 if (firstTargets.Contains(ge)) firstTargets.Remove(ge);
-    //             }
-    //             range = 3;
-    //         } else if (upgrades[targetPath] == 1) {
-    //             slag.hpMax ++;
-    //             slag.elementCanvas.InstantiateMaxPips();
-    //             //slag.ui.overview.hPPips.UpdatePips();
-    //             slag.StartCoroutine(slag.TakeDamage(-1, GridElement.DamageType.Heal));
-
-    //             range += 2;
-    //         } else if (upgrades[targetPath] == 2) {
-    //             foreach (GridElement ge in upgradeTargets)
-    //                 firstTargets.Add(ge);
-    //         }
-    //     }
-    }
 }

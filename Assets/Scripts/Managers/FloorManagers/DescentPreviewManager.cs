@@ -78,6 +78,8 @@ public class DescentPreviewManager : MonoBehaviour {
             previewing = !previewing;
             if (scenario.currentTurn == ScenarioManager.Turn.Player)
                 UIManager.instance.endTurnButton.interactable = !previewing;
+            UIManager.instance.ToggleUndoButton(!previewing && scenario.player.undoOrder.Count > 0);
+
             
             FloorPeekEvent evt = ObjectiveEvents.FloorPeekEvent;
             evt.down = dir != 1;

@@ -436,9 +436,9 @@ public class PlayerManager : UnitManager {
             if (!equip.multiselect || equip.firstTarget == null) {
                 contextuals.StartUpdateCoroutine();
             }
-            if (equip.contextualAnimGO != null) {
+            if (equip.contextualAnimGO != null) { // gear
                 contextuals.DisplayGridContextuals(selectedUnit, equip, equip.gridColor);
-            } else {
+            } else { // movement
                 contextuals.DisplayGridContextuals(selectedUnit, equip, equip.gridColor, selectedUnit.gameObject);
             }
             targetCursorState = equip is MoveData ? PlayerController.CursorState.Move : PlayerController.CursorState.Target;

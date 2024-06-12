@@ -16,7 +16,7 @@ namespace Relics {
             ScenarioManager scenario = ScenarioManager.instance;
             PlayerManager manager = scenario.player;
             switch (relicType) {
-                default:
+                default: break;
                 case RelicType.AutopsyReport:
                     manager.reviveTo = 3;
                 break;
@@ -29,11 +29,9 @@ namespace Relics {
                 case RelicType.TackleBox:
                     scenario.tackleChance = 15;
                 break;
-                case RelicType.FireSaleTag:
-                    scenario.pathManager.objectiveDiscount = 1;
-                break;
+
                 case RelicType.TTS800:
-                    scenario.floorManager.nailTries+=3;
+                    scenario.floorManager.nailTries=3;
                 break;
             }
 
@@ -41,29 +39,26 @@ namespace Relics {
 
         public override void UnsubRelic() {
             base.UnsubRelic();
-            // ScenarioManager scenario = ScenarioManager.instance;
-            // PlayerManager manager = scenario.player;
-            // switch (relicType) {
-            //     default:
-            //     case RelicType.AutopsyReport:
-            //         manager.reviveTo = 3;
-            //     break;
-            //     case RelicType.BulbShoot:
-            //         foreach (Unit u in manager.units) {
-            //             if (u is PlayerUnit pu)
-            //                 pu.bulbMod++;
-            //         }
-            //     break;
-            //     case RelicType.TackleBox:
-            //         scenario.tackleChance = 15;
-            //     break;
-            //     case RelicType.FireSaleTag:
-            //         scenario.pathManager.objectiveDiscount = 1;
-            //     break;
-            //     case RelicType.TTS800:
-            //         scenario.floorManager.nailTries+=3;
-            //     break;
-            // }
+            ScenarioManager scenario = ScenarioManager.instance;
+            PlayerManager manager = scenario.player;
+            switch (relicType) {
+                default: break;
+                case RelicType.AutopsyReport:
+                    manager.reviveTo = 3;
+                break;
+                case RelicType.BulbShoot:
+                    foreach (Unit u in manager.units) {
+                        if (u is PlayerUnit pu)
+                            pu.bulbMod--;
+                    }
+                break;
+                case RelicType.TackleBox:
+                    scenario.tackleChance = 0;
+                break;
+                case RelicType.TTS800:
+                    scenario.floorManager.nailTries=0;
+                break;
+            }
         }
     }
 }

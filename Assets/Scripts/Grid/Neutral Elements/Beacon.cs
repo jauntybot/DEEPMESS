@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Beacon : Unit {
 
+    [SerializeField] SFX callDownSFX;
     public override event OnElementUpdate ElementDestroyed;
 
     public override void TargetElement(bool state) {
@@ -20,7 +21,7 @@ public class Beacon : Unit {
         yield return ScenarioManager.instance.objectiveManager.StartCoroutine(ScenarioManager.instance.objectiveManager.ObjectiveSequence(true));
         yield return new WaitForSecondsRealtime(0.5f);
         yield return ScenarioManager.instance.player.StartCoroutine(ScenarioManager.instance.player.upgradeManager.UpgradeSequence());
-        PlaySound(dmgdSFX); // Placeholder param for call down SFX
+        PlaySound(callDownSFX); // Placeholder param for call down SFX
         yield return new WaitForSecondsRealtime(0.75f);
         yield return FloorManager.instance.StartCoroutine(FloorManager.instance.TransitionToSlimeHub(false));
         ScenarioManager.instance.currentTurn = ScenarioManager.Turn.Player;

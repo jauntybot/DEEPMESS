@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameplayOptionalTooltips : MonoBehaviour
-{
+public class GameplayOptionalTooltips : MonoBehaviour {
 
 
     public static GameplayOptionalTooltips instance;
@@ -225,6 +224,8 @@ public class GameplayOptionalTooltips : MonoBehaviour
     }
 
     public IEnumerator BossSlain() {        
+        screenFade.gameObject.SetActive(true);
+        
         header = "NAIL INCOMING";
         body = "Cracked the big guy! <b>" + ColorToRichText("Brace yourself", keyColor) + "</b>, massive impact incoming!" + '\n';
         tooltip.SetText(body, header, true);

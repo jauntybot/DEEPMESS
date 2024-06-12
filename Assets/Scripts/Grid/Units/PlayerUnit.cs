@@ -80,7 +80,7 @@ public class PlayerUnit : Unit {
                 } else {
                     co = StartCoroutine(base.ExecuteAction(target));
                     Animator anim = equip.contextualAnimGO.GetComponentInChildren<Animator>();
-                    pManager.contextuals.UpdateContext(equip, equip.gridColor, equip.multiContext, anim, target);
+                    pManager.contextuals.UpdateContext(equip, equip.gridColor, equip.multiContext, anim, equip is HammerData ? target : this);
                 }
             }
         } else {
