@@ -35,8 +35,8 @@ public class GameplayOptionalTooltips : MonoBehaviour {
     public IEnumerator Paths() {
         pathsEncountered = true;
 
-        header = "PATHS";
-        body = "<b>" + ColorToRichText("Pick your path", keyColor) + "</b>, squish. Big Slime upstairs has intel on what lies below. Get a sense of the <b>" + ColorToRichText("danger", keyColor) + "</b>, and a peek at the <b>" + ColorToRichText("rewards", keyColor) + "</b>." + '\n';
+        header = "CHUNKS";
+        body = "<b>" + ColorToRichText("Pick your path", keyColor) + "</b>, squish. Big Slime upstairs has intel on what lies below." ; //Get a sense of the <b>" + ColorToRichText("danger", keyColor) + "</b>, and a peek at the <b>" + ColorToRichText("rewards", keyColor) + "</b>." + '\n'
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
