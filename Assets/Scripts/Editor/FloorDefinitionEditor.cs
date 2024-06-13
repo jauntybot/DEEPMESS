@@ -24,7 +24,7 @@ public class FloorDefinitionEditor : Editor
             if (GUILayout.Button("Open FloorEditor"))
                 FloorEditor.Init(arg);
             //EditorList.Show(tar.FindProperty("initSpawns"));
-            EditorGUILayout.LabelField(arg.spawnElite?"spawn" : "no spawn");
+            EditorGUILayout.LabelField(arg.spawnBeacon?"spawn" : "no spawn");
             
         } else {
             EditorGUILayout.HelpBox("Serialize a FloorAtlas to open FloorEditor.", MessageType.Warning);

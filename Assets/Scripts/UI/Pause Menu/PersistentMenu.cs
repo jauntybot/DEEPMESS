@@ -101,7 +101,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         SetResolution(user.resolutionIndex);
         SetMusicVolume(user.musicVol);
         SetSFXVolume(user.sfxVol);
-        
+        Screen.fullScreen = user.fullscreen;
     }
 
     public void SaveUser(ref UserData user) {
@@ -110,6 +110,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         user.resolutionIndex = currentResolutionIndex;
         user.cutsceneSkip = cutsceneToggle.isOn;
         user.scatterSkip = scatterToggle.isOn;
+        user.fullscreen = Screen.fullScreen;
     }
     
     public void LoadRun(RunData run) {
@@ -203,6 +204,10 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         System.Single map = Util.Remap(vol, 0, 9, .0001f, .6f);
         mixer.SetFloat(MIXER_SFX, Mathf.Log10(map) * 30);
         
+    }
+
+    public void ToggleFullscreen() {
+        Screen.fullScreen = !Screen.fullScreen;
     }
 
     public void SetResolution(int index) {

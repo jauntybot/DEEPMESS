@@ -86,6 +86,7 @@ public class FloorManager : MonoBehaviour {
     }
 
     public void GenerateFloor(FloorDefinition definitionOverride = null, bool first = false) {
+        Debug.Log("Generate");
         int index = floorSequence.floorsGot;
 
         Grid newFloor = Instantiate(floorPrefab, floorParent).GetComponent<Grid>();
