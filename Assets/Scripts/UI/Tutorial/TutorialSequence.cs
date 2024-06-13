@@ -445,7 +445,7 @@ public class TutorialSequence : MonoBehaviour {
         screenFade.gameObject.SetActive(true);
 
         header = "";
-        body = "Playtime's over, squish. Time for the real deal. <b>" + ColorToRichText("Dig. Make mess", keyColor) + "</b>.";
+        body = "Playtime's over, squish. Time for the real deal. <b>" + ColorToRichText("Dig deep. Make mess", keyColor) + "</b>.";
         tooltip.SetText(body, header, true);
         sequenceEnd = true;
 
