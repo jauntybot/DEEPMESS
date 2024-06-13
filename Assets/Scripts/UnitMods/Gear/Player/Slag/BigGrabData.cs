@@ -75,7 +75,6 @@ public class BigGrabData : SlagGearData {
 
 // Nested TargetEquipment functionality inside of first UseGear
             List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range, this);
-            validCoords.Add(target.coord);
 
 // Remove orthagonal adjacencies
             if (!flexibleSlime) {
@@ -106,6 +105,14 @@ public class BigGrabData : SlagGearData {
                 }
             }
 
+// Remove directly adjacent coords
+            for (int x = -1; x <= 1; x++) {
+                for (int y = -1; y <= 1; y++) {
+                    Vector2 c = user.coord + new Vector2(x, y);
+                    if (validCoords.Contains(c)) validCoords.Remove(c);
+                }
+            }
+
             user.grid.DisplayValidCoords(validCoords, gridColor);
             unit.inRangeCoords = validCoords;
 
@@ -120,14 +127,6 @@ public class BigGrabData : SlagGearData {
                         if (validCoords.Count >= i)
                             validCoords.Remove(validCoords[i]);
                     }
-                }
-            }
-
-// Remove directly adjacent coords
-            for (int x = -1; x <= 1; x+=2) {
-                for (int y = -1; y <= 1; y+=2) {
-                    Vector2 c = user.coord + new Vector2(x, y);
-                    if (validCoords.Contains(c)) validCoords.Remove(c);
                 }
             }
 
@@ -172,7 +171,6 @@ public class BigGrabData : SlagGearData {
     }
 
     public IEnumerator ThrowUnit(Unit thrower, GridElement thrown, Vector2 coord) {
-        thrower.manager.DeselectUnit();
 
         Vector3 to = thrower.grid.PosFromCoord(coord);
         Vector3 origin = thrown.transform.position;
@@ -180,15 +178,13 @@ public class BigGrabData : SlagGearData {
 
         float throwDur = 0.25f + animDur * Vector2.Distance(thrower.coord, coord);
         float timer = 0;
-        bool collisionChecked = false;
         while (timer < throwDur) {
             thrown.transform.position = Util.SampleParabola(origin, to, h, timer/throwDur);
             yield return null;
             timer += Time.deltaTime;
-            if (timer >= throwDur/2 && !collisionChecked) {
-                collisionChecked = true;
-            }
         }
+        thrower.manager.DeselectUnit();
+        
         List<Coroutine> cos = new();
 
 // UNIT TIER II - Throw onto occupied spaces
@@ -211,7 +207,7 @@ public class BigGrabData : SlagGearData {
 // Deal damage on throw
         if (impact) cos.Add(thrown.StartCoroutine(thrown.TakeDamage(1, GridElement.DamageType.Fall, thrower, this)));
 
-        thrower.grid.AddElement(thrown);
+        //thrower.grid.AddElement(thrown);
 
         if (thrown is Unit u2)
             u2.UpdateElement(coord, thrower, this);
