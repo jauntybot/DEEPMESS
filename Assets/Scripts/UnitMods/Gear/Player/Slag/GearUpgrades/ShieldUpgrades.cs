@@ -7,7 +7,7 @@ using UnityEngine;
 public class ShieldUpgrades : GearUpgrade {
 
     ShieldData shieldData;
-    public enum Upgrade { Thorns, LiveWired, Aerodynamics, PinchClosed, Base, BasePlus  }
+    public enum Upgrade { Buoyant, Thorns, LiveWired, Aerodynamics, PinchClosed, Base, BasePlus  }
     public Upgrade upgrade;
 
     public override void EquipDequip(bool equip) {
@@ -15,6 +15,9 @@ public class ShieldUpgrades : GearUpgrade {
         shieldData = (ShieldData)modifiedGear;
         switch (upgrade) {
             default: break;
+            case Upgrade.Buoyant:
+                shieldData.buyoant = true;
+            break;
             case Upgrade.Thorns:
                 shieldData.thorns = equip;
             break;

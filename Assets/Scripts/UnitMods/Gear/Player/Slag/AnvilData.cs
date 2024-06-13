@@ -9,7 +9,9 @@ public class AnvilData : SlagGearData {
     [Header("ANVIL PARAMS")]
     [SerializeField] GameObject prefab;
     public int anvilHP;
+    public int anvilLimit;
     public bool reinforcedBottom, explode, liveWire, crystalize;
+
 
     public override void EquipGear(Unit user) {
         base.EquipGear(user);
@@ -19,6 +21,7 @@ public class AnvilData : SlagGearData {
         crystalize = false;
         range = 1;
         anvilHP = 1;
+        anvilLimit = 1;
     }
 
     public override IEnumerator UseGear(GridElement user, GridElement target = null) {
@@ -39,9 +42,9 @@ public class AnvilData : SlagGearData {
             }
         }
 // SPECIAL TIER II -- increase anvil limit
-        int anvilLimit = 0;
+        
 // Destroy active anvils over anvil limit
-        if (activeAnvils > anvilLimit) {
+        if (activeAnvils >= anvilLimit) {
             int destroyCount = activeAnvils - anvilLimit;
             for (int i = 0; i < destroyCount; i++) {
                 anvils[0].StartCoroutine(anvils[0].DestroySequence());

@@ -8,7 +8,7 @@ using UnityEngine;
 public class BigGrabUpgrades : GearUpgrade {
 
     BigGrabData bigGrabData;
-    public enum Upgrade { Impact, Maim, FlexibleSlime, Landscaper, Base, BasePlus }
+    public enum Upgrade { Impact, Maim, FlexibleSlime, Landscaper, SiesmicLanding, ThrowSelf, Base, BasePlus }
     public Upgrade upgrade;
 
     public override void EquipDequip(bool equip) {
@@ -35,6 +35,12 @@ public class BigGrabUpgrades : GearUpgrade {
                             bigGrabData.firstTargets.Remove(ge);
                     }
                 }
+            break;
+            case Upgrade.SiesmicLanding:
+                bigGrabData.seismicLanding = true;
+            break;
+            case Upgrade.ThrowSelf:
+                bigGrabData.throwSelf = true;
             break;
             case Upgrade.Base:
                 if (equip) {

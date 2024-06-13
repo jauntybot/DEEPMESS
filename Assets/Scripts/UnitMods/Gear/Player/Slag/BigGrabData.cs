@@ -11,7 +11,7 @@ public class BigGrabData : SlagGearData {
     public List<GridElement> upgradeTargets;
 
     public int grabRange;
-    public bool flexibleSlime, maim, impact, landscaper, ontoOccupied;
+    public bool flexibleSlime, maim, impact, landscaper, seismicLanding, throwSelf, ontoOccupied;
 
     public override void EquipGear(Unit user) {
         base.EquipGear(user);
@@ -22,6 +22,8 @@ public class BigGrabData : SlagGearData {
         ontoOccupied = false;
         range = 3;
         grabRange = 1;
+        seismicLanding = false;
+        throwSelf = false;
     }
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
@@ -48,6 +50,8 @@ public class BigGrabData : SlagGearData {
                         validCoords.Remove(validCoords[i]);
                 }
             }
+
+            if (throwSelf) validCoords.Add(user.coord);
             return validCoords;
         }
         else return null;
@@ -75,9 +79,8 @@ public class BigGrabData : SlagGearData {
 
 // Nested TargetEquipment functionality inside of first UseGear
             List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range, this);
-
 // Remove orthagonal adjacencies
-            if (!flexibleSlime) {
+            if (!flexibleSlime && !(throwSelf && target == user)) {
                 if (dir.x != 0) {
                     int sign = (int)Mathf.Sign(dir.x);
                     for (int i = 1; i <= range; i++) {
@@ -206,8 +209,23 @@ public class BigGrabData : SlagGearData {
         
 // Deal damage on throw
         if (impact) cos.Add(thrown.StartCoroutine(thrown.TakeDamage(1, GridElement.DamageType.Fall, thrower, this)));
+        if (seismicLanding) {
+            for (int x = -1; x <= 1; x+=2) {
+                foreach (GridElement ge in thrower.grid.CoordContents(coord + new Vector2(x, 0))) {
+                    if (ge is EnemyUnit || ge is Wall) {
+                        ge.StartCoroutine(ge.TakeDamage(1, GridElement.DamageType.Melee, thrower, this));        
+                    }
+                }
+                foreach (GridElement ge in thrower.grid.CoordContents(coord + new Vector2(0, x))) {
+                    if (ge is EnemyUnit || ge is Wall) {
+                        ge.StartCoroutine(ge.TakeDamage(1, GridElement.DamageType.Melee, thrower, this));        
+                    }
+                }
+                
+            }
+        }
 
-        //thrower.grid.AddElement(thrown);
+        thrower.grid.AddElement(thrown);
 
         if (thrown is Unit u2)
             u2.UpdateElement(coord, thrower, this);

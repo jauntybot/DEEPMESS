@@ -8,7 +8,7 @@ using UnityEngine;
 public class AnvilUpgrades : GearUpgrade {
 
     AnvilData anvilData;
-    public enum Upgrade { ReinforcedBottom, LiveWired, Crystalize, SelfDetonate, Base, BasePlus  }
+    public enum Upgrade { ReinforcedBottom, LiveWired, Crystalize, SelfDetonate, SteelSurplus, Base, BasePlus  }
     public Upgrade upgrade;
 
 
@@ -33,6 +33,9 @@ public class AnvilUpgrades : GearUpgrade {
             break;
             case Upgrade.SelfDetonate:
                 anvilData.explode = equip;
+            break;
+            case Upgrade.SteelSurplus:
+                anvilData.anvilLimit++;
             break;
             case Upgrade.Base:
                 if (equip) {

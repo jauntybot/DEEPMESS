@@ -16,11 +16,11 @@ public class Shield : MonoBehaviour {
         anim = gfx.GetComponent<Animator>();
         unit = target;
 
-// UNIT TIER I - Prevents liquid tile effects
-//         buoyant = data.upgrades[SlagGearData.UpgradePath.Sludge] >= 1;
+
 // // UNIT TIER II - Heals users
 //         healing = data.upgrades[SlagGearData.UpgradePath.Sludge] >= 2; 
 
+        buoyant = data.buyoant;
         thorns = data.thorns;
         liveWired = data.liveWired;
         aerodynamics = data.aerodynamics;

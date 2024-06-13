@@ -12,12 +12,13 @@ public class ShieldData : SlagGearData {
     public int activeShieldLimit;
 
     public int shieldHP;
-    public bool thorns, liveWired, aerodynamics, pinchClosed;
+    public bool buyoant, thorns, liveWired, aerodynamics, pinchClosed;
     [SerializeField] GameObject pinchClosedVFX, pinchClosedInflictedVFX;
 
     public override void EquipGear(Unit user) {
         base.EquipGear(user);
         activeShields = new();
+        buyoant = false;
         thorns = false;
         liveWired = false;
         aerodynamics = false;

@@ -53,11 +53,8 @@ public class Anvil : Unit {
     }
 
     public override IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0) {
-        if (reinforcedBottom)
+        if (!reinforcedBottom)
             yield return base.CollideFromAbove(subGE, hardLand);
-        else
-            yield return StartCoroutine(TakeDamage(hpCurrent));
-
     }
 
     public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
