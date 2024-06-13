@@ -87,7 +87,7 @@ public class HammerData : GearData {
                         remove = true;
                 } else {
                     foreach(GridElement target in targetTypes) {
-                        if (ge.GetType() == target.GetType()) {
+                        if (ge.GetType() == target.GetType() || ge.GetType().IsSubclassOf(target.GetType())) {
                             if (ge is Nail n) {
                                 if (n.nailState == Nail.NailState.Primed)
                                     remove = false;

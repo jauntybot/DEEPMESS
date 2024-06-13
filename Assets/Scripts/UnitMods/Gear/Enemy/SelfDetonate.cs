@@ -55,7 +55,7 @@ public class SelfDetonate : EnemyAttackData {
             foreach (Vector2 coord in aoe) {
                 if (user.grid.CoordContents(coord).Count > 0) {
                     foreach (GridElement ge in user.grid.CoordContents(coord)) {
-                        if ((ge is Unit || ge is Wall) && ge != user ) {
+                        if ((ge is Unit || ge is Wall || ge is Beacon || ge is BloatedBulb) && ge != user ) {
                             evt = ObjectiveEvents.OnEquipmentUse;
                             evt.data = this; evt.user = user; evt.target = ge;
                             ObjectiveEventManager.Broadcast(evt);

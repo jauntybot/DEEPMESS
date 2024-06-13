@@ -145,6 +145,7 @@ MonoBehaviour:
   upgradeIcon: {fileID: 0}
   lvl: 0
   slotTooltip: 1
+  cardTooltip: 0
   slottable: 0
 --- !u!114 &6146675223460501339
 MonoBehaviour:
@@ -170,6 +171,7 @@ GameObject:
   - component: {fileID: 5869853098368434920}
   - component: {fileID: 219228046444879475}
   - component: {fileID: 2509121528095301592}
+  - component: {fileID: 8168236005298130628}
   m_Layer: 5
   m_Name: blank fill
   m_TagString: Untagged
@@ -235,6 +237,26 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!95 &8168236005298130628
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647593701123014769}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 54b722a10ce8f414d8e4137d4eab124d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &3603279378991690323
 GameObject:
   m_ObjectHideFlags: 0
@@ -459,7 +481,7 @@ MonoBehaviour:
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -577,7 +599,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1182410805941293754
 RectTransform:
   m_ObjectHideFlags: 0
@@ -648,7 +670,6 @@ GameObject:
   m_Component:
   - component: {fileID: 628385878884311804}
   - component: {fileID: 335715823437339476}
-  - component: {fileID: 3883609795907339362}
   m_Layer: 5
   m_Name: Upgrade Slot
   m_TagString: Untagged
@@ -701,23 +722,3 @@ MonoBehaviour:
   sparksPrefab: {fileID: 1009471058919800317, guid: 8632694dd3b67474e84968a32521a459, type: 3}
   buttonHold: {fileID: 6146675223460501339}
   ttTrigger: {fileID: 4014399608777492097}
---- !u!95 &3883609795907339362
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9020583415529130986}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: ecbdbff0a3e8ae64fbe174363124c9e3, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0

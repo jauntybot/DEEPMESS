@@ -51,7 +51,7 @@ public class MainMenuManager : MonoBehaviour
         , "Slime Hub", true);
         while (!tooltip.skip) yield return null;
         tooltip.SetText(
-            "Down the road, you'll be able to use your earnings to snag new Gear for your Slags, carve out shortcuts through the skull, and toss new Relics into the loot pool for your deep dives."
+            "Down the road, you'll be able to use your earnings to snag new Gear for your Slags, carve out shortcuts through the skull, and toss new god thoughts into the loot pool for your deep dives."
         , "Coming Soon", true);
         while (!tooltip.skip) yield return null;
         tooltip.SetText(

@@ -717,6 +717,7 @@ public class FloorManager : MonoBehaviour {
 
         uiManager.ToggleBattleCanvas(false);
 
+// Contextual tooltips
         if (floorSequence.currentThreshold != FloorChunk.PacketType.BARRIER) {
             if (floorSequence.currentThreshold != FloorChunk.PacketType.Tutorial && tutorial.isActiveAndEnabled && !tutorial.sequenceEnd) yield return tutorial.StartCoroutine(tutorial.TutorialEnd());            
                 if (!scenario.gpOptional.pathsEncountered) 
@@ -728,7 +729,6 @@ public class FloorManager : MonoBehaviour {
                 }
 
                 if (floorSequence.currentThreshold == FloorChunk.PacketType.BOSS) {
-                    floorSequence.StartPacket(floorSequence.bossPacket);
                     if (!scenario.gpOptional.prebossEncountered)
                         yield return StartCoroutine(scenario.gpOptional.Preboss());
                     uiManager.ToggleObjectiveTracker(false);
