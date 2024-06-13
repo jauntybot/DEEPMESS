@@ -64,7 +64,7 @@ public class UpgradeManager : MonoBehaviour {
         RectTransform rect = unitUIContainer.GetComponent<RectTransform>();
         rect.anchorMin = new Vector2(0.6f, rect.anchorMin.y);
 
-        if (GameplayOptionalTooltips.instance.beaconObjectivesEncountered) yield return GameplayOptionalTooltips.instance.StartCoroutine(GameplayOptionalTooltips.instance.BeaconScratchOff());
+        if (!GameplayOptionalTooltips.instance.beaconScratchOffEncountered) yield return GameplayOptionalTooltips.instance.StartCoroutine(GameplayOptionalTooltips.instance.BeaconScratchOff());
         
         upgradeScreen.SetActive(true);
         yield return StartCoroutine(ScratchOffSequence());

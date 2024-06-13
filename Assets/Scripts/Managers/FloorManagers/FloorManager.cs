@@ -344,12 +344,6 @@ public class FloorManager : MonoBehaviour {
             yield return StartCoroutine(TutorialSequence.instance.TutorialDescend());
         } else {
 
-            // if (cascade) {
-            //     yield return StartCoroutine(previewManager.PreviewFloor(true, true));
-            //     currentFloor.LockGrid(false);
-            // }
-            // else
-
 // Check if at the end of packet / if there was a sub floor generated, if not packet is done
             if (floors.Count - 1 > currentFloor.transform.GetSiblingIndex()) {
 // Generate next floor if still mid packet
@@ -363,27 +357,11 @@ public class FloorManager : MonoBehaviour {
                 
                 yield return StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Descent, scen));
                 yield return new WaitForSecondsRealtime(0.25f);
-
-// Yield for cascade sequence
-                // if (cascade) {
-                //     yield return StartCoroutine(ChooseLandingPositions());
-                //     yield return new WaitForSecondsRealtime(1.25f);
-                //     downButton.SetActive(true); upButton.SetActive(false);
-                // }
                 
 // Descend units from previous floor
                 yield return StartCoroutine(DescendUnits(floors[currentFloor.transform.GetSiblingIndex() -1].gridElements, enemy));
                 
                 if (currentFloor.index+1 == floorSequence.activePacket.packetLength) scenario.player.nail.barkBox.Bark(BarkBox.BarkType.FinalFloor);
-// Check for tutorial tooltip triggers
-                if (floorSequence.activePacket.packetType != FloorChunk.PacketType.Tutorial) {
-                    if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.gpOptional.bulbEncountered)
-                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.TileBulb());
-                    if (currentFloor.gridElements.Find(ge => ge is Beacon) && !scenario.gpOptional.beaconEncountered)
-                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.Beacon());
-                    if (currentFloor.gridElements.Find(ge => ge is BloatedBulb) && !scenario.gpOptional.bloatedBulbEncountered)
-                        scenario.gpOptional.StartCoroutine(scenario.gpOptional.BloatedBulb());
-                }
 
                 StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
             } else {
@@ -424,14 +402,22 @@ public class FloorManager : MonoBehaviour {
             yield return StartCoroutine(SpawnBoss(floorSequence.elitePrefab, true));
             currentFloor.lvlDef.spawnElite = false;
         }
-        
 
         scenario.player.DescendGrids(currentFloor);
         currentFloor.LockGrid(false);
 
-
         if (uiManager.gameObject.activeSelf)    
             uiManager.metaDisplay.UpdateEnemiesRemaining(scenario.currentEnemy.units.Count);
+
+// Check for tutorial tooltip triggers
+        if (floorSequence.activePacket.packetType != FloorChunk.PacketType.Tutorial) {
+            if (currentFloor.lvlDef.initSpawns.Find(spawn => spawn.asset.prefab.GetComponent<GridElement>() is TileBulb) != null && !scenario.gpOptional.bulbEncountered)
+                scenario.gpOptional.StartCoroutine(scenario.gpOptional.TileBulb());
+            if (currentFloor.gridElements.Find(ge => ge is Beacon) && !scenario.gpOptional.beaconEncountered)
+                scenario.gpOptional.StartCoroutine(scenario.gpOptional.Beacon());
+            if (currentFloor.gridElements.Find(ge => ge is BloatedBulb) && !scenario.gpOptional.bloatedBulbEncountered)
+                scenario.gpOptional.StartCoroutine(scenario.gpOptional.BloatedBulb());
+        }
     }
 
 
@@ -717,16 +703,13 @@ public class FloorManager : MonoBehaviour {
 
         uiManager.ToggleBattleCanvas(false);
 
-// Contextual tooltips
+// Path sequence and contextual tooltips
         if (floorSequence.currentThreshold != FloorChunk.PacketType.BARRIER) {
             if (floorSequence.currentThreshold != FloorChunk.PacketType.Tutorial && tutorial.isActiveAndEnabled && !tutorial.sequenceEnd) yield return tutorial.StartCoroutine(tutorial.TutorialEnd());            
                 if (!scenario.gpOptional.pathsEncountered) 
                     yield return StartCoroutine(scenario.gpOptional.Paths());
+                
                 yield return scenario.pathManager.PathSequence(); 
-                if (floorSequence.currentThreshold == FloorChunk.PacketType.I) {
-                    yield return GameplayOptionalTooltips.instance.StartCoroutine(GameplayOptionalTooltips.instance.Objectives());
-                    yield return scenario.objectiveManager.ObjectiveSequence(false);
-                }
 
                 if (floorSequence.currentThreshold == FloorChunk.PacketType.BOSS) {
                     if (!scenario.gpOptional.prebossEncountered)

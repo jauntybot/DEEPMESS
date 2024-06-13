@@ -71,7 +71,6 @@ public class PathManager : MonoBehaviour {
         for (int i = 0; i <= randomPackets.Count - 1; i++) {
             PathCard pc = Instantiate(pathCardPrefab, pathCardContainer).GetComponent<PathCard>();
             pc.Init(this, randomPackets[i]);
-            //totalObjectives += randomPackets[i].bonusNuggetObjectives + randomPackets[i].bonusRelicObjectives;
             activeCards.Add(pc);
         }
        

@@ -26,6 +26,7 @@ public class ObjectiveManager : MonoBehaviour {
     void Start() {
         scenario = ScenarioManager.instance;
         ClearObjectives();
+        tracker.gameObject.SetActive(false);
         objectiveScreen.SetActive(false);
         activeObjectives = new();
         objectiveIndices = new() { 0, 0, 0 };
@@ -45,7 +46,8 @@ public class ObjectiveManager : MonoBehaviour {
     bool reviewing;
     public IEnumerator ObjectiveSequence(bool beacon) {
         reviewing = true;
-        if (beacon && !scenario.gpOptional.beaconObjectivesEncountered) yield return scenario.gpOptional.StartCoroutine(scenario.gpOptional.BeaconObjectives());
+        if (beacon && !scenario.gpOptional.objectivesEncountered) yield return scenario.gpOptional.StartCoroutine(scenario.gpOptional.Objectives());
+        else if (beacon && !scenario.gpOptional.beaconObjectivesEncountered) yield return scenario.gpOptional.StartCoroutine(scenario.gpOptional.BeaconObjectives());
 
         nuggets.UpdateNuggetCount();
         nuggets.gameObject.SetActive(true);
@@ -135,12 +137,15 @@ public class ObjectiveManager : MonoBehaviour {
 
         
     void SubscribeTracker(List<Objective> objs = null) {
-        if (objs != null)
+        if (objs != null) {
+            tracker.gameObject.SetActive(true);
             tracker.AssignObjectives(objs);
+        }
         else {
             for (int i = 0; i <= tracker.activeObjectives.Count - 1; i++) {
                 tracker.UnsubObjective(i);
             }
+            tracker.gameObject.SetActive(false);
         }
     }
 

@@ -5,6 +5,7 @@ using UnityEngine.U2D;
 
 public class EnemyManager : UnitManager {
 
+    [SerializeField] int spawnCap;
     [SerializeField] GameObject reinforcementPrefab;
     [SerializeField] Unit defaultUnit;
     public List<Unit> unitsToAct = new();
@@ -21,6 +22,8 @@ public class EnemyManager : UnitManager {
         yield return base.Initialize(_currentGrid);
         for (int i = 0; i <= units.Count - 1; i++)
             units[i].elementCanvas.UpdateTurnOrder(units.Count - i);
+
+        spawnCap = scenario.floorManager.floorSequence.activePacket.minEnemies;
     }
 
     public override Unit SpawnUnit(Unit unit, Vector2 coord) {
@@ -132,6 +135,8 @@ public class EnemyManager : UnitManager {
         Unit lastUnit = null;
         if (units.Count > 0) lastUnit = units[0];
         if (!lastUnit || !(lastUnit is BossUnit && lastUnit.energyCurrent == 0)) {
+            if (turns > 0) spawnCap++;
+            turns++;
             if (AddToReinforcements()) {
                 yield return StartCoroutine(SpawnReinforcements());
                 yield return new WaitForSecondsRealtime(1.5f);
@@ -152,7 +157,7 @@ public class EnemyManager : UnitManager {
         }
     }
 
-
+    int turns = 0;
     public void EndTurn() {
         EndTurnEvent evt = ObjectiveEvents.EndTurnEvent;
         evt.toTurn = ScenarioManager.Turn.Player;
@@ -206,8 +211,8 @@ public class EnemyManager : UnitManager {
     public virtual bool AddToReinforcements() {
         bool spawn = false;
 
-        if (units.Count < scenario.floorManager.floorSequence.activePacket.minEnemies) {
-            int count = scenario.floorManager.floorSequence.activePacket.minEnemies - units.Count;
+        if (units.Count < spawnCap) {
+            int count = spawnCap - units.Count;
             for (int i = 0; i < count; i++) {
                 Unit reinforcement = Reinforcement(scenario.tackleChance);
                 if (reinforcement) {
