@@ -293,6 +293,8 @@ public class Unit : GridElement {
                     if (this is PlayerUnit)
                         ui.UpdateEquipmentButtons();
                     elementCanvas.UpdateStatsDisplay();
+                    if (conditions.Contains(Status.Stunned)) 
+                        RemoveCondition(Status.Stunned);
                 break;
                 case Status.Weakened:
                     //elementCanvas.UpdateStatsDisplay();

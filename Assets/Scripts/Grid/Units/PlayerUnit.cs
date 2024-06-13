@@ -99,8 +99,7 @@ public class PlayerUnit : Unit {
         if (equip is MoveData && energyCurrent > 0) {
             grid.UpdateSelectedCursor(true, coord);
             ui.ToggleEquipmentButtons();
-        }
-        else {
+        } else {
             foreach(GridElement ge in pManager.currentGrid.gridElements) 
                 ge.TargetElement(false);
         }

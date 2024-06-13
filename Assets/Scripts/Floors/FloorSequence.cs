@@ -1,9 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.XR;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.UIElements;
 
 [CreateAssetMenu(menuName = "Floors/Floor Sequence")]
 [System.Serializable]
@@ -28,11 +24,12 @@ public class FloorSequence : ScriptableObject {
         floorsGot = 0;
         switch (index) {
             case 0: currentThreshold = FloorChunk.PacketType.Tutorial; break;
+            default:
             case 1: currentThreshold = FloorChunk.PacketType.I; break;
             case 2: currentThreshold = FloorChunk.PacketType.II; break;
-            case 3: currentThreshold = FloorChunk.PacketType.III; break;
-            case 4: currentThreshold = FloorChunk.PacketType.BOSS; break;
+            case 3: currentThreshold = FloorChunk.PacketType.BOSS; break;
         }
+
         activePacket.packetType = currentThreshold;
     }
 
@@ -60,6 +57,7 @@ public class FloorSequence : ScriptableObject {
     }
 
     public void StartPacket(FloorChunk packet) {
+        Debug.Log("Start Packet " + packet.packetType);
 // Replace active packet params manually
         activePacket.packetType = packet.packetType;
         activePacket.inOrder = true;
@@ -90,49 +88,46 @@ public class FloorSequence : ScriptableObject {
         ShuffleBag<FloorDefinition> rndHazardOrder = new(packet.hazardFloors.ToArray());
         
         ShuffleBag<FloorDefinition> rndOrder = new(packet.floors.ToArray());
+// Build chunk floor order rolling on hazard index
         for (int i = 1; i <= packet.packetLength - 1; i++) {
             FloorDefinition floor = null;
             if (hazardIndex.Contains(i)) 
                 floor = rndHazardOrder.Next();
             else
                 floor = rndOrder.Next();
-            
+
+// Chunk spawning rules
+            if (activePacket.packetType != FloorChunk.PacketType.BOSS) {
 // Spawn a beacon if floor count is mod 4
-            floor.spawnBeacon = (i+1)%4 == 0;
+                floor.spawnBeacon = i%4 == 0;
 // Bloated bulb spawn rules
-            if (!activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite)) {
-                if ((i+1)%3 == 0) {
-                    if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Hazard) || activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme)) {
-                        if ((currentThreshold == FloorChunk.PacketType.I && (i+1) >= 6) ||
-                        currentThreshold == FloorChunk.PacketType.II)
+                if (!activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite)) {
+                    if (i%3 == 0) {
+                        if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Hazard) || activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme)) {
                             floor.spawnBloatedBulb = true;
-                    } else if ((i+1) == 6) {
-                        floor.spawnBloatedBulb = true;
+                        } else if (i >= 6) {
+                            floor.spawnBloatedBulb = true;
+                        } else 
+                            floor.spawnBloatedBulb = false;
                     } else 
                         floor.spawnBloatedBulb = false;
-                } else 
+                } else
                     floor.spawnBloatedBulb = false;
-            } else if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme) && i == 5)
-                floor.spawnBloatedBulb = true;
-            else
-                floor.spawnBloatedBulb = false;
 // Elite spawn rules
-            if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite)) {
-                if ((i+1)%3 == 0) {
-                    if ((currentThreshold == FloorChunk.PacketType.I && (i+1) >= 6) || 
-                    currentThreshold == FloorChunk.PacketType.II) {
+                if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite)) {
+                    if (i%3 == 0) {
                         floor.spawnElite = true;
                     } else 
                         floor.spawnElite = false;
-                } else 
+                } else if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme) && i == 5)
+                    floor.spawnElite = true;
+                else
                     floor.spawnElite = false;
-            } else if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme) && i == 5)
-                floor.spawnElite = true;
-            else
-                floor.spawnElite = false;
-
+            }
+            
             activePacket.floors.Add(floor);
         }
+
         rndOrder = new(packet.firstFloors.ToArray());
         activePacket.firstFloors = new List<FloorDefinition> { rndOrder.Next() };
 
@@ -171,41 +166,15 @@ public class FloorSequence : ScriptableObject {
         if (first && currentThreshold != FloorChunk.PacketType.BOSS) {
             floor = activePacket.firstFloors[0];
             activePacket.firstFloors.Remove(floor);
+            floor.spawnBeacon = true;
 
             floorsGot += 1;
             return floor;
 // Middle of packet
         } else {
             int index = 0;
-//             if (!activePacket.inOrder) {
-//                 if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Hazard)) {
-// // Calculate number of hazard floors, half of chunk
-//                     int hazardTotal = Mathf.RoundToInt(activePacket.packetLength/2);
-//                     if (hazardFloorsGot < hazardTotal) {
-//                         int odds = Random.Range(0, hazardTotal - floorsGot - 1);
-//                         if (odds <= 0) {
-//                             floor = activePacket.hazardFloors[Random.Range(0, activePacket.hazardFloors.Count)];
-//                             activePacket.hazardFloors.Remove(floor);
-//                             hazardFloorsGot++;
-//                         } else {
-//                             index = Random.Range(0, activePacket.floors.Count);
-//                             floor = activePacket.floors[index];
-//                             activePacket.floors.Remove(floor);
-//                         }
-//                     } else {
-//                         index = Random.Range(0, activePacket.floors.Count);
-//                         floor = activePacket.floors[index];
-//                         activePacket.floors.Remove(floor);
-//                     }
-//                 } else {
-//                     index = Random.Range(0, activePacket.floors.Count);
-//                     floor = activePacket.floors[index];
-//                     activePacket.floors.Remove(floor);
-//                 }
-//             } else {
                 floor = activePacket.floors[index];
                 activePacket.floors.Remove(floor);
-            //}
             
             floorsGot += 1;
         }

@@ -324,13 +324,13 @@ public static class EquipmentAdjacency {
                 foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                     occupied = true;
 // Valid coord if element is not filtered
-                    if (filters == null || !filters.Find(f => f.GetType() == ge.GetType())) {
+                    if (filters == null || (!filters.Find(f => f.GetType() == ge.GetType()) && !filters.Find(f => ge.GetType().IsSubclassOf(f.GetType())))) {
                         _coords.Add(coord);
 // Valid coord if element is target, but stops frontier
                     } else if (targetLast != null) {
                         blocked = true;
                         foreach(GridElement target in targetLast) {
-                            if (ge.GetType() == target.GetType()) {
+                            if (ge.GetType() == target.GetType() || filters.Find(f => ge.GetType().IsSubclassOf(f.GetType()))) {
                                 _coords.Add(coord);
                                 blocked = true;
                             }

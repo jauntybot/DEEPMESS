@@ -122,6 +122,15 @@ public class BigGrabData : SlagGearData {
                     }
                 }
             }
+
+// Remove directly adjacent coords
+            for (int x = -1; x <= 1; x+=2) {
+                for (int y = -1; y <= 1; y+=2) {
+                    Vector2 c = user.coord + new Vector2(x, y);
+                    if (validCoords.Contains(c)) validCoords.Remove(c);
+                }
+            }
+
             unit.validActionCoords = validCoords;
 
             if (user is PlayerUnit u) u.ui.ToggleEquipmentButtons();
@@ -163,6 +172,8 @@ public class BigGrabData : SlagGearData {
     }
 
     public IEnumerator ThrowUnit(Unit thrower, GridElement thrown, Vector2 coord) {
+        thrower.manager.DeselectUnit();
+
         Vector3 to = thrower.grid.PosFromCoord(coord);
         Vector3 origin = thrown.transform.position;
         float h = 0.25f + Vector2.Distance(thrower.coord, coord) / 2;
