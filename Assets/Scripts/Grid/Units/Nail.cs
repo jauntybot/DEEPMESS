@@ -40,7 +40,7 @@ public class Nail : Unit {
                 gfxAnim.SetBool("Primed", true);
                 primedVFX.SetActive(true);
                 PlaySound(primedSFX);
-                if (Random.Range(0, 4) == 0) barkBox.Bark(BarkBox.BarkType.NailPrime);
+                if (Random.Range(0, 4) == 0) Invoke("PrimeBark", 0.5f);
             break;
             case NailState.Hiding:
             case NailState.Buried:
@@ -50,6 +50,10 @@ public class Nail : Unit {
         }
         nailState = toState;
         ui.overview.UpdateOverview();
+    }
+
+    void PrimeBark() {
+        barkBox.Bark(BarkBox.BarkType.NailPrime);
     }
 
     public override void UpdateElement(Vector2 c) {

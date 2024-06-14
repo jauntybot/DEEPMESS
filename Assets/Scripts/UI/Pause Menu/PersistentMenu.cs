@@ -17,7 +17,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     [SerializeField] AudioMixer mixer;
     [SerializeField] Slider musicSlider, sfxSlider;
     [SerializeField] TMP_Dropdown resolutionsDropdown;
-    [SerializeField] Toggle cutsceneToggle, scatterToggle;
+    [SerializeField] Toggle fullscreenToggle, cutsceneToggle, scatterToggle;
     [SerializeField] GameObject menuButton;
     public Animator fadeToBlack;
     public int startCavity;
@@ -102,6 +102,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         SetMusicVolume(user.musicVol);
         SetSFXVolume(user.sfxVol);
         Screen.fullScreen = user.fullscreen;
+        fullscreenToggle.isOn = user.fullscreen;
     }
 
     public void SaveUser(ref UserData user) {
@@ -110,7 +111,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         user.resolutionIndex = currentResolutionIndex;
         user.cutsceneSkip = cutsceneToggle.isOn;
         user.scatterSkip = scatterToggle.isOn;
-        user.fullscreen = Screen.fullScreen;
+        user.fullscreen = fullscreenToggle.isOn;
     }
     
     public void LoadRun(RunData run) {
@@ -207,7 +208,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     }
 
     public void ToggleFullscreen() {
-        Screen.fullScreen = !Screen.fullScreen;
+        Screen.fullScreen = fullscreenToggle.isOn;
     }
 
     public void SetResolution(int index) {
@@ -223,6 +224,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
             Screen.SetResolution(resolution.width, resolution.height, true);
             currentResolutionIndex = filteredResolutions.IndexOf(resolution);
         } else SetResolution(0);
+        Screen.fullScreen = fullscreenToggle.isOn;
     }
 
     #region Debug Functions

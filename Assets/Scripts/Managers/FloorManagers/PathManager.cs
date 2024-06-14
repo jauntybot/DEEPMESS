@@ -93,7 +93,6 @@ public class PathManager : MonoBehaviour {
         while (choosingPath)
             yield return null;
 
-        pathChoiceContainer.SetActive(false);
     }
 
     public IEnumerator SelectPath(PathCard selected) {
@@ -125,7 +124,9 @@ public class PathManager : MonoBehaviour {
         layout.enabled = true;
         t = 0; while (t <= 0.75f) { t += Time.deltaTime; yield return null; }
         card.GetComponent<Animator>().SetTrigger("SlideOut");
-        t = 0; while (t <= .25f) { t += Time.deltaTime; yield return null; }
+        t = 0; while (t <= 0.45f) { t += Time.deltaTime; yield return null; }
+
+        pathChoiceContainer.SetActive(false);
 
         if (!cutsceneSkip) {
             videoPlayer.clip = nodeClips[clipIndex];

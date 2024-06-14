@@ -79,9 +79,12 @@ public class UpgradeManager : MonoBehaviour {
     IEnumerator ScratchOffSequence() {
         if (activeCard != null) Destroy(activeCard.gameObject);
 
+        FloorSequence sequence = FloorManager.instance.floorSequence;
         int cardLvl = 1;
-        if (FloorManager.instance.floorSequence.currentThreshold == FloorChunk.PacketType.I && FloorManager.instance.floorSequence.floorsGot >= 10 ||
-        FloorManager.instance.floorSequence.currentThreshold == FloorChunk.PacketType.II && FloorManager.instance.floorSequence.floorsGot >= 7)
+        if (sequence.currentThreshold == FloorChunk.PacketType.II &&
+        sequence.floorsGot <= 2 ||
+        (sequence.activePacket.packetMods.Count == 0 && sequence.floorsGot >= 10) ||
+        (sequence.activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme) && sequence.floorsGot >= 8))
             cardLvl = 2;
 
         List<GearUpgrade> rolledUpgrades = new();

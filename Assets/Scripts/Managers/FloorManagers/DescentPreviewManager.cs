@@ -73,6 +73,7 @@ public class DescentPreviewManager : MonoBehaviour {
     }
 
     public void PreviewButton() {
+        if (UIManager.instance.peekButton.interactable == false) return;
         int dir = previewing ? 1 : -1;
         if (!floorManager.transitioning && floorManager.floors.Count - 1 >= currentFloor.transform.GetSiblingIndex() - dir) {
             previewing = !previewing;

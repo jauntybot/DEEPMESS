@@ -13,7 +13,7 @@ public class PathCard : MonoBehaviour {
 
     public Transform hazardsContainer;
     [SerializeField] GameObject vanillaTagPrefab, hazardTagPrefab, extremeTagPrefab, eliteTagPrefab, bossTagPrefab;
-    [SerializeField] TMP_Text floorCount;
+    [SerializeField] TMP_Text floorCount, beaconCount, godThoughtCount;
     public Button selectButton;
     bool selectable = true;
 
@@ -26,14 +26,19 @@ public class PathCard : MonoBehaviour {
         floorPacket = _packet;
 
         floorCount.text = _packet.packetType == FloorChunk.PacketType.BOSS? "?" : floorPacket.packetLength.ToString();
+        beaconCount.text = "x" + Mathf.Ceil(_packet.packetLength / 4).ToString();
 
         GameObject prefab = null;
             
         if (floorPacket.packetMods.Count == 0 && floorPacket.packetType != FloorChunk.PacketType.BOSS) {
             prefab = vanillaTagPrefab;
+            godThoughtCount.text = _packet.packetType == FloorChunk.PacketType.I? "x1" : "x2";
         } else if (floorPacket.packetType == FloorChunk.PacketType.BOSS) {
             prefab = bossTagPrefab;
+            beaconCount.text = "x0";
+            godThoughtCount.text = "x0";
         } else {
+            godThoughtCount.text = _packet.packetType == FloorChunk.PacketType.I? "x2" : "x3";
             for (int i = floorPacket.packetMods.Count - 1; i >= 0; i--) {
                 switch (floorPacket.packetMods[i]) {
                     default:

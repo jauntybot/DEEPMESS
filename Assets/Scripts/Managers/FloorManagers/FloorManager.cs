@@ -244,12 +244,12 @@ public class FloorManager : MonoBehaviour {
         while (timer <= 2f) {
             parallax.ScrollParallax(Time.deltaTime * Mathf.Lerp(0, 5 * sign, timer/2f));
             
-            parallax.GetComponent<SpriteRenderer>().material.SetFloat("_Alpha", Mathf.Lerp(up? 1 : 0, up? 0 : 1, up? timer-1.9f/2 : timer/0.1f));
-            parallax.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = Mathf.Lerp(up? 1 : 0, up? 0 : 1, up? timer-1.9f/2 : timer/0.1f);
-            parallax.slimeHub.transform.position = new Vector3(0, Mathf.Lerp(up? 1.5f : -0.5f, up? -0.5f : 1.5f, up? timer-1.9f/2 : timer/0.25f));
+            parallax.GetComponent<SpriteRenderer>().material.SetFloat("_Alpha", Mathf.Lerp(up? 1 : 0, up? 0 : 1, up? (timer-1.75f)/.25f : timer/0.25f));
+            parallax.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = Mathf.Lerp(up? 1 : 0, up? 0 : 1, up? (timer-1.75f)/.25f : timer/0.25f);
+            parallax.slimeHub.transform.position = new Vector3(0, Mathf.Lerp(up? 1.5f : -0.5f, up? -0.5f : 1.5f, up? (timer-1.75f)/.25f : timer/0.25f));
 
-            floorParent.transform.position = new Vector3(origin.x, Mathf.Lerp(origin.y, up? origin.y - 18 : origin.y + 18, up? timer/0.5f : timer-1.9f/2f));
-            fade.AlphaSelf = Mathf.Lerp(up? 1 : 0, up? 0 : 1, up? timer/0.25f : timer-1.75f/2f);
+            floorParent.transform.position = new Vector3(origin.x, Mathf.Lerp(origin.y, up? origin.y - 18 : origin.y + 18, up? timer/0.5f : (timer-1.5f)/.5f));
+            fade.AlphaSelf = Mathf.Lerp(up? 1 : 0, up? 0 : 1, up? timer/0.25f : (timer-1.5f)/.5f);
             
             if (!toggle && timer >= 1.0f) {
                 toggle = true;
@@ -719,7 +719,7 @@ public class FloorManager : MonoBehaviour {
             }
 
 // Lerp units offscreen
-        scenario.player.nail.PlaySound(cavityTransition);
+            scenario.player.nail.PlaySound(cavityTransition);
             StopCoroutine(floating);
             timer = 0;
             Vector3 startPos = transitionParent.transform.position;
@@ -778,7 +778,7 @@ public class FloorManager : MonoBehaviour {
 
 
             descending = false;
-            yield return scenario.StartCoroutine(scenario.FirstTurn(lastFloorEnemey));
+            yield return scenario.StartCoroutine(scenario.FirstTurn());
         } else {
             StartCoroutine(scenario.Win());
             while (scenario.scenario == ScenarioManager.Scenario.EndState) {
