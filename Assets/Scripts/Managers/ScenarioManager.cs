@@ -107,6 +107,12 @@ public class ScenarioManager : MonoBehaviour {
                         unitsToDrop.Add(u);
                 }
                 yield return StartCoroutine(floorManager.DescendUnits(unitsToDrop, prevEnemy, true));
+            } else {
+                foreach (Unit u in player.units) {
+                    if (u is Anvil) {
+                        u.StartCoroutine(u.DestroySequence());
+                    }
+                }
             }
             player.units[3].grid = floorManager.currentFloor;
             yield return StartCoroutine(PlayerEnter());

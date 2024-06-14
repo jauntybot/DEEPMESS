@@ -20,10 +20,6 @@ public class AnvilUpgrades : GearUpgrade {
             default: break;
             case Upgrade.ReinforcedBottom:
                 anvilData.reinforcedBottom = equip;
-                if (equip) 
-                    anvilData.anvilHP++;
-                else
-                    anvilData.anvilHP--;
             break;
             case Upgrade.LiveWired:
                 anvilData.liveWire = equip;

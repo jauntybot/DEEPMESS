@@ -25,7 +25,7 @@ public class Beacon : Unit {
         yield return new WaitForSecondsRealtime(0.75f);
         yield return FloorManager.instance.StartCoroutine(FloorManager.instance.TransitionToSlimeHub(false));
         ScenarioManager.instance.currentTurn = ScenarioManager.Turn.Player;
-        //  StartCoroutine(DestroySequence());
+        StartCoroutine(DestroySequence());
         UIManager.instance.ToggleBattleCanvas(true);
     }
 
