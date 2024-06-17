@@ -221,10 +221,9 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     
     public void SetResolution(Resolution resolution) {
         if (filteredResolutions.Contains(resolution)) {
-            Screen.SetResolution(resolution.width, resolution.height, true);
+            Screen.SetResolution(resolution.width, resolution.height, fullscreenToggle.isOn);
             currentResolutionIndex = filteredResolutions.IndexOf(resolution);
         } else SetResolution(0);
-        Screen.fullScreen = fullscreenToggle.isOn;
     }
 
     #region Debug Functions
