@@ -151,7 +151,7 @@ public class EnemyUnit : Unit {
             if (ge is Unit unit && unit.manager is PlayerManager) {
                 if (!unit.conditions.Contains(Status.Disabled)) {
 // Adjacent coords to player unit
-                    List<Vector2> targetCoords = EquipmentAdjacency.BoxAdjacency(unit.coord, range);
+                    List<Vector2> targetCoords = EquipmentAdjacency.DiamondAdjacency(unit.coord, range);
 
                     foreach (Vector2 c in targetCoords) {
                         Dictionary<Vector2, Vector2> fromTo = new(); 
