@@ -104,6 +104,8 @@ public class UnitManager : MonoBehaviour {
             currentGrid.UpdateSelectedCursor(false, Vector2.one * -32);
             currentGrid.DisableGridHighlight();
         }            
+        foreach(GridElement ge in currentGrid.gridElements) 
+            ge.TargetElement(false);
         
     }
 

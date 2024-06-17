@@ -26,7 +26,7 @@ public class PathCard : MonoBehaviour {
         floorPacket = _packet;
 
         floorCount.text = _packet.packetType == FloorChunk.PacketType.BOSS? "?" : floorPacket.packetLength.ToString();
-        beaconCount.text = "x" + (Mathf.Ceil(_packet.packetLength / 4)+1).ToString();
+        beaconCount.text = "x" + Mathf.Ceil(((float)_packet.packetLength) / 4).ToString();
 
         GameObject prefab = null;
             

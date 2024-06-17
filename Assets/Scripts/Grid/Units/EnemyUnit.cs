@@ -1,6 +1,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EnemyUnit : Unit {
@@ -92,65 +93,43 @@ public class EnemyUnit : Unit {
     public virtual Vector2 SelectOptimalCoord(Pathfinding pathfinding) {
         switch (pathfinding) {
             case Pathfinding.ClosestCoord:
-//                 int shortestPathCount = 64;
-//                 Dictionary<Vector2, Vector2> shortestPath = new Dictionary<Vector2, Vector2>();
-//                 Vector2 targetCoord = coord;
-//                 Debug.Log("First while loop");
-// //Calculate a path from each target to self
-//                 while (!shortestPath.ContainsKey(coord)) {
-//                     foreach (Unit unit in manager.scenario.player.units) {
-// // Don't target disabled slags
-//                         if (!unit.conditions.Contains(Status.Disabled)) {
-// // Possible spaces in range of and originating from target
-//                             List<Vector2> targetCoords = EquipmentAdjacency.GetAdjacent(unit.coord, 8, equipment[0]);
-//                             foreach (Vector2 c in targetCoords) {
-//                                 Dictionary<Vector2, Vector2> fromTo = new Dictionary<Vector2, Vector2>(); 
-//                                 fromTo = EquipmentAdjacency.ClosestSteppedCoordAdjacency(coord, c, equipment[0]);
-//                                 if (fromTo != null && fromTo.Count < shortestPathCount) {
-//                                     shortestPath = fromTo;
-//                                     shortestPathCount = fromTo.Count;
-//                                     targetCoord = c;
-//                                     grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.blue, true);
-//                                 } else {
-//                                     grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.red, true);
-//                                 }
-
-//                             }
-//                         }
-//                     }
-//                 }
-
+                Vector2 targetCoord = coord;
                 
-//                 if (targetCoord != coord) {
-//                     grid.tiles.Find(t => t.coord == targetCoord).ToggleValidCoord(true, Color.blue, true);
-//                     string coords = "MoveTo Coord: " + targetCoord + ", ";
-//                     targetCoord = coord;
-//                     for (int i = 1; i <= equipment[0].range; i++) {
-//                         targetCoord = shortestPath[targetCoord];
-//                         coords += i + ": " + targetCoord + ", ";
-//                     }
-//                     Debug.Log(coords);
-//                     grid.tiles.Find(t => t.coord == targetCoord).ToggleValidCoord(true, Color.white, true);
-//                 }
-                
-//                 return targetCoord;
-//             break;
-//         }
-//Old logic
-                closestUnit = null;
-                foreach (Unit unit in manager.scenario.player.units) {
-                    if (grid.gridElements.Contains(unit) && unit.hpCurrent != 0 && !unit.conditions.Contains(Status.Disabled) && equipment[1].targetTypes.Find(t => t.GetType() == unit.GetType())) {
-                        if (closestUnit == null || Vector2.Distance(unit.coord, coord) < Vector2.Distance(closestUnit.coord, coord))
-                            closestUnit = unit;
+                Dictionary<Vector2, Vector2> shortestPath = ClosestCoord(1);
+                if (shortestPath != null && shortestPath.Count > 0) {
+                    targetCoord = shortestPath.ElementAt(shortestPath.Count-1).Value;
+                }
+                foreach (KeyValuePair<Vector2, Vector2> entry in shortestPath)
+                    grid.tiles.Find(t => t.coord == entry.Value).ToggleValidCoord(true, Color.white, true);
+
+// There is a valid target coord, not own coord
+                if (targetCoord != coord) {
+                    targetCoord = coord;
+                    for (int i = 1; i <= equipment[0].range; i++) {
+                        if (shortestPath.ContainsKey(targetCoord) && grid.CoordContents(shortestPath[targetCoord]).Count == 0)
+                            targetCoord = shortestPath[targetCoord];
+                        else break;
                     }
+                    grid.tiles.Find(t => t.coord == targetCoord).ToggleValidCoord(true, Color.yellow, true);
                 }
+                
+            return targetCoord;
+        
+//Old logic
+            //     closestUnit = null;
+            //     foreach (Unit unit in manager.scenario.player.units) {
+            //         if (grid.gridElements.Contains(unit) && unit.hpCurrent != 0 && !unit.conditions.Contains(Status.Disabled) && equipment[1].targetTypes.Find(t => t.GetType() == unit.GetType())) {
+            //             if (closestUnit == null || Vector2.Distance(unit.coord, coord) < Vector2.Distance(closestUnit.coord, coord))
+            //                 closestUnit = unit;
+            //         }
+            //     }
 
-                Vector2 closestCoord = coord;
-                foreach(Vector2 c in validActionCoords) {
-                    if (Vector2.Distance(c, closestUnit.coord) < Vector2.Distance(closestCoord, closestUnit.coord)) 
-                        closestCoord = c;
-                }
-                return closestCoord;
+            //     Vector2 closestCoord = coord;
+            //     foreach(Vector2 c in validActionCoords) {
+            //         if (Vector2.Distance(c, closestUnit.coord) < Vector2.Distance(closestCoord, closestUnit.coord)) 
+            //             closestCoord = c;
+            //     }
+            //     return closestCoord;
                 
             case Pathfinding.Random:
                 if (validActionCoords.Count > 0) {
@@ -160,6 +139,31 @@ public class EnemyUnit : Unit {
         }
 // Fallout, returns own coord
         return coord;
+    }
+
+    Dictionary<Vector2, Vector2> ClosestCoord(int range) {
+        int shortestPathCount = 64;
+        Dictionary<Vector2, Vector2> shortestPath = new();
+        foreach (Unit unit in manager.scenario.player.units) {
+            if (!unit.conditions.Contains(Status.Disabled)) {
+// Adjacent coords to player unit
+                List<Vector2> targetCoords = EquipmentAdjacency.BoxAdjacency(unit.coord, range);
+
+                foreach (Vector2 c in targetCoords) {
+                    Dictionary<Vector2, Vector2> fromTo = new(); 
+                    fromTo = EquipmentAdjacency.ClosestSteppedCoordAdjacency(coord, c, equipment[0]);
+                    if (fromTo != null && fromTo.Count < shortestPathCount) {
+                        shortestPath = fromTo;
+                        shortestPathCount = fromTo.Count;
+                        grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.blue, true);
+                    } else {
+                        grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.red, true);
+                    }
+                }
+            }
+        }
+
+        return shortestPath;
     }
 
     public override IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {

@@ -45,11 +45,7 @@ public class AnvilData : SlagGearData {
         
 // Destroy active anvils over anvil limit
         if (activeAnvils >= anvilLimit) {
-            int destroyCount = activeAnvils - anvilLimit;
-            for (int i = 0; i < destroyCount; i++) {
-                anvils[0].StartCoroutine(anvils[0].DestroySequence());
-                anvils.RemoveAt(0);
-            }
+            anvils[0].StartCoroutine(anvils[0].DestroySequence());
         } 
             
 // Spawn new Anvil and Initialize
@@ -83,6 +79,7 @@ public class AnvilData : SlagGearData {
                     unit.transform.position = Vector3.Lerp(unit.transform.position, toPos, timer/animDur);
                     timer += Time.deltaTime;
                 }
+                unit.UpdateSortOrder(fromTo[current]);
                 current = fromTo[current];
                 yield return null;
             }        

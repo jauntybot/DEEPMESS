@@ -182,7 +182,6 @@ public class UpgradeManager : MonoBehaviour {
         confirmButton.gameObject.SetActive(false);
     }
 
-    bool confirming = false;
     public void DiscardScratchOff() {
         
         confirmDiscard.SetActive(true);

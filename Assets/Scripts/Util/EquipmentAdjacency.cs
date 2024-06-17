@@ -157,7 +157,7 @@ public static class EquipmentAdjacency {
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered
-                            if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
+                            if (data.filters == null || !data.filters.Find(f => f.GetType() == ge.GetType() || !ge.GetType().IsSubclassOf(f.GetType()))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord,current);
                                 continue;
@@ -184,11 +184,11 @@ public static class EquipmentAdjacency {
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered
-                            if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
+                            if (data.filters == null || !data.filters.Find(f => f.GetType() == ge.GetType() || !ge.GetType().IsSubclassOf(f.GetType()))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord, current);
                                 continue;
-                            }
+                            } 
                             if (Vector2.Equals(current, to)) break;
                         }
 // Coord is empty
@@ -207,13 +207,13 @@ public static class EquipmentAdjacency {
 // Reverse dictionary
         current = to;
         Dictionary<Vector2, Vector2> _fromTo = new();
-        string dict = "";
         while (!Vector2.Equals(current, from)) {
             _fromTo.Add(_toFrom[current], current);
-            dict += _toFrom[current] + ", " + current + '\n';
+            
             current = _toFrom[current];
             if (Vector2.Equals(current, from)) break;
         }
+
         return _fromTo;
     }
 
@@ -237,7 +237,11 @@ public static class EquipmentAdjacency {
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered
-                            if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
+                            if (ge is EnemyUnit) {
+                                frontier.Add(coord);
+                                _toFrom.Add(coord, current);
+                                continue;
+                            } else if (data.filters == null || !data.filters.Find(f => f.GetType() == ge.GetType() && !ge.GetType().IsSubclassOf(f.GetType()))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord,current);
                                 continue;
@@ -262,7 +266,11 @@ public static class EquipmentAdjacency {
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered
-                            if (data.filters == null || data.filters.Find(f => f.GetType() == ge.GetType() && ge.GetType().IsSubclassOf(f.GetType()))) {
+                            if (ge is EnemyUnit) {
+                                frontier.Add(coord);
+                                _toFrom.Add(coord, current);
+                                continue;
+                            } else if (data.filters == null || !data.filters.Find(f => f.GetType() == ge.GetType() && !ge.GetType().IsSubclassOf(f.GetType()))) {
                                 frontier.Add(coord);
                                 _toFrom.Add(coord, current);
                                 continue;
@@ -279,28 +287,20 @@ public static class EquipmentAdjacency {
                 }
             }
         }
-        
-        Debug.Log("Frontier empty or to reached");
-        Vector2 newTo = from;
-        if (!_toFrom.ContainsKey(to)) {
-            foreach (KeyValuePair<Vector2, Vector2> entry in _toFrom) {
-                if (Vector2.Distance(entry.Value, to) < Vector2.Distance(newTo, to)) 
-                    newTo = entry.Value;
-            }
-        }
-        Debug.Log("new to: " + newTo);
 
+
+        if (_toFrom.ContainsKey(to)) {
 // Reverse dictionary
-        current = newTo;
-        Dictionary<Vector2, Vector2> _fromTo = new();
-        string dict = "";
-        while (!Vector2.Equals(current, from)) {
-            _fromTo.Add(_toFrom[current], current);
-            dict += _toFrom[current] + ", " + current + '\n';
-            current = _toFrom[current];
-            if (Vector2.Equals(current, from)) break;
-        }
-        return _fromTo;         
+            current = to;
+            Dictionary<Vector2, Vector2> _fromTo = new();
+            while (!Vector2.Equals(current, from)) {
+                _fromTo.Add(_toFrom[current], current);
+                current = _toFrom[current];
+                if (Vector2.Equals(current, from)) break;
+            }
+            return _fromTo;         
+        } else return null;
+
     }
 
     public static List<Vector2> OrthagonalAdjacency(Vector2 from, int range, List<GridElement> filters = null, List<GridElement> targetLast = null) 
@@ -374,7 +374,8 @@ public static class EquipmentAdjacency {
         for (int x = -range; x <= range; x++) {
             for (int y = -range; y <= range; y++) {
                 Vector3 coord = new Vector3(from.x+x, from.y+y);
-                _coords.Add(coord);                
+                if (coord.x >= 0 && coord.x <= 7 && coord.y >= 0 && coord.y <= 7)
+                    _coords.Add(coord);                
             }
         }
 
