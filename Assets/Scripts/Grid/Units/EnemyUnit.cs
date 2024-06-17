@@ -103,7 +103,7 @@ public class EnemyUnit : Unit {
                     targetCoord = shortestPath.ElementAt(shortestPath.Count-1).Value;
                 }
                 foreach (KeyValuePair<Vector2, Vector2> entry in shortestPath)
-                    grid.tiles.Find(t => t.coord == entry.Value).ToggleValidCoord(true, Color.white, true);
+                    //grid.tiles.Find(t => t.coord == entry.Value).ToggleValidCoord(true, Color.white, true);
 
 // There is a valid target coord, not own coord
                 if (targetCoord != coord) {
@@ -113,7 +113,7 @@ public class EnemyUnit : Unit {
                             targetCoord = shortestPath[targetCoord];
                         else break;
                     }
-                    grid.tiles.Find(t => t.coord == targetCoord).ToggleValidCoord(true, Color.yellow, true);
+                    //grid.tiles.Find(t => t.coord == targetCoord).ToggleValidCoord(true, Color.yellow, true);
                 }
                 
             return targetCoord;
@@ -156,8 +156,8 @@ public class EnemyUnit : Unit {
                     foreach (Vector2 c in targetCoords) {
                         Dictionary<Vector2, Vector2> fromTo = new(); 
                         fromTo = EquipmentAdjacency.SteppedCoordAdjacency(coord, c, equipment[0]);
-                        if (fromTo != null) grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.blue, true);
-                        else grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.red, true);
+                        // if (fromTo != null) grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.blue, true);
+                        // else grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.red, true);
                         
                         if (fromTo != null && fromTo.Count < shortestPathCount) {
                             shortestPath = fromTo;
