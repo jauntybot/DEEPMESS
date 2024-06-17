@@ -98,6 +98,9 @@ public class EnemyUnit : Unit {
                 Dictionary<Vector2, Vector2> shortestPath = ClosestCoord(1);
                 if (shortestPath != null && shortestPath.Count > 0) {
                     targetCoord = shortestPath.ElementAt(shortestPath.Count-1).Value;
+                } else {
+                    shortestPath = NextClosestCoord(1);
+                    targetCoord = shortestPath.ElementAt(shortestPath.Count-1).Value;
                 }
                 foreach (KeyValuePair<Vector2, Vector2> entry in shortestPath)
                     //grid.tiles.Find(t => t.coord == entry.Value).ToggleValidCoord(true, Color.white, true);
@@ -142,6 +145,33 @@ public class EnemyUnit : Unit {
     }
 
     Dictionary<Vector2, Vector2> ClosestCoord(int range) {
+        int shortestPathCount = 64;
+        Dictionary<Vector2, Vector2> shortestPath = new();
+        foreach (GridElement ge in grid.gridElements) {
+            if (ge is Unit unit && unit.manager is PlayerManager) {
+                if (!unit.conditions.Contains(Status.Disabled)) {
+// Adjacent coords to player unit
+                    List<Vector2> targetCoords = EquipmentAdjacency.BoxAdjacency(unit.coord, range);
+
+                    foreach (Vector2 c in targetCoords) {
+                        Dictionary<Vector2, Vector2> fromTo = new(); 
+                        fromTo = EquipmentAdjacency.SteppedCoordAdjacency(coord, c, equipment[0]);
+                        if (fromTo != null && fromTo.Count < shortestPathCount) {
+                            shortestPath = fromTo;
+                            shortestPathCount = fromTo.Count;
+                            //grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.blue, true);
+                        } else {
+                            //  grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.red, true);
+                        }
+                    }
+                }
+            }
+        }
+
+        return shortestPath;
+    }
+
+    Dictionary<Vector2, Vector2> NextClosestCoord(int range) {
         int shortestPathCount = 64;
         Dictionary<Vector2, Vector2> shortestPath = new();
         foreach (GridElement ge in grid.gridElements) {

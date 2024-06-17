@@ -83,17 +83,21 @@ public class FileDataHandler {
 
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
 
-            string dataToStore = JsonConvert.SerializeObject(data, new JsonSerializerSettings() {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                Formatting = Formatting.Indented
-            });
-            
+            // string dataToStore = JsonConvert.SerializeObject(data, new JsonSerializerSettings() {
+            //     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            //     Formatting = Formatting.Indented
+            // });
             JsonSerializer serializer = new();
 
-            using FileStream stream = new(fullPath, FileMode.Create);
-            using StreamWriter writer = new (stream);
-            using JsonWriter jWriter = new JsonTextWriter(writer);
-            writer.Write(dataToStore);
+            string dataToStore = JsonUtility.ToJson(data, true);
+            using (FileStream stream = new FileStream(fullPath, FileMode.Create)) {
+                using (StreamWriter writer = new StreamWriter(stream)) {
+                    writer.Write(dataToStore);
+                }
+            }
+
+            // using JsonWriter jWriter = new JsonTextWriter(writer);
+            // writer.Write(dataToStore);
             //JsonConvert.Serialize(jWriter, data);
 
         } catch (Exception e) {

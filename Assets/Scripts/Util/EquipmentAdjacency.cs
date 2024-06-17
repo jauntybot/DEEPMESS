@@ -206,17 +206,17 @@ public static class EquipmentAdjacency {
 
         //if (!_toFrom.ContainsKey(to)) return null;
 
+        if (_toFrom.ContainsKey(to)) {
 // Reverse dictionary
-        current = to;
-        Dictionary<Vector2, Vector2> _fromTo = new();
-        while (!Vector2.Equals(current, from)) {
-            _fromTo.Add(_toFrom[current], current);
-            
-            current = _toFrom[current];
-            if (Vector2.Equals(current, from)) break;
-        }
-
-        return _fromTo;
+            current = to;
+            Dictionary<Vector2, Vector2> _fromTo = new();
+            while (!Vector2.Equals(current, from)) {
+                _fromTo.Add(_toFrom[current], current);
+                current = _toFrom[current];
+                if (Vector2.Equals(current, from)) break;
+            }
+            return _fromTo;         
+        } else return null;
     }
 
     

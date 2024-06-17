@@ -11,6 +11,7 @@ public class PersistentDataManager : MonoBehaviour {
     public RunData runData;
 
     List<IUserDataPersistence> userDataPersistenceObjs;
+    List<IUserDataPersistence> runDataPersistenceObjs;
     FileDataHandler dataHandler;
 
     public static PersistentDataManager instance {get; private set; }
@@ -28,6 +29,7 @@ public class PersistentDataManager : MonoBehaviour {
     void Start() {
         dataHandler = new FileDataHandler(Application.persistentDataPath, userDataFileName, runDataFileName);
         userDataPersistenceObjs = FindAllUserDataObjs();
+        runDataPersistenceObjs = FindAllRunDataObjs();
         LoadUser();
     }
 

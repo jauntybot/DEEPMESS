@@ -119,7 +119,8 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     }
 
     public void SaveRun(ref RunData run) {
-        run = new RunData(scenario.floorManager.currentFloor, scenario.floorManager.floorSequence.activePacket);
+        run = new RunData(scenario.player.units);
+        Debug.Log(run.unitHP["FLAT"][0]);
     }
 
     // void GetFPS() {

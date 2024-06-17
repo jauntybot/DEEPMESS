@@ -49,21 +49,21 @@ public class LoadedGrid : Grid {
         enemy.transform.SetSiblingIndex(2);
         enemy.StartCoroutine(enemy.Initialize(this));
 
-        foreach (KeyValuePair<Vector2, string[]> entry in runData.floorDict) {
-            Tile tile = null;
-            if (entry.Value[0] == "BONE") tile = Instantiate(tilePrefab, transform).GetComponent<Tile>();
-            //else if (entry.Value[0] == "BLOOD") tile = Instantiate()
+        // foreach (KeyValuePair<Vector2, string[]> entry in runData.floorDict) {
+        //     Tile tile = null;
+        //     if (entry.Value[0] == "BONE") tile = Instantiate(tilePrefab, transform).GetComponent<Tile>();
+        //     //else if (entry.Value[0] == "BLOOD") tile = Instantiate()
 
-            // tile.white=false;
-            // if (x%2==0) { if (y%2==0) tile.white=true; } 
-            // else { if (y%2!=0) tile.white=true; }
+        //     // tile.white=false;
+        //     // if (x%2==0) { if (y%2==0) tile.white=true; } 
+        //     // else { if (y%2!=0) tile.white=true; }
 
-            // tile.StoreInGrid(this);
-            // tile.UpdateElement(new Vector2(x,y));
+        //     // tile.StoreInGrid(this);
+        //     // tile.UpdateElement(new Vector2(x,y));
 
-            tiles.Add(tile);
-            tile.transform.parent = gridContainer.transform;
-        }
+        //     tiles.Add(tile);
+        //     tile.transform.parent = gridContainer.transform;
+        // }
         
 
     }
