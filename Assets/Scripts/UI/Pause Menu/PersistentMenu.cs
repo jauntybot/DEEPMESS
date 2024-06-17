@@ -20,7 +20,6 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     [SerializeField] Toggle fullscreenToggle, cutsceneToggle, scatterToggle;
     [SerializeField] GameObject menuButton;
     public Animator fadeToBlack;
-    public int startCavity;
 
     const string MIXER_MUSIC = "musicVolume";
     const string MIXER_SFX = "sfxVolume";
@@ -52,6 +51,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         //InvokeRepeating("GetFPS", 1, 1);
 
         Time.timeScale = 1;
+        loadedRun = null;
 
         SceneManager.sceneLoaded += UpdateRefs;
     }
@@ -74,7 +74,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
                 (resolutions[i].width == 2560 && resolutions[i].height == 1440) ||
                 (resolutions[i].width == 2560 && resolutions[i].height == 1600)))
                 filteredResolutions.Add(resolutions[i]);
-                Debug.Log(resolutions[i].width + ", " + resolutions[i].height + ", " + resolutions[i].refreshRate);
+//                Debug.Log(resolutions[i].width + ", " + resolutions[i].height + ", " + resolutions[i].refreshRate);
         }
 
         List<string> options = new List<string>();
@@ -113,28 +113,29 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         user.scatterSkip = scatterToggle.isOn;
         user.fullscreen = fullscreenToggle.isOn;
     }
-    
+      
     public void LoadRun(RunData run) {
-
+        loadedRun = run;
+        Debug.Log("persistent menu loaded run");
     }
 
     public void SaveRun(ref RunData run) {
         run = new RunData((int)scenario.floorManager.floorSequence.currentThreshold, scenario.player.units, scenario.relicManager.collectedRelics);
-        Debug.Log(run.unitHP["FLAT"][0]);
     }
 
     // void GetFPS() {
     //     fps = (int) (1f / Time.unscaledDeltaTime);
     // }
 
+    public RunData loadedRun;
+    public bool tutorial;
     void UpdateRefs(Scene scene = default, LoadSceneMode mode = default) {
         if (ScenarioManager.instance) {
 // Initialize scenario manager starts game
             scenario = ScenarioManager.instance;
-            if (startCavity != -1) {
-                scenario.StartCoroutine(scenario.Init(startCavity));
-            } else
-                scenario.StartCoroutine(scenario.Init());
+            Debug.Log("loaded run? " + loadedRun != null);       
+            scenario.StartCoroutine(scenario.Init(loadedRun, tutorial));
+    
 
             relicDropdown.ClearOptions();
             RelicManager relicManager = RelicManager.instance;
@@ -151,6 +152,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         }
 // Initialize the MainMenuManager
         else if (MainMenuManager.instance) {
+            loadedRun = null;
             menuButton.SetActive(false);
             MainMenuManager.instance.optionsButton.onClick.AddListener(MainMenuPause);
             pauseMenu.ToggleOptionsBack(true);

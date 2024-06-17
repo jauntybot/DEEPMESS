@@ -13,6 +13,8 @@ public class RunData {
     public Dictionary<String, List<String>> unitUpgrades;
     public List<String> godThoughts;
 
+    public RunData() {}
+
     public RunData(int cavityIndex, List<Unit> playerUnits, List<Relic> relics) { // List<Unit> units, List<RelicData> _relics, List<Objective> _objectives
         startCavity = cavityIndex;
         unitUpgrades = new();

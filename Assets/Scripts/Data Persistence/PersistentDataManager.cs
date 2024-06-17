@@ -11,7 +11,7 @@ public class PersistentDataManager : MonoBehaviour {
     public RunData runData;
 
     List<IUserDataPersistence> userDataPersistenceObjs;
-    List<IUserDataPersistence> runDataPersistenceObjs;
+    List<IRunDataPersistence> runDataPersistenceObjs;
     FileDataHandler dataHandler;
 
     public static PersistentDataManager instance {get; private set; }
@@ -61,17 +61,30 @@ public class PersistentDataManager : MonoBehaviour {
     public void NewRun() {}
 
     public void LoadRun() {
+        runData = dataHandler.LoadRun();
+        Debug.Log("Data manager load run");
 
+        if (runData == null) {
+            Debug.Log("No data was found. Initializing new run data.");
+            //NewRun();
+        }
+
+        foreach (IRunDataPersistence runDataObj in runDataPersistenceObjs) {
+            runDataObj.LoadRun(runData);
+        }
     }
 
     public void SaveRun() {
-        foreach (IRunDataPersistence runDataObj in userDataPersistenceObjs) {
+        foreach (IRunDataPersistence runDataObj in runDataPersistenceObjs) {
             runDataObj.SaveRun(ref runData);
         }
 
         dataHandler.SaveRun(runData);
     }
 
+    public void DeleteRun() {
+
+    }
 
     void OnApplicationQuit() {
         SaveUser();
@@ -83,10 +96,10 @@ public class PersistentDataManager : MonoBehaviour {
         return new List<IUserDataPersistence>(userDataObjs);
     }
 
-    List<IUserDataPersistence> FindAllRunDataObjs() {
-        IEnumerable<IUserDataPersistence> runDataObjs = FindObjectsOfType<MonoBehaviour>().OfType<IUserDataPersistence>();
+    List<IRunDataPersistence> FindAllRunDataObjs() {
+        IEnumerable<IRunDataPersistence> runDataObjs = FindObjectsOfType<MonoBehaviour>().OfType<IRunDataPersistence>();
 
-        return new List<IUserDataPersistence>(runDataObjs);
+        return new List<IRunDataPersistence>(runDataObjs);
     }
 
 }

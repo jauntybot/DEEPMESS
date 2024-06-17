@@ -49,10 +49,10 @@ public class ScenarioManager : MonoBehaviour {
 
 
 #region Initialization
-    public IEnumerator Init(int startIndex = -1) {
-        if (startIndex != -1) {
-            startCavity = startIndex;
-        }
+    public IEnumerator Init(RunData run = null, bool tutorial = false) {
+        if (tutorial) startCavity = 0;
+        else if (run != null) startCavity = run.startCavity;
+        else startCavity = 1;
 
         if (UIManager.instance)
             uiManager = UIManager.instance;     
@@ -66,7 +66,7 @@ public class ScenarioManager : MonoBehaviour {
 
         runDataTracker.Init(this);
     
-        yield return StartCoroutine(player.Initialize());
+        yield return StartCoroutine(player.Initialize(run));
 
         if (GameplayOptionalTooltips.instance) {
             gpOptional = GameplayOptionalTooltips.instance;

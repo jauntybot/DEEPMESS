@@ -116,12 +116,17 @@ public class MainMenuManager : MonoBehaviour
 
     IEnumerator FadeOut(int index) {
         yield return new WaitForSecondsRealtime(1f);
-        PersistentMenu.instance.startCavity = index;
         PersistentMenu.instance.FadeToBlack(true);
-        if (index != 0)
+        if (index != 0) {
+            PersistentMenu.instance.tutorial = false;
             PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
-        else
+            if (index > 1)
+                PersistentDataManager.instance.LoadRun();
+        }
+        else {
+            PersistentMenu.instance.tutorial = true;
             PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Tutorial, true);
+        }
         yield return new WaitForSecondsRealtime(1f);
         SceneManager.LoadScene(1, LoadSceneMode.Single);
     }

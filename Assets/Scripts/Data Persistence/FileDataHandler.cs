@@ -39,26 +39,6 @@ public class FileDataHandler {
         return loadedData;
     }
 
-    public RunData LoadRun() {
-        string fullPath = Path.Combine(dataDirPath, runDataFileName);
-        RunData loadedData = null;
-        if (File.Exists(fullPath)) {
-            try  {
-                string dataToLoad = "";
-                using (FileStream stream = new FileStream(fullPath, FileMode.Open)) {
-                    using (StreamReader reader = new StreamReader(stream)) {
-                        dataToLoad = reader.ReadToEnd();
-                    }
-                }
-
-                loadedData = JsonUtility.FromJson<RunData>(dataToLoad);
-            } catch (Exception e) {
-                Debug.LogError("Error occured when trying to load data from file: " + fullPath + "\n" + e);
-            }
-        }
-        return loadedData;
-    }
-
     public void SaveUser(UserData data) {
         string fullPath = Path.Combine(dataDirPath, userDataFileName);
         try {
@@ -75,6 +55,30 @@ public class FileDataHandler {
         } catch (Exception e) {
             Debug.LogError("Error occured when trying to save data to file: " + fullPath + "\n" + e);
         }
+    }
+    
+    public RunData LoadRun() {
+        string fullPath = Path.Combine(dataDirPath, runDataFileName);
+        RunData loadedData = null;
+        if (File.Exists(fullPath)) {
+            try  {
+                string dataToLoad = "";
+                using (FileStream stream = new FileStream(fullPath, FileMode.Open)) {
+                    using (StreamReader reader = new StreamReader(stream)) {
+                        dataToLoad = reader.ReadToEnd();
+                        Debug.Log(dataToLoad);
+                        // using (JsonReader jReader = new JsonTextReader(reader)) {
+                        //     dataToLoad = jReader.ReadAsString();
+                        // }
+                    }
+                }
+
+                loadedData = JsonConvert.DeserializeObject<RunData>(dataToLoad);
+            } catch (Exception e) {
+                Debug.LogError("Error occured when trying to load data from file: " + fullPath + "\n" + e);
+            }
+        }
+        return loadedData;
     }
 
     public void SaveRun(RunData data) {

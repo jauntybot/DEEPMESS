@@ -82,9 +82,9 @@ public class UpgradeManager : MonoBehaviour {
         FloorSequence sequence = FloorManager.instance.floorSequence;
         int cardLvl = 1;
         if (sequence.currentThreshold == FloorChunk.PacketType.II &&
-        sequence.floorsGot <= 2 ||
-        (sequence.activePacket.packetMods.Count == 0 && sequence.floorsGot >= 10) ||
-        (sequence.activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme) && sequence.floorsGot >= 8))
+        (sequence.floorsGot <= 2 ||
+        (sequence.activePacket.packetMods.Count == 0 && sequence.floorsGot >= 12) ||
+        (sequence.activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme) && sequence.floorsGot >= 8)))
             cardLvl = 2;
 
         List<GearUpgrade> rolledUpgrades = new();

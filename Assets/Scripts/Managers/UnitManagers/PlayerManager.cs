@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -62,7 +63,7 @@ public class PlayerManager : UnitManager {
     }
     #endregion
 
-    public override IEnumerator Initialize(Grid _currentGrid = null) {
+    public virtual IEnumerator Initialize(RunData run = null) {
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
         if (FloorManager.instance) floorManager = FloorManager.instance;
         if (FloorManager.instance) floorManager = FloorManager.instance;
@@ -91,6 +92,28 @@ public class PlayerManager : UnitManager {
 
         reviveTo = 1;
         collectedNuggets = 0;
+
+        if (run != null) LoadRunState(run);
+    }
+
+    void LoadRunState(RunData runData) {
+        Debug.Log("player loaded run");
+        foreach (Unit u in units) {
+            if (runData.unitHP.ContainsKey(u.name)) {
+                u.hpCurrent = runData.unitHP[u.name][0];
+                u.hpMax = runData.unitHP[u.name][1];
+            }
+            if (u is PlayerUnit && runData.unitUpgrades.ContainsKey(u.equipment[1].name)) {
+                SlagGearData gear = (SlagGearData)u.equipment[1];
+                int slotIndex = 0;
+                foreach(String upgrade in runData.unitUpgrades[gear.name]) {
+                    if (upgrade != "Empty") {
+                        gear.UpgradeGear(gear.upgrades.Find(up => up.name == upgrade), slotIndex);
+                    }
+                    slotIndex++;
+                }
+            }
+        }
     }
 
 // Overriden functionality
