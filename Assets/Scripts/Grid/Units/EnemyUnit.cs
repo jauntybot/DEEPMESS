@@ -156,12 +156,12 @@ public class EnemyUnit : Unit {
                     foreach (Vector2 c in targetCoords) {
                         Dictionary<Vector2, Vector2> fromTo = new(); 
                         fromTo = EquipmentAdjacency.SteppedCoordAdjacency(coord, c, equipment[0]);
+                        if (fromTo != null) grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.blue, true);
+                        else grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.red, true);
+                        
                         if (fromTo != null && fromTo.Count < shortestPathCount) {
                             shortestPath = fromTo;
                             shortestPathCount = fromTo.Count;
-                            grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.blue, true);
-                        } else {
-                            grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.red, true);
                         }
                     }
                 }

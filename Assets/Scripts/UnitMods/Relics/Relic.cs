@@ -8,7 +8,7 @@ namespace Relics {
     [System.Serializable]    
     public class Relic : MonoBehaviour {
 
-        RelicData data;
+        public RelicData data;
         Image relicSprite;
 
         public void Init(RelicData _data) {

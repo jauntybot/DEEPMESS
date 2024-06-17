@@ -119,7 +119,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     }
 
     public void SaveRun(ref RunData run) {
-        run = new RunData(scenario.player.units);
+        run = new RunData((int)scenario.floorManager.floorSequence.currentThreshold, scenario.player.units, scenario.relicManager.collectedRelics);
         Debug.Log(run.unitHP["FLAT"][0]);
     }
 
