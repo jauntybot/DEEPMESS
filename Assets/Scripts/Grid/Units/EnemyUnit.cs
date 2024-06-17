@@ -144,20 +144,22 @@ public class EnemyUnit : Unit {
     Dictionary<Vector2, Vector2> ClosestCoord(int range) {
         int shortestPathCount = 64;
         Dictionary<Vector2, Vector2> shortestPath = new();
-        foreach (Unit unit in manager.scenario.player.units) {
-            if (!unit.conditions.Contains(Status.Disabled)) {
+        foreach (GridElement ge in grid.gridElements) {
+            if (ge is Unit unit && unit.manager is PlayerManager) {
+                if (!unit.conditions.Contains(Status.Disabled)) {
 // Adjacent coords to player unit
-                List<Vector2> targetCoords = EquipmentAdjacency.BoxAdjacency(unit.coord, range);
+                    List<Vector2> targetCoords = EquipmentAdjacency.BoxAdjacency(unit.coord, range);
 
-                foreach (Vector2 c in targetCoords) {
-                    Dictionary<Vector2, Vector2> fromTo = new(); 
-                    fromTo = EquipmentAdjacency.ClosestSteppedCoordAdjacency(coord, c, equipment[0]);
-                    if (fromTo != null && fromTo.Count < shortestPathCount) {
-                        shortestPath = fromTo;
-                        shortestPathCount = fromTo.Count;
-                        //grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.blue, true);
-                    } else {
-                        //  grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.red, true);
+                    foreach (Vector2 c in targetCoords) {
+                        Dictionary<Vector2, Vector2> fromTo = new(); 
+                        fromTo = EquipmentAdjacency.ClosestSteppedCoordAdjacency(coord, c, equipment[0]);
+                        if (fromTo != null && fromTo.Count < shortestPathCount) {
+                            shortestPath = fromTo;
+                            shortestPathCount = fromTo.Count;
+                            //grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.blue, true);
+                        } else {
+                            //  grid.tiles.Find(t => t.coord == c).ToggleValidCoord(true, Color.red, true);
+                        }
                     }
                 }
             }

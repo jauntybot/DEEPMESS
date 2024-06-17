@@ -11,6 +11,48 @@ public class BossUnit : EnemyUnit {
         yield return base.DestroySequence(dmgType, source, sourceEquip);
     }
 
+    public override IEnumerator CalculateAction() {
+        if (!conditions.Contains(Status.Stunned)) {
+            UpdateAction(equipment[1]);
+            foreach (Vector2 coord in validActionCoords) {
+            if (ValidCommand(coord, selectedEquipment)) {
+                GridElement target = null;
+                foreach (GridElement ge in grid.CoordContents(coord))
+                    target = ge;
+                yield return new WaitForSecondsRealtime(0.5f);
+                Coroutine co = StartCoroutine(selectedEquipment.UseGear(this, target));
+                grid.UpdateSelectedCursor(false, Vector2.one * -32);
+                grid.DisableGridHighlight();
+                yield return co;
+                yield return new WaitForSecondsRealtime(0.125f);
+            }
+        }
+            if (energyCurrent > 0) {
+                if (!moved) yield return StartCoroutine(MoveScan());
+                yield return StartCoroutine(AttackScan());
+            }
+        } else {
+            moved = true;
+            //energyCurrent = 0;
+            yield return new WaitForSecondsRealtime(0.125f);
+            RemoveCondition(Status.Stunned);
+            yield return new WaitForSecondsRealtime(0.25f);
+        }
+       
+        grid.DisableGridHighlight();
+        manager.unitActing = false;
+    }
+
+    protected override IEnumerator AttackScan() {
+        UpdateAction(equipment[1]);
+        yield return new WaitForSecondsRealtime(0.5f);
+        Coroutine co = StartCoroutine(selectedEquipment.UseGear(this));
+        grid.UpdateSelectedCursor(false, Vector2.one * -32);
+        grid.DisableGridHighlight();
+        yield return co;
+        yield return new WaitForSecondsRealtime(0.125f);
+    }
+
     public override bool ValidCommand(Vector2 target, GearData equip) {
         if (equip == null) return false;
         if (validActionCoords.Count == 0) return false;
@@ -21,5 +63,7 @@ public class BossUnit : EnemyUnit {
 
         return true;
     }
+
+    public override void ApplyCondition(Status s, bool undo = false) {}
 
 }

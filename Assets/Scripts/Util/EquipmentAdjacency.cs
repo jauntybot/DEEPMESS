@@ -154,6 +154,8 @@ public static class EquipmentAdjacency {
                     if (!_toFrom.ContainsKey(coord)) {
 // If there is something already occupying this coord  
                         bool occupied = false;
+                        Tile tile = FloorManager.instance.currentFloor.tiles.Find(t => t.coord == coord);
+                        if (data.filters.Find(f => f is Tile t && t.tileType == Tile.TileType.Bile) && tile.tileType == Tile.TileType.Bile) continue;
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered
@@ -234,6 +236,8 @@ public static class EquipmentAdjacency {
                     if (!_toFrom.ContainsKey(coord)) {
 // If there is something already occupying this coord  
                         bool occupied = false;
+                        Tile tile = FloorManager.instance.currentFloor.tiles.Find(t => t.coord == coord);
+                        if (data.filters.Find(f => f is Tile t && t.tileType == Tile.TileType.Bile) && tile.tileType == Tile.TileType.Bile) continue;
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered
@@ -261,8 +265,10 @@ public static class EquipmentAdjacency {
                     Vector2 coord = new(current.x, current.y + y);
                     if (coord.y < 0 || coord.y > 7) continue;
                     if (!_toFrom.ContainsKey(coord)) {
-// If there is something already occupying this coord                        
+// If there is something already occupying this coord         
                         bool occupied = false;
+                        Tile tile = FloorManager.instance.currentFloor.tiles.Find(t => t.coord == coord);
+                        if (data.filters.Find(f => f is Tile t && t.tileType == Tile.TileType.Bile) && tile.tileType == Tile.TileType.Bile) continue;               
                         foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
                             occupied = true;
 // Valid coord if element is not filtered
