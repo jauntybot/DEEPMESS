@@ -148,7 +148,7 @@ public class EnemyUnit : Unit {
         int shortestPathCount = 64;
         Dictionary<Vector2, Vector2> shortestPath = new();
         foreach (GridElement ge in grid.gridElements) {
-            if (ge is Unit unit && unit.manager is PlayerManager) {
+            if (ge is Unit unit && unit.manager is PlayerManager && ge is not Beacon) {
                 if (!unit.conditions.Contains(Status.Disabled)) {
 // Adjacent coords to player unit
                     List<Vector2> targetCoords = EquipmentAdjacency.DiamondAdjacency(unit.coord, range);
