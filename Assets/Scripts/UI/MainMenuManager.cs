@@ -33,14 +33,13 @@ public class MainMenuManager : MonoBehaviour {
     }
 
     public IEnumerator WhatsToCome(int currency) {
-        yield return new WaitForSecondsRealtime(2f);
         float t = 0;
         bodegaAnim.gameObject.SetActive(true);
         cannonAnim.gameObject.SetActive(true);
         mainButtonsAnim.gameObject.SetActive(false);
         logoAnim.gameObject.SetActive(false);
 
-        t = 0; while (t <= 1f) { t += Time.deltaTime; yield return null; }
+        t = 0; while (t <= 3f) { t += Time.deltaTime; yield return null; }
         slimeBucksAnim.gameObject.SetActive(true);
 
         yield return StartCoroutine(StringCountUp.CountUp(currency, 0.75f, (countUp) => { 
