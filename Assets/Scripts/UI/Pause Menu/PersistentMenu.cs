@@ -171,6 +171,15 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         if (TooltipSystem.instance)
             toolTips = TooltipSystem.instance;
         
+        StartCoroutine(SceneLoadDelay());
+    }
+
+    IEnumerator SceneLoadDelay() {
+        float t = 0;
+        while (t <= 1.5f) {
+            t += Time.deltaTime;
+            yield return null;
+        }
         FadeToBlack(false);
     }
 

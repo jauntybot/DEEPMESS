@@ -5,8 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 
-public class MainMenuManager : MonoBehaviour
-{
+public class MainMenuManager : MonoBehaviour {
 
     public static MainMenuManager instance;
 
@@ -26,6 +25,7 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] DialogueTooltip tooltip;
     [SerializeField] TMP_Text currencyCountUp;
     [SerializeField] Animator slimeBucksAnim, bodegaAnim, cannonAnim, logoAnim;
+    [SerializeField] Color keyColor;
 
     public void Init(bool runSaved) {
         mainButtonsAnim.SetTrigger("FadeIn");
@@ -33,6 +33,7 @@ public class MainMenuManager : MonoBehaviour
     }
 
     public IEnumerator WhatsToCome(int currency) {
+        yield return new WaitForSecondsRealtime(2f);
         float t = 0;
         bodegaAnim.gameObject.SetActive(true);
         cannonAnim.gameObject.SetActive(true);
@@ -56,7 +57,7 @@ public class MainMenuManager : MonoBehaviour
         , "Coming Soon", true);
         while (!tooltip.skip) yield return null;
         tooltip.SetText(
-            "This demo will be updated as development continues, bringing exciting new content for you to experience and enjoy. Don't forget to wishlist DEEPMESS and join the Discord for updates."
+            "This demo <b>" + ColorToRichText("will be updated") + "</b> as development continues, bringing exciting new content for you to experience and enjoy. Don't forget to <b>" + ColorToRichText("wishlist DEEPMESS") + "</b> and <b>" + ColorToRichText("join the discord") + "</b> for updates."
         , "Next Time", true);
         while (!tooltip.skip) yield return null;
 
@@ -150,7 +151,7 @@ public class MainMenuManager : MonoBehaviour
         Application.Quit();
     }
 
-    static string ColorToRichText(string str) {
+    string ColorToRichText(string str) {
         return "<color=#" + ColorUtility.ToHtmlStringRGB(keyColor) + ">" + str + "</color>";
     }
 }

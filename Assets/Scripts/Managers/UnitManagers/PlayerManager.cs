@@ -62,7 +62,7 @@ public class PlayerManager : UnitManager {
         PlayerManager.instance = this;
     }
     #endregion
-
+    
     public virtual IEnumerator Initialize(RunData run = null) {
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
         if (FloorManager.instance) floorManager = FloorManager.instance;

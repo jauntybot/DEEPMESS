@@ -50,6 +50,7 @@ public class ScenarioManager : MonoBehaviour {
 
 #region Initialization
     public IEnumerator Init(RunData run = null, int index = -1) {
+        yield return new WaitForSecondsRealtime(1f);
         if (index <= 1 && index != -1)
             startCavity = index;
         else if (run != null) startCavity = run.startCavity;

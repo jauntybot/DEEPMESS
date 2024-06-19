@@ -962,6 +962,7 @@ MonoBehaviour:
   bodegaAnim: {fileID: 455435749}
   cannonAnim: {fileID: 839166299}
   logoAnim: {fileID: 1634892927}
+  keyColor: {r: 0.98039216, g: 0.5882353, b: 0.60784316, a: 1}
 --- !u!1001 &964492532
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4043,6 +4044,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2937251314126702749, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 3133000393742405668, guid: 874c92b8d213f214a905ef23865e42b0, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -5679,7 +5684,7 @@ RectTransform:
   m_Children:
   - {fileID: 409227290}
   m_Father: {fileID: 1617724318}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
