@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 namespace Relics {
     
@@ -27,9 +28,18 @@ namespace Relics {
         [SerializeField] Queue<IEnumerator> relicQueue;
         Queue<Animator> onFloorQueue;
 
-        void Start() {
+        public void Init(RunData run = null) {
             ClearRelics();
-            relicPool = new ShuffleBag<RelicData>(serializedRelics.ToArray());
+            List<RelicData> data = new(serializedRelics);
+            if (run != null) {
+                foreach (String gt in run.godThoughts) {
+                    RelicData relic = data.Find(r => r.name == gt);
+                    CollectRelic(relic);
+                    data.Remove(relic);
+                }
+            }
+            relicPool = new ShuffleBag<RelicData>(data.ToArray());
+
             scrapValue = 0;
 
             relicQueue = new();

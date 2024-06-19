@@ -23,12 +23,14 @@ public class UnitUpgradeUI : UnitUI {
         
         upgrade = _upgrade;
 
+        int i = 0;
         foreach (UpgradeSlot slot in slots) {
-            slot.Init(this);
+            slot.Init(this, gear.slottedUpgrades[i]);
             slot.radialFill.fillAmount = 0;
             slot.radialFill.GetComponent<AudioSource>().enabled = false;
+            i++;
         }
-        if (hpSlot) hpSlot.Init(this);
+        if (hpSlot) hpSlot.Init(this, u.hpMax > 3);
                 
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();

@@ -9,13 +9,15 @@ public class ObjectiveTrackerCard : ObjectiveCard {
 
     public override void Init(Objective _objective) {
         base.Init(_objective);
-        anim.SetTrigger("Reroll");
+        
     }
 
     public override void UpdateCard(Objective ob) {
         base.UpdateCard(ob);
-        if (ob.succeeded) anim.SetTrigger("Score");
-
+        if (ob.succeeded) {
+            Debug.Log("tracker success");
+            anim.SetTrigger("Score");
+        }
     }
 
     public override void Unsub() {

@@ -13,26 +13,6 @@ public class Anvil : Unit {
     [SerializeField] List<GridElement> targetTypes;
     bool reinforcedBottom, explode, liveWire, crystalize;
 
-    protected override void Start() {
-// Manual override of Base.Start to exclude hp initialization
-        audioSource = GetComponent<AudioSource>();
-        hitbox = GetComponent<PolygonCollider2D>();
-        hitbox.enabled = false;
-
-        hpCurrent = hpMax;
-        energyCurrent = energyMax;
-
-        
-        elementCanvas = GetComponentInChildren<ElementCanvas>();
-        if (elementCanvas) elementCanvas.Initialize(this);
-// If first serialized GFX has an animator set Unit anim to it 
-        if (gfx[0].GetComponent<Animator>()) {
-            gfxAnim = gfx[0].GetComponent<Animator>();
-            gfxAnim.keepAnimatorStateOnDisable = true;
-        }
-        if (conditionDisplay) conditionDisplay.Init(this);
-    }
-
     public virtual void Init(int _hp, AnvilData _data) {
         data = _data;
 // SPECIAL TIERS -- Increase anvil max HP

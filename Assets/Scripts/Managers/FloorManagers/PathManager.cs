@@ -45,7 +45,7 @@ public class PathManager : MonoBehaviour {
         if (clipIndex < 0) clipIndex = 0;
     }
 
-    public IEnumerator PathSequence() {
+    public IEnumerator PathSequence(bool save) {
         HorizontalLayoutGroup layout = pathCardContainer.GetComponent<HorizontalLayoutGroup>();
         layout.enabled = true;
         choosingPath = true;
@@ -53,6 +53,7 @@ public class PathManager : MonoBehaviour {
         activeCards = new();
         float t  = 0;
 
+        if (save) PersistentDataManager.instance.SaveRun();
         
         for (int i = pathCardContainer.childCount - 1; i >= 0; i--) {
             Destroy(pathCardContainer.GetChild(i).gameObject);

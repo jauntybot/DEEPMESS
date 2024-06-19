@@ -120,7 +120,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     }
 
     public void SaveRun(ref RunData run) {
-        run = new RunData((int)scenario.floorManager.floorSequence.currentThreshold, scenario.player.units, scenario.relicManager.collectedRelics);
+        run = new RunData((int)scenario.floorManager.floorSequence.currentThreshold, scenario.player.units, scenario.relicManager.collectedRelics, scenario.objectiveManager.activeObjectives, scenario.objectiveManager.objectiveIndices, scenario.player.collectedNuggets);
     }
 
     // void GetFPS() {
@@ -128,13 +128,12 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     // }
 
     public RunData loadedRun;
-    public bool tutorial;
+    public int startIndex = -1;
     void UpdateRefs(Scene scene = default, LoadSceneMode mode = default) {
         if (ScenarioManager.instance) {
 // Initialize scenario manager starts game
             scenario = ScenarioManager.instance;
-            Debug.Log("loaded run? " + loadedRun != null);       
-            scenario.StartCoroutine(scenario.Init(loadedRun, tutorial));
+            scenario.StartCoroutine(scenario.Init(loadedRun, startIndex));
     
 
             relicDropdown.ClearOptions();
@@ -157,7 +156,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
             MainMenuManager.instance.optionsButton.onClick.AddListener(MainMenuPause);
             pauseMenu.ToggleOptionsBack(true);
             if (upcomingCurrency > 0) MainMenuManager.instance.StartCoroutine(MainMenuManager.instance.WhatsToCome(upcomingCurrency));
-            else MainMenuManager.instance.Init();
+            else MainMenuManager.instance.Init(PersistentDataManager.instance.IsRunSaved());
         }
 
 // initialize MusicController if not initialized

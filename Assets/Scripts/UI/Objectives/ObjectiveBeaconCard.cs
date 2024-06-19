@@ -8,7 +8,11 @@ public class ObjectiveBeaconCard : ObjectiveCard {
     [SerializeField] Animator anim;
     [SerializeField] Button button;
     [SerializeField] TMPro.TMP_Text buttonTMP;
-    
+
+    public override void Init(Objective _objective) {
+        Unsub();
+        base.Init(_objective);
+    }
 
     public override void UpdateCard(Objective ob) {
         base.UpdateCard(ob);

@@ -18,17 +18,18 @@ public class MainMenuManager : MonoBehaviour
         instance = this;
     }
     
-    public Button optionsButton;
+    public Button optionsButton, continueButton;
     [SerializeField] GameObject buttonColumn;
-    [SerializeField] Animator creditsAnim, mainButtonsAnim, playButtonsAnim, nailAnim;
+    [SerializeField] Animator creditsAnim, mainButtonsAnim, playButtonsAnim, tutorialButtonsAnim, nailAnim;
 
     [Header("What's To Come Refs")]
     [SerializeField] DialogueTooltip tooltip;
     [SerializeField] TMP_Text currencyCountUp;
     [SerializeField] Animator slimeBucksAnim, bodegaAnim, cannonAnim, logoAnim;
 
-    public void Init() {
+    public void Init(bool runSaved) {
         mainButtonsAnim.SetTrigger("FadeIn");
+        continueButton.gameObject.SetActive(runSaved);
     }
 
     public IEnumerator WhatsToCome(int currency) {
@@ -106,11 +107,27 @@ public class MainMenuManager : MonoBehaviour
             playButtonsAnim.SetBool("Active", false);
     }
 
+    public void ToggleTutorialButtons(bool state) {
+        for (int i = buttonColumn.transform.childCount - 1; i >= 0; i--) {
+            Button b = buttonColumn.transform.GetChild(i).GetComponent<Button>();
+            if (b != null)
+                buttonColumn.transform.GetChild(i).GetComponent<Button>().interactable = !state;
+        }
+
+        if (state) {
+            tutorialButtonsAnim.gameObject.SetActive(true);
+            tutorialButtonsAnim.SetBool("Active", true);
+        } else 
+            tutorialButtonsAnim.SetBool("Active", false);
+    }
+
     public void SendNail(int index) {
         nailAnim.SetTrigger("Start Game");
         for (int i = playButtonsAnim.transform.childCount - 1; i >= 0; i--) 
             playButtonsAnim.transform.GetChild(i).GetComponent<Button>().interactable = false;
 
+        PersistentMenu.instance.startIndex = index;
+        if (index == 1) PersistentDataManager.instance.DeleteRun();
         StartCoroutine(FadeOut(index));
     }
 
@@ -118,13 +135,11 @@ public class MainMenuManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(1f);
         PersistentMenu.instance.FadeToBlack(true);
         if (index != 0) {
-            PersistentMenu.instance.tutorial = false;
             PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
             if (index > 1)
                 PersistentDataManager.instance.LoadRun();
         }
-        else {
-            PersistentMenu.instance.tutorial = true;
+        else {    
             PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Tutorial, true);
         }
         yield return new WaitForSecondsRealtime(1f);

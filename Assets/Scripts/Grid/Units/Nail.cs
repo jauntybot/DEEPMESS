@@ -19,8 +19,8 @@ public class Nail : Unit {
 
     public BarkBox barkBox;
 
-    protected override void Start() {
-        base.Start();
+    public override void Init() {
+        base.Init();
         selectedEquipment = equipment[0];
         gfxAnim = gfx[0].GetComponent<Animator>();
         ToggleNailState(NailState.Falling);

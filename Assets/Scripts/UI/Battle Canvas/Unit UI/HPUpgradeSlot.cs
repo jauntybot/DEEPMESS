@@ -5,11 +5,13 @@ using UnityEngine.UI;
 
 public class HPUpgradeSlot : UpgradeSlot {
 
-    public override void Init(UnitUpgradeUI _ui) {
-        base.Init(_ui);
+    public virtual void Init(UnitUpgradeUI _ui, bool used) {
+        base.Init(_ui, null);
 
         selectable = true;
         ttTrigger.enabled = true;
+
+        if (used) filled = true;
     }
 
 

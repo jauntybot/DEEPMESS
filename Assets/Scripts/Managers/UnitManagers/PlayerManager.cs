@@ -20,6 +20,7 @@ public class PlayerManager : UnitManager {
     public UpgradeManager upgradeManager;
     public Nail nail;
     public List<HammerData> hammerActions;
+    [SerializeField] List<BulbEquipmentData> bulbData;
     [SerializeField] GearData cascadeMovement;
      public GearData overrideEquipment = null;
     [SerializeField] public GridContextuals contextuals;
@@ -66,7 +67,6 @@ public class PlayerManager : UnitManager {
     public virtual IEnumerator Initialize(RunData run = null) {
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
         if (FloorManager.instance) floorManager = FloorManager.instance;
-        if (FloorManager.instance) floorManager = FloorManager.instance;
 
         contextuals.Initialize(this);
         lastHoveredCoord = new Vector2(0,0);
@@ -78,11 +78,7 @@ public class PlayerManager : UnitManager {
             SpawnUnit(unitPrefabs[2])
         };
 
-        //yield return StartCoroutine(loadout.Initialize(initU));
-        //yield return ScenarioManager.instance.StartCoroutine(ScenarioManager.instance.SwitchTurns(ScenarioManager.Turn.Descent));
         yield return null;
-        upgradeManager.Init(initU, this);
-        SpawnHammer((PlayerUnit)units[0], hammerActions);
         
         nail = (Nail)SpawnUnit(nailPrefab.GetComponent<Nail>());
         nail.gameObject.transform.parent = unitParent.transform;      
@@ -94,14 +90,22 @@ public class PlayerManager : UnitManager {
         collectedNuggets = 0;
 
         if (run != null) LoadRunState(run);
+        else SpawnHammer((PlayerUnit)units[0], hammerActions);
+        
+        upgradeManager.Init(initU, run);
     }
 
     void LoadRunState(RunData runData) {
-        Debug.Log("player loaded run");
         foreach (Unit u in units) {
+            if (runData.hammerUnit == u.name) SpawnHammer((PlayerUnit)u, hammerActions);
+            if (runData.bulbs.ContainsKey(u.name) && bulbData.Find(d => d.name == runData.bulbs[u.name])) {
+                u.ui.UpdateLoadout(bulbData.Find(d => d.name == runData.bulbs[u.name]));
+            }
             if (runData.unitHP.ContainsKey(u.name)) {
                 u.hpCurrent = runData.unitHP[u.name][0];
                 u.hpMax = runData.unitHP[u.name][1];
+                u.elementCanvas.InstantiateMaxPips();
+                if (u.hpCurrent == 0) u.StartCoroutine(u.DestroySequence());
             }
             if (u is PlayerUnit && runData.unitUpgrades.ContainsKey(u.equipment[1].name)) {
                 SlagGearData gear = (SlagGearData)u.equipment[1];
@@ -114,6 +118,7 @@ public class PlayerManager : UnitManager {
                 }
             }
         }
+        collectedNuggets = runData.slimeBux;
     }
 
 // Overriden functionality
@@ -132,9 +137,7 @@ public class PlayerManager : UnitManager {
             
         }
 
-        u.StoreInGrid(currentGrid);
-        u.UpdateElement(coord);
-        //u.transform.position += new Vector3(0, floorManager.floorOffset, 0);
+        u.Init(currentGrid, coord);
         
         u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
 
@@ -153,11 +156,11 @@ public class PlayerManager : UnitManager {
         if (unit is not Nail) {
             DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
             dp.Initialize(u, floorManager.previewManager);
-            
         }
 
+        u.Init();
+
         u.GetComponent<NestedFadeGroup.NestedFadeGroup>().AlphaSelf = 0;
-        u.transform.localScale = Vector3.one * FloorManager.sqrSize;
 
         return u;
     }
@@ -527,7 +530,6 @@ public class PlayerManager : UnitManager {
                     harvested.UndoHarvest();
                     lastMoved.equipment.Find(e => e is BulbEquipmentData).UnequipEquipment(lastMoved);
                     harvestedByMove.Remove(lastMoved);
-                    lastMoved.bulbPickups--;
                 } else if (harvestedByMove[lastMoved] is GodParticleGE particle) {
                     particle.UndoHarvest();
                     //collectedParticles.Remove(particle.type);

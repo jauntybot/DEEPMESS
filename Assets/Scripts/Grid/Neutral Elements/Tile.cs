@@ -19,14 +19,10 @@ public class Tile : GridElement {
 
 
 // Initialize refs
-    protected virtual void Awake() {
-        audioSource = GetComponent<AudioSource>();
-        hitbox = GetComponent<PolygonCollider2D>();
+    public override void Init(Grid g, Vector2 c) {
+        base.Init(g, c);
         if (rndSprite.Count > 0)
             gfx[0].sprite = rndSprite[Random.Range(0,rndSprite.Count)];
-        if (gfx[0].GetComponent<Animator>())
-            gfxAnim = gfx[0].GetComponent<Animator>();
-
     }
 
 // Don't inherit base class initialization to avoid adding GridElement to wrong list

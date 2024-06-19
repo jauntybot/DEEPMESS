@@ -55,8 +55,8 @@ public class PauseMenu : MonoBehaviour {
     public void QuitToMainMenu() {
         QuitButton(false);
         ResumeButton();
-        PersistentDataManager.instance.SaveRun();
-
+        ScenarioManager.instance.objectiveManager.ClearObjectives();
+        ScenarioManager.instance.relicManager.ClearRelics();
         
         PersistentMenu.instance.StartCoroutine(PersistentMenu.instance.FadeToScene(0));
     }
@@ -64,7 +64,8 @@ public class PauseMenu : MonoBehaviour {
     public void QuitToDesktop() {
         QuitButton(false);
         ResumeButton();
-        PersistentDataManager.instance.SaveRun();
+        ScenarioManager.instance.objectiveManager.ClearObjectives();
+        ScenarioManager.instance.relicManager.ClearRelics();
     }
 
 }

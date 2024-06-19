@@ -49,15 +49,13 @@ public class ScenarioManager : MonoBehaviour {
 
 
 #region Initialization
-    public IEnumerator Init(RunData run = null, bool tutorial = false) {
-        if (tutorial) startCavity = 0;
+    public IEnumerator Init(RunData run = null, int index = -1) {
+        if (index <= 1 && index != -1)
+            startCavity = index;
         else if (run != null) startCavity = run.startCavity;
-        else startCavity = 1;
 
         if (UIManager.instance)
             uiManager = UIManager.instance;     
-        if (Relics.RelicManager.instance)
-            relicManager = Relics.RelicManager.instance;
 
         if (FloorManager.instance) {
             floorManager = FloorManager.instance;
@@ -67,6 +65,10 @@ public class ScenarioManager : MonoBehaviour {
         runDataTracker.Init(this);
     
         yield return StartCoroutine(player.Initialize(run));
+        if (Relics.RelicManager.instance) {
+            relicManager = Relics.RelicManager.instance;
+            relicManager.Init(run);
+        }
 
         if (GameplayOptionalTooltips.instance) {
             gpOptional = GameplayOptionalTooltips.instance;
@@ -77,9 +79,10 @@ public class ScenarioManager : MonoBehaviour {
 
         yield return null;
 
+        objectiveManager.Init(run);
+
         if (startCavity != 0) {
             floorManager.StartCoroutine(floorManager.TransitionPackets());
-            objectiveManager.ClearObjectives();
         }
         else 
             StartCoroutine(FirstTurn());
@@ -346,6 +349,7 @@ public class ScenarioManager : MonoBehaviour {
         objectiveManager.ClearObjectives();
         relicManager.ClearRelics();
         StartCoroutine(runDataTracker.UpdateAndDisplay(false, floorManager.floors.Count - 2 >= 0 ? floorManager.floors.Count - 2 : 0, player.defeatedEnemies,  relicManager.scrapValue));
+        PersistentDataManager.instance.DeleteRun();
     }
 
 }

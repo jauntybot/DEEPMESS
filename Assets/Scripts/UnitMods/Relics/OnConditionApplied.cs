@@ -17,9 +17,11 @@ namespace Relics {
                 default:break;
                 case RelicType.ScytheCells:
                     ScenarioManager scenario = ScenarioManager.instance;
-                    foreach(Unit u in scenario.currentEnemy.units) {
-                        if (u.conditions.Contains(Unit.Status.Restricted)) 
-                            u.ApplyCondition(Unit.Status.Weakened);
+                    if (scenario.currentEnemy != null) {
+                        foreach(Unit u in scenario.currentEnemy.units) {
+                            if (u.conditions.Contains(Unit.Status.Restricted)) 
+                                u.ApplyCondition(Unit.Status.Weakened);
+                        }
                     }
                 break;
             }

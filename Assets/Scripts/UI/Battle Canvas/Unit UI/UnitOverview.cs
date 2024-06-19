@@ -51,11 +51,11 @@ public class UnitOverview : MonoBehaviour {
 
         movePip.SetActive(!unit.moved);
         actionPip.SetActive(unit.energyCurrent > 0);
+        hPPips.UpdatePips();
 
         //if (unit.ui) equipment.sprite = unit.ui.equipButtons[0].data.icon;
         //equipmentDisable.SetActive(unit.usedEquip);
 
-        //hPPips.UpdatePips();
     }
 
 

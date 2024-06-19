@@ -40,19 +40,16 @@ public class EnemyManager : UnitManager {
             scenario.player.SubscribeElement(u);
         else
             SubscribeElement(u);
-        
         u.manager = tackle ? scenario.player : this;
-        UIManager.instance.UpdatePortrait(u, false);
-
-        u.StoreInGrid(currentGrid);
-        u.transform.position = u.grid.PosFromCoord(coord);
-        u.UpdateSortOrder(coord);
-        u.coord = coord;
+        
+        u.Init(currentGrid, coord);
         u.grid.RemoveElement(u);
 
-        
-        u.ElementDestroyed += CountDefeatedEnemy; 
-        u.ElementDestroyed += StopActingUnit;
+
+        if (!tackle) {
+            u.ElementDestroyed += CountDefeatedEnemy; 
+            u.ElementDestroyed += StopActingUnit;
+        }
         
         return u;
     }

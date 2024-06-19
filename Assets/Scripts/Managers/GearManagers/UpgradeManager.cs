@@ -26,7 +26,7 @@ public class UpgradeManager : MonoBehaviour {
     bool upgrading;
 
 
-    public void Init(List<Unit> _units, PlayerManager _pManager) {
+    public void Init(List<Unit> _units, RunData run = null) {
         
         upgradePool = new();
 
@@ -37,7 +37,9 @@ public class UpgradeManager : MonoBehaviour {
 
                 SlagGearData gear = (SlagGearData)pu.equipment[1];
                 foreach (GearUpgrade gu in gear.upgrades) {
-                    if (gu.ugpradeLevel == 1) {
+                    if (run != null && run.unitUpgrades[gear.name].Contains(gu.name)) {
+                        continue;
+                    } else if (gu.ugpradeLevel == 1) {
                         lvl1Bag.Add(gu);
                     } else if (gu.ugpradeLevel == 2) {
                         lvl2Bag.Add(gu);

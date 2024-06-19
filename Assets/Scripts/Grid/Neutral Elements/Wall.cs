@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Wall : GridElement {
-
-    [SerializeField] Animator anim;
     [SerializeField] List<Sprite> rndSprite;
     [SerializeField] List<PolygonCollider2D> colliders;
 
-    protected override void Start() {
-        base.Start();
-        anim.enabled = false;
+    public override void Init(Grid g, Vector2 c) {
+        base.Init(g, c);
+        gfxAnim.enabled = false;
         if (rndSprite.Count > 0) {
             int rnd = Random.Range(0,rndSprite.Count);
             gfx[0].sprite = rndSprite[rnd];
@@ -19,8 +17,8 @@ public class Wall : GridElement {
     }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
-        anim.enabled = true;
-        anim.SetTrigger("Destroy");
+        gfxAnim.enabled = true;
+        gfxAnim.SetTrigger("Destroy");
         yield return base.DestroySequence(dmgType, source, sourceEquip);
     }
 

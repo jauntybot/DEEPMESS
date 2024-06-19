@@ -11,8 +11,8 @@ public class ObjectiveManager : MonoBehaviour {
     [SerializeField] GameObject objectiveScreen;
     [SerializeField] Animator ginosAnim;
     [SerializeField] List<ObjectiveBeaconCard> objectiveCards;
-    List<int> objectiveIndices;
-    [SerializeField] List<Objective> activeObjectives;
+    [HideInInspector] public List<int> objectiveIndices;
+    public List<Objective> activeObjectives;
 
     [Header("Serialized Objective Pools")]
     [SerializeField] List<Objective> serializedObjectives;
@@ -23,10 +23,9 @@ public class ObjectiveManager : MonoBehaviour {
     [SerializeField] NuggetDisplay nuggets;
     [SerializeField] ObjectiveTracker tracker;
 
-    void Start() {
+    public void Init(RunData run) {
         scenario = ScenarioManager.instance;
         ClearObjectives();
-        tracker.gameObject.SetActive(false);
         objectiveScreen.SetActive(false);
         activeObjectives = new();
         objectiveIndices = new() { 0, 0, 0 };
@@ -34,13 +33,19 @@ public class ObjectiveManager : MonoBehaviour {
         objectivePoolC2 = new();
         objectivePoolC3 = new();
         foreach (Objective ob in serializedObjectives) {
-            if (ob.chunk == FloorChunk.PacketType.I) objectivePoolC1.Add(ob);
-            if (ob.chunk == FloorChunk.PacketType.II) objectivePoolC2.Add(ob);
-            if (ob.chunk == FloorChunk.PacketType.III) objectivePoolC3.Add(ob);
+            if (run != null && run.objectives.ContainsKey(ob.name)) continue;
+            else if (ob.chunk == FloorChunk.PacketType.I) objectivePoolC1.Add(ob);
+            else if (ob.chunk == FloorChunk.PacketType.II) objectivePoolC2.Add(ob);
+            else if (ob.chunk == FloorChunk.PacketType.III) objectivePoolC3.Add(ob);
         }
 
         audioSource = GetComponent<AudioSource>();
         audioSource.outputAudioMixerGroup = ginoSFX.outputMixerGroup;
+        
+        if (run != null && run.objectives.Count > 0) { 
+            LoadObjectives(run);
+        } else 
+            tracker.gameObject.SetActive(false);
     }
 
     bool reviewing;
@@ -77,6 +82,24 @@ public class ObjectiveManager : MonoBehaviour {
         ginosAnim.SetTrigger("Disappear");
     }
 
+    void LoadObjectives(RunData run) {
+        activeObjectives = new List<Objective> {null, null, null};
+        int i = 0;
+        foreach (KeyValuePair<String, int> entry in run.objectives) {
+            Objective o = serializedObjectives.Find(o => o.name == entry.Key);
+            if (o != null) {
+                o.Init();
+                o.progress = entry.Value;
+                o.ProgressCheck();
+                activeObjectives[i] = o;
+                objectiveCards[i].Init(o);
+            }
+            i++;
+        }
+        
+        SubscribeTracker(activeObjectives);
+    }
+
     public void RollObjectiveCard(int index) {
         Objective rolled;
         objectiveIndices[index]++;
@@ -93,21 +116,25 @@ public class ObjectiveManager : MonoBehaviour {
         }
 
         rolled = rolled.Init();
-        objectiveCards[index].Unsub();
         activeObjectives[index] = rolled;
         objectiveCards[index].Init(rolled);
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(objectiveCards[0].transform.parent.GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
     }
 
     public void RollObjectiveCard(ObjectiveBeaconCard card, bool collect) {
+        int index = objectiveCards.IndexOf(card);
         Objective rolled;
-        ShuffleBag<Objective> bag;
-        switch(scenario.floorManager.floorSequence.currentThreshold) {
-            default:
-            case FloorChunk.PacketType.I: bag = objectivePoolC1; break;
-            case FloorChunk.PacketType.II: bag = objectivePoolC2; break;
-        }
+        objectiveIndices[index]++;
+
+        ShuffleBag<Objective> bag = objectivePoolC1;
+        if (objectiveIndices[index] > 1 && objectiveIndices[index] <= 3) bag = objectivePoolC2; 
+        else if (objectiveIndices[index] > 3) bag = objectivePoolC3; 
+        
         rolled = bag.Next(); 
-        //bag.Remove(rolled); 
+        bag.Remove(rolled); 
+
         if (bag.Count == 0) {
             foreach (ObjectiveBeaconCard c in objectiveCards) c.DisableButton();
         }
@@ -118,8 +145,6 @@ public class ObjectiveManager : MonoBehaviour {
         }
 
         rolled = rolled.Init();
-        card.Unsub();
-        int index = objectiveCards.IndexOf(card);
         activeObjectives[index] = rolled;
         objectiveCards[index].Init(rolled);
 
@@ -132,6 +157,7 @@ public class ObjectiveManager : MonoBehaviour {
             card.Unsub();
         }
         activeObjectives = new();
+        Debug.Log("clear tracker");
         SubscribeTracker();
     }
 

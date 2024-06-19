@@ -42,26 +42,37 @@ public class Unit : GridElement {
         if (conditionDisplay) conditionDisplay.Init(this);
     }
 
-    protected override void Start() {
-// Exposed base.Start functionality
+    public virtual void Init() {
         audioSource = GetComponent<AudioSource>();
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
-        
+
         hpCurrent = hpMax;
         energyCurrent = energyMax;
-// Create UnitGameUI through UIManager before element canvas init
-        UIManager.instance.UpdatePortrait(this, false);
 
-        elementCanvas = GetComponentInChildren<ElementCanvas>();
-        if (elementCanvas) elementCanvas.Initialize(this);
 // If first serialized GFX has an animator set Unit anim to it 
         if (gfx[0].GetComponent<Animator>()) {
             gfxAnim = gfx[0].GetComponent<Animator>();
             gfxAnim.keepAnimatorStateOnDisable = true;
         }
 
+        elementCanvas = GetComponentInChildren<ElementCanvas>();
+        if (elementCanvas) elementCanvas.Initialize(this);
 
+        UnitInit();
+        transform.localScale = Vector3.one * FloorManager.sqrSize;
+    }
+
+    public override void Init(Grid g, Vector2 c) {
+        base.Init(g, c);
+        UnitInit();
+    }
+
+    void UnitInit() {
+// Create UnitGameUI through UIManager before element canvas init
+        UIManager.instance.UpdatePortrait(this, false);
+        elementCanvas = GetComponentInChildren<ElementCanvas>();
+        if (elementCanvas) elementCanvas.Initialize(this);
 // Initialize equipment from prefab
         foreach(GearData e in equipment) {
             e.EquipGear(this);

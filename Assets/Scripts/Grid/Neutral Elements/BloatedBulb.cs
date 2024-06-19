@@ -6,8 +6,8 @@ public class BloatedBulb : GridElement {
 
     public override event OnElementUpdate ElementDestroyed;
 
-    protected override void Start() {
-        base.Start();
+    public override void Init(Grid g, Vector2 c) {
+        base.Init(g, c);
         string name = gfxAnim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
         gfxAnim.Play(name, 0, Util.Remap(8 + (int)coord.x - (int)coord.y, 1, 15, 1, 18));
     }

@@ -86,7 +86,6 @@ public class FloorManager : MonoBehaviour {
     }
 
     public void GenerateFloor(FloorDefinition definitionOverride = null, bool first = false) {
-        Debug.Log("Generate");
         int index = floorSequence.floorsGot;
 
         Grid newFloor = Instantiate(floorPrefab, floorParent).GetComponent<Grid>();
@@ -710,7 +709,7 @@ public class FloorManager : MonoBehaviour {
                 if (!scenario.gpOptional.pathsEncountered) 
                     yield return StartCoroutine(scenario.gpOptional.Paths());
                 
-                yield return scenario.pathManager.PathSequence(); 
+                yield return scenario.pathManager.PathSequence(floorSequence.currentThreshold != FloorChunk.PacketType.I); 
 
                 if (floorSequence.currentThreshold == FloorChunk.PacketType.BOSS) {
                     if (!scenario.gpOptional.prebossEncountered)

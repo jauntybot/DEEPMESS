@@ -18,11 +18,20 @@ public class UpgradeSlot : MonoBehaviour {
     [SerializeField] protected UpgradeButtonHoldHandler buttonHold;
     [SerializeField] protected UpgradeTooltipTrigger ttTrigger;
 
-    public virtual void Init(UnitUpgradeUI _ui) {
+    public virtual void Init(UnitUpgradeUI _ui, GearUpgrade upgrade) {
         ui = _ui;
         buttonHold.Init(this);
         UpdateSlot();
         ttTrigger.Initialize(null);
+
+        if (upgrade != null) {
+            radialFill.fillAmount = 0;
+            filled = true;
+            slottedUpgrade.gameObject.SetActive(true);
+            slottedUpgrade.sprite = upgrade.icon;
+            ttTrigger.header = upgrade.name; ttTrigger.content = upgrade.description;
+            ttTrigger.Initialize(upgrade);
+        }
     }
 
     public virtual void UpdateSlot(GearUpgrade upgrade = null) {

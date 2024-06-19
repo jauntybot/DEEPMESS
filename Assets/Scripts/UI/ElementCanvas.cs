@@ -21,8 +21,7 @@ public class ElementCanvas : MonoBehaviour
     public GameObject dmgPanel;
     [SerializeField] Animator dmgAnim;
 
-    [SerializeField] UnitOverview overview = null;
-
+    
     public virtual void Initialize(GridElement ge) {
         if (!disable) {
             element = ge;
@@ -30,11 +29,6 @@ public class ElementCanvas : MonoBehaviour
             InstantiateMaxPips();
             UpdateStatsDisplay();
             ToggleStatsDisplay(false);
-        }
-        if (element is PlayerUnit u) {
-            overview = u.ui.overview;
-        } else if (element is Nail n) {
-            overview = n.ui.overview;
         }
     }
 

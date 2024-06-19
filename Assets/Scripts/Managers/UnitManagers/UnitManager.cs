@@ -42,14 +42,12 @@ public class UnitManager : MonoBehaviour {
         SubscribeElement(u);
         u.manager = this;
 
-        UIManager.instance.UpdatePortrait(u, false);
         if (unit is not Nail) {
             DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
             dp.Initialize(u, floorManager.previewManager);
         }
 
-        u.StoreInGrid(currentGrid);
-        u.UpdateElement(coord);
+        u.Init(currentGrid, coord);
 
         return u;
     }
@@ -61,11 +59,12 @@ public class UnitManager : MonoBehaviour {
         SubscribeElement(u);
         u.manager = this;
 
-        UIManager.instance.UpdatePortrait(u, false);
         if (unit is not Nail) {
             DescentPreview dp = Instantiate(unitDescentPreview, floorManager.previewManager.transform).GetComponent<DescentPreview>();
             dp.Initialize(u, floorManager.previewManager);
         }
+
+        u.Init();
 
         return u;
     }
@@ -125,7 +124,8 @@ public class UnitManager : MonoBehaviour {
     }
 
     protected virtual void RemoveUnit(GridElement ge) {
-        units.Remove(ge as Unit);
+        if (units.Contains(ge as Unit))
+            units.Remove(ge as Unit);
     }
 }
 

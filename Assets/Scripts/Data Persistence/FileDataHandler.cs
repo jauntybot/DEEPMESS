@@ -56,6 +56,11 @@ public class FileDataHandler {
             Debug.LogError("Error occured when trying to save data to file: " + fullPath + "\n" + e);
         }
     }
+
+    public bool IsRunSaved() {
+        string fullPath = Path.Combine(dataDirPath, runDataFileName);
+        return File.Exists(fullPath);
+    }
     
     public RunData LoadRun() {
         string fullPath = Path.Combine(dataDirPath, runDataFileName);
@@ -66,10 +71,6 @@ public class FileDataHandler {
                 using (FileStream stream = new FileStream(fullPath, FileMode.Open)) {
                     using (StreamReader reader = new StreamReader(stream)) {
                         dataToLoad = reader.ReadToEnd();
-                        Debug.Log(dataToLoad);
-                        // using (JsonReader jReader = new JsonTextReader(reader)) {
-                        //     dataToLoad = jReader.ReadAsString();
-                        // }
                     }
                 }
 
@@ -106,6 +107,17 @@ public class FileDataHandler {
 
         } catch (Exception e) {
             Debug.LogError("Error occured when trying to save data to file: " + fullPath + "\n" + e);
+        }
+    }
+
+    public void DeleteRunFile() {
+        string fullPath = Path.Combine(dataDirPath, runDataFileName);
+        if (File.Exists(fullPath)) {
+            try  {
+                File.Delete(fullPath);
+            } catch (Exception e) {
+                Debug.LogError("Error occured when trying to delete file: " + fullPath + "\n" + e);
+            }
         }
     }
 

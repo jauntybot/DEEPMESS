@@ -22,12 +22,12 @@ public class PersistentDataManager : MonoBehaviour {
             return;
         }
         instance = this;
+        dataHandler = new FileDataHandler(Application.persistentDataPath, userDataFileName, runDataFileName);
     }
 
 
 
     void Start() {
-        dataHandler = new FileDataHandler(Application.persistentDataPath, userDataFileName, runDataFileName);
         userDataPersistenceObjs = FindAllUserDataObjs();
         runDataPersistenceObjs = FindAllRunDataObjs();
         LoadUser();
@@ -48,6 +48,10 @@ public class PersistentDataManager : MonoBehaviour {
         foreach (IUserDataPersistence userDataObj in userDataPersistenceObjs) {
             userDataObj.LoadUser(userData);
         }
+    }
+
+    public bool IsRunSaved() {
+        return dataHandler.IsRunSaved();
     }
 
     public void SaveUser() {
@@ -83,7 +87,7 @@ public class PersistentDataManager : MonoBehaviour {
     }
 
     public void DeleteRun() {
-
+        dataHandler.DeleteRunFile();
     }
 
     void OnApplicationQuit() {

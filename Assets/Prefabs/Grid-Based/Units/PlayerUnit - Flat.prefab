@@ -67,13 +67,13 @@ MonoBehaviour:
   destroyed: 0
   gfx:
   - {fileID: 8826729497496100445}
+  gfxAnim: {fileID: 0}
   audioSource: {fileID: 0}
   selectedSFX: {fileID: 11400000, guid: 5c30872cb0988ba449a40758ffe05b34, type: 2}
   dmgdSFX: {fileID: 0}
   healedSFX: {fileID: 11400000, guid: c6850de864e4bc94b9c18e4bffe96839, type: 2}
   destroyedSFX: {fileID: 11400000, guid: baab7c1492f06ba46ad088a17e2fc30d, type: 2}
   manager: {fileID: 0}
-  gfxAnim: {fileID: 0}
   descentVFX: {fileID: 194004713039768303}
   airTraillVFX: {fileID: 142218204749988682}
   selected: 0
@@ -97,6 +97,7 @@ MonoBehaviour:
   hammerUses: 0
   equipUses: 0
   bulbPickups: 0
+  bulbMod: 0
 --- !u!114 &6378630401893328485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -371,6 +372,10 @@ PrefabInstance:
     - target: {fileID: 2503472585976460526, guid: 7bf2f5f844e355940877eab56e965117, type: 3}
       propertyPath: m_Layer
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2503472585976460526, guid: 7bf2f5f844e355940877eab56e965117, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6122252504057264135, guid: 7bf2f5f844e355940877eab56e965117, type: 3}
       propertyPath: m_RootOrder

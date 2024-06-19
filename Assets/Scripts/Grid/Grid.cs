@@ -82,8 +82,7 @@ public class Grid : MonoBehaviour {
                 //         a.Play(name, 0, Util.Remap(8 + x - y, 1, 15, 1, 18));
                 //     }
                 // }
-                tile.StoreInGrid(this);
-                tile.UpdateElement(new Vector2(x,y));
+                tile.Init(this, new Vector2(x,y));
 
                 tiles.Add(tile);
                 tile.transform.parent = gridContainer.transform;
@@ -124,16 +123,14 @@ public class Grid : MonoBehaviour {
                     beacon.transform.parent = neutralGEContainer.transform;
 
                     beacon.manager = player;
-                    beacon.StoreInGrid(this);
-                    beacon.UpdateElement(spawn.coord);
+                    beacon.Init(this, spawn.coord);
                 }
 // Spawn a Neutral Grid Element
             } else if (ge is not Tile) {
                 GridElement neutralGE = Instantiate(spawn.asset.prefab, this.transform).GetComponent<GridElement>();
                 neutralGE.transform.parent = neutralGEContainer.transform;
 
-                neutralGE.StoreInGrid(this);
-                neutralGE.UpdateElement(spawn.coord);
+                neutralGE.Init(this, spawn.coord);
 
                 if (neutralGE is BloatedBulb) {
                     neutralGE.ElementDestroyed += ScenarioManager.instance.RewardOnKill;
@@ -178,8 +175,7 @@ public class Grid : MonoBehaviour {
                 beacon.transform.parent = neutralGEContainer.transform;
 
                 beacon.manager = player;
-                beacon.StoreInGrid(this);
-                beacon.UpdateElement(coord);
+                beacon.Init(this, coord);
             }
         }
 // Bloated Bulb spawning
@@ -189,8 +185,7 @@ public class Grid : MonoBehaviour {
                 GridElement neutralGE = Instantiate(bulbPrefab, this.transform).GetComponent<GridElement>();
                 neutralGE.transform.parent = neutralGEContainer.transform;
 
-                neutralGE.StoreInGrid(this);
-                neutralGE.UpdateElement(bulb.coord);
+                neutralGE.Init(this, bulb.coord);
 
                 neutralGE.ElementDestroyed += ScenarioManager.instance.RewardOnKill;
             }

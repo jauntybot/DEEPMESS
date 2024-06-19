@@ -14,14 +14,7 @@ public class PlayerUnit : Unit {
     
     public override event OnElementUpdate ElementDestroyed;
     public virtual event OnElementUpdate ElementDisabled;
-
-    public int hammerUses, equipUses, bulbPickups, bulbMod;
-
-    protected override void Start() {
-        base.Start();
-        hammerUses = 0; equipUses = 0; bulbPickups = 0; bulbMod = 0;
-    }
-
+    public int bulbMod;
 
     // Called when an action is applied to a unit or to clear it's actions
     public override void UpdateAction(GearData equipment = null, int mod = 0) {
@@ -51,12 +44,6 @@ public class PlayerUnit : Unit {
 // Input parsing - what kind of equipment is being used 
 // single target equipment, not movement
         if (equip) {
-// Tally for end of run scoring
-            if (equip is SlagGearData && equip is not HammerData) {
-                if (equip is not BigGrabData || equip.firstTarget != null) 
-                    equipUses++;
-            }
-            else if (equip is HammerData && equip.firstTarget != null) hammerUses++; 
 // Base equipment, no multitarget
             if (!equip.multiselect) {
                 co = StartCoroutine(base.ExecuteAction(target));

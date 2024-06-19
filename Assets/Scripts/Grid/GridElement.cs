@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
 // Universal data class derrived by any instance that occupies grid space
@@ -42,17 +43,28 @@ public class GridElement : MonoBehaviour {
     public SFX dmgdSFX, healedSFX, destroyedSFX;
 
 // Initialize references, scale to grid, subscribe onDeath event
-    protected virtual void Start()  {
+    public virtual void Init(Grid g, Vector2 c)  {
         audioSource = GetComponent<AudioSource>();
         hitbox = GetComponent<PolygonCollider2D>();
         hitbox.enabled = false;
-        //coord = new Vector2(-32, -32);
-        gfxAnim = gfx[0].GetComponent<Animator>();
 
         hpCurrent = hpMax;
         energyCurrent = energyMax;
+
+// If first serialized GFX has an animator set Unit anim to it 
+        if (gfx[0].GetComponent<Animator>()) {
+            gfxAnim = gfx[0].GetComponent<Animator>();
+            gfxAnim.keepAnimatorStateOnDisable = true;
+        }
+
         elementCanvas = GetComponentInChildren<ElementCanvas>();
         if (elementCanvas) elementCanvas.Initialize(this);
+
+        StoreInGrid(g);
+        transform.position = grid.PosFromCoord(coord);
+        UpdateSortOrder(coord);
+        coord = c;
+        UpdateElement(c);
     }
 
     public virtual void StoreInGrid(Grid owner) {

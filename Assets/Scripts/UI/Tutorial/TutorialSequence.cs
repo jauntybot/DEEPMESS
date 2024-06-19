@@ -270,7 +270,7 @@ public class TutorialSequence : MonoBehaviour {
               
        
         PlayerUnit pu = (PlayerUnit)scenario.player.units[0];
-        while (pu.hammerUses == 0) yield return new WaitForSecondsRealtime(1/Util.fps);
+        while (pu.energyCurrent == 1) yield return new WaitForSecondsRealtime(1/Util.fps);
         tooltip.transform.GetComponent<RectTransform>().anchoredPosition = prevPos;
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
