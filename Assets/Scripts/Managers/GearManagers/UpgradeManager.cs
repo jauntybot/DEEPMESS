@@ -37,7 +37,7 @@ public class UpgradeManager : MonoBehaviour {
 
                 SlagGearData gear = (SlagGearData)pu.equipment[1];
                 foreach (GearUpgrade gu in gear.upgrades) {
-                    if (run != null && run.unitUpgrades[gear.name].Contains(gu.name)) {
+                    if (run.startCavity != 0 && run.unitUpgrades[gear.name].Contains(gu.name)) {
                         continue;
                     } else if (gu.ugpradeLevel == 1) {
                         lvl1Bag.Add(gu);

@@ -11,7 +11,9 @@ public class BuildVersionProcessor : IPreprocessBuildWithReport {
     public void OnPreprocessBuild(BuildReport report) {
         string[] currentVersion = FindCurrentVersion();
         UpdateVersion(currentVersion);
-        PersistentDataManager.instance.NewUser();
+        
+        FileDataHandler userFile = new(Application.persistentDataPath,"userData", "runData");
+        userFile.DeleteUserPrefs();
     }
 
     string[] FindCurrentVersion() {

@@ -57,6 +57,17 @@ public class FileDataHandler {
         }
     }
 
+    public void DeleteUserPrefs() {
+        string fullPath = Path.Combine(dataDirPath, userDataFileName);
+        if (File.Exists(fullPath)) {
+            try  {
+                File.Delete(fullPath);
+            } catch (Exception e) {
+                Debug.LogError("Error occured when trying to delete file: " + fullPath + "\n" + e);
+            }
+        }
+    }
+
     public bool IsRunSaved() {
         string fullPath = Path.Combine(dataDirPath, runDataFileName);
         return File.Exists(fullPath);
