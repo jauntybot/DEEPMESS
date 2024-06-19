@@ -88,7 +88,7 @@ public class PlayerManager : UnitManager {
         reviveTo = 1;
         collectedNuggets = 0;
 
-        if (run.startCavity != 0) LoadRunState(run);
+        if (run != null && run.startCavity != 0) LoadRunState(run);
         else SpawnHammer((PlayerUnit)units[0], hammerActions);
         
         upgradeManager.Init(initU, run);

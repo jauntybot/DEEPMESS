@@ -32,7 +32,7 @@ namespace Relics {
         public void Init(RunData run = null) {
             ClearRelics();
             List<RelicData> data = new(serializedRelics);
-            if (run.startCavity != 0) {
+            if (run != null && run.startCavity != 0) {
                 foreach (String gt in run.godThoughts) {
                     RelicData relic = data.Find(r => r.name == gt);
                     CollectRelic(relic);

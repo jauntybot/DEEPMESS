@@ -53,7 +53,7 @@ public class ScenarioManager : MonoBehaviour {
         yield return new WaitForSecondsRealtime(1f);
         if (index <= 1 && index != -1)
             startCavity = index;
-        else if (run.startCavity != 0) startCavity = run.startCavity;
+        else if (run != null && run.startCavity != 0) startCavity = run.startCavity;
 
         if (UIManager.instance)
             uiManager = UIManager.instance;     

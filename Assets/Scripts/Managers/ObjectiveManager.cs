@@ -33,7 +33,7 @@ public class ObjectiveManager : MonoBehaviour {
         objectivePoolC2 = new();
         objectivePoolC3 = new();
         foreach (Objective ob in serializedObjectives) {
-            if (run.startCavity != 0 && run.objectives.ContainsKey(ob.name)) continue;
+            if (run != null && run.startCavity != 0 && run.objectives.ContainsKey(ob.name)) continue;
             else if (ob.chunk == FloorChunk.PacketType.I) objectivePoolC1.Add(ob);
             else if (ob.chunk == FloorChunk.PacketType.II) objectivePoolC2.Add(ob);
             else if (ob.chunk == FloorChunk.PacketType.III) objectivePoolC3.Add(ob);
@@ -42,7 +42,7 @@ public class ObjectiveManager : MonoBehaviour {
         audioSource = GetComponent<AudioSource>();
         audioSource.outputAudioMixerGroup = ginoSFX.outputMixerGroup;
         
-        if (run.startCavity != 0 && run.objectives.Count > 0) { 
+        if (run != null && run.startCavity != 0 && run.objectives.Count > 0) { 
             LoadObjectives(run);
         } else 
             tracker.gameObject.SetActive(false);
