@@ -13,9 +13,9 @@ public class RunDataTracker : MonoBehaviour {
     // float playTime;
     // bool runInProgress;
 
-    [SerializeField] GameObject floorRow, enemiesRow, scrapRow, cutRow;
+    [SerializeField] GameObject floorRow, enemiesRow, buxRow, cutRow;
 
-    [SerializeField] TMP_Text resultsTMP, floorsCountUp, floorsMultCountUp, enemiesCountUp, enemiesMultCountUp, scrapCountUp, cutPercentCountUp, cutCountUp, totalCountUp;
+    [SerializeField] TMP_Text resultsTMP, floorsCountUp, floorsMultCountUp, enemiesCountUp, enemiesMultCountUp, buxCountUp, buxMultCountUp, cutPercentCountUp, cutCountUp, totalCountUp;
 
 
     public void Init(ScenarioManager scen) {
@@ -34,8 +34,14 @@ public class RunDataTracker : MonoBehaviour {
     //     }
     // }
 
-    public IEnumerator UpdateAndDisplay(bool win, int floors, int enemies, int scrap) {
-        int total = (floors * 10) + (enemies * 5) + scrap;
+    public IEnumerator UpdateAndDisplay(bool win, int floors, int enemies, int bux) {
+        floorRow.SetActive(false); enemiesRow.SetActive(false); buxRow.SetActive(false); cutRow.SetActive(false);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.transform.parent.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+
+        int total = (floors * 10) + (enemies * 5) + (bux * 25);
         PersistentMenu.instance.upcomingCurrency = total + (win ? 0 : (int)(-total*0.2f));
         panel.SetActive(true);
         if (win) {
@@ -58,13 +64,13 @@ public class RunDataTracker : MonoBehaviour {
 
         float t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
         floorRow.SetActive(true);
-        yield return null;
+        
         LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.GetComponentInParent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.transform.parent.GetComponentInParent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
-        yield return null;
+        
         StartCoroutine(StringCountUp.CountUp(floors, 1f, (countUp) => { 
             floorsCountUp.text = countUp;
         }));
@@ -73,13 +79,13 @@ public class RunDataTracker : MonoBehaviour {
         }));
         t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
         enemiesRow.SetActive(true);
-        yield return null;
+        
         LayoutRebuilder.ForceRebuildLayoutImmediate(enemiesRow.GetComponentInParent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(enemiesRow.transform.parent.GetComponentInParent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(enemiesRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
-        yield return null;
+        
         StartCoroutine(StringCountUp.CountUp(enemies, 0.75f, (countUp) => { 
             enemiesCountUp.text = countUp;
         }));
@@ -87,28 +93,31 @@ public class RunDataTracker : MonoBehaviour {
             enemiesMultCountUp.text = countUp;
         }));
         t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
-        scrapRow.SetActive(true);
-        yield return null;
-        LayoutRebuilder.ForceRebuildLayoutImmediate(scrapRow.GetComponentInParent<RectTransform>());
-        LayoutRebuilder.ForceRebuildLayoutImmediate(scrapRow.transform.parent.GetComponentInParent<RectTransform>());
-        LayoutRebuilder.ForceRebuildLayoutImmediate(scrapRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
+        buxRow.SetActive(true);
+        
+        LayoutRebuilder.ForceRebuildLayoutImmediate(buxRow.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(buxRow.transform.parent.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(buxRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
         Canvas.ForceUpdateCanvases();
-        yield return null;
-        yield return StartCoroutine(StringCountUp.CountUp(scrap, 0.75f, (countUp) => { 
-            scrapCountUp.text = countUp;
+        
+        StartCoroutine(StringCountUp.CountUp(bux, 0.75f, (countUp) => { 
+            buxCountUp.text = countUp;
+        }));
+        yield return StartCoroutine(StringCountUp.CountUp(bux * 25, 0.75f, (countUp) => { 
+            buxMultCountUp.text = countUp;
         }));
         t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
         
         if (!win) {
             cutRow.SetActive(true);
-            yield return null;
+            
             LayoutRebuilder.ForceRebuildLayoutImmediate(cutRow.GetComponentInParent<RectTransform>());
             LayoutRebuilder.ForceRebuildLayoutImmediate(cutRow.transform.parent.GetComponentInParent<RectTransform>());
             LayoutRebuilder.ForceRebuildLayoutImmediate(cutRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
             LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
             Canvas.ForceUpdateCanvases();
-            yield return null;
+
             StartCoroutine(StringCountUp.CountUp(-20, 0.75f, (countUp) => { 
                 cutPercentCountUp.text = countUp + "%";
             }));

@@ -96,33 +96,35 @@ public class FloorSequence : ScriptableObject {
                 else
                     floor = rndOrder.Next();
 
-    // Chunk spawning rules
+// Chunk spawning rules
                 if (activePacket.packetType != FloorChunk.PacketType.Tutorial) {   
-    // Spawn a beacon if floor count is mod 4
-                    floor.spawnBeacon = i%4 == 0;
-    // Bloated bulb spawn rules
+// Beacon spawn rules
+                    if (activePacket.packetMods.Count > 0)
+                        floor.spawnBeacon = i%5 == 0;
+                    else 
+                        floor.spawnBeacon = i%4 == 0;
+
+// Bloated bulb spawn rules
                     if (!activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite)) {
-                        if (i%3 == 0) {
-                            if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Hazard) || activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme)) {
-                                floor.spawnBloatedBulb = true;
-                            } else if (i >= 6) {
-                                floor.spawnBloatedBulb = true;
-                            } else 
-                                floor.spawnBloatedBulb = false;
-                        } else 
+// Hazard chunk bloated bulbs
+                        if (activePacket.packetMods.Count > 0 && (i+3)%5 == 0) 
+                            floor.spawnBloatedBulb = true;
+                        else if (i == 6)
+                            floor.spawnBloatedBulb = true;
+                        else
                             floor.spawnBloatedBulb = false;
-                    } else
-                        floor.spawnBloatedBulb = false;
-    // Elite spawn rules
+                    }
+                    
+// Elite spawn rules
                     if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite)) {
-                        if (i%3 == 0) {
+// Hazard chunk bloated bulbs
+                        if (activePacket.packetMods.Count > 0 && (i+3)%5 == 0) 
                             floor.spawnElite = true;
-                        } else 
+                        else if (i == 6)
+                            floor.spawnElite = true;
+                        else
                             floor.spawnElite = false;
-                    } else if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme) && i == 5)
-                        floor.spawnElite = true;
-                    else
-                        floor.spawnElite = false;
+                    }
                 } else {
                     floor.spawnBeacon = false;
                     floor.spawnElite = false;

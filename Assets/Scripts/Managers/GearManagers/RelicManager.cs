@@ -18,6 +18,7 @@ namespace Relics {
         }
 
         [SerializeField] RelicReward reward;
+        [SerializeField] NuggetDisplay nuggets;
         [SerializeField] Transform relicContainer;
         [SerializeField] GameObject relicPrefab, onFloorRelicPrefab;
         public List<RelicData> serializedRelics;
@@ -85,12 +86,14 @@ namespace Relics {
                 data = relicPool.Next();
             else if (relicPool.Contains(data)) relicPool.Remove(data);
             
+            nuggets.gameObject.SetActive(true);
             yield return reward.StartCoroutine(reward.RewardSequence(data));
-            
+
             if (reward.take)
                 CollectRelic(data);
             else    
-                ScrapRelic(data);
+                yield return StartCoroutine(ScrapRelic(data));
+            nuggets.gameObject.SetActive(false);
         }
 
         public void CollectRelic(RelicData data) {
@@ -100,8 +103,10 @@ namespace Relics {
 
         }
 
-        public void ScrapRelic(RelicData relic) {
-            scrapValue += relic.scrapValue;
+        public IEnumerator ScrapRelic(RelicData relic) {
+            nuggets.CollectNugget();
+            ScenarioManager.instance.player.collectedNuggets += 2;
+            yield return new WaitForSecondsRealtime(0.6f);
         }
 
         public void ClearRelics() {

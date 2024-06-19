@@ -15,6 +15,12 @@ public class Wall : GridElement {
             hitbox = colliders[rnd];
         }
     }
+    public virtual void Init(Grid g, Vector2 c, bool crystalize) {
+        base.Init(g, c);
+        gfxAnim.enabled = true;
+        gfxAnim.SetTrigger("Crystalize");
+
+    }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         gfxAnim.enabled = true;

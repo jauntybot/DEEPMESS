@@ -153,7 +153,7 @@ public class GridElement : MonoBehaviour {
         
         if (elementCanvas)
             elementCanvas.ToggleStatsDisplay(false);
-        yield return new WaitForSecondsRealtime(.5f);
+        yield return new WaitForSecondsRealtime(.75f);
 
         foreach (SpriteRenderer sr in gfx) 
             sr.enabled = false;

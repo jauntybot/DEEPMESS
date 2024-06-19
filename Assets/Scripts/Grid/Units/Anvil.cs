@@ -45,6 +45,7 @@ public class Anvil : Unit {
     }
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
+        gfxAnim.SetTrigger("Destroy");
 // POWER TIER I - Detonate anvil
         if (explode)
             yield return Detonate(1);
@@ -52,8 +53,7 @@ public class Anvil : Unit {
             Wall wall = Instantiate(wallPrefab).GetComponent<GridElement>().GetComponent<Wall>();
             wall.transform.SetParent(FloorManager.instance.currentFloor.neutralGEContainer.transform);
 
-            wall.StoreInGrid(FloorManager.instance.currentFloor);
-            wall.UpdateElement(coord);
+            wall.Init(grid, coord, true);
         }
         yield return base.DestroySequence(dmgType, source, sourceEquip);
        

@@ -48,15 +48,15 @@ public class MainMenuManager : MonoBehaviour
         t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
         tooltip.transform.GetChild(0).gameObject.SetActive(true);
         tooltip.SetText(
-            "Nice work in there, squish. Welcome back topside. Here's where you'll beef up your arsenal before taking another crack at the Big One's brain."
+            ColorToRichText("Nice work down there, squish!") + "</b>. Welcome back to the SLime Hub. this is where you'll <b>" + ColorToRichText("beef up your arsenal") + "</b> before taking another crack at the Big One's brain."
         , "Slime Hub", true);
         while (!tooltip.skip) yield return null;
         tooltip.SetText(
-            "Down the road, you'll be able to use your earnings to snag new Gear for your Slags, carve out shortcuts through the skull, and toss new god thoughts into the loot pool for your deep dives."
+            "Down the road, you'll be able to use your earnings to snag <b>" + ColorToRichText("new Gear") + "</b> for your Slags, carve out <b>" + ColorToRichText("shortcuts") + "</b> through the skull, and unlock <b>" + ColorToRichText("new god thoughts") + "</b> for your deep dives."
         , "Coming Soon", true);
         while (!tooltip.skip) yield return null;
         tooltip.SetText(
-            "Looking forward to digging deeper and making more mess with you next time!"
+            "This demo will be updated as development continues, bringing exciting new content for you to experience and enjoy. Don't forget to wishlist DEEPMESS and join the Discord for updates."
         , "Next Time", true);
         while (!tooltip.skip) yield return null;
 
@@ -148,5 +148,9 @@ public class MainMenuManager : MonoBehaviour
     
     public void ExitApplication() {
         Application.Quit();
+    }
+
+    static string ColorToRichText(string str) {
+        return "<color=#" + ColorUtility.ToHtmlStringRGB(keyColor) + ">" + str + "</color>";
     }
 }

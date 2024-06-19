@@ -348,7 +348,7 @@ public class ScenarioManager : MonoBehaviour {
         yield return StartCoroutine(player.RetrieveNailAnimation());
         objectiveManager.ClearObjectives();
         relicManager.ClearRelics();
-        StartCoroutine(runDataTracker.UpdateAndDisplay(false, floorManager.floors.Count - 2 >= 0 ? floorManager.floors.Count - 2 : 0, player.defeatedEnemies,  relicManager.scrapValue));
+        StartCoroutine(runDataTracker.UpdateAndDisplay(false, floorManager.floors.Count - 2 >= 0 ? floorManager.floors.Count - 2 : 0, player.defeatedEnemies, player.collectedNuggets));
         PersistentDataManager.instance.DeleteRun();
     }
 

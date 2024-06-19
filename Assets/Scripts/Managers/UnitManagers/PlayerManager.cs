@@ -16,7 +16,6 @@ public class PlayerManager : UnitManager {
 
     [Header("PLAYER MANAGER")]
     [SerializeField] List<Unit> unitPrefabs;
-    public LoadoutManager loadout;
     public UpgradeManager upgradeManager;
     public Nail nail;
     public List<HammerData> hammerActions;
@@ -25,7 +24,7 @@ public class PlayerManager : UnitManager {
      public GearData overrideEquipment = null;
     [SerializeField] public GridContextuals contextuals;
     [HideInInspector] public Vector2 lastHoveredCoord;
-    [HideInInspector] public int defeatedEnemies;
+    public int defeatedEnemies;
 
     public delegate void OnPlayerAction(PlayerManager player);
     public virtual event OnPlayerAction UndoClearCallback;

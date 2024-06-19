@@ -129,6 +129,7 @@ public class PathManager : MonoBehaviour {
 
         pathChoiceContainer.SetActive(false);
 
+        yield return new WaitForSecondsRealtime(0.75f);
         if (!cutsceneSkip) {
             videoPlayer.clip = nodeClips[clipIndex];
             videoPlayer.frame = 0;
@@ -149,7 +150,7 @@ public class PathManager : MonoBehaviour {
                 t += Time.deltaTime; yield return null; 
             }
             videoPlayer.gameObject.SetActive(false);
-        } else yield return new WaitForSecondsRealtime(0.5f);
+        }
 // Assign selected path
         floorSequence.StartPacket(selected.floorPacket);
         // if (selected.floorPacket.objectives.Count > 0) {
