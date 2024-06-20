@@ -709,7 +709,7 @@ public class FloorManager : MonoBehaviour {
                 if (!scenario.gpOptional.pathsEncountered) 
                     yield return StartCoroutine(scenario.gpOptional.Paths());
                 
-                yield return scenario.pathManager.PathSequence(floorSequence.currentThreshold != FloorChunk.PacketType.I); 
+                yield return scenario.pathManager.PathSequence(floorSequence.currentThreshold != FloorChunk.PacketType.I && floorSequence.currentThreshold != FloorChunk.PacketType.Tutorial); 
 
                 if (floorSequence.currentThreshold == FloorChunk.PacketType.BOSS) {
                     if (!scenario.gpOptional.prebossEncountered)

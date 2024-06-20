@@ -6,7 +6,6 @@ public class Unit : GridElement {
 
     public override event OnElementUpdate ElementDestroyed;
 
-    [HideInInspector]
     public UnitManager manager;
 
     [Header("Unit")]

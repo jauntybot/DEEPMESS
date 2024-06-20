@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour {
     
-    [SerializeField] Button optionsBack;
+    [SerializeField] Button optionsBack, helpBack;
     [SerializeField] GameObject mainDirectory, options, helpMenu, quitPanel, abandonPanel;
     void OnEnable() {
         Time.timeScale = 0;
@@ -23,6 +24,7 @@ public class PauseMenu : MonoBehaviour {
     }
 
     public void HelpButton(bool toFrom) {
+        Time.timeScale = toFrom ? 1 : 0;
         mainDirectory.SetActive(!toFrom);
         helpMenu.SetActive(toFrom);
     }
@@ -51,6 +53,15 @@ public class PauseMenu : MonoBehaviour {
             optionsBack.onClick.AddListener(ResumeButton);
         }
     }
+
+    public void ToggleHelpBack(bool mainMenu) {
+        helpBack.onClick.RemoveAllListeners();
+        helpBack.onClick.AddListener(delegate { HelpButton(false); });
+        if (mainMenu) {
+            helpBack.onClick.AddListener(ResumeButton);
+        }
+    }
+
 
     public void QuitToMainMenu() {
         QuitButton(false);

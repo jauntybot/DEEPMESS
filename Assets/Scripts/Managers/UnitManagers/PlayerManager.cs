@@ -255,7 +255,15 @@ public class PlayerManager : UnitManager {
                         DeselectUnit();
                         SelectUnit(u);
                     }
+                } else if (overrideEquipment) {
+                    foreach(Unit _u in units) {
+                        if (input.coord == _u.coord) {
+                            Debug.Log(u.name);
+                            SelectUnit(_u);
+                        }
+                    }
                 } else {
+                    Debug.Log("Fallout " + u.name);
                     SelectUnit(u);
                 }
             }
@@ -277,14 +285,6 @@ public class PlayerManager : UnitManager {
                     SelectUnit(u);
                 
             }
-        } else if (input is Beacon b && b.selectable) {
-            if (selectedUnit && selectedUnit.ValidCommand(b.coord, selectedUnit.selectedEquipment)) 
-                StartCoroutine(selectedUnit.ExecuteAction(b));
-            else {
-                if (selectedUnit) DeselectUnit();
-                //scenario.SwitchTurns()
-                SelectUnit(b);
-            }
         } 
 // Player clicks on square
         else if (input is Tile tile) {
@@ -292,7 +292,6 @@ public class PlayerManager : UnitManager {
             GridElement contents = null;
             foreach (GridElement ge in currentGrid.CoordContents(tile.coord)) {
                 contents = ge;
-                if (ge is PlayerUnit && overrideEquipment) break;
             }
             if (overrideEquipment && !selectedUnit) {
                 foreach(Unit _u in units) {
@@ -302,7 +301,7 @@ public class PlayerManager : UnitManager {
                 }
             }
 // Square not empty, recurse this function with reference to square contents
-            if (contents)
+            else if (contents)
                 GridInput(contents);
 // Square empty
             else {
@@ -370,7 +369,13 @@ public class PlayerManager : UnitManager {
 // No unit selected
         } else if (scenario.currentTurn == ScenarioManager.Turn.Player || scenario.currentTurn == ScenarioManager.Turn.Cascade) {
             bool hovering = false;
-            foreach (GridElement ge in floorManager.currentFloor.CoordContents(pos)) {
+            List<GridElement> elements = new(floorManager.currentFloor.CoordContents(pos));
+            if (overrideEquipment) {
+                foreach(GridElement ge in units) {
+                    if (ge.coord == pos) elements.Add(ge);
+                }
+            }
+            foreach (GridElement ge in elements) {
                 if (ge is Unit u) {
                     hovering = true;
                     if (u.selectable)
@@ -390,6 +395,7 @@ public class PlayerManager : UnitManager {
                         u.UpdateAction(u.selectedEquipment, u.moveMod);
                         u.grid.DisplayValidCoords(u.validActionCoords, u is EnemyUnit ? 4 : 3, false, false);
                     }
+                    if (u is PlayerUnit) break;
                 }
             }
             if (!hovering) {

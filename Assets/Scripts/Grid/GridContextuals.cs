@@ -56,7 +56,7 @@ public class GridContextuals : MonoBehaviour {
         if (state) {
             bool occupied = false;
             foreach (GridElement ge in floorManager.currentFloor.CoordContents(coord)) {
-                if (ge is not Unit) {
+                if (ge is Beacon || ge is BloatedBulb || ge is not Unit) {
                     occupied = true;
                     neutralTooltip.HoverOver(ge);
                 }

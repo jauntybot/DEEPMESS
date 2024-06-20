@@ -13,8 +13,8 @@ public class NeutralElementTooltip : Tooltip {
     public TMP_Text titleText;
     public TMP_Text contentText;
 
-    [SerializeField] Sprite wallSprite, boneSprite;
-    [SerializeField] RuntimeAnimatorController bloodAnim, bileAnim, bulbAnim;
+    [SerializeField] Sprite wallSprite, beaconSprite, boneSprite;
+    [SerializeField] RuntimeAnimatorController bloodAnim, bileAnim, healBulbAnim, surgeBulbAnim, stunBulbAnim, bloatedBulbAnim;
 
     public override void SetText(string content = "", string header = "", List<RuntimeAnimatorController> gif = null) {
          transform.GetChild(0).gameObject.SetActive(true);
@@ -31,6 +31,7 @@ public class NeutralElementTooltip : Tooltip {
         else {
             tilePreviewAnim.runtimeAnimatorController = null;
             if (header == "WALL") tilePreview.sprite = wallSprite;
+            else if (header == "BEACON") tilePreview.sprite = beaconSprite;
             else tilePreview.sprite = boneSprite;
         }
 
@@ -57,10 +58,16 @@ public class NeutralElementTooltip : Tooltip {
             } else if (ge is Beacon) {
                 SetText("Direct line to Gino. Can be destroyed.", "BEACON");
             } else if (ge is BloatedBulb) {
-                SetText("Releases god thought when destroyed.", "BLOATED BULB");
+                SetText("Releases a god thought when destroyed.", "BLOATED BULB", new List<RuntimeAnimatorController>{ bloatedBulbAnim });
             } else if (ge is Tile t) {
-                if (ge is TileBulb) {
-                    SetText("Contains a bulb.", "BULB", new List<RuntimeAnimatorController>{ bulbAnim });
+                if (ge is TileBulb tb) {
+                    if (tb.bulb is SupportBulbData s) {
+                        if (s.supportType == SupportBulbData.SupportType.Heal) 
+                            SetText("Contains a Heal Bulb. Restores 2 HP.", "HEAL BULB", new List<RuntimeAnimatorController>{ healBulbAnim });
+                        else 
+                            SetText("Contains a Surge Bulb. Refresh Slag action and move.", "SURGE BULB", new List<RuntimeAnimatorController>{ surgeBulbAnim });
+                    } else if (tb.bulb is DebuffBulbData) 
+                        SetText("Contains a Stun Bulb. Stuns in area of effect.", "BULB", new List<RuntimeAnimatorController>{ stunBulbAnim });
                 } else {
                     switch(t.tileType) {
                         case Tile.TileType.Bone:

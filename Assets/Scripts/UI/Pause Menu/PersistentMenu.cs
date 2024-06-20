@@ -26,9 +26,11 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
 
     public int upcomingCurrency;
     [SerializeField] TMP_Dropdown relicDropdown;
-
-
+    [SerializeField] Animator splashAnim;
+    bool splash;
+    [SerializeField] GameObject loadIcon;
     public static PersistentMenu instance;
+    [SerializeField] Color keyColor;
     private void Awake() {
         if (PersistentMenu.instance) {
             Debug.Log("Warning! More than one instance of PersistentMenu found!");
@@ -37,6 +39,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         }
         instance = this;
         DontDestroyOnLoad(this);
+        splash = false;
 
         musicController = GetComponentInChildren<MusicController>();
         musicSlider.onValueChanged.AddListener(SetMusicVolume);
@@ -147,14 +150,17 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
             relicDropdown.RefreshShownValue();
 
             pauseMenu.ToggleOptionsBack(false);
+            pauseMenu.ToggleHelpBack(false);
             menuButton.SetActive(true);
         }
 // Initialize the MainMenuManager
         else if (MainMenuManager.instance) {
             loadedRun = null;
             menuButton.SetActive(false);
-            MainMenuManager.instance.optionsButton.onClick.AddListener(MainMenuPause);
+            MainMenuManager.instance.optionsButton.onClick.AddListener(MainMenuOptions);
+            MainMenuManager.instance.helpButton.onClick.AddListener(MainMenuHelp);
             pauseMenu.ToggleOptionsBack(true);
+            pauseMenu.ToggleHelpBack(true);
             if (upcomingCurrency > 0) MainMenuManager.instance.StartCoroutine(MainMenuManager.instance.WhatsToCome(upcomingCurrency));
             else MainMenuManager.instance.Init(PersistentDataManager.instance.IsRunSaved());
         }
@@ -171,7 +177,11 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         if (TooltipSystem.instance)
             toolTips = TooltipSystem.instance;
         
-        StartCoroutine(SceneLoadDelay());
+        if (!splash && MainMenuManager.instance) {
+            StartCoroutine(SplashDelay());
+        } else {
+            StartCoroutine(SceneLoadDelay());
+        }
     }
 
     IEnumerator SceneLoadDelay() {
@@ -183,6 +193,30 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         FadeToBlack(false);
     }
 
+    IEnumerator SplashDelay() {
+        splashAnim.gameObject.SetActive(true);
+        splashAnim.GetComponent<TMP_Text>().text = 
+        "Yo, squish! <b>" + ColorToRichText("Welcome to DEEPMESS") + "</b>. You're about to enter the Slime Hub, where a parasitic pink slime mold has taken root - <b>" + ColorToRichText("right above god's shiny dome") + "</b>. Your goal: help the slime reach the source of the tastiest thoughts in existence (and <b>" + ColorToRichText("give god a lobotomy") + "</b> in the process). Explore a sampling of enemies, upgrades, and delectable god-thoughts in the <b>" + ColorToRichText("Cranium") + "</b> - a bony glimpse into the first of many biomes in god's big head." + 
+        '\n' + '\n' + "<b>" + ColorToRichText("This is a demo build") + "</b>, a taste of the mess to come. Some features might not function perfectly. You might encounter bugs lurking in the cracks and crevices of god's brain." +
+        '\n' + '\n' + "This demo <b>" + ColorToRichText("will be updated as development continues") + "</b>, bringing exciting new content for you to experience and enjoy. <b>" + ColorToRichText("Wishlist DEEPMESS") + "</b> and <b>" + ColorToRichText("join the discord") + "</b> for updates and to support development." +
+        '\n' + '\n' + "Dig deep. Make mess.";
+
+        float t = 0;
+        while (t <= 3f) {
+            t += Time.deltaTime;
+            yield return null;
+        }
+        loadIcon.SetActive(false);
+        splashAnim.SetTrigger("Continue");
+        yield return null;
+        while (!Input.anyKeyDown) {
+            yield return null;
+        }
+        splashAnim.SetTrigger("Continue");
+        splash = true;
+        FadeToBlack(false);
+    }
+
     public IEnumerator FadeToScene(int index) {
         Time.timeScale = 1f;
         yield return new WaitForSecondsRealtime(0.25f);
@@ -191,18 +225,27 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
             PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.MainMenu, true);
         }
         yield return new WaitForSecondsRealtime(1f);
+        AsyncOperation op = SceneManager.LoadSceneAsync(index, LoadSceneMode.Single);
         Time.timeScale = 1f;
-        SceneManager.LoadScene(index, LoadSceneMode.Single);
+        while (!op.isDone) {
+            yield return null;
+        }
         Time.timeScale = 1f;
     }
 
     public void FadeToBlack(bool state) {
+        loadIcon.SetActive(state);
         fadeToBlack.SetBool("Fade", state);
     }
 
-    void MainMenuPause() {
+    void MainMenuOptions() {
         pauseMenu.gameObject.SetActive(true);
         pauseMenu.Options(true);
+    }
+    
+    void MainMenuHelp() {
+        pauseMenu.gameObject.SetActive(true);
+        pauseMenu.HelpButton(true);
     }
 
 
@@ -257,4 +300,8 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         scenario.relicManager.GiveAllRelics();
     }
     #endregion
+
+    string ColorToRichText(string str) {
+        return "<color=#" + ColorUtility.ToHtmlStringRGB(keyColor) + ">" + str + "</color>";
+    }
 }

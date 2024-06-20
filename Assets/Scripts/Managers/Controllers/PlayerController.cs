@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour {
     // On click
                             manager.GridMouseOver(hit.transform.GetComponent<GridElement>().coord, true);
     // Disable input under these conditions
-                            if (!manager.unitActing && !(FloorManager.instance.peeking && manager.scenario.currentTurn != ScenarioManager.Turn.Cascade)) {
+                            if (!manager.unitActing && !FloorManager.instance.peeking) {
                                 if (Input.GetMouseButtonDown(0)) {
     // Pass call to contextualize click to manager
                                     manager.GridInput(hit.transform.GetComponent<GridElement>());

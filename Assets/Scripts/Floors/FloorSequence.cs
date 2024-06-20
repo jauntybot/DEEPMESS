@@ -102,29 +102,31 @@ public class FloorSequence : ScriptableObject {
                     if (activePacket.packetMods.Count > 0)
                         floor.spawnBeacon = i%5 == 0;
                     else 
-                        floor.spawnBeacon = i%4 == 0;
-
-// Bloated bulb spawn rules
-                    if (!activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite)) {
-// Hazard chunk bloated bulbs
-                        if (activePacket.packetMods.Count > 0 && (i+3)%5 == 0) 
-                            floor.spawnBloatedBulb = true;
-                        else if (i == 6)
-                            floor.spawnBloatedBulb = true;
-                        else
-                            floor.spawnBloatedBulb = false;
-                    }
-                    
+                        floor.spawnBeacon = i%4 == 0;                    
+                        
 // Elite spawn rules
                     if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite)) {
 // Hazard chunk bloated bulbs
                         if (activePacket.packetMods.Count > 0 && (i+3)%5 == 0) 
                             floor.spawnElite = true;
-                        else if (i == 6)
-                            floor.spawnElite = true;
                         else
                             floor.spawnElite = false;
-                    }
+                    } else
+                        floor.spawnElite = false;
+
+// Bloated bulb spawn rules
+                    if (!activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite)) {
+// Hazard chunk bloated bulbs
+                        if (activePacket.packetMods.Count > 0 && (i+3)%5 == 0) {
+                            floor.spawnBloatedBulb = true;
+                            if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme)) floor.spawnElite = true;
+                        }
+                        else if (i == 6)
+                            floor.spawnBloatedBulb = true;
+                        else
+                            floor.spawnBloatedBulb = false;
+                    } else
+                        floor.spawnBloatedBulb = false;
                 } else {
                     floor.spawnBeacon = false;
                     floor.spawnElite = false;

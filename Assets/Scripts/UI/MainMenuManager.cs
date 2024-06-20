@@ -17,7 +17,7 @@ public class MainMenuManager : MonoBehaviour {
         instance = this;
     }
     
-    public Button optionsButton, continueButton;
+    public Button optionsButton, helpButton, continueButton;
     [SerializeField] GameObject buttonColumn;
     [SerializeField] Animator creditsAnim, mainButtonsAnim, playButtonsAnim, tutorialButtonsAnim, nailAnim;
 
@@ -56,7 +56,7 @@ public class MainMenuManager : MonoBehaviour {
         , "Coming Soon", true);
         while (!tooltip.skip) yield return null;
         tooltip.SetText(
-            "This demo <b>" + ColorToRichText("will be updated") + "</b> as development continues, bringing exciting new content for you to experience and enjoy. Don't forget to <b>" + ColorToRichText("wishlist DEEPMESS") + "</b> and <b>" + ColorToRichText("join the discord") + "</b> for updates."
+            "This demo <b>" + ColorToRichText("will be updated") + "</b> as development continues, bringing exciting new content for you to experience and enjoy. <b>" + ColorToRichText("Wishlist DEEPMESS") + "</b> and <b>" + ColorToRichText("join the discord") + "</b> for updates!"
         , "Next Time", true);
         while (!tooltip.skip) yield return null;
 

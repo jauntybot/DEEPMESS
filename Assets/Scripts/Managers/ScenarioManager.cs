@@ -112,9 +112,10 @@ public class ScenarioManager : MonoBehaviour {
                 }
                 yield return StartCoroutine(floorManager.DescendUnits(unitsToDrop, prevEnemy, true));
             } else {
-                foreach (Unit u in player.units) {
-                    if (u is Anvil) {
-                        u.StartCoroutine(u.DestroySequence());
+                for (int i = player.units.Count - 1; i >= 0; i--) {
+                    if (player.units[i] is Anvil a) {
+                        player.units.Remove(a);
+                        Destroy(a.gameObject);
                     }
                 }
             }
