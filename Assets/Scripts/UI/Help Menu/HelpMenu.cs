@@ -23,9 +23,9 @@ public class HelpMenu : MonoBehaviour
         foreach (HelpSection section in helpSections)
             section.SelectSection(false);
         if (newSection.gif)
-            explainer.UpdateExplaination(newSection.title, newSection.body, newSection.anims);
+            explainer.UpdateExplaination(newSection.title, newSection.anims);
         else
-            explainer.UpdateExplaination(newSection.title, newSection.body, newSection.image);
+            explainer.UpdateExplaination(newSection.title, newSection.image);
     }
 
 }

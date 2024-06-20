@@ -10,7 +10,6 @@ public class HelpSection : MonoBehaviour {
     [SerializeField] TMPro.TMP_Text titleTMP;
     [SerializeField] GameObject selected;
     public string title;
-    [TextArea] public string body;
 
     public bool gif;
     public Sprite image;
