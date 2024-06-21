@@ -715,6 +715,7 @@ MonoBehaviour:
   resolutionsDropdown: {fileID: 769217914465478921}
   fullscreenToggle: {fileID: 3945106552485461548}
   cutsceneToggle: {fileID: 1817739845371620285}
+  tooltipToggle: {fileID: 1452765341115138442}
   scatterToggle: {fileID: 6722452005411647467}
   menuButton: {fileID: 1844174083667942396}
   fadeToBlack: {fileID: 1172342262780273606}
@@ -751,6 +752,7 @@ MonoBehaviour:
     scatterSkip: 0
     fullscreen: 1
     resolutionIndex: 0
+    tooltipToggle: 0
   runData:
     startCavity: 0
     hammerUnit: 
@@ -2392,7 +2394,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 872415231
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -2488,7 +2490,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 231.1382, y: -0}
+  m_AnchoredPosition: {x: 231.1382, y: 0}
   m_SizeDelta: {x: 462.2764, y: 70}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &4795625341542009749
@@ -3604,7 +3606,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 185.28998, y: 70.92999}
+  m_SizeDelta: {x: 185.29, y: 70.93}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7996575653992846420
 CanvasRenderer:
@@ -7116,7 +7118,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &7938890952815581386
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9253,7 +9255,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7394815152955344959}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 456712696168355024}
+        m_TargetAssemblyTypeName: PersistentMenu, Assembly-CSharp
+        m_MethodName: ResetTooltips
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4620829245889315782
 GameObject:
   m_ObjectHideFlags: 0
@@ -11150,7 +11164,7 @@ GameObject:
   - component: {fileID: 9204532675002170280}
   - component: {fileID: 1452765341115138442}
   m_Layer: 5
-  m_Name: Cutscene Toggle
+  m_Name: Tooltip Toggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11223,7 +11237,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 456712696168355024}
+        m_TargetAssemblyTypeName: PersistentMenu, Assembly-CSharp
+        m_MethodName: ToggleTooltips
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
 --- !u!1 &6164326334144613569
 GameObject:
@@ -11459,8 +11485,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 490, y: -80}
-  m_SizeDelta: {x: 940, y: 381}
+  m_AnchoredPosition: {x: 455, y: -80}
+  m_SizeDelta: {x: 870, y: 381}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &8545537879341649165
 CanvasRenderer:
@@ -14247,7 +14273,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2567177710403709650
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14939,13 +14965,14 @@ GameObject:
   - component: {fileID: 773770244290355612}
   - component: {fileID: 5747480775196394101}
   - component: {fileID: 4790159138998989357}
+  - component: {fileID: 8427838758301718437}
   m_Layer: 5
   m_Name: Click to continue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6019814774032071990
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14964,7 +14991,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 800, y: 43.65}
+  m_SizeDelta: {x: 800, y: 51.84}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &773770244290355612
 CanvasRenderer:
@@ -15008,10 +15035,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '[Press any button to continue]'
+  m_text: CONTINUE
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8d72595f12117d849a2555c863085797, type: 2}
-  m_sharedMaterial: {fileID: -572948886920793140, guid: 8d72595f12117d849a2555c863085797, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 4658b7dfbefc86340b1279196af5183b, type: 2}
+  m_sharedMaterial: {fileID: -3901078251180137152, guid: 4658b7dfbefc86340b1279196af5183b, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -15035,8 +15062,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
-  m_fontSizeBase: 32
+  m_fontSize: 38
+  m_fontSizeBase: 38
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -15077,6 +15104,62 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &8427838758301718437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8115257602671132771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 0
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 1, g: 0.80784315, b: 0.80784315, a: 1}
+    m_PressedColor: {r: 0.9529412, g: 0.45490196, b: 0.4117647, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 4790159138998989357}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 456712696168355024}
+        m_TargetAssemblyTypeName: PersistentMenu, Assembly-CSharp
+        m_MethodName: SplashContinue
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8191403053667375832
 GameObject:
   m_ObjectHideFlags: 0

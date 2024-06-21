@@ -31,7 +31,7 @@ public class FileDataHandler {
                     }
                 }
 
-                loadedData = JsonUtility.FromJson<UserData>(dataToLoad);
+                loadedData = JsonConvert.DeserializeObject<UserData>(dataToLoad);
             } catch (Exception e) {
                 Debug.LogError("Error occured when trying to load data from file: " + fullPath + "\n" + e);
             }
@@ -44,7 +44,11 @@ public class FileDataHandler {
         try {
 
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
-            string dataToStore = JsonUtility.ToJson(data, true);
+
+            string dataToStore = JsonConvert.SerializeObject(data, new JsonSerializerSettings() {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                Formatting = Formatting.Indented
+            });
 
             using (FileStream stream = new FileStream(fullPath, FileMode.Create)) {
                 using (StreamWriter writer = new StreamWriter(stream)) {

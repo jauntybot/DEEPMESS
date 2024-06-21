@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using Relics;
+using System;
 
 public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersistence {
     ScenarioManager scenario;
@@ -17,7 +18,8 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     [SerializeField] AudioMixer mixer;
     [SerializeField] Slider musicSlider, sfxSlider;
     [SerializeField] TMP_Dropdown resolutionsDropdown;
-    [SerializeField] Toggle fullscreenToggle, cutsceneToggle, scatterToggle;
+    [SerializeField] Toggle fullscreenToggle, cutsceneToggle, tooltipToggle;
+    public Toggle scatterToggle;
     [SerializeField] GameObject menuButton;
     public Animator fadeToBlack;
 
@@ -98,23 +100,41 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     public void LoadUser(UserData user) {
         musicSlider.value = user.musicVol;
         sfxSlider.value = user.sfxVol;
-        cutsceneToggle.isOn = user.cutsceneSkip;
-        user.scatterSkip = scatterToggle.isOn;
         
         SetResolution(user.resolutionIndex);
         SetMusicVolume(user.musicVol);
         SetSFXVolume(user.sfxVol);
-        Screen.fullScreen = user.fullscreen;
+        
         fullscreenToggle.isOn = user.fullscreen;
+        Screen.fullScreen = user.fullscreen;
+        cutsceneToggle.isOn = user.cutsceneSkip;
+        tooltipToggle.isOn = user.tooltipToggle;
+
     }
 
     public void SaveUser(ref UserData user) {
         user.musicVol = musicSlider.value;
         user.sfxVol = sfxSlider.value;
+        
         user.resolutionIndex = currentResolutionIndex;
+        
         user.cutsceneSkip = cutsceneToggle.isOn;
-        user.scatterSkip = scatterToggle.isOn;
         user.fullscreen = fullscreenToggle.isOn;
+        user.tooltipToggle = tooltipToggle.isOn;
+
+        if (scenario) {
+            Dictionary<string, bool> tooltips = new() {
+                { "bulbEncountered", scenario.gpOptional.bulbEncountered },
+                { "deathReviveEncountered", scenario.gpOptional.deathReviveEncountered },
+                { "bossEncountered", scenario.gpOptional.bossEncountered},
+                { "objectivesEncountered", scenario.gpOptional.objectivesEncountered},
+                { "bloatedBulbEncountered", scenario.gpOptional.bloatedBulbEncountered },
+                { "beaconEncountered", scenario.gpOptional.beaconEncountered },
+                { "beaconObjectivesEncountered", scenario.gpOptional.beaconObjectivesEncountered },
+                { "beaconScratchOffEncountered", scenario.gpOptional.beaconScratchOffEncountered }
+            };
+            user.tooltipsEncountered = tooltips;
+        }
     }
       
     public void LoadRun(RunData run) {
@@ -193,7 +213,13 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         FadeToBlack(false);
     }
 
+
+    public void SplashContinue() {
+        splashContinue = true;
+    }
+    bool splashContinue;
     IEnumerator SplashDelay() {
+        splashContinue = false;
         splashAnim.gameObject.SetActive(true);
         splashAnim.GetComponent<TMP_Text>().text = 
         "Yo, squish! <b>" + ColorToRichText("Welcome to DEEPMESS") + "</b>. You're about to enter the Slime Hub, where a parasitic pink slime mold has taken root - <b>" + ColorToRichText("right above god's shiny dome") + "</b>. Your goal: help the slime reach the source of the tastiest thoughts in existence (and <b>" + ColorToRichText("give god a lobotomy") + "</b> in the process). Explore a sampling of enemies, upgrades, and delectable god-thoughts in the <b>" + ColorToRichText("Cranium") + "</b> - a bony glimpse into the first of many biomes in god's big head." + 
@@ -209,7 +235,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         loadIcon.SetActive(false);
         splashAnim.SetTrigger("Continue");
         yield return null;
-        while (!Input.anyKeyDown) {
+        while (!splashContinue) {
             yield return null;
         }
         splashAnim.SetTrigger("Continue");
@@ -218,6 +244,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     }
 
     public IEnumerator FadeToScene(int index) {
+        PersistentDataManager.instance.SaveUser();
         Time.timeScale = 1f;
         yield return new WaitForSecondsRealtime(0.25f);
         fadeToBlack.SetBool("Fade", true);
@@ -279,6 +306,19 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
             currentResolutionIndex = filteredResolutions.IndexOf(resolution);
         } else SetResolution(0);
     }
+
+    public void ResetTooltips() {
+        PersistentDataManager.instance.userData.tooltipsEncountered = new();
+        if (GameplayOptionalTooltips.instance)
+            GameplayOptionalTooltips.instance.LoadTooltips();
+    }
+
+    public void ToggleTooltips(bool state) {
+        PersistentDataManager.instance.userData.tooltipToggle = state;
+        if (GameplayOptionalTooltips.instance)
+            GameplayOptionalTooltips.instance.LoadTooltips();
+    }
+
 
     #region Debug Functions
     public void TriggerCascade() {

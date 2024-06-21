@@ -81,6 +81,13 @@ public class AnvilData : SlagGearData {
                 }
                 unit.UpdateSortOrder(fromTo[current]);
                 current = fromTo[current];
+                Tile t = unit.grid.tiles.Find(ti => ti.coord == moveTo && ti.tileType == Tile.TileType.Blood);
+                if (t) {
+                    t.PlaySound(t.dmgdSFX);
+// SHIELD UNIT TIER II -- Blood bouyancy
+                    if (!unit.conditions.Contains(Unit.Status.Disabled) && !(unit.shield && unit.shield.buoyant))
+                        unit.ApplyCondition(Unit.Status.Restricted);
+                }
                 yield return null;
             }        
         //} else {
