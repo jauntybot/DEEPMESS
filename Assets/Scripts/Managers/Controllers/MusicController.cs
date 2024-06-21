@@ -25,11 +25,13 @@ public class MusicController : MonoBehaviour {
     bool loop = false;
 
     public void SwitchMusicState(MusicState state, bool fadeOut, bool fadeIn = false) {
-        loop = fadeIn;
+        loop = false;
+        StopAllCoroutines();
         StartCoroutine(UpdateTracklist(state, fadeOut, fadeIn));
     }
 
     public IEnumerator UpdateTracklist(MusicState targetState, bool fadeOut, bool fadeIn) { 
+        yield return null;
         if (targetState != MusicState.Ginos) currentState = targetState;
         if (fadeIn)
             StartCoroutine(StopAudio(fadeOut));
@@ -52,7 +54,6 @@ public class MusicController : MonoBehaviour {
             }
         }
         stateTracks = new(_stateTracks);
-
         loop = true;
 
         if (fadeIn) {
@@ -63,9 +64,9 @@ public class MusicController : MonoBehaviour {
         }
         
         while (loop) {
-            if (AudioSettings.dspTime > loopPt - 1)
-                QueueTrack();
             yield return null;
+            if (AudioSettings.dspTime + 1 > loopPt)
+                QueueTrack();
         }
     }
 
@@ -76,14 +77,18 @@ public class MusicController : MonoBehaviour {
 
         sourceIndex = 1 - sourceIndex;
 
+        audioSources[sourceIndex].Stop();
         audioSources[sourceIndex].clip = stateTracks[stateTrackIndex].trackAudioClip;
         audioSources[sourceIndex].PlayScheduled(loopPt);
+        audioSources[sourceIndex].time = 0;
+        Debug.Log(stateTracks[stateTrackIndex].trackAudioClip.name + " scheduled for " + loopPt);
 
         trackDur = (double)stateTracks[stateTrackIndex].trackAudioClip.samples / stateTracks[stateTrackIndex].trackAudioClip.frequency;
         loopPt = loopPt + trackDur;
     }    
 
     public IEnumerator StopAudio(bool fade) { 
+        audioSources[1 - sourceIndex].Stop();
         AudioSource prevSource = audioSources[sourceIndex];
         float prevVol = prevSource.volume;
         if (fade) {
@@ -101,9 +106,9 @@ public class MusicController : MonoBehaviour {
     IEnumerator FadeInAudio() {
         sourceIndex = 1 - sourceIndex;
         AudioSource source = audioSources[sourceIndex];
+        source.Stop();
         source.clip = stateTracks[stateTrackIndex].trackAudioClip;
         source.Play();
-        Debug.Log(trackDur + ", " + loopPt + ", " + AudioSettings.dspTime + ", " + (loopPt - AudioSettings.dspTime));
         source.time = (float)(trackDur - (loopPt - AudioSettings.dspTime));
 
         float prevVol = source.volume;

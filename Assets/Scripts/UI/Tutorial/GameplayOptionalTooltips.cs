@@ -120,7 +120,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
         screenFade.gameObject.SetActive(true);
 
         header = "BEACON";
-        body = "Nice catch, squish. That there is one of my direct lines. Why don't youse <b>" + ColorToRichText("give me a ring", keyColor) + "</b>?";
+        body = "Yo, squish. That tower there is one of my direct lines. Why don't youse <b>" + ColorToRichText("use its action", keyColor) + "</b> in the bottom left to <b>" + ColorToRichText("give me a ring", keyColor) + "?";
         tooltip.SetText(body, header, true, true);
 
         while (!tooltip.skip) {
@@ -137,7 +137,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
         objectivesEncountered = true;
 
         header = "TASKS";
-        body = "Yo, squish! Hold up a sec, I got a list for ya. Knock these out, and I'll toss some <b>" + ColorToRichText("slime bucks", keyColor) + "</b> your way for the hustle.";
+        body = "Hold up a sec, I got a list for ya. Knock these out, and I'll toss some <b>" + ColorToRichText("slime bucks", keyColor) + "</b> your way for the hustle.";
         tooltip.SetText(body, header, true, true);
 
         while (!tooltip.skip) {

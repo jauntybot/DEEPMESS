@@ -86,6 +86,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         }
 
         if (resolutionsDropdown) {
+            resolutionsDropdown.ClearOptions();
             resolutionsDropdown.AddOptions(options);
             resolutionsDropdown.value = currentResolutionIndex;
             resolutionsDropdown.RefreshShownValue();
@@ -158,6 +159,11 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     public RunData loadedRun;
     public int startIndex = -1;
     void UpdateRefs(Scene scene = default, LoadSceneMode mode = default) {
+        Canvas canvas = GetComponent<Canvas>();
+        canvas.worldCamera = Camera.main;
+        canvas.planeDistance = 20f;
+        //canvas.sortingLayerName = "UI";
+
         if (ScenarioManager.instance) {
 // Initialize scenario manager starts game
             scenario = ScenarioManager.instance;

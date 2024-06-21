@@ -112,7 +112,7 @@ public class UpgradeManager : MonoBehaviour {
             yield return new WaitForSecondsRealtime(2f);
             
             foreach(UnitUpgradeUI ui in unitUpgradeUIs) {
-                ui.hpSlot.UpdateSlot(!ui.hpSlot.filled);
+                ui.hpSlot.UpdateSlot(false);
 
                 Animator anim = ui.transform.GetComponent<Animator>();
                 anim.SetTrigger("SlideIn");
@@ -125,6 +125,9 @@ public class UpgradeManager : MonoBehaviour {
                     t += Time.deltaTime;
                     yield return null;
                 }
+            }
+            foreach(UnitUpgradeUI ui in unitUpgradeUIs) {
+                ui.hpSlot.UpdateSlot(!ui.hpSlot.filled);
             }
         }
 
