@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 [System.Serializable]
 public class UserData {
 
@@ -7,13 +9,15 @@ public class UserData {
     public bool scatterSkip;
     public bool fullscreen;
     public int resolutionIndex;
+    public bool tooltipToggle;
+    public Dictionary<string, bool> tooltipsEncountered;
 
     public UserData() {
         this.musicVol = 5f;
         this.sfxVol = 5f;
         this.cutsceneSkip = false;
-        this.scatterSkip = false;
         this.fullscreen = true;
+        tooltipsEncountered = new();
     }
 
 

@@ -11,9 +11,10 @@ public class GameplayOptionalTooltips : MonoBehaviour {
     [SerializeField] Color keyColor;
     public DialogueTooltip tooltip;
     public Animator screenFade;
-    [SerializeField] RuntimeAnimatorController anvilAnim, bigThrowAnim, basophicAnim, reviveAnim, bulbAnim;
-    public bool bulbEncountered = false, deathReviveEncountered = false, basophicEncountered = false, prebossEncountered = false, bossEncountered = false,
-        vacuoleEncountered = true, pathsEncountered = false, objectivesEncountered = false, bloatedBulbEncountered = false, beaconEncountered = false, beaconObjectivesEncountered = false, beaconScratchOffEncountered = false;
+    bool tooltipToggle;
+    [SerializeField] RuntimeAnimatorController reviveAnim, bulbAnim;
+    public bool bulbEncountered = false, deathReviveEncountered = false, prebossEncountered = false, bossEncountered = false,
+        pathsEncountered = false, objectivesEncountered = false, bloatedBulbEncountered = false, beaconEncountered = false, beaconObjectivesEncountered = false, beaconScratchOffEncountered = false;
 
     void Awake() {
         if (GameplayOptionalTooltips.instance) {
@@ -30,9 +31,27 @@ public class GameplayOptionalTooltips : MonoBehaviour {
                 pu.ElementDisabled += StartDeathTut;
             }
         }
+
+        LoadTooltips();
+    }
+
+    public void LoadTooltips() {
+        Debug.Log("Load tooltips");
+        UserData user = PersistentDataManager.instance.userData;
+        tooltipToggle = user.tooltipToggle;
+        
+        bulbEncountered = user.tooltipsEncountered.ContainsKey("bulbEncountered") && user.tooltipsEncountered["bulbEncountered"];
+        deathReviveEncountered = user.tooltipsEncountered.ContainsKey("deathReviveEncountered") && user.tooltipsEncountered["deathReviveEncountered"];
+        bossEncountered = user.tooltipsEncountered.ContainsKey("bossEncountered") && user.tooltipsEncountered["bossEncountered"];
+        objectivesEncountered = user.tooltipsEncountered.ContainsKey("objectivesEncountered") && user.tooltipsEncountered["objectivesEncountered"];
+        bloatedBulbEncountered = user.tooltipsEncountered.ContainsKey("bloatedBulbEncountered") && user.tooltipsEncountered["bloatedBulbEncountered"];
+        beaconEncountered = user.tooltipsEncountered.ContainsKey("beaconEncountered") && user.tooltipsEncountered["beaconEncountered"];
+        beaconObjectivesEncountered = user.tooltipsEncountered.ContainsKey("beaconObjectivesEncountered") && user.tooltipsEncountered["beaconObjectivesEncountered"];
+        beaconScratchOffEncountered = user.tooltipsEncountered.ContainsKey("beaconScratchOffEncountered") && user.tooltipsEncountered["beaconScratchOffEncountered"];
     }
 
     public IEnumerator Paths() {
+        if (tooltipToggle) yield break;
         pathsEncountered = true;
 
         header = "CHUNKS";
@@ -47,6 +66,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
     }
 
     public IEnumerator TileBulb() {
+        if (tooltipToggle) yield break;
         bulbEncountered = true;
         while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
             yield return null;
@@ -68,6 +88,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
     }
 
     public IEnumerator BloatedBulb() {
+        if (tooltipToggle) yield break;
         bloatedBulbEncountered = true;
 
         while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
@@ -90,6 +111,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
     }
 
     public IEnumerator Beacon() {
+        if (tooltipToggle) yield break;
         beaconEncountered = true;
         while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
             yield return null;
@@ -111,6 +133,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
     }
 
     public IEnumerator Objectives() {
+        if (tooltipToggle) yield break;
         objectivesEncountered = true;
 
         header = "TASKS";
@@ -127,6 +150,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
 
 
     public IEnumerator BeaconObjectives() {
+        if (tooltipToggle) yield break;
         beaconObjectivesEncountered = true;
 
         header = "TASKS";
@@ -142,6 +166,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
     }
 
     public IEnumerator BeaconScratchOff() {
+        if (tooltipToggle) yield break;
         beaconScratchOffEncountered = true;
 
         header = "LUCKY LIXXX";
@@ -160,8 +185,6 @@ public class GameplayOptionalTooltips : MonoBehaviour {
     void StartDeathTut(GridElement blank) {
         if (!deathReviveEncountered) {
             StartCoroutine(DeathRevivTut());
-        }
-        else {
             for (int i = 0; i <= scenario.player.units.Count - 1; i++) {
                 if (scenario.player.units[i] is PlayerUnit pu) {
                     pu.ElementDisabled -= StartDeathTut;
@@ -171,12 +194,13 @@ public class GameplayOptionalTooltips : MonoBehaviour {
     }
 
      public IEnumerator DeathRevivTut() {
+        if (tooltipToggle) yield break;
         deathReviveEncountered = true;
 
         while (scenario.currentTurn != ScenarioManager.Turn.Player) {
             yield return null;
         }
-        yield return new WaitForSecondsRealtime(0.25f);
+        yield return new WaitForSecondsRealtime(1.25f);
         screenFade.gameObject.SetActive(true);
 
         header = "SLAG REVIVE";
@@ -204,6 +228,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
     }
 
     public IEnumerator Boss() {
+        if (tooltipToggle) yield break;
         bossEncountered = true;
         while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
             yield return null;

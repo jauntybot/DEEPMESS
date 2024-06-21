@@ -531,9 +531,9 @@ public class PlayerManager : UnitManager {
             PlayerUnit lastMoved = (PlayerUnit)undoOrder[undoOrder.Count - 1];
 // Undo bulb harvest
             if (harvestedByMove.ContainsKey(lastMoved)) {
-                if (harvestedByMove[lastMoved] is TileBulb harvested) {
-                    harvested.UndoHarvest();
+                if (harvestedByMove[lastMoved] is TileBulb harvested && lastMoved.equipment.Find(e => e is BulbEquipmentData)) {
                     lastMoved.equipment.Find(e => e is BulbEquipmentData).UnequipEquipment(lastMoved);
+                    harvested.UndoHarvest();
                     harvestedByMove.Remove(lastMoved);
                 } else if (harvestedByMove[lastMoved] is GodParticleGE particle) {
                     particle.UndoHarvest();

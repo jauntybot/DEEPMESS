@@ -121,7 +121,7 @@ public class FloorSequence : ScriptableObject {
                             floor.spawnBloatedBulb = true;
                             if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme)) floor.spawnElite = true;
                         }
-                        else if (i == 6)
+                        else if (activePacket.packetMods.Count == 0 && i == 6)
                             floor.spawnBloatedBulb = true;
                         else
                             floor.spawnBloatedBulb = false;

@@ -213,7 +213,7 @@ public class ScenarioManager : MonoBehaviour {
                 }
                 yield return new WaitForSecondsRealtime(0.625f);
 
-                bool skip = PersistentDataManager.instance.userData.scatterSkip;
+                bool skip = PersistentMenu.instance.scatterToggle.isOn;
                 if (prevTurn == Turn.Descent && !skip)
                     StartCoroutine(currentEnemy.TakeTurn(true));
                 else if (!skip) {
