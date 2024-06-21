@@ -25,7 +25,7 @@ public class MusicController : MonoBehaviour {
     bool loop = false;
 
     public void SwitchMusicState(MusicState state, bool fadeOut, bool fadeIn = false) {
-        loop = false;
+        loop = fadeIn;
         StartCoroutine(UpdateTracklist(state, fadeOut, fadeIn));
     }
 
@@ -47,19 +47,19 @@ public class MusicController : MonoBehaviour {
 
         List<Track> _stateTracks = new();
         foreach(Track t in musicTracks) {
-            Debug.Log(t.name + ", " + (t.state == currentState) + ", " + t.ginos + ", " + (targetState == MusicState.Ginos));
             if (t.state == currentState && t.ginos == (targetState == MusicState.Ginos)) {
                 _stateTracks.Add(t);
             }
         }
         stateTracks = new(_stateTracks);
 
-        loopPt = AudioSettings.dspTime;
         loop = true;
 
-        QueueTrack();
         if (fadeIn) {
             StartCoroutine(FadeInAudio());
+        } else {
+            loopPt = AudioSettings.dspTime;
+            QueueTrack();
         }
         
         while (loop) {
@@ -73,8 +73,6 @@ public class MusicController : MonoBehaviour {
         stateTrackIndex++;      
         if (stateTrackIndex > stateTracks.Count - 1)     
             stateTrackIndex = 0;
-
-            Debug.Log(stateTrackIndex);
 
         sourceIndex = 1 - sourceIndex;
 
@@ -101,7 +99,13 @@ public class MusicController : MonoBehaviour {
     }
 
     IEnumerator FadeInAudio() {
+        sourceIndex = 1 - sourceIndex;
         AudioSource source = audioSources[sourceIndex];
+        source.clip = stateTracks[stateTrackIndex].trackAudioClip;
+        source.Play();
+        Debug.Log(trackDur + ", " + loopPt + ", " + AudioSettings.dspTime + ", " + (loopPt - AudioSettings.dspTime));
+        source.time = (float)(trackDur - (loopPt - AudioSettings.dspTime));
+
         float prevVol = source.volume;
         float timer = 0;
         while (timer < 1.5f) {   
@@ -109,5 +113,6 @@ public class MusicController : MonoBehaviour {
             yield return new WaitForSecondsRealtime(1/Util.fps);
             timer += Time.deltaTime;
         }
+        source.volume = prevVol;
     }
 }

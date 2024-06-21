@@ -14,7 +14,6 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     public PauseMenu pauseMenu;
     public int targetFPS;
     //[SerializeField] int fps;
-    TooltipSystem toolTips;
     [SerializeField] AudioMixer mixer;
     [SerializeField] Slider musicSlider, sfxSlider;
     [SerializeField] TMP_Dropdown resolutionsDropdown;
@@ -204,8 +203,6 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
             else if (scenario.startCavity == 3)
                 musicController.SwitchMusicState(MusicController.MusicState.Chunk3, false);
         }
-        if (TooltipSystem.instance)
-            toolTips = TooltipSystem.instance;
         
         if (!splash && MainMenuManager.instance) {
             StartCoroutine(SplashDelay());
@@ -300,6 +297,10 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
 
     public void ToggleFullscreen() {
         Screen.fullScreen = fullscreenToggle.isOn;
+    }
+
+    public void ToggleCutsceneSkip(bool state) {
+        PersistentDataManager.instance.userData.cutsceneSkip = state;
     }
 
     public void SetResolution(int index) {

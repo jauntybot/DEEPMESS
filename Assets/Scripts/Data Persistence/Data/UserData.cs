@@ -7,7 +7,6 @@ public class UserData {
     public float musicVol;
     public float sfxVol;
     public bool cutsceneSkip;
-    public bool scatterSkip;
     public bool fullscreen;
     public List<int> resolution;
     public bool tooltipToggle;

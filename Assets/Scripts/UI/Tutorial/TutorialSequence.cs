@@ -702,7 +702,6 @@ public class TutorialSequence : MonoBehaviour {
             break;
             default:
                 EnemyManager enemy = (EnemyManager)floorManager.currentFloor.enemy;
-                PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Chunk1, true);
                 foreach (Unit u in playerUnits) {
                     u.StartCoroutine(u.TakeDamage(u.hpCurrent - u.hpMax, GridElement.DamageType.Heal));
                 }
