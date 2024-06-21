@@ -48,7 +48,7 @@ public class MainMenuManager : MonoBehaviour {
         t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
         tooltip.transform.GetChild(0).gameObject.SetActive(true);
         tooltip.SetText(
-            ColorToRichText("Nice work down there, squish!") + "</b>. Welcome back to the SLime Hub. this is where you'll <b>" + ColorToRichText("beef up your arsenal") + "</b> before taking another crack at the Big One's brain."
+            "<b>" + ColorToRichText("Nice work down there, squish!") + "</b>. Welcome back to the Slime Hub. this is where you'll <b>" + ColorToRichText("beef up your arsenal") + "</b> before taking another crack at the Big One's brain."
         , "Slime Hub", true);
         while (!tooltip.skip) yield return null;
         tooltip.SetText(
@@ -135,7 +135,7 @@ public class MainMenuManager : MonoBehaviour {
         yield return new WaitForSecondsRealtime(1f);
         PersistentMenu.instance.FadeToBlack(true);
         if (index != 0) {
-            PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Game, true);
+            PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.Chunk1, true);
             if (index > 1)
                 PersistentDataManager.instance.LoadRun();
         }

@@ -33,6 +33,15 @@ public class PersistentDataManager : MonoBehaviour {
         LoadUser();
     }
 
+    public void ResetOptions() {
+        Dictionary<string, bool> temp = new(userData.tooltipsEncountered);
+        bool toggle = userData.tooltipToggle;
+        userData = new(temp, toggle);
+        foreach (IUserDataPersistence userDataObj in userDataPersistenceObjs) {
+            userDataObj.LoadUser(userData);
+        }
+    }
+
     public void NewUser() {
         userData = new();
     }

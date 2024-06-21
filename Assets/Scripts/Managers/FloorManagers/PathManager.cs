@@ -53,7 +53,9 @@ public class PathManager : MonoBehaviour {
         activeCards = new();
         float t  = 0;
 
-        if (save) PersistentDataManager.instance.SaveRun();
+        if (save) {
+            PersistentDataManager.instance.SaveRun();
+        }
         
         for (int i = pathCardContainer.childCount - 1; i >= 0; i--) {
             Destroy(pathCardContainer.GetChild(i).gameObject);
