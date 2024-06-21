@@ -10,13 +10,14 @@ public class HelpMenu : MonoBehaviour
 
     void Start() {
         helpSections = new();
-        for (int i = sectionsContainer.childCount - 1; i >= 0; i--) {
+        for (int i = 0; i <= sectionsContainer.childCount - 1; i++) {
             HelpSection section = sectionsContainer.GetChild(i).GetComponent<HelpSection>();
             if (section) {
                 helpSections.Add(section);
                 section.Initialize(this);
             }
         }
+        helpSections[0].SelectSection(true);
     }
 
     public void SwitchSections(HelpSection newSection) {
@@ -27,5 +28,6 @@ public class HelpMenu : MonoBehaviour
         else
             explainer.UpdateExplaination(newSection.title, newSection.image);
     }
+
 
 }

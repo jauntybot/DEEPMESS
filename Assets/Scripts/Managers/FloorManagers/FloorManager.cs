@@ -14,7 +14,8 @@ public class FloorManager : MonoBehaviour {
 
     UIManager uiManager;
     ScenarioManager scenario;
-    
+    MusicController musicController;
+
     [Header("Floor Serialization")]
     [SerializeField] public GameObject floorPrefab;
     [SerializeField] Transform floorParent;
@@ -69,6 +70,7 @@ public class FloorManager : MonoBehaviour {
     public IEnumerator Init(int startIndex) {
         if (ScenarioManager.instance) scenario = ScenarioManager.instance;
         if (UIManager.instance) uiManager = UIManager.instance;
+        if (PersistentMenu.instance) musicController = PersistentMenu.instance.musicController;
 
         floorSequence.Init(startIndex);
         if (startIndex == 0) {
@@ -225,6 +227,7 @@ public class FloorManager : MonoBehaviour {
 
     public IEnumerator TransitionToSlimeHub(bool up) {
         //yield return StartCoroutine(TransitionFloors(!up, false));
+        musicController.SwitchMusicState(up ? MusicController.MusicState.Ginos : musicController.currentState, true, true);
         float timer = 0f;
         Vector3 origin = floorParent.transform.position;
         NestedFadeGroup.NestedFadeGroup fade = floorParent.GetComponent<NestedFadeGroup.NestedFadeGroup>();
@@ -715,6 +718,19 @@ public class FloorManager : MonoBehaviour {
                     if (!scenario.gpOptional.prebossEncountered)
                         yield return StartCoroutine(scenario.gpOptional.Preboss());
                     uiManager.ToggleObjectiveTracker(false);
+            }
+
+            MusicController.MusicState state;
+            int s;
+            switch(floorSequence.currentThreshold) {
+                default:
+                case FloorChunk.PacketType.I: s = 1; state = MusicController.MusicState.Chunk1; break;
+                case FloorChunk.PacketType.II: s = 2; state = MusicController.MusicState.Chunk2; break;
+                case FloorChunk.PacketType.BOSS: s = 3; state = MusicController.MusicState.Chunk3; break;
+            }
+            if (s != scenario.startCavity) {
+                Debug.Log(s + ", " + scenario.startCavity);
+                musicController.SwitchMusicState(state, true);
             }
 
 // Lerp units offscreen

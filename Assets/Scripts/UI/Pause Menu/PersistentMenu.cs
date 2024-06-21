@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using Relics;
-using System;
+using System.Linq;
 
 public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersistence {
     ScenarioManager scenario;
@@ -47,7 +47,6 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         musicSlider.onValueChanged.AddListener(SetMusicVolume);
         sfxSlider.onValueChanged.AddListener(SetSFXVolume);
         
-        ConfigureResolutionDropdown();
         // musicSlider.value = 5f;
         // sfxSlider.value = 5f;
 
@@ -64,30 +63,27 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     int currentResolutionIndex;
     List<Resolution> filteredResolutions = new();
     void ConfigureResolutionDropdown() {
-        Resolution[] resolutions = Screen.resolutions;
+        List<Resolution> resolutions = new(Screen.resolutions);
         float currentRefereshRate;
 
         resolutionsDropdown.ClearOptions();
         currentRefereshRate = Screen.currentResolution.refreshRate;
 
-        for (int i = resolutions.Length - 1; i >= 0 ; i--) {
+        for (int i = resolutions.Count - 1; i >= 0; i--) {
+            //Debug.Log(resolutions[i].width + ", " + resolutions[i].height + ", " + resolutions[i].refreshRate);
             if (resolutions[i].refreshRate == currentRefereshRate &&
-                ((resolutions[i].width == 1280 && resolutions[i].height == 720) ||
-                (resolutions[i].width == 1280 && resolutions[i].height == 800) ||
-                (resolutions[i].width == 1920 && resolutions[i].height == 1080) ||
-                (resolutions[i].width == 1920 && resolutions[i].height == 1200) ||
-                (resolutions[i].width == 2560 && resolutions[i].height == 1440) ||
-                (resolutions[i].width == 2560 && resolutions[i].height == 1600)))
+                ((resolutions[i].width % 16 == 0 && resolutions[i].height % 10 == 0) ||
+                (resolutions[i].width % 16 == 0 && resolutions[i].height % 9 == 0) ||
+                (resolutions[i].width % 4 == 0 && resolutions[i].height % 3 == 0)) &&
+                resolutions[i].width <= 1920)
                 filteredResolutions.Add(resolutions[i]);
 //                Debug.Log(resolutions[i].width + ", " + resolutions[i].height + ", " + resolutions[i].refreshRate);
         }
 
         List<string> options = new List<string>();
-        for (int i = 0; i < filteredResolutions.Count; i++) {
+        for (int i = 0; i <= filteredResolutions.Count - 1; i++) {
             string resolutionOption = filteredResolutions[i].width + "x" + filteredResolutions[i].height;
             options.Add(resolutionOption);
-            if (filteredResolutions[i].width == Screen.width && filteredResolutions[i].height == Screen.height)
-                currentResolutionIndex = i;
         }
 
         if (resolutionsDropdown) {
@@ -95,28 +91,39 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
             resolutionsDropdown.value = currentResolutionIndex;
             resolutionsDropdown.RefreshShownValue();
         }
+
+
     }
 
     public void LoadUser(UserData user) {
         musicSlider.value = user.musicVol;
         sfxSlider.value = user.sfxVol;
         
-        SetResolution(user.resolutionIndex);
         SetMusicVolume(user.musicVol);
         SetSFXVolume(user.sfxVol);
         
-        fullscreenToggle.isOn = user.fullscreen;
         Screen.fullScreen = user.fullscreen;
         cutsceneToggle.isOn = user.cutsceneSkip;
         tooltipToggle.isOn = user.tooltipToggle;
 
+        ConfigureResolutionDropdown();
+
+        if (user.resolution.Count > 0 && filteredResolutions.Any(r => r.width == user.resolution[0] && r.height == user.resolution[1])) {
+            Resolution res = filteredResolutions.Find(r => r.width == user.resolution[0] && r.height == user.resolution[1]);
+            SetResolution(res);
+            resolutionsDropdown.value = filteredResolutions.IndexOf(res);
+        } else {
+            SetResolution(0);
+            resolutionsDropdown.value = 0;
+        }
+        fullscreenToggle.isOn = user.fullscreen;
     }
 
     public void SaveUser(ref UserData user) {
         user.musicVol = musicSlider.value;
         user.sfxVol = sfxSlider.value;
         
-        user.resolutionIndex = currentResolutionIndex;
+        user.resolution = new() { filteredResolutions[currentResolutionIndex].width, filteredResolutions[currentResolutionIndex].height };
         
         user.cutsceneSkip = cutsceneToggle.isOn;
         user.fullscreen = fullscreenToggle.isOn;
@@ -139,7 +146,6 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
       
     public void LoadRun(RunData run) {
         loadedRun = run;
-        Debug.Log("persistent menu loaded run");
     }
 
     public void SaveRun(ref RunData run) {
@@ -191,8 +197,12 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
                 musicController.SwitchMusicState(MusicController.MusicState.MainMenu, false);
             else if (scenario.startCavity == 0)
                 musicController.SwitchMusicState(MusicController.MusicState.Tutorial, false);
-            else
-                musicController.SwitchMusicState(MusicController.MusicState.Game, false);
+            else if (scenario.startCavity == 1)
+                musicController.SwitchMusicState(MusicController.MusicState.Chunk1, false);
+            else if (scenario.startCavity == 2)
+                musicController.SwitchMusicState(MusicController.MusicState.Chunk2, false);
+            else if (scenario.startCavity == 3)
+                musicController.SwitchMusicState(MusicController.MusicState.Chunk3, false);
         }
         if (TooltipSystem.instance)
             toolTips = TooltipSystem.instance;
@@ -247,7 +257,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
         PersistentDataManager.instance.SaveUser();
         Time.timeScale = 1f;
         yield return new WaitForSecondsRealtime(0.25f);
-        fadeToBlack.SetBool("Fade", true);
+        FadeToBlack(true);
         if (index == 0) {
             PersistentMenu.instance.musicController.SwitchMusicState(MusicController.MusicState.MainMenu, true);
         }
@@ -295,7 +305,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     public void SetResolution(int index) {
         if (filteredResolutions.Count > 0) {
             Resolution resolution = filteredResolutions[index];
-            Screen.SetResolution(resolution.width, resolution.height, true);
+            Screen.SetResolution(resolution.width, resolution.height, fullscreenToggle.isOn);
             currentResolutionIndex = index;
         }
     }

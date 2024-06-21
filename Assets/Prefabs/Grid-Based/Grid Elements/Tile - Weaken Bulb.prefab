@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 86320390212167392}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.225, z: 0}
+  m_LocalPosition: {x: 0, y: -0.1, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -496,6 +496,7 @@ MonoBehaviour:
   destroyed: 0
   gfx:
   - {fileID: 4548692920616438334}
+  gfxAnim: {fileID: 0}
   audioSource: {fileID: 0}
   selectedSFX: {fileID: 0}
   dmgdSFX: {fileID: 0}
@@ -508,7 +509,6 @@ MonoBehaviour:
   blackColor: {r: 0.91764706, g: 0.91764706, b: 0.91764706, a: 1}
   highlight: {fileID: 5847650023900071179}
   rndSprite: []
-  anim: {fileID: 0}
   undoPrefab: {fileID: 0}
   bulb: {fileID: 11400000, guid: de43282e9446013429b729a7e4d9d049, type: 2}
   harvested: 0
@@ -564,12 +564,9 @@ MonoBehaviour:
   apPipPrefab: {fileID: 0}
   dmgPipPrefab: {fileID: 0}
   emptyPipPrefab: {fileID: 0}
-  barkBox: {fileID: 0}
-  barkBoxText: {fileID: 0}
   turnOrder: {fileID: 0}
   dmgPanel: {fileID: 0}
   dmgAnim: {fileID: 0}
-  overview: {fileID: 0}
 --- !u!82 &4725770806878504000
 AudioSource:
   m_ObjectHideFlags: 0

@@ -258,12 +258,10 @@ public class PlayerManager : UnitManager {
                 } else if (overrideEquipment) {
                     foreach(Unit _u in units) {
                         if (input.coord == _u.coord) {
-                            Debug.Log(u.name);
                             SelectUnit(_u);
                         }
                     }
                 } else {
-                    Debug.Log("Fallout " + u.name);
                     SelectUnit(u);
                 }
             }

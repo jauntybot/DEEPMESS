@@ -24,7 +24,6 @@ public class PauseMenu : MonoBehaviour {
     }
 
     public void HelpButton(bool toFrom) {
-        Time.timeScale = toFrom ? 1 : 0;
         mainDirectory.SetActive(!toFrom);
         helpMenu.SetActive(toFrom);
     }
