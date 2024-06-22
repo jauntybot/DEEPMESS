@@ -46,7 +46,7 @@ public class HelpExplaination : MonoBehaviour {
             default: break;
             case "OVERVIEW":
                 str = 
-                "DEEPMESS is a turn-based micro-tactics game. Control 3 Slags and use the Hammer to strike the Nail and descend through god's head. Each Slag has unique Gear, use it and the PEEK button to strategize your descents. If all 3 Slags or the Nail lose all HP you lose. God's anatomy rebuilds itself after every attempt."
+                "DEEPMESS is a turn-based micro-tactics game. Control 3 Slags and use the Hammer to strike the Nail and descend through god's head. Each Slag has unique Gear, use it and the Peek button to strategize your descents. If all 3 Slags or the Nail lose all HP you lose. Power up at Beacons and with on Floor rewards. God's anatomy rebuilds itself after every attempt."
                 + "<b>" +ColorToRichText("") + "</b>";
             break;
             case "DESCENDING":

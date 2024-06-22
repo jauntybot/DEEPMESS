@@ -27,9 +27,8 @@ public class MainMenuManager : MonoBehaviour {
     [SerializeField] Animator slimeBucksAnim, bodegaAnim, cannonAnim, logoAnim;
     [SerializeField] Color keyColor;
 
-    public void Init(bool runSaved) {
+    public void Init() {
         mainButtonsAnim.SetTrigger("FadeIn");
-        continueButton.gameObject.SetActive(runSaved);
     }
 
     public IEnumerator WhatsToCome(int currency) {
@@ -101,6 +100,7 @@ public class MainMenuManager : MonoBehaviour {
         }
 
         if (state) {
+            continueButton.gameObject.SetActive(PersistentDataManager.instance.IsRunSaved());
             playButtonsAnim.gameObject.SetActive(true);
             playButtonsAnim.SetBool("Active", true);
         } else 

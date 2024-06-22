@@ -277,10 +277,22 @@ public class PlayerManager : UnitManager {
 // Unit is a target of valid action adjacency
                     if (selectedUnit.ValidCommand(u.coord, selectedUnit.selectedEquipment)) {
                         StartCoroutine(selectedUnit.ExecuteAction(u));
-                    } else if (selectedUnit.selectedEquipment == null || selectedUnit.selectedEquipment is MoveData)
+                    } else if (selectedUnit.selectedEquipment == null || selectedUnit.selectedEquipment is MoveData) {
                         SelectUnit(u); 
-                } else if (!overrideEquipment)
+                        if (u.selectedEquipment != u.equipment[0])
+                            u.selectedEquipment = u.equipment[0];
+                        u.grid.DisableGridHighlight();
+                        u.UpdateAction(u.selectedEquipment, u.moveMod);
+                        u.grid.DisplayValidCoords(u.validActionCoords, 4, false, false);
+                    }
+                } else if (!overrideEquipment){
                     SelectUnit(u);
+                    if (u.selectedEquipment != u.equipment[0])
+                        u.selectedEquipment = u.equipment[0];
+                    u.grid.DisableGridHighlight();
+                    u.UpdateAction(u.selectedEquipment, u.moveMod);
+                    u.grid.DisplayValidCoords(u.validActionCoords, 4, false, false);
+                }
                 
             }
         } 

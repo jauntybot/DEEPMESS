@@ -105,8 +105,9 @@ public class GridElement : MonoBehaviour {
   
     public virtual IEnumerator TakeDamage(int dmg, DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         if (!destroyed) {
-            ObjectiveEventManager.Broadcast(GenerateDamageEvent(dmgType, dmg, source, sourceEquip));
             if (shield == null || Mathf.Sign(dmg) == -1) {
+                ObjectiveEventManager.Broadcast(GenerateDamageEvent(dmgType, dmg, source, sourceEquip));
+                
                 if (Mathf.Sign(dmg) == 1) 
                     PlaySound(dmgdSFX);
                             

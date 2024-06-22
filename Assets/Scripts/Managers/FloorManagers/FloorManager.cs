@@ -884,6 +884,7 @@ public class FloorManager : MonoBehaviour {
             yield return null;
             timer += Time.deltaTime;
         }
+        transitionParent.transform.position = new Vector3(6, 0, 0);
         scenario.player.nail.transform.localPosition = Vector3.zero;
         arm.transform.localPosition = Vector3.zero;
         while (scenario.scenario == ScenarioManager.Scenario.EndState) {

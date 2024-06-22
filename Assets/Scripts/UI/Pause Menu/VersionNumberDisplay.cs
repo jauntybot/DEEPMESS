@@ -7,7 +7,7 @@ public class VersionNumberDisplay : MonoBehaviour {
 
     void Awake() {
         if (TryGetComponent(out TMP_Text tmp))
-            tmp.text = "version " + Application.version;
+            tmp.text = "v" + Application.version + "_DEMO";
     }
 
 }

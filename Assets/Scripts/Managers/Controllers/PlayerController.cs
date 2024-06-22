@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour {
                     }
                 } 
                 
-                //OnTurnHotkeyInput();
+                OnTurnHotkeyInput();
             }
         }
     }

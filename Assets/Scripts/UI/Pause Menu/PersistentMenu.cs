@@ -7,6 +7,7 @@ using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using Relics;
 using System.Linq;
+using UnityEditor.Compilation;
 
 public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersistence {
     ScenarioManager scenario;
@@ -113,7 +114,12 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
             SetResolution(res);
             resolutionsDropdown.value = filteredResolutions.IndexOf(res);
         } else {
-            SetResolution(0);
+            Vector2 currentAspect;
+            if (Screen.currentResolution.width % 16 == 0 && Screen.currentResolution.width % 10 == 0)
+                currentAspect = new(16,10);
+            else
+                currentAspect = new(16,9);
+            SetResolution(currentAspect);
             resolutionsDropdown.value = 0;
         }
         fullscreenToggle.isOn = user.fullscreen;
@@ -193,7 +199,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
             pauseMenu.ToggleOptionsBack(true);
             pauseMenu.ToggleHelpBack(true);
             if (upcomingCurrency > 0) MainMenuManager.instance.StartCoroutine(MainMenuManager.instance.WhatsToCome(upcomingCurrency));
-            else MainMenuManager.instance.Init(PersistentDataManager.instance.IsRunSaved());
+            else MainMenuManager.instance.Init();
         }
 
 // initialize MusicController if not initialized
@@ -319,6 +325,23 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     
     public void SetResolution(Resolution resolution) {
         if (filteredResolutions.Contains(resolution)) {
+            Screen.SetResolution(resolution.width, resolution.height, fullscreenToggle.isOn);
+            currentResolutionIndex = filteredResolutions.IndexOf(resolution);
+        } else SetResolution(0);
+    }
+
+    public void SetResolution(Vector2 ratio) {
+        int greatestRes = 0;
+        Resolution resolution = Screen.currentResolution;
+        foreach (Resolution res in filteredResolutions) {
+            if (res.width % ratio.x == 0 && res.width % ratio.y == 0) {
+                if (greatestRes < res.width) {
+                    greatestRes = res.width;
+                    resolution = res;
+                }
+            }
+        }
+        if (greatestRes > 0) {
             Screen.SetResolution(resolution.width, resolution.height, fullscreenToggle.isOn);
             currentResolutionIndex = filteredResolutions.IndexOf(resolution);
         } else SetResolution(0);
