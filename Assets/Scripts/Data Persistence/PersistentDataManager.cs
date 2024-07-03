@@ -36,7 +36,8 @@ public class PersistentDataManager : MonoBehaviour {
     public void ResetOptions() {
         Dictionary<string, bool> temp = new(userData.tooltipsEncountered);
         bool toggle = userData.tooltipToggle;
-        userData = new(temp, toggle);
+        bool prompt = userData.promptTutorial;
+        userData = new(prompt, temp, toggle);
         foreach (IUserDataPersistence userDataObj in userDataPersistenceObjs) {
             userDataObj.LoadUser(userData);
         }
@@ -59,16 +60,16 @@ public class PersistentDataManager : MonoBehaviour {
         }
     }
 
-    public bool IsRunSaved() {
-        return dataHandler.IsRunSaved();
-    }
-
     public void SaveUser() {
         foreach (IUserDataPersistence userDataObj in userDataPersistenceObjs) {
             userDataObj.SaveUser(ref userData);
         }
 
         dataHandler.SaveUser(userData);
+    }
+
+    public bool IsRunSaved() {
+        return dataHandler.IsRunSaved();
     }
 
     public void NewRun() {}

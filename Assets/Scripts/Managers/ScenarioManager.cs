@@ -333,6 +333,10 @@ public class ScenarioManager : MonoBehaviour {
 
     public IEnumerator Lose() {
         scenario = Scenario.EndState;
+        PersistentDataManager.instance.DeleteRun();
+        objectiveManager.ClearObjectives();
+        relicManager.ClearRelics();
+        
         if (currentTurn == Turn.Enemy)
             currentEnemy.StopActingUnit();
         else if (currentTurn == Turn.Player)
@@ -348,10 +352,7 @@ public class ScenarioManager : MonoBehaviour {
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Lose));
         }
         yield return StartCoroutine(player.RetrieveNailAnimation());
-        objectiveManager.ClearObjectives();
-        relicManager.ClearRelics();
         StartCoroutine(runDataTracker.UpdateAndDisplay(false, floorManager.floors.Count - 2 >= 0 ? floorManager.floors.Count - 2 : 0, player.defeatedEnemies, player.collectedNuggets));
-        PersistentDataManager.instance.DeleteRun();
     }
 
 }

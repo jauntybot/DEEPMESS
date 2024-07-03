@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -80,7 +81,7 @@ public class PlayerController : MonoBehaviour {
                     }
                 } 
                 
-                OnTurnHotkeyInput();
+                //OnTurnHotkeyInput();
             }
         }
     }
@@ -108,6 +109,12 @@ public class PlayerController : MonoBehaviour {
                 }
                 if (Input.GetKeyDown(KeyCode.D)) {
                     manager.SelectUnit(manager.units[2]);
+                }
+                if (Input.GetKeyDown(KeyCode.Q) && manager.selectedUnit) {
+                    manager.selectedUnit.UpdateAction(manager.selectedUnit.equipment[1]);
+                }
+                if (Input.GetKeyDown(KeyCode.W) && manager.selectedUnit && manager.selectedUnit.equipment.Any(e => e is HammerData)) {
+                    manager.selectedUnit.UpdateAction(manager.selectedUnit.equipment.Find(e => e is HammerData));
                 }
                 // if (Input.GetKeyDown(KeyCode.E)) {
                 //     if (manager.selectedUnit) {

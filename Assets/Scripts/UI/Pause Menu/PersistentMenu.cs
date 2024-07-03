@@ -7,7 +7,6 @@ using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using Relics;
 using System.Linq;
-using UnityEditor.Compilation;
 
 public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersistence {
     ScenarioManager scenario;

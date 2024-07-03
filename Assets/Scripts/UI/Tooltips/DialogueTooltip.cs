@@ -43,7 +43,8 @@ public class DialogueTooltip : Tooltip {
 
         if (_skip)     
             StartCoroutine(WaitForClick());
-
+        else
+            clickToSkipAnim.gameObject.SetActive(false);
         
     }
 

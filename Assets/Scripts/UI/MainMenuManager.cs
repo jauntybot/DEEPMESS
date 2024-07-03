@@ -23,6 +23,7 @@ public class MainMenuManager : MonoBehaviour {
 
     [Header("What's To Come Refs")]
     [SerializeField] DialogueTooltip tooltip;
+    [SerializeField] GameObject tutorialPrompt, fadeScreen;
     [SerializeField] TMP_Text currencyCountUp;
     [SerializeField] Animator slimeBucksAnim, bodegaAnim, cannonAnim, logoAnim;
     [SerializeField] Color keyColor;
@@ -33,6 +34,7 @@ public class MainMenuManager : MonoBehaviour {
 
     public IEnumerator WhatsToCome(int currency) {
         float t = 0;
+        tooltip.transform.localPosition = new (0, -320, 0);
         bodegaAnim.gameObject.SetActive(true);
         cannonAnim.gameObject.SetActive(true);
         mainButtonsAnim.gameObject.SetActive(false);
@@ -79,6 +81,29 @@ public class MainMenuManager : MonoBehaviour {
         PersistentMenu.instance.upcomingCurrency = 0;
     }
 
+    public IEnumerator PromptTutorial() {
+        isPromptingTutorial = true;
+        PersistentDataManager.instance.userData.promptTutorial = false;
+        
+        tutorialPrompt.SetActive(true);
+        fadeScreen.SetActive(true);
+        tooltip.transform.GetChild(0).gameObject.SetActive(true);
+        tooltip.transform.localPosition = new (0, 0, 0);
+        tooltip.SetText(
+            "<b>" + ColorToRichText("Hold up, squish!") + "</b>. This your first time? You'll dig better after <b>" + ColorToRichText("playing the tutorial") + "</b> first."
+        , "Play Tutorial?", false);
+        while (isPromptingTutorial) yield return null;
+
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+        fadeScreen.SetActive(false);
+        tutorialPrompt.SetActive(false);
+    }
+
+    bool isPromptingTutorial;
+    public void FinishTutorialPrompt() {
+        isPromptingTutorial = false;
+    }
+
     public void ToggleCredits(bool state) {
         for (int i = buttonColumn.transform.childCount - 1; i >= 0; i--) {
             Button b = buttonColumn.transform.GetChild(i).GetComponent<Button>();
@@ -122,13 +147,17 @@ public class MainMenuManager : MonoBehaviour {
     }
 
     public void SendNail(int index) {
-        nailAnim.SetTrigger("Start Game");
-        for (int i = playButtonsAnim.transform.childCount - 1; i >= 0; i--) 
-            playButtonsAnim.transform.GetChild(i).GetComponent<Button>().interactable = false;
+        if (index != 0 && PersistentDataManager.instance.userData.promptTutorial) {
+            StartCoroutine(PromptTutorial());
+        } else {
+            nailAnim.SetTrigger("Start Game");
+            for (int i = playButtonsAnim.transform.childCount - 1; i >= 0; i--) 
+                playButtonsAnim.transform.GetChild(i).GetComponent<Button>().interactable = false;
 
-        PersistentMenu.instance.startIndex = index;
-        if (index == 1) PersistentDataManager.instance.DeleteRun();
-        StartCoroutine(FadeOut(index));
+            PersistentMenu.instance.startIndex = index;
+            if (index == 1) PersistentDataManager.instance.DeleteRun();
+            StartCoroutine(FadeOut(index));
+        }
     }
 
     IEnumerator FadeOut(int index) {

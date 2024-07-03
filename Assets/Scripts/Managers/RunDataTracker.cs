@@ -13,7 +13,8 @@ public class RunDataTracker : MonoBehaviour {
     // float playTime;
     // bool runInProgress;
 
-    [SerializeField] GameObject floorRow, enemiesRow, buxRow, cutRow;
+    [SerializeField] GameObject floorRow, enemiesRow, buxRow, cutRow, quitButton;
+    [SerializeField] Animator totalAnim;
 
     [SerializeField] TMP_Text resultsTMP, floorsCountUp, floorsMultCountUp, enemiesCountUp, enemiesMultCountUp, buxCountUp, buxMultCountUp, cutPercentCountUp, cutCountUp, totalCountUp;
 
@@ -35,7 +36,7 @@ public class RunDataTracker : MonoBehaviour {
     // }
 
     public IEnumerator UpdateAndDisplay(bool win, int floors, int enemies, int bux) {
-        floorRow.SetActive(false); enemiesRow.SetActive(false); buxRow.SetActive(false); cutRow.SetActive(false);
+        floorRow.SetActive(false); enemiesRow.SetActive(false); buxRow.SetActive(false); cutRow.SetActive(false); quitButton.SetActive(false);
         LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.GetComponentInParent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.transform.parent.GetComponentInParent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
@@ -62,7 +63,7 @@ public class RunDataTracker : MonoBehaviour {
         // float seconds = Mathf.FloorToInt(playTime % 60);
         //playTimeTMP.text = string.Format("{0:00} : {1:00}", minutes, seconds);
 
-        float t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        float t = 0; while (t <= 0.5f) { t += Time.deltaTime; yield return null; }
         floorRow.SetActive(true);
         
         LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.GetComponentInParent<RectTransform>());
@@ -74,10 +75,10 @@ public class RunDataTracker : MonoBehaviour {
         StartCoroutine(StringCountUp.CountUp(floors, 1f, (countUp) => { 
             floorsCountUp.text = countUp;
         }));
-        yield return StartCoroutine(StringCountUp.CountUp(floors * 10, 0.75f, (countUp) => { 
+        StartCoroutine(StringCountUp.CountUp(floors * 10, 0.75f, (countUp) => { 
             floorsMultCountUp.text = countUp;
         }));
-        t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        t = 0; while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
         enemiesRow.SetActive(true);
         
         LayoutRebuilder.ForceRebuildLayoutImmediate(enemiesRow.GetComponentInParent<RectTransform>());
@@ -89,10 +90,10 @@ public class RunDataTracker : MonoBehaviour {
         StartCoroutine(StringCountUp.CountUp(enemies, 0.75f, (countUp) => { 
             enemiesCountUp.text = countUp;
         }));
-        yield return StartCoroutine(StringCountUp.CountUp(enemies * 5, 0.75f, (countUp) => { 
+        StartCoroutine(StringCountUp.CountUp(enemies * 5, 0.75f, (countUp) => { 
             enemiesMultCountUp.text = countUp;
         }));
-        t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        t = 0; while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
         buxRow.SetActive(true);
         
         LayoutRebuilder.ForceRebuildLayoutImmediate(buxRow.GetComponentInParent<RectTransform>());
@@ -104,10 +105,10 @@ public class RunDataTracker : MonoBehaviour {
         StartCoroutine(StringCountUp.CountUp(bux, 0.75f, (countUp) => { 
             buxCountUp.text = countUp;
         }));
-        yield return StartCoroutine(StringCountUp.CountUp(bux * 25, 0.75f, (countUp) => { 
+        StartCoroutine(StringCountUp.CountUp(bux * 25, 0.75f, (countUp) => { 
             buxMultCountUp.text = countUp;
         }));
-        t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        t = 0; while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
         
         if (!win) {
             cutRow.SetActive(true);
@@ -121,15 +122,18 @@ public class RunDataTracker : MonoBehaviour {
             StartCoroutine(StringCountUp.CountUp(-20, 0.75f, (countUp) => { 
                 cutPercentCountUp.text = countUp + "%";
             }));
-            yield return StartCoroutine(StringCountUp.CountUp(-Mathf.RoundToInt(total*0.2f), 0.75f, (countUp) => { 
+            StartCoroutine(StringCountUp.CountUp(-Mathf.RoundToInt(total*0.2f), 0.75f, (countUp) => { 
                 cutCountUp.text = countUp;
             }));
         }
         
-        t = 0; while (t <= 0.25f) { t += Time.deltaTime; yield return null; }
+        t = 0; while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
         yield return StartCoroutine(StringCountUp.CountUp(total + (win ? 0 : (int)(-total*0.2f)), 0.75f, (countUp) => { 
             totalCountUp.text = countUp;
         }));
+        
+        quitButton.SetActive(true);
+        totalAnim.SetTrigger("Total");  
     }
 
 
