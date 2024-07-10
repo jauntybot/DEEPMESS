@@ -42,7 +42,7 @@ public class RunDataTracker : MonoBehaviour {
         LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
 
-        int total = (floors * 50) + (enemies * 25) + (tasks * 150) + (thoughts * 100) + (crushes * 200);
+        int total = (enemies * 10)  + (crushes * 50) + (floors * 100) + (tasks * 200) + (thoughts * 500);
         PersistentMenu.instance.upcomingCurrency = total + (win ? 0 : (int)(-total*0.2f));
         panel.SetActive(true);
         if (win) {
@@ -69,53 +69,8 @@ public class RunDataTracker : MonoBehaviour {
         StartCoroutine(StringCountUp.CountUp(enemies, 0.75f, (countUp) => { 
             enemiesCountUp.text = countUp;
         }));
-        StartCoroutine(StringCountUp.CountUp(enemies * 25, 0.75f, (countUp) => { 
+        StartCoroutine(StringCountUp.CountUp(enemies * 10, 0.75f, (countUp) => { 
             enemiesMultCountUp.text = countUp;
-        }));
-        t = 0; while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
-        floorRow.SetActive(true);
-        
-        LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.GetComponentInParent<RectTransform>());
-        LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.transform.parent.GetComponentInParent<RectTransform>());
-        LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
-        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
-        Canvas.ForceUpdateCanvases();
-        
-        StartCoroutine(StringCountUp.CountUp(floors, 1f, (countUp) => { 
-            floorsCountUp.text = countUp;
-        }));
-        StartCoroutine(StringCountUp.CountUp(floors * 50, 0.75f, (countUp) => { 
-            floorsMultCountUp.text = countUp;
-        }));
-        t = 0; while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
-        godThoughtRow.SetActive(true);
-        
-        LayoutRebuilder.ForceRebuildLayoutImmediate(godThoughtRow.GetComponentInParent<RectTransform>());
-        LayoutRebuilder.ForceRebuildLayoutImmediate(godThoughtRow.transform.parent.GetComponentInParent<RectTransform>());
-        LayoutRebuilder.ForceRebuildLayoutImmediate(godThoughtRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
-        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
-        Canvas.ForceUpdateCanvases();
-
-        StartCoroutine(StringCountUp.CountUp(thoughts, 0.75f, (countUp) => { 
-            godThoughtCountUp.text = countUp;
-        }));
-        StartCoroutine(StringCountUp.CountUp(thoughts * 100, 0.75f, (countUp) => { 
-            godThoughtMultCountUp.text = countUp;
-        }));
-        t = 0; while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
-        tasksRow.SetActive(true);
-        
-        LayoutRebuilder.ForceRebuildLayoutImmediate(tasksRow.GetComponentInParent<RectTransform>());
-        LayoutRebuilder.ForceRebuildLayoutImmediate(tasksRow.transform.parent.GetComponentInParent<RectTransform>());
-        LayoutRebuilder.ForceRebuildLayoutImmediate(tasksRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
-        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
-        Canvas.ForceUpdateCanvases();
-        
-        StartCoroutine(StringCountUp.CountUp(tasks, 0.75f, (countUp) => { 
-            tasksCountUp.text = countUp;
-        }));
-        StartCoroutine(StringCountUp.CountUp(tasks * 150, 0.75f, (countUp) => { 
-            tasksMultCountUp.text = countUp;
         }));
         t = 0; while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
         crushesRow.SetActive(true);
@@ -129,8 +84,53 @@ public class RunDataTracker : MonoBehaviour {
         StartCoroutine(StringCountUp.CountUp(crushes, 0.75f, (countUp) => { 
             crushesCountUp.text = countUp;
         }));
-        StartCoroutine(StringCountUp.CountUp(crushes * 200, 0.75f, (countUp) => { 
+        StartCoroutine(StringCountUp.CountUp(crushes * 50, 0.75f, (countUp) => { 
             crushesMultCountUp.text = countUp;
+        }));
+        t = 0; while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
+        floorRow.SetActive(true);
+        
+        LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.transform.parent.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
+        
+        StartCoroutine(StringCountUp.CountUp(floors, 1f, (countUp) => { 
+            floorsCountUp.text = countUp;
+        }));
+        StartCoroutine(StringCountUp.CountUp(floors * 100, 0.75f, (countUp) => { 
+            floorsMultCountUp.text = countUp;
+        }));
+        t = 0; while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
+        tasksRow.SetActive(true);
+        
+        LayoutRebuilder.ForceRebuildLayoutImmediate(tasksRow.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(tasksRow.transform.parent.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(tasksRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
+        
+        StartCoroutine(StringCountUp.CountUp(tasks, 0.75f, (countUp) => { 
+            tasksCountUp.text = countUp;
+        }));
+        StartCoroutine(StringCountUp.CountUp(tasks * 200, 0.75f, (countUp) => { 
+            tasksMultCountUp.text = countUp;
+        }));
+        t = 0; while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
+        godThoughtRow.SetActive(true);
+        
+        LayoutRebuilder.ForceRebuildLayoutImmediate(godThoughtRow.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(godThoughtRow.transform.parent.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(godThoughtRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
+
+        StartCoroutine(StringCountUp.CountUp(thoughts, 0.75f, (countUp) => { 
+            godThoughtCountUp.text = countUp;
+        }));
+        StartCoroutine(StringCountUp.CountUp(thoughts * 500, 0.75f, (countUp) => { 
+            godThoughtMultCountUp.text = countUp;
         }));
         t = 0; while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
         

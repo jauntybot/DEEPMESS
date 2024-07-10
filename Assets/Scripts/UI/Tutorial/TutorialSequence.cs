@@ -129,7 +129,7 @@ public class TutorialSequence : MonoBehaviour {
         while (descents < 1) yield return null;
 // yield Descent 1
         yield return StartCoroutine(DiggingDown());
-        yield return StartCoroutine(scenario.messagePanel.PlayMessage(MessagePanel.Message.Antibody));
+
 // yield first enemy turn
         yield return StartCoroutine(EnemyTurn());
 
@@ -145,9 +145,6 @@ public class TutorialSequence : MonoBehaviour {
         while (descents < 2) yield return null;
 // Descent 2
         
-        yield return StartCoroutine(scenario.messagePanel.PlayMessage(MessagePanel.Message.Antibody));
-        yield return StartCoroutine(ScatterTurn());
-        yield return StartCoroutine(EnemyTurn());
         yield return new WaitForSecondsRealtime(1.25f);
 
         yield return StartCoroutine(Gear());
@@ -356,21 +353,6 @@ public class TutorialSequence : MonoBehaviour {
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
 
     }
-    public IEnumerator ScatterTurn() {
-        screenFade.gameObject.SetActive(true);
-
-        header = "ENEMY SCATTER";
-        body = "When we land, <b>" + ColorToRichText("enemies scatter but don't attack", keyColor) + "</b>. A little dance before the real brawl." + '\n';
-        tooltip.SetText(body, header, true);
-
-        while (!tooltip.skip) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-            
-        }
-
-        screenFade.SetTrigger("FadeOut");
-        tooltip.transform.GetChild(0).gameObject.SetActive(false);
-    }  
 
     public IEnumerator OnTurnMoveAndAP() {
         screenFade.gameObject.SetActive(true);

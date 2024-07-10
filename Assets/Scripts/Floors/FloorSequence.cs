@@ -119,8 +119,9 @@ public class FloorSequence : ScriptableObject {
 // Hazard chunk bloated bulbs
                         if (activePacket.packetMods.Count > 0 && (i+3)%5 == 0) {
                             floor.spawnBloatedBulb = true;
-                            if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme)) floor.spawnElite = true;
                         }
+                        else if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Extreme) && i == 8) 
+                            floor.spawnElite = true;
                         else if (activePacket.packetMods.Count == 0 && i == 6)
                             floor.spawnBloatedBulb = true;
                         else
