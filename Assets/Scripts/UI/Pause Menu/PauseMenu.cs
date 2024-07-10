@@ -21,6 +21,8 @@ public class PauseMenu : MonoBehaviour {
     public void Options(bool toFrom) {
         mainDirectory.SetActive(!toFrom);
         options.SetActive(toFrom);
+        if (!toFrom)
+            PersistentDataManager.instance.SaveUser();
     }
 
     public void HelpButton(bool toFrom) {

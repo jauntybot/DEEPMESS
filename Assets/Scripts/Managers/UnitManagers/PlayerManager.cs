@@ -25,6 +25,7 @@ public class PlayerManager : UnitManager {
     [SerializeField] public GridContextuals contextuals;
     [HideInInspector] public Vector2 lastHoveredCoord;
     public int defeatedEnemies;
+    public int crushedEnemies;
 
     public delegate void OnPlayerAction(PlayerManager player);
     public virtual event OnPlayerAction UndoClearCallback;
@@ -92,6 +93,8 @@ public class PlayerManager : UnitManager {
         else SpawnHammer((PlayerUnit)units[0], hammerActions);
         
         upgradeManager.Init(initU, run);
+
+        ObjectiveEventManager.AddListener<GridElementDestroyedEvent>(OnElimination);
     }
 
     void LoadRunState(RunData runData) {
@@ -118,6 +121,14 @@ public class PlayerManager : UnitManager {
             }
         }
         collectedNuggets = runData.slimeBux;
+    }
+
+    void OnElimination(GridElementDestroyedEvent evt) {
+        if (evt.element is EnemyUnit) {
+            defeatedEnemies++;
+            if (evt.damageType == GridElement.DamageType.Crush)
+                crushedEnemies++;
+        }
     }
 
 // Overriden functionality
@@ -625,5 +636,6 @@ public class PlayerManager : UnitManager {
         nail.ToggleNailState(Nail.NailState.Falling);
         StartCoroutine(floorManager.EndSequenceAnimation(arm));
         yield return new WaitForSecondsRealtime(1.5f);
+        ObjectiveEventManager.RemoveListener<GridElementDestroyedEvent>(OnElimination);
     }
 }

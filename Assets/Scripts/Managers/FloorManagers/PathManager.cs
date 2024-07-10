@@ -38,7 +38,6 @@ public class PathManager : MonoBehaviour {
 
 
     void Start() {
-        cutsceneSkip = PersistentDataManager.instance.userData.cutsceneSkip;
         floorSequence = FloorManager.instance.floorSequence;
         objectiveDiscount = 0;
         clipIndex = ScenarioManager.instance.startCavity-1;
@@ -46,6 +45,7 @@ public class PathManager : MonoBehaviour {
     }
 
     public IEnumerator PathSequence(bool save) {
+        
         HorizontalLayoutGroup layout = pathCardContainer.GetComponent<HorizontalLayoutGroup>();
         layout.enabled = true;
         choosingPath = true;
@@ -132,7 +132,7 @@ public class PathManager : MonoBehaviour {
         pathChoiceContainer.SetActive(false);
 
         yield return new WaitForSecondsRealtime(0.75f);
-        if (!cutsceneSkip) {
+        if (!PersistentDataManager.instance.userData.cutsceneSkip) {
             videoPlayer.clip = nodeClips[clipIndex];
             videoPlayer.frame = 0;
             videoPlayer.gameObject.SetActive(true);

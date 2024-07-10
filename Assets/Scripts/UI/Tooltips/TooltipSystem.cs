@@ -33,11 +33,11 @@ public class TooltipSystem : MonoBehaviour {
 
     public static void ShowUpgradeHover(UpgradeTooltipTrigger trigger) {
         activeTrigger = trigger;
-        instance.tooltipUpgrade.SetText(trigger.content, trigger.header, (trigger.slotTooltip || trigger.cardTooltip)? trigger.gearIcon : trigger.upgradeIcon);
+        instance.tooltipUpgrade.SetText(trigger.content, trigger.header, (trigger.slotTooltip || trigger.cardTooltip)? trigger.gearIcon : trigger.upgradeIcon, trigger.lvl);
         instance.tooltipUpgrade.transform.GetChild(0).gameObject.SetActive(true);
         instance.upgradeContext.SetActive(trigger.slottable && trigger.slotTooltip && selectedUpgrade != null);
         if (trigger.slottable && trigger.slotTooltip && selectedUpgrade != null) {
-            instance.tooltipUpgradeCompare.SetText(selectedUpgrade.content, selectedUpgrade.header, selectedUpgrade.gearIcon);
+            instance.tooltipUpgradeCompare.SetText(selectedUpgrade.content, selectedUpgrade.header, selectedUpgrade.gearIcon, selectedUpgrade.lvl);
             if (trigger.header != "Empty") {
                 instance.contextText.text = "REPLACE";
                 foreach (Image i in instance.contextImages) 
@@ -80,7 +80,7 @@ public class TooltipSystem : MonoBehaviour {
                     if (data.slottedUpgrades[i] != null) {
                         instance.upgradeContainer.GetChild(i).gameObject.SetActive(true);
                         UpgradeTooltip tt = instance.upgradeContainer.GetChild(i).GetComponent<UpgradeTooltip>();
-                        tt.SetText(data.slottedUpgrades[i].description, data.slottedUpgrades[i].name, data.slottedUpgrades[i].icon);
+                        tt.SetText(data.slottedUpgrades[i].description, data.slottedUpgrades[i].name, data.slottedUpgrades[i].icon, data.slottedUpgrades[i].ugpradeLevel);
                     } else
                         instance.upgradeContainer.GetChild(i).gameObject.SetActive(false);
                 }

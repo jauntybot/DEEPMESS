@@ -32,6 +32,8 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     [SerializeField] GameObject loadIcon;
     public static PersistentMenu instance;
     [SerializeField] Color keyColor;
+
+    [SerializeField] GameObject devResultsButton;
     private void Awake() {
         if (PersistentMenu.instance) {
             Debug.Log("Warning! More than one instance of PersistentMenu found!");
@@ -360,6 +362,19 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
 
 
     #region Debug Functions
+
+    public void DisplayResults(bool state) {
+        devResultsButton.SetActive(state);
+        if (state) 
+            StartCoroutine(scenario.runDataTracker.UpdateAndDisplay(false, scenario.floorManager.floors.Count - 2 >= 0 ? scenario.floorManager.floors.Count - 2 : 0, scenario.player.defeatedEnemies, scenario.relicManager.collectedRelics.Count, scenario.objectiveManager.completedObjectives, scenario.player.crushedEnemies));
+         else 
+            scenario.runDataTracker.CloseResults();
+                    
+    }
+
+    public void CloseResults() {
+    }
+
     public void TriggerCascade() {
         if (FloorManager.instance && ScenarioManager.instance && !FloorManager.instance.transitioning && !FloorManager.instance.peeking) {
             ScenarioManager.instance.prevTurn = ScenarioManager.Turn.Descent;

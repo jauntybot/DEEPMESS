@@ -50,7 +50,7 @@ public class ScenarioManager : MonoBehaviour {
 
 #region Initialization
     public IEnumerator Init(RunData run = null, int index = -1) {
-        yield return new WaitForSecondsRealtime(1f);
+        float t = 0; while (t <= 1f) { yield return null; t += Time.deltaTime; }
         if (index <= 1 && index != -1)
             startCavity = index;
         else if (run != null && run.startCavity != 0) startCavity = run.startCavity;
@@ -130,11 +130,13 @@ public class ScenarioManager : MonoBehaviour {
                 units.Remove(player.nail);
             
             yield return StartCoroutine(floorManager.DescendUnits(units));
+            float t = 0;
             if (floorManager.floorSequence.activePacket.packetType == FloorChunk.PacketType.BOSS && !floorManager.floorSequence.activePacket.eliteSpawn) {
                 floorManager.floorSequence.activePacket.eliteSpawn = true;
-                yield return new WaitForSecondsRealtime(0.75f);
+                t = 0; while (t <= 0.75f) { yield return null; t += Time.deltaTime; }
                 yield return StartCoroutine(floorManager.SpawnBoss(floorManager.floorSequence.bossPrefab));
             } 
+            t = 0; while (t <= 0.5f) { yield return null; t += Time.deltaTime; }
             StartCoroutine(SwitchTurns(Turn.Enemy));
         }
     }
@@ -158,7 +160,7 @@ public class ScenarioManager : MonoBehaviour {
             
         }
         yield return StartCoroutine(floorManager.ChooseLandingPositions());
-        yield return new WaitForSecondsRealtime(.5f);
+        float t = 0; while (t <= 0.5f) { yield return null; t += Time.deltaTime; }
     }
 
 #endregion
@@ -211,7 +213,7 @@ public class ScenarioManager : MonoBehaviour {
                 if (beacon != null) {
                     beacon.GetComponent<Beacon>().EnableSelection(false);
                 }
-                yield return new WaitForSecondsRealtime(0.625f);
+                float t = 0; while (t <= 0.625f) { yield return null; t += Time.deltaTime; }
 
                 bool skip = PersistentMenu.instance.scatterToggle.isOn;
                 if (prevTurn == Turn.Descent && !skip)
@@ -288,7 +290,7 @@ public class ScenarioManager : MonoBehaviour {
                 }
                 uiManager.LockHUDButtons(false);
                 uiManager.LockPeekButton(true);
-                yield return new WaitForSecondsRealtime(0.2f);
+                t = 0; while (t <= 0.25f) { yield return null; t += Time.deltaTime; }
                 if (uiManager.gameObject.activeSelf)
                     yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Position));
                 floorManager.currentFloor.LockGrid(false);
@@ -314,7 +316,7 @@ public class ScenarioManager : MonoBehaviour {
     }
 
     public IEnumerator FinalDrop() {
-        yield return new WaitForSecondsRealtime(1f);
+        float t = 0; while (t <= 1) { yield return null; t += Time.deltaTime; }
         yield return StartCoroutine(floorManager.FinalDescent());
     }
 
@@ -327,8 +329,8 @@ public class ScenarioManager : MonoBehaviour {
         }
         objectiveManager.ClearObjectives();
         relicManager.ClearRelics();
-        yield return new WaitForSecondsRealtime(1.25f);
-        StartCoroutine(runDataTracker.UpdateAndDisplay(true, floorManager.floors.Count - 1, player.defeatedEnemies, relicManager.scrapValue));
+        float t = 0; while (t <= 1.25f) { yield return null; t += Time.deltaTime; }
+        StartCoroutine(runDataTracker.UpdateAndDisplay(true, floorManager.floors.Count - 1, player.defeatedEnemies, relicManager.collectedRelics.Count, objectiveManager.completedObjectives, player.crushedEnemies));
     }
 
     public IEnumerator Lose() {
@@ -352,7 +354,7 @@ public class ScenarioManager : MonoBehaviour {
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Lose));
         }
         yield return StartCoroutine(player.RetrieveNailAnimation());
-        StartCoroutine(runDataTracker.UpdateAndDisplay(false, floorManager.floors.Count - 2 >= 0 ? floorManager.floors.Count - 2 : 0, player.defeatedEnemies, player.collectedNuggets));
+        StartCoroutine(runDataTracker.UpdateAndDisplay(false, floorManager.floors.Count - 2 >= 0 ? floorManager.floors.Count - 2 : 0, player.defeatedEnemies, relicManager.collectedRelics.Count, objectiveManager.completedObjectives, player.crushedEnemies));
     }
 
 }

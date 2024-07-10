@@ -29,7 +29,6 @@ public class EnemyManager : UnitManager {
     public override Unit SpawnUnit(Unit unit, Vector2 coord) {
         Unit u = base.SpawnUnit(unit, coord);
         //u.ElementDestroyed += DescentTriggerCheck;
-        u.ElementDestroyed += CountDefeatedEnemy; 
         u.ElementDestroyed += StopActingUnit;
         return u;
     }
@@ -47,18 +46,13 @@ public class EnemyManager : UnitManager {
 
 
         if (!tackle) {
-            u.ElementDestroyed += CountDefeatedEnemy; 
             u.ElementDestroyed += StopActingUnit;
         }
         
         return u;
     }
 
-    void CountDefeatedEnemy(GridElement ge) {
 
-        scenario.player.defeatedEnemies++;
-        UpdateTurnOrder();
-    }
 
     public void UpdateTurnOrder() {
         for (int i = 0; i <= units.Count - 1; i++)
@@ -112,7 +106,7 @@ public class EnemyManager : UnitManager {
                 break;
 
 // Yield to selected acting EnemyUnit coroutine
-            if (unitsToAct[0] is EnemyUnit enemy && !(unitsToAct[0] is EnemyStaticUnit && _scatter)) {
+            if (!_scatter && unitsToAct[0] is EnemyUnit enemy && !(unitsToAct[0] is EnemyStaticUnit && _scatter)) {
                 SelectUnit(enemy);
                 StartCoroutine(_scatter ? enemy.ScatterTurn() : enemy.CalculateAction());
                 unitActing = true;
@@ -183,9 +177,7 @@ public class EnemyManager : UnitManager {
             newGrid.enemy.SubscribeElement(units[i]);
             units[i].manager = eManager;
     
-            units[i].ElementDestroyed -= CountDefeatedEnemy;
             units[i].ElementDestroyed -= StopActingUnit;
-            units[i].ElementDestroyed += eManager.CountDefeatedEnemy; 
             units[i].ElementDestroyed += eManager.StopActingUnit;
 
             units[i].transform.parent = newGrid.enemy.unitParent.transform;

@@ -13,6 +13,7 @@ public class ObjectiveManager : MonoBehaviour {
     [SerializeField] List<ObjectiveBeaconCard> objectiveCards;
     [HideInInspector] public List<int> objectiveIndices;
     public List<Objective> activeObjectives;
+    [HideInInspector] public int completedObjectives;
 
     [Header("Serialized Objective Pools")]
     [SerializeField] List<Objective> serializedObjectives;
@@ -46,6 +47,8 @@ public class ObjectiveManager : MonoBehaviour {
             LoadObjectives(run);
         } else 
             tracker.gameObject.SetActive(false);
+        
+        completedObjectives = 0;
     }
 
     bool reviewing;
@@ -142,6 +145,7 @@ public class ObjectiveManager : MonoBehaviour {
         if (collect) {
             scenario.player.collectedNuggets++;
             nuggets.CollectNugget();
+            completedObjectives++;
         }
 
         rolled = rolled.Init();

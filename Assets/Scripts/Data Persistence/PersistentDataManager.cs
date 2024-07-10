@@ -37,7 +37,8 @@ public class PersistentDataManager : MonoBehaviour {
         Dictionary<string, bool> temp = new(userData.tooltipsEncountered);
         bool toggle = userData.tooltipToggle;
         bool prompt = userData.promptTutorial;
-        userData = new(prompt, temp, toggle);
+        int score = userData.highScore;
+        userData = new(prompt, score, temp, toggle);
         foreach (IUserDataPersistence userDataObj in userDataPersistenceObjs) {
             userDataObj.LoadUser(userData);
         }
