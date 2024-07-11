@@ -154,7 +154,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
         beaconObjectivesEncountered = true;
 
         header = "TASKS";
-        body = "Keep me updated on your progress—<b>" + ColorToRichText("cash in", keyColor) + "</b> completed tasks or " + ColorToRichText("switch 'em out", keyColor) + "</b> if ya want.";
+        body = "Keep me updated on your progress—<b>" + ColorToRichText("cash in", keyColor) + "</b> completed tasks or <b>" + ColorToRichText("switch 'em out", keyColor) + "</b> if ya want.";
         tooltip.SetText(body, header, true, true);
 
         while (!tooltip.skip) {
