@@ -120,7 +120,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
         screenFade.gameObject.SetActive(true);
 
         header = "BEACON";
-        body = "Yo, squish. That tower there is one of my direct lines. Why don't youse <b>" + ColorToRichText("use its action", keyColor) + "</b> in the bottom left to <b>" + ColorToRichText("give me a ring", keyColor) + "?";
+        body = "Yo, squish. That tower there is one of my direct lines. Select it and " + ColorToRichText("use its action", keyColor) + "</b> in the bottom left <b>" + ColorToRichText("before you get started", keyColor) + ".";
         tooltip.SetText(body, header, true, true);
 
         while (!tooltip.skip) {

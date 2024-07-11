@@ -97,7 +97,7 @@ public class FloorSequence : ScriptableObject {
                     floor = rndOrder.Next();
 
 // Chunk spawning rules
-                if (activePacket.packetType != FloorChunk.PacketType.Tutorial) {   
+                if (activePacket.packetType != FloorChunk.PacketType.Tutorial && activePacket.packetType != FloorChunk.PacketType.BOSS) {   
 // Beacon spawn rules
                     if (activePacket.packetMods.Count > 0)
                         floor.spawnBeacon = i%5 == 0;
@@ -107,7 +107,7 @@ public class FloorSequence : ScriptableObject {
 // Elite spawn rules
                     if (activePacket.packetMods.Contains(FloorChunk.PacketMods.Elite)) {
 // Hazard chunk bloated bulbs
-                        if (activePacket.packetMods.Count > 0 && (i+4)%5 == 0) 
+                        if (activePacket.packetMods.Count > 0 && (i+3)%5 == 0) 
                             floor.spawnElite = true;
                         else
                             floor.spawnElite = false;

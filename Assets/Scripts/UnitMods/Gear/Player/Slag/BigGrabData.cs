@@ -28,9 +28,9 @@ public class BigGrabData : SlagGearData {
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
         if (firstTarget == null) {
-            List<Vector2> validCoords = EquipmentAdjacency.OrthagonalAdjacency(user.coord, grabRange, firstTargets, firstTargets);
+            List<Vector2> validCoords = EquipmentAdjacency.OrthagonalAdjacency(user.coord, grabRange, filters, firstTargets);
             Unit u = (Unit)user;
-            u.inRangeCoords = validCoords;
+            u.inRangeCoords = EquipmentAdjacency.OrthagonalAdjacency(user.coord, grabRange);
             user.grid.DisplayValidCoords(validCoords, gridColor);
             for (int i = validCoords.Count - 1; i >= 0; i--) {
                 bool occupied = false;
@@ -78,7 +78,7 @@ public class BigGrabData : SlagGearData {
             target.grid.RemoveElement(target);
 
 // Nested TargetEquipment functionality inside of first UseGear
-            List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range, this);
+            List<Vector2> validCoords = EquipmentAdjacency.LobbedOrthagonalAdjacency(user.coord, range);
 // Remove orthagonal adjacencies
             if (!flexibleSlime && !(throwSelf && target == user)) {
                 if (dir.x != 0) {

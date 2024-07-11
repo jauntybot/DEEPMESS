@@ -11,7 +11,7 @@ public class ObjectiveManager : MonoBehaviour {
     [SerializeField] GameObject objectiveScreen;
     [SerializeField] Animator ginosAnim;
     [SerializeField] List<ObjectiveBeaconCard> objectiveCards;
-    [HideInInspector] public List<int> objectiveIndices;
+    public List<int> objectiveIndices;
     public List<Objective> activeObjectives;
     [HideInInspector] public int completedObjectives;
 
@@ -30,15 +30,10 @@ public class ObjectiveManager : MonoBehaviour {
         objectiveScreen.SetActive(false);
         activeObjectives = new();
         objectiveIndices = new() { 0, 0, 0 };
-        objectivePoolC1 = new();
-        objectivePoolC2 = new();
-        objectivePoolC3 = new();
-        foreach (Objective ob in serializedObjectives) {
-            if (run != null && run.startCavity != 0 && run.objectives.ContainsKey(ob.name)) continue;
-            else if (ob.chunk == FloorChunk.PacketType.I) objectivePoolC1.Add(ob);
-            else if (ob.chunk == FloorChunk.PacketType.II) objectivePoolC2.Add(ob);
-            else if (ob.chunk == FloorChunk.PacketType.III) objectivePoolC3.Add(ob);
-        }
+        objectivePoolC1 = new(serializedObjectives.FindAll(ob => ob.chunk == FloorChunk.PacketType.I).ToArray());
+        objectivePoolC2 = new(serializedObjectives.FindAll(ob => ob.chunk == FloorChunk.PacketType.II).ToArray());
+        objectivePoolC3 = new(serializedObjectives.FindAll(ob => ob.chunk == FloorChunk.PacketType.III).ToArray());
+
 
         audioSource = GetComponent<AudioSource>();
         audioSource.outputAudioMixerGroup = ginoSFX.outputMixerGroup;
@@ -86,6 +81,7 @@ public class ObjectiveManager : MonoBehaviour {
     }
 
     void LoadObjectives(RunData run) {
+        objectiveIndices = run.objectiveIndices;
         activeObjectives = new List<Objective> {null, null, null};
         int i = 0;
         foreach (KeyValuePair<String, int> entry in run.objectives) {

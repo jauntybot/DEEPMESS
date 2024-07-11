@@ -350,6 +350,40 @@ public static class EquipmentAdjacency {
         return _coords;
     }
 
+    public static List<Vector2> LobbedOrthagonalAdjacency(Vector2 from, int range, List<GridElement> filters = null, List<GridElement> targetLast = null) {
+        List<Vector2> _coords = new();
+        Vector2 dir = Vector2.zero;
+        for (int d = 0; d < 4; d++) {
+            switch (d) {
+                case 0: dir = Vector2.up; break;
+                case 1: dir = Vector2.right; break;
+                case 2: dir = Vector2.down; break;
+                case 3: dir = Vector2.left; break;
+            }
+            for (int r = 1; r <= range; r++) {
+                Vector2 coord = from + dir * r;
+                bool occupied = false;
+                foreach (GridElement ge in FloorManager.instance.currentFloor.CoordContents(coord)) {
+                    occupied = true;
+// Valid coord if element is not filtered
+                    if (filters == null || (!filters.Find(f => f.GetType() == ge.GetType()) && !filters.Find(f => ge.GetType().IsSubclassOf(f.GetType())))) {
+                        _coords.Add(coord);
+// Valid coord if element is target, but stops frontier
+                    } else if (targetLast != null) {
+                        foreach(GridElement target in targetLast) {
+                            if (ge.GetType() == target.GetType() || filters.Find(f => ge.GetType().IsSubclassOf(f.GetType()))) {
+                                _coords.Add(coord);
+                            }
+                        }
+                    }
+                }
+                if (!occupied)
+                    _coords.Add(coord);
+            }
+        }
+        return _coords;
+    }
+
     
     public static List<Vector2> OfTypeOnBoardAdjacency(List<GridElement> elements, Grid grid) {
         List<Vector2> _coords = new();
