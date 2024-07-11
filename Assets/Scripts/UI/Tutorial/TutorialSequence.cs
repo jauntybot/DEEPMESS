@@ -33,7 +33,7 @@ public class TutorialSequence : MonoBehaviour {
 
     [Header("GIF Serialization")]
     [SerializeField] RuntimeAnimatorController hittingTheNailAnim;
-    [SerializeField] RuntimeAnimatorController hittingEnemiesAnim, shieldAnim, anvilAnim, bigGrabAnim;
+    [SerializeField] RuntimeAnimatorController  descentDamage, hittingEnemiesAnim, shieldAnim, anvilAnim, bigGrabAnim;
 
     [Header("Button Highlights")]
     [SerializeField] GameObject buttonHighlight;
@@ -148,7 +148,7 @@ public class TutorialSequence : MonoBehaviour {
         yield return new WaitForSecondsRealtime(1.25f);
 
         yield return StartCoroutine(Gear());
-        //yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Player));
+        yield return scenario.StartCoroutine(scenario.SwitchTurns(ScenarioManager.Turn.Enemy));
     }
 
     public IEnumerator BlinkTile(Vector2 coord, bool move = true) {
@@ -276,15 +276,21 @@ public class TutorialSequence : MonoBehaviour {
         screenFade.gameObject.SetActive(true);
         
         header = "DIGGING DOWN";
-        body = "Hit the <b>" + ColorToRichText("Nail", keyColor) + "</b> with the <b>" + ColorToRichText("Hammer", keyColor) + "</b>—floor crumbles, <b>" + ColorToRichText("all units crash below", keyColor) + "</b>. That's progress, squish." + '\n';
+        body = "Smash the <b>" + ColorToRichText("Nail", keyColor) + "</b> with the <b>" + ColorToRichText("Hammer", keyColor) + "</b>—the floor crumbles and all units <b>" + ColorToRichText("crash below", keyColor) + "</b>. That's how we go deeper, squish." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
+        header = "DIGGING DOWN";
+        body = "...and deal <b>" + ColorToRichText("a lot of damage", keyColor) + "</b>. <b>" + ColorToRichText("Crush", keyColor) + "</b> enemies below and <b>" + ColorToRichText("drop em' on hazards", keyColor) + "</b>. Units that land on something take damage too, so be careful with your Slags." + '\n';
+        tooltip.SetText(body, header, true, false, new List<RuntimeAnimatorController> { descentDamage } );
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+        }
+
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
-        
     }
 
     public IEnumerator NailPriming() {
@@ -388,7 +394,7 @@ public class TutorialSequence : MonoBehaviour {
         float x = tooltip.contentField.GetComponent<RectTransform>().sizeDelta.x;
         tooltip.contentField.GetComponent<RectTransform>().sizeDelta = new Vector2(900, tooltip.contentField.GetComponent<RectTransform>().sizeDelta.y);
         header = "GEAR";
-        body = "Each piece of Gear's unique. Check those <b>" + ColorToRichText("buttons", keyColor) + "</b> in the bottom left to get to know your arsenal." + '\n';
+        body = "Each piece of Gear's useful for combat or to deal damage on descent. Check those <b>" + ColorToRichText("buttons", keyColor) + "</b> in the bottom left to get to know your arsenal." + '\n';
         tooltip.SetText(body, header, new List<RuntimeAnimatorController>{ shieldAnim, anvilAnim, bigGrabAnim });
 
         while (!tooltip.skip) {
@@ -436,10 +442,17 @@ public class TutorialSequence : MonoBehaviour {
         }
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
+
+        if (!undoEncountered) StartCoroutine(ForcedOopsies());
     }
 
-
 // Gameplay optional - tutorial specific - tooltips
+
+    IEnumerator ForcedOopsies() {
+        while (scenario.player.undoableMoves.Count <= 0) yield return null;
+        StartCoroutine(Oopsies(3));
+    }
+
     public IEnumerator NailDamage() {
         nailDamageEncountered = true;
         while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
@@ -513,6 +526,9 @@ public class TutorialSequence : MonoBehaviour {
         } else if (trigger == 2) {
             header = "OOPSIES";
             body = "Use your noggin, squish! <b>" + ColorToRichText("Slide your Slag in line with the enemy", keyColor) + "</b> Got a problem? <b>" + ColorToRichText("Fix it in the bottom right", keyColor) + "</b>." + '\n';    
+        } else if (trigger == 3) {
+            header = "OOPSIES";
+            body = "Make an oopsie? You can <b>" + ColorToRichText("undo", keyColor) + "</b> your <b>" + ColorToRichText("Slag's movement", keyColor) + "</b> with the button in the bottom right." + '\n';    
         }
         tooltip.SetText(body, header, true);
 
@@ -564,7 +580,7 @@ public class TutorialSequence : MonoBehaviour {
         enemySpawnEncountered = true;
 
         header = "ENEMY SPAWNING";
-        body = "Enemies won't give up. Clear too many, <b>" + ColorToRichText("more will drop in", keyColor) + "</b>. Better dive deeper to avoid an ambush." + '\n';
+        body = "Enemies won't give up. Wait too long on a floor, <b>" + ColorToRichText("more will drop in", keyColor) + "</b>. Better dive deeper to avoid an ambush." + '\n';
         tooltip.SetText(body, header, true);
 
         while (!tooltip.skip) {
@@ -597,31 +613,6 @@ public class TutorialSequence : MonoBehaviour {
         CheckAllDone();
     }
     
-
-    public IEnumerator DescentDamage() {
-        collisionEncountered = true;
-
-        while (ScenarioManager.instance.currentTurn != ScenarioManager.Turn.Player) {
-            yield return null;
-        }
-        yield return new WaitForSecondsRealtime(0.25f);
-        screenFade.gameObject.SetActive(true);
-
-        header = "DESCENT DAMAGE";
-        body = "<b>" + ColorToRichText("Slags", keyColor) + "</b> and <b>" + ColorToRichText("enemies crush", keyColor) + "</b> anything they land on. No free rides though—units take damage for squashing." + '\n';
-        tooltip.SetText(body, header, true);
-
-        while (!tooltip.skip) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-            
-        }
-
-        screenFade.SetTrigger("FadeOut");
-        tooltip.transform.GetChild(0).gameObject.SetActive(false);
-        CheckAllDone();
-    }
-
-
     public IEnumerator TutorialDescend() {
         List<GridElement> toDescend = new();
         switch(descents) {

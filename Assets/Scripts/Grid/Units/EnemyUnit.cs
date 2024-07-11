@@ -214,6 +214,7 @@ public class EnemyUnit : Unit {
 
     public override IEnumerator DestroySequence(DamageType dmgType = DamageType.Unspecified, GridElement source = null, GearData sourceEquip = null) {
         switch(dmgType) {
+            default:
             case DamageType.Unspecified:
                 gfxAnim.SetTrigger("Split");
             break;
@@ -234,10 +235,7 @@ public class EnemyUnit : Unit {
         
     }
 
-    public override IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0) {
-        if (manager.scenario.floorManager.tutorial.isActiveAndEnabled && !manager.scenario.floorManager.tutorial.collisionEncountered && manager.scenario.floorManager.floorSequence.activePacket.packetType != FloorChunk.PacketType.Tutorial)
-            manager.scenario.floorManager.tutorial.StartCoroutine(manager.scenario.floorManager.tutorial.DescentDamage());
-        
+    public override IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0) {       
         if (subGE is PlayerUnit)
             yield return StartCoroutine(DestroySequence(DamageType.Fall, subGE));
         else {

@@ -327,17 +327,15 @@ public class ScenarioManager : MonoBehaviour {
             uiManager.ToggleBattleCanvas(false);
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Win));
         }
-        objectiveManager.ClearObjectives();
-        relicManager.ClearRelics();
         float t = 0; while (t <= 1.25f) { yield return null; t += Time.deltaTime; }
         StartCoroutine(runDataTracker.UpdateAndDisplay(true, floorManager.floors.Count - 1, player.defeatedEnemies, relicManager.collectedRelics.Count, objectiveManager.completedObjectives, player.crushedEnemies));
+        objectiveManager.ClearObjectives();
+        relicManager.ClearRelics();
     }
 
     public IEnumerator Lose() {
         scenario = Scenario.EndState;
         PersistentDataManager.instance.DeleteRun();
-        objectiveManager.ClearObjectives();
-        relicManager.ClearRelics();
         
         if (currentTurn == Turn.Enemy)
             currentEnemy.StopActingUnit();
@@ -355,6 +353,8 @@ public class ScenarioManager : MonoBehaviour {
         }
         yield return StartCoroutine(player.RetrieveNailAnimation());
         StartCoroutine(runDataTracker.UpdateAndDisplay(false, floorManager.floors.Count - 2 >= 0 ? floorManager.floors.Count - 2 : 0, player.defeatedEnemies, relicManager.collectedRelics.Count, objectiveManager.completedObjectives, player.crushedEnemies));
+        objectiveManager.ClearObjectives();
+        relicManager.ClearRelics();
     }
 
 }

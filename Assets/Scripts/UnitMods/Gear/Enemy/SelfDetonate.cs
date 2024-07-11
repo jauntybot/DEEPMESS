@@ -9,7 +9,7 @@ public class SelfDetonate : EnemyAttackData {
 
 
     public override List<Vector2> TargetEquipment(GridElement user, int mod = 0) {
-        List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(user.coord, range + mod, this, targetTypes);
+        List<Vector2> validCoords = EquipmentAdjacency.BoxAdjacency(user.coord, range + mod);
         user.grid.DisplayValidCoords(validCoords, gridColor);
         
         bool valid = false;
@@ -50,7 +50,7 @@ public class SelfDetonate : EnemyAttackData {
             user.PlaySound(selfDetonateSFX);
 
 // Apply damage to units in AOE
-            List<Vector2> aoe = EquipmentAdjacency.GetAdjacent(user.coord, range, this, targetTypes);
+            List<Vector2> aoe = EquipmentAdjacency.BoxAdjacency(user.coord, range);
             List<Coroutine> affectedCo = new();
             foreach (Vector2 coord in aoe) {
                 if (user.grid.CoordContents(coord).Count > 0) {
@@ -74,6 +74,4 @@ public class SelfDetonate : EnemyAttackData {
             }
         }
     }
-
-
 }

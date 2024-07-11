@@ -71,11 +71,20 @@ public class HammerData : GearData {
         pu.SwitchAnim(PlayerUnit.AnimState.Idle);
         hammer.SetActive(true);
         pu.ui.ToggleEquipmentButtons();
+        
+        if (nail.nailState == Nail.NailState.Buried) {
+            if (filters.Contains(nail)) filters.Remove(nail);
+            if (targetTypes.Contains(nail)) targetTypes.Remove(nail);
+        }
+        else {
+            if (!filters.Contains(nail)) filters.Add((GridElement)nail);
+            if (!targetTypes.Contains(nail)) targetTypes.Add((GridElement)nail);
+        }
+            
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(origin, range, this, targetTypes);
-        pu.inRangeCoords = EquipmentAdjacency.GetAdjacent(origin, range, this);
-        foreach (Vector2 coord in validCoords)
-            pu.inRangeCoords.Add(coord);
+        pu.inRangeCoords = new(validCoords);
         pu.grid.DisplayValidCoords(validCoords, gridColor);
+        
         for (int i = validCoords.Count - 1; i >= 0; i--) {
             bool occupied = false;
             bool remove = false;
@@ -85,21 +94,14 @@ public class HammerData : GearData {
                 if (ge is PlayerUnit u) {
                     if (u.conditions.Contains(Unit.Status.Disabled) && tile.tileType == Tile.TileType.Bile) 
                         remove = true;
+                } else if (ge is Nail n && n.nailState == Nail.NailState.Buried) {
+                    remove = true;
                 } else {
                     foreach(GridElement target in targetTypes) {
                         if (ge.GetType() == target.GetType() || ge.GetType().IsSubclassOf(target.GetType())) {
-                            if (ge is Nail n) {
-                                if (n.nailState == Nail.NailState.Primed)
-                                    remove = false;
-                                else {
-                                    tile.ToggleValidCoord(false);
-                                    remove = true;
-                                }
-                            } else {
                                 remove = false;
                                 if (ge is EnemyUnit)
                                     ge.elementCanvas.ToggleStatsDisplay(true);
-                            }
                         }
                     }
                 }

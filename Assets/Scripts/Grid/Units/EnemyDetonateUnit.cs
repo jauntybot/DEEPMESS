@@ -81,7 +81,7 @@ public class EnemyDetonateUnit : EnemyUnit {
 
         manager.SelectUnit(this);
         UpdateAction(equipment[1]);
-        grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
+        //grid.DisplayValidCoords(validActionCoords, selectedEquipment.gridColor);
         yield return new WaitForSecondsRealtime(0.5f);
         List<Coroutine> cos = new();
         cos.Add(StartCoroutine(selectedEquipment.UseGear(this, null)));
