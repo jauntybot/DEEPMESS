@@ -79,6 +79,7 @@ public class ShieldData : SlagGearData {
         shield.Init((Unit)target, this);
 
         if (aerodynamics && target is Unit u) u.moveMod++;
+        if (buyoant && target is Unit un && un.conditions.Contains(Unit.Status.Restricted)) un.RemoveCondition(Unit.Status.Restricted);
 
         activeShields.Add(shield);
         target.ApplyShield(shield);
@@ -99,37 +100,5 @@ public class ShieldData : SlagGearData {
                 }
             }
         }
-    }
-
-    public override void UpgradeGear(GearUpgrade upgrade, int slotIndex) {
-        base.UpgradeGear(upgrade, slotIndex);
-        // if (targetPath == UpgradePath.Shunt) {
-        //     if (upgrades[targetPath] == 0) {
-        //         adjacency = AdjacencyType.Diamond;
-        //         range = 1;
-        //     }
-        //     if (upgrades[targetPath] == 1) {
-        //         range = 2;
-        //     }
-        //     if (upgrades[targetPath] == 2) {
-        //         range = 3;
-        //         slag.moveMod += 1;
-        //     }
-        // } else if (targetPath ==  UpgradePath.Sludge) {
-        //     if (upgrades[targetPath] == 1) {
-        //         slag.hpMax += 1;
-        //         slag.elementCanvas.InstantiateMaxPips();
-        //         //slag.ui.overview.hPPips.UpdatePips();
-        //         slag.StartCoroutine(slag.TakeDamage(-1, GridElement.DamageType.Heal));
-        //         foreach(Shield shield in activeShields)
-        //             shield.buoyant = true;
-        //     } else if (upgrades[targetPath] == 2) {
-        //         foreach(Shield shield in activeShields)
-        //             shield.healing = true;
-        //     }
-        // } else if (targetPath == UpgradePath.Scab && upgrades[targetPath] == 2) {
-        //     foreach(Shield shield in activeShields)
-        //             shield.thorns = true;
-        // }
     }
 }

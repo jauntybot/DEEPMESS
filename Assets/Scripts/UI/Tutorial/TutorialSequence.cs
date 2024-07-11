@@ -282,7 +282,7 @@ public class TutorialSequence : MonoBehaviour {
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
-        header = "DIGGING DOWN";
+        header = "DESCENT DAMAGE";
         body = "...and deal <b>" + ColorToRichText("a lot of damage", keyColor) + "</b>. <b>" + ColorToRichText("Crush", keyColor) + "</b> enemies below and <b>" + ColorToRichText("drop em' on hazards", keyColor) + "</b>. Units that land on something take damage too, so be careful with your Slags." + '\n';
         tooltip.SetText(body, header, true, false, new List<RuntimeAnimatorController> { descentDamage } );
         while (!tooltip.skip) {
