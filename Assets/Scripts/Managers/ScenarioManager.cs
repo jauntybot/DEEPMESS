@@ -322,6 +322,8 @@ public class ScenarioManager : MonoBehaviour {
 
     public IEnumerator Win() {
         scenario = Scenario.EndState;
+        PersistentDataManager.instance.DeleteRun();
+        
         yield return StartCoroutine(gpOptional.WhatsAhead());
         if (uiManager.gameObject.activeSelf) {
             uiManager.ToggleBattleCanvas(false);
