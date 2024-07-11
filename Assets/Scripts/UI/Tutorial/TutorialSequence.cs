@@ -395,7 +395,7 @@ public class TutorialSequence : MonoBehaviour {
         tooltip.contentField.GetComponent<RectTransform>().sizeDelta = new Vector2(900, tooltip.contentField.GetComponent<RectTransform>().sizeDelta.y);
         header = "GEAR";
         body = "Each piece of Gear's useful for combat or to deal damage on descent. Check those <b>" + ColorToRichText("buttons", keyColor) + "</b> in the bottom left to get to know your arsenal." + '\n';
-        tooltip.SetText(body, header, new List<RuntimeAnimatorController>{ shieldAnim, anvilAnim, bigGrabAnim });
+        tooltip.SetText(body, header, true, false, new List<RuntimeAnimatorController>{ shieldAnim, anvilAnim, bigGrabAnim });
 
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
