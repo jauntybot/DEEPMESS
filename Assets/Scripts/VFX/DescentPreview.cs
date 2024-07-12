@@ -76,7 +76,7 @@ public class DescentPreview : MonoBehaviour {
             anim.gameObject.GetComponent<SpriteRenderer>().sortingOrder = mgmt.alignmentFloor.SortOrderFromCoord(ge.coord) - 1;
             portraitSR.sortingOrder = mgmt.alignmentFloor.SortOrderFromCoord(ge.coord);
             bgSR.sortingOrder = mgmt.alignmentFloor.SortOrderFromCoord(ge.coord) - 1;
-            anim.SetBool("Crush", mgmt.alignmentFloor.CoordContents(ge.coord).Count > 0 && !ge.grid.CoordContents(ge.coord).Contains(ge));
+            anim.SetBool("Crush", mgmt.alignmentFloor.CoordContents(ge.coord).Count > 0 && !mgmt.alignmentFloor.CoordContents(ge.coord).Contains(ge));
         } else {
             transform.localPosition = unit.transform.localPosition;
             anim.gameObject.GetComponent<SpriteRenderer>().sortingOrder = unit.gfx[0].sortingOrder - 1;
