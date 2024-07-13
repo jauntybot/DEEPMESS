@@ -152,13 +152,14 @@ public class ScenarioManager : MonoBehaviour {
         player.units[2].UpdateElement(new Vector2(3,5));
         player.nail.selectable = false;
         player.nail.grid.RemoveElement(player.nail);
-        floorManager.previewManager.InitialPreview();
         
         foreach (GridElement ge in player.units) {
             if (floorManager.currentFloor.gridElements.Contains(ge))
                 floorManager.currentFloor.RemoveElement(ge);
-            
         }
+
+        floorManager.previewManager.InitialPreview();
+        
         yield return StartCoroutine(floorManager.ChooseLandingPositions());
         float t = 0; while (t <= 0.5f) { yield return null; t += Time.deltaTime; }
     }

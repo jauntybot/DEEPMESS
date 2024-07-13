@@ -43,7 +43,7 @@ public class RunDataTracker : MonoBehaviour {
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
 
         int total = (enemies * 10)  + (crushes * 50) + (floors * 100) + (tasks * 200) + (thoughts * 500);
-        PersistentMenu.instance.upcomingCurrency = total + (win ? 0 : (int)(-total*0.2f));
+        PersistentMenu.instance.upcomingCurrency = total;
         panel.SetActive(true);
         if (win) {
             resultsTMP.text = "Excavation Complete";

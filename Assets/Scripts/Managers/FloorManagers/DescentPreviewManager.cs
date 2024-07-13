@@ -49,13 +49,13 @@ public class DescentPreviewManager : MonoBehaviour {
 
     public void InitialPreview() {
         UpdateFloors(null, currentFloor);
-        foreach(DescentPreview dp in descentPreviews) 
-            dp.UpdatePreview(dp.unit);
-        
         foreach(DescentPreview dp in descentPreviews) {
             if (dp.unit is PlayerUnit)
                 dp.anim.gameObject.SetActive(true);
         }
+
+        foreach(DescentPreview dp in descentPreviews) 
+            dp.UpdatePreview(dp.unit);
     }
 
     public void TogglePreivews(bool state) {
