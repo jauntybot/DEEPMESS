@@ -32,7 +32,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
             }
         }
 
-        LoadTooltips();
+        //LoadTooltips();
     }
 
     public void LoadTooltips() {
