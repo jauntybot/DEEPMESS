@@ -366,7 +366,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
     public void DisplayResults(bool state) {
         devResultsButton.SetActive(state);
         if (state) 
-            StartCoroutine(scenario.runDataTracker.UpdateAndDisplay(false, scenario.floorManager.floors.Count - 2 >= 0 ? scenario.floorManager.floors.Count - 2 : 0, scenario.player.defeatedEnemies, scenario.relicManager.collectedRelics.Count, scenario.objectiveManager.completedObjectives, scenario.player.crushedEnemies));
+            StartCoroutine(scenario.runDataTracker.UpdateAndDisplay(false, scenario.floorManager.floors.Count - 2 >= 0 ? scenario.floorManager.floors.Count - 2 : 0, scenario.player.defeatedEnemies, scenario.player.downedSlags, scenario.relicManager.collectedRelics.Count, scenario.objectiveManager.completedObjectives, scenario.player.crushedEnemies));
          else 
             scenario.runDataTracker.CloseResults();
                     
