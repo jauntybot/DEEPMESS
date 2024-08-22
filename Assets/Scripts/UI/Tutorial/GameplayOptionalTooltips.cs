@@ -285,7 +285,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
         playTime = 0;
         runInProgress = true;
 
-        while (runInProgress && playTime <= 60 * 1) {
+        while (runInProgress && playTime <= 60 * 30) {
             yield return null;
             playTime += Time.deltaTime;
         }
@@ -294,10 +294,9 @@ public class GameplayOptionalTooltips : MonoBehaviour {
 
     public IEnumerator EndOfDemo() {      
         screenFade.gameObject.SetActive(true);  
-        endOfDemoButtons.SetActive(true);
         
         header = "TIME'S UP";
-        body = "Wow, squish, thanks for playing so long! You can play more at home by downloading this demo on Steam. And toss us a wishlist, would ya?" + '\n';
+        body = "Wow, squish, thanks for playing <b>" + ColorToRichText("so long", keyColor) + "</b>! If you want to play more, <b>" + ColorToRichText("download this demo", keyColor) + "</b> on <b>" + ColorToRichText("Steam", keyColor) + "</b>. And toss us a <b>" + ColorToRichText("wishlist", keyColor) + "</b>, would ya?" + '\n';
         tooltip.SetText(body, header);
 
         tooltip.skip = false;
@@ -305,6 +304,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
         while(tooltip.tw.writing) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
+        endOfDemoButtons.SetActive(true);
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
