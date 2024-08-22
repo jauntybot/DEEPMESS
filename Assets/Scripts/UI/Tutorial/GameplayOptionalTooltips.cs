@@ -297,19 +297,13 @@ public class GameplayOptionalTooltips : MonoBehaviour {
         
         header = "TIME'S UP";
         body = "Wow, squish, thanks for playing <b>" + ColorToRichText("so long", keyColor) + "</b>! If you want to play more, <b>" + ColorToRichText("download this demo", keyColor) + "</b> on <b>" + ColorToRichText("Steam", keyColor) + "</b>. And toss us a <b>" + ColorToRichText("wishlist", keyColor) + "</b>, would ya?" + '\n';
-        tooltip.SetText(body, header);
+        tooltip.SetText(body, header, true);
 
-        tooltip.skip = false;
-
-        while(tooltip.tw.writing) {
-            yield return new WaitForSecondsRealtime(1/Util.fps);
-        }
-        endOfDemoButtons.SetActive(true);
         while (!tooltip.skip) {
             yield return new WaitForSecondsRealtime(1/Util.fps);
         }
 
-        endOfDemoButtons.SetActive(false);
+        scenario.StartCoroutine(scenario.Lose());
         screenFade.SetTrigger("FadeOut");
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
