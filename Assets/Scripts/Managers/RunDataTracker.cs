@@ -13,10 +13,10 @@ public class RunDataTracker : MonoBehaviour {
     // float playTime;
     // bool runInProgress;
 
-    [SerializeField] GameObject floorRow, enemiesRow, tasksRow, godThoughtRow, crushesRow, quitButton;
+    [SerializeField] GameObject floorRow, enemiesRow, tasksRow, godThoughtRow, crushesRow, slagsDownedRow, quitButton;
     [SerializeField] Animator totalAnim;
 
-    [SerializeField] TMP_Text resultsTMP, floorsCountUp, floorsMultCountUp, enemiesCountUp, enemiesMultCountUp, tasksCountUp, tasksMultCountUp, godThoughtCountUp, godThoughtMultCountUp, crushesCountUp, crushesMultCountUp, totalCountUp, highScoreCountUp;
+    [SerializeField] TMP_Text resultsTMP, floorsCountUp, floorsMultCountUp, enemiesCountUp, enemiesMultCountUp, tasksCountUp, tasksMultCountUp, godThoughtCountUp, godThoughtMultCountUp, crushesCountUp, crushesMultCountUp, slagsDownedCountUp, slagsDownedMultCountUp, totalCountUp, highScoreCountUp;
 
 
     public void Init(ScenarioManager scen) {
@@ -35,15 +35,16 @@ public class RunDataTracker : MonoBehaviour {
     //     }
     // }
 
-    public IEnumerator UpdateAndDisplay(bool win, int floors, int enemies, int thoughts, int tasks, int crushes) {
-        floorRow.SetActive(false); enemiesRow.SetActive(false); tasksRow.SetActive(false); godThoughtRow.SetActive(false); crushesRow.SetActive(false); quitButton.SetActive(false);
+    public IEnumerator UpdateAndDisplay(bool win, int floors, int enemies, int downs, int thoughts, int tasks, int crushes) {
+        floorRow.SetActive(false); enemiesRow.SetActive(false); tasksRow.SetActive(false); godThoughtRow.SetActive(false); crushesRow.SetActive(false); quitButton.SetActive(false); slagsDownedRow.SetActive(false);
         LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.GetComponentInParent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.transform.parent.GetComponentInParent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(floorRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
         LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
 
-        int total = (enemies * 10)  + (crushes * 50) + (floors * 100) + (tasks * 200) + (thoughts * 500);
-        PersistentMenu.instance.upcomingCurrency = total + (win ? 0 : (int)(-total*0.2f));
+        int total = (enemies * 10)  + (crushes * 50) + (floors * 100) + (tasks * 200) + (thoughts * 500) - (downs * 150);
+        if (total < 0) total = 0;
+        PersistentMenu.instance.upcomingCurrency = total;
         panel.SetActive(true);
         if (win) {
             resultsTMP.text = "Excavation Complete";
@@ -131,6 +132,21 @@ public class RunDataTracker : MonoBehaviour {
         }));
         StartCoroutine(StringCountUp.CountUp(thoughts * 500, 0.75f, (countUp) => { 
             godThoughtMultCountUp.text = countUp;
+        }));
+        t = 0; while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
+        slagsDownedRow.SetActive(true);
+        
+        LayoutRebuilder.ForceRebuildLayoutImmediate(slagsDownedRow.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(slagsDownedRow.transform.parent.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(slagsDownedRow.transform.parent.transform.parent.GetComponentInParent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        Canvas.ForceUpdateCanvases();
+
+        StartCoroutine(StringCountUp.CountUp(downs, 0.75f, (countUp) => { 
+            slagsDownedCountUp.text = countUp;
+        }));
+        StartCoroutine(StringCountUp.CountUp(-downs * 150, 0.75f, (countUp) => { 
+            slagsDownedMultCountUp.text = countUp;
         }));
         t = 0; while (t <= 0.125f) { t += Time.deltaTime; yield return null; }
         

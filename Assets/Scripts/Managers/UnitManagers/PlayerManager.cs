@@ -26,11 +26,12 @@ public class PlayerManager : UnitManager {
     [HideInInspector] public Vector2 lastHoveredCoord;
     public int defeatedEnemies;
     public int crushedEnemies;
+    public int collectedNuggets;
+    public int downedSlags;
 
     public delegate void OnPlayerAction(PlayerManager player);
     public virtual event OnPlayerAction UndoClearCallback;
 
-    public int collectedNuggets;
 
     [Header("PREFABS")]
     [SerializeField] public GameObject nailPrefab;

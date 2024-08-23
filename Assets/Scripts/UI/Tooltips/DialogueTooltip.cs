@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class DialogueTooltip : Tooltip {
     
     public bool skip = true;
-    [SerializeField] DialogueTypewriter tw;
+    public DialogueTypewriter tw;
     [SerializeField] Button clickToSkip;
     [SerializeField] Animator clickToSkipAnim;
     [SerializeField] SFX nailSpeak, ginoSpeak;

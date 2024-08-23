@@ -16,6 +16,8 @@ public class GameplayOptionalTooltips : MonoBehaviour {
     public bool bulbEncountered = false, deathReviveEncountered = false, prebossEncountered = false, bossEncountered = false,
         pathsEncountered = false, objectivesEncountered = false, bloatedBulbEncountered = false, beaconEncountered = false, beaconObjectivesEncountered = false, beaconScratchOffEncountered = false;
 
+    [SerializeField] GameObject endOfDemoButtons;
+
     void Awake() {
         if (GameplayOptionalTooltips.instance) {
             DestroyImmediate(this);
@@ -32,7 +34,8 @@ public class GameplayOptionalTooltips : MonoBehaviour {
             }
         }
 
-        LoadTooltips();
+        //LoadTooltips();
+        StartCoroutine(TrackDemoTime());
     }
 
     public void LoadTooltips() {
@@ -275,9 +278,57 @@ public class GameplayOptionalTooltips : MonoBehaviour {
         tooltip.transform.GetChild(0).gameObject.SetActive(false);
     }
 
+    
+    float playTime = 0;
+    public bool runInProgress;
+    IEnumerator TrackDemoTime() {
+        playTime = 0;
+        runInProgress = true;
+
+        while (runInProgress && playTime <= 60 * 30) {
+            yield return null;
+            playTime += Time.deltaTime;
+        }
+        StartCoroutine(EndOfDemo());
+    }
+
+    public IEnumerator EndOfDemo() {      
+        screenFade.gameObject.SetActive(true);  
+        
+        header = "TIME'S UP";
+        body = "Wow, squish, thanks for playing <b>" + ColorToRichText("so long", keyColor) + "</b>! If you want to play more, <b>" + ColorToRichText("download this demo", keyColor) + "</b> on <b>" + ColorToRichText("Steam", keyColor) + "</b>. And toss us a <b>" + ColorToRichText("wishlist", keyColor) + "</b>, would ya?" + '\n';
+        tooltip.SetText(body, header);
+
+        tooltip.skip = false;
+
+        while(tooltip.tw.writing) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+        }
+        endOfDemoButtons.SetActive(true);
+        while (!tooltip.skip) {
+            yield return new WaitForSecondsRealtime(1/Util.fps);
+        }
+
+        endOfDemoButtons.SetActive(false);
+        screenFade.SetTrigger("FadeOut");
+        tooltip.transform.GetChild(0).gameObject.SetActive(false);
+    }
 
     static string ColorToRichText(string str, Color color) {
         return "<color=#" + ColorUtility.ToHtmlStringRGB(color) + ">" + str + "</color>";
     }
 
+    public void EndOfDemoButton(bool cont) {
+        tooltip.skip = true;
+        if (!cont) {
+            scenario.StartCoroutine(scenario.Lose());
+        } else {
+            StartCoroutine(ResetTimerDelay());
+        }
+    }
+
+    IEnumerator ResetTimerDelay() {
+        yield return new WaitForSecondsRealtime(2);
+        StartCoroutine(TrackDemoTime());
+    }
 }

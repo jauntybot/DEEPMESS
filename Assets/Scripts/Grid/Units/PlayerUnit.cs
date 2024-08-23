@@ -140,6 +140,7 @@ public class PlayerUnit : Unit {
             destroyed = true;
 
         PlaySound(destroyedSFX);
+        pManager.downedSlags++;
 
         bool droppedHammer = false;
         for (int i = equipment.Count - 1; i >= 0; i--) {

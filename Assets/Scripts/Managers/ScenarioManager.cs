@@ -152,13 +152,14 @@ public class ScenarioManager : MonoBehaviour {
         player.units[2].UpdateElement(new Vector2(3,5));
         player.nail.selectable = false;
         player.nail.grid.RemoveElement(player.nail);
-        floorManager.previewManager.InitialPreview();
         
         foreach (GridElement ge in player.units) {
             if (floorManager.currentFloor.gridElements.Contains(ge))
                 floorManager.currentFloor.RemoveElement(ge);
-            
         }
+
+        floorManager.previewManager.InitialPreview();
+        
         yield return StartCoroutine(floorManager.ChooseLandingPositions());
         float t = 0; while (t <= 0.5f) { yield return null; t += Time.deltaTime; }
     }
@@ -330,7 +331,7 @@ public class ScenarioManager : MonoBehaviour {
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Win));
         }
         float t = 0; while (t <= 1.25f) { yield return null; t += Time.deltaTime; }
-        StartCoroutine(runDataTracker.UpdateAndDisplay(true, floorManager.floors.Count - 1, player.defeatedEnemies, relicManager.collectedRelics.Count, objectiveManager.completedObjectives, player.crushedEnemies));
+        StartCoroutine(runDataTracker.UpdateAndDisplay(true, floorManager.floors.Count - 1, player.defeatedEnemies, player.downedSlags, relicManager.collectedRelics.Count, objectiveManager.completedObjectives, player.crushedEnemies));
         objectiveManager.ClearObjectives();
         relicManager.ClearRelics();
     }
@@ -354,7 +355,7 @@ public class ScenarioManager : MonoBehaviour {
             yield return StartCoroutine(messagePanel.PlayMessage(MessagePanel.Message.Lose));
         }
         yield return StartCoroutine(player.RetrieveNailAnimation());
-        StartCoroutine(runDataTracker.UpdateAndDisplay(false, floorManager.floors.Count - 2 >= 0 ? floorManager.floors.Count - 2 : 0, player.defeatedEnemies, relicManager.collectedRelics.Count, objectiveManager.completedObjectives, player.crushedEnemies));
+        StartCoroutine(runDataTracker.UpdateAndDisplay(false, floorManager.floors.Count - 2 >= 0 ? floorManager.floors.Count - 2 : 0, player.defeatedEnemies, player.downedSlags, relicManager.collectedRelics.Count, objectiveManager.completedObjectives, player.crushedEnemies));
         objectiveManager.ClearObjectives();
         relicManager.ClearRelics();
     }
