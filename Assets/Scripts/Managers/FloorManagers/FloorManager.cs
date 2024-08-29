@@ -362,7 +362,7 @@ public class FloorManager : MonoBehaviour {
                 yield return new WaitForSecondsRealtime(0.25f);
                 
 // Descend units from previous floor
-                yield return StartCoroutine(DescendUnits(floors[currentFloor.transform.GetSiblingIndex() -1].gridElements, enemy));
+                yield return StartCoroutine(DescendUnits(floors[currentFloor.transform.GetSiblingIndex() -1].gridElements, enemy, true));
                 
                 if (currentFloor.index+1 == floorSequence.activePacket.packetLength) scenario.player.nail.barkBox.Bark(BarkBox.BarkType.FinalFloor);
 
@@ -460,6 +460,7 @@ public class FloorManager : MonoBehaviour {
 
         Nail nail = null;
         List<Coroutine> descents = new();
+
         for (int i = units1.Length - 1; i >= 0; i--) {
             if (units1[i] is Unit u) {
                 if (u is not Nail) {
@@ -533,12 +534,17 @@ public class FloorManager : MonoBehaviour {
 
         List<Coroutine> cos = new();
 
+        if (unit is PlayerUnit || unit is Nail || unit is Anvil 
+        || unit is EnemyDetonateUnit || unit is EnemyStaticUnit || unit is BossUnit) 
+            hardLand = false;
+
         if (subElement) {
             cos.Add(StartCoroutine(subElement.CollideFromBelow(unit)));
             cos.Add(StartCoroutine(unit.CollideFromAbove(subElement, hardLand?1:0)));
         } else if (hardLand && currentFloor.tiles.Find(t => t.coord == unit.coord).tileType != Tile.TileType.Bile) {
             yield return StartCoroutine(unit.TakeDamage(1, GridElement.DamageType.Fall));
         }
+
         if (cos.Count > 0) {
              for (int i = cos.Count - 1; i >= 0; i--) {
                 if (cos[i] != null) 

@@ -232,6 +232,16 @@ public class Unit : GridElement {
 
     }
 
+    // TODO move descending functionality from FloorManager, remove collide from above from there
+    // public virtual void Descend() {
+    //     if (subElement) {
+    //         cos.Add(StartCoroutine(subElement.CollideFromBelow(unit)));
+    //         cos.Add(StartCoroutine(unit.CollideFromAbove(subElement, hardLand?1:0)));
+    //     } else if (hardLand && currentFloor.tiles.Find(t => t.coord == unit.coord).tileType != Tile.TileType.Bile) {
+    //         yield return StartCoroutine(unit.TakeDamage(1, GridElement.DamageType.Fall));
+    //     }
+    // }
+
     public virtual IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0) {       
         if (subGE is PlayerUnit)
             yield return StartCoroutine(DestroySequence());
@@ -246,7 +256,6 @@ public class Unit : GridElement {
         else
             yield return StartCoroutine(TakeDamage(1 + hardLand, DamageType.Fall, source, sourceEquip));
     }
-
     
     public override void RemoveShield() {
         if (shield) {

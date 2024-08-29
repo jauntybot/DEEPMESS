@@ -235,14 +235,6 @@ public class EnemyUnit : Unit {
         
     }
 
-    public override IEnumerator CollideFromAbove(GridElement subGE, int hardLand = 0) {       
-        if (subGE is PlayerUnit)
-            yield return StartCoroutine(DestroySequence(DamageType.Fall, subGE));
-        else {
-            yield return StartCoroutine(TakeDamage(1, DamageType.Fall, subGE));
-        }
-    }
-
     public void Splatter(Vector2 dir) {
         Tile tileParent = grid.tiles.Find(t => t.coord == coord+dir);
         if (tileParent == null) tileParent = grid.tiles.Find(t => t.coord == coord);
