@@ -34,8 +34,8 @@ public class GameplayOptionalTooltips : MonoBehaviour {
             }
         }
 
-        //LoadTooltips();
-        StartCoroutine(TrackDemoTime());
+        LoadTooltips();
+        //StartCoroutine(TrackDemoTime());
     }
 
     public void LoadTooltips() {
@@ -296,7 +296,7 @@ public class GameplayOptionalTooltips : MonoBehaviour {
         screenFade.gameObject.SetActive(true);  
         
         header = "TIME'S UP";
-        body = "Wow, squish, thanks for playing <b>" + ColorToRichText("so long", keyColor) + "</b>! If you want to play more, <b>" + ColorToRichText("download this demo", keyColor) + "</b> on <b>" + ColorToRichText("Steam", keyColor) + "</b>. And toss us a <b>" + ColorToRichText("wishlist", keyColor) + "</b>, would ya?" + '\n';
+        body = "Wow, squish,  <b>" + ColorToRichText("thanks for playing", keyColor) + "</b> so long! If you're hungry for more, <b>" + ColorToRichText("grab this demo from Steam", keyColor) + "</b> on <b>" + ColorToRichText("Steam", keyColor) + "</b>. And toss us a <b>" + ColorToRichText("wishlist", keyColor) + "</b>, would ya?" + '\n';
         tooltip.SetText(body, header);
 
         tooltip.skip = false;
