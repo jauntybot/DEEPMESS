@@ -6,6 +6,15 @@ public class Beacon : Unit {
 
     [SerializeField] SFX callDownSFX;
     public override event OnElementUpdate ElementDestroyed;
+    public BarkBox barkBox;
+    bool used = false;
+
+    public override void Init(Grid g, Vector2 c) {
+        base.Init(g, c);
+        
+        barkBox.Init(this);
+        elementCanvas = null;
+    }
 
     public override void TargetElement(bool state) {
         base.TargetElement(state);
@@ -15,6 +24,7 @@ public class Beacon : Unit {
 
     public IEnumerator SelectBeacon() {
         UIManager.instance.ToggleBattleCanvas(false);
+        used = true;
         ScenarioManager.instance.currentTurn = ScenarioManager.Turn.Event;
         yield return FloorManager.instance.StartCoroutine(FloorManager.instance.TransitionToSlimeHub(true));
         yield return new WaitForSecondsRealtime(1f);
@@ -46,6 +56,22 @@ public class Beacon : Unit {
 
         if (gameObject != null)
             Destroy(gameObject);
+    }
+
+        float timer = 0;
+    public IEnumerator RepeatedBark() {
+        while (ScenarioManager.instance.currentTurn == ScenarioManager.Turn.Player && !used && !destroyed) {
+            if (timer <= 15) {
+                yield return null;
+                timer += Time.deltaTime;
+            } else {
+                barkBox.Bark(BarkBox.BarkType.Beacon);
+                timer = 0;
+            }
+
+
+
+        }
     }
 
 }

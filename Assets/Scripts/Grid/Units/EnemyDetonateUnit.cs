@@ -9,6 +9,7 @@ public class EnemyDetonateUnit : EnemyUnit {
 
     public void PrimeSelf() {
         primed = true;
+        //fragile = true;
         gfxAnim.SetBool("Primed", true);
     }
 

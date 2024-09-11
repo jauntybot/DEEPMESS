@@ -18,6 +18,7 @@ public class Unit : GridElement {
 
     public List<Vector2> validActionCoords;
     public List<Vector2> inRangeCoords;
+    public bool fragile;
     
     public enum Status { Normal, Immobilized, Restricted, Disabled, Weakened, Stunned }
 

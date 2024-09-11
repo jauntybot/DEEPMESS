@@ -534,9 +534,9 @@ public class FloorManager : MonoBehaviour {
 
         List<Coroutine> cos = new();
 
-        if (unit is PlayerUnit || unit is Nail || unit is Anvil 
-        || unit is EnemyDetonateUnit || unit is EnemyStaticUnit || unit is BossUnit) 
+        if (!unit.fragile) {
             hardLand = false;
+        }
 
         if (subElement) {
             cos.Add(StartCoroutine(subElement.CollideFromBelow(unit)));

@@ -9,22 +9,22 @@ public class BarkBox : MonoBehaviour {
     AudioSource audioSource;
     [SerializeField] SFX barkSFX;
 
-    public enum BarkType { Delay, FinalFloor, EnemyCount, NotPrimed, LowHP, SlagHurt, NailKill, NailCrush, NailPrime };
+    public enum BarkType { Delay, FinalFloor, EnemyCount, NotPrimed, LowHP, SlagHurt, NailKill, NailCrush, NailPrime, Beacon};
     [SerializeField] GameObject barkBox;
     [SerializeField] TMP_Text barkBoxText;
     
-    [SerializeField] List<string> delayStrings, finalFloorStrings, EnemyCountStrings, NotPrimedStrings, LowHPStrings, SlagHurtStrings, NailKillStrings, NailCrushStrings, NailPrimeStrings;
+    [SerializeField] List<string> delayStrings, finalFloorStrings, EnemyCountStrings, NotPrimedStrings, LowHPStrings, SlagHurtStrings, NailKillStrings, NailCrushStrings, NailPrimeStrings, beaconStrings;
     
-    Nail nail;
+    GridElement ge;
 
-    public void Init(Nail n) {
+    public void Init(GridElement g) {
         audioSource = GetComponent<AudioSource>();
-        nail = n;
+        ge = g;
     }
 
     public void Bark(BarkType type) {
         if (FloorManager.instance.floorSequence.activePacket.packetType != FloorChunk.PacketType.Tutorial
-            && nail.nailState != Nail.NailState.Falling) {
+            && (ge is not Nail || (ge is Nail n && n.nailState != Nail.NailState.Falling))) {
             barkBox.SetActive(false);
             string bark;
             switch (type) {
@@ -55,6 +55,9 @@ public class BarkBox : MonoBehaviour {
                 break;
                 case BarkType.NailPrime: 
                     bark = NailPrimeStrings[Random.Range(0, NailPrimeStrings.Count - 1)];
+                break;
+                case BarkType.Beacon:
+                    bark = beaconStrings[Random.Range(0, beaconStrings.Count - 1)];
                 break;
             }
 

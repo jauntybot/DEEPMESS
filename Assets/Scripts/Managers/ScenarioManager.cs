@@ -245,9 +245,10 @@ public class ScenarioManager : MonoBehaviour {
 
 
                     player.StartEndTurn(true);
-                    GridElement be = floorManager.currentFloor.gridElements.Find(ge => ge is Beacon);
+                    Beacon be = floorManager.currentFloor.gridElements.Find(ge => ge is Beacon).GetComponent<Beacon>();
                     if (be != null) {
                         be.GetComponent<Beacon>().EnableSelection(true);
+                        be.StartCoroutine(be.RepeatedBark());
                     }
                 } else {
                     yield return StartCoroutine(Lose());

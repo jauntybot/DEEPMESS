@@ -104,6 +104,8 @@ public class UnitGameUI : UnitUI {
     }
 
     public void UpdateEquipmentButtons() {
+        //if (unit.fragile) equipmentParent.transform.GetComponentInChildren<GameUnitFrame>().BecomeFragile();
+
 
 // Destroy buttons no longer owned by unit
         for (int i = equipButtons.Count - 1; i >= 0; i--) {
