@@ -121,6 +121,7 @@ public class Grid : MonoBehaviour {
                 } else if (u is Beacon) {
                     Unit beacon = Instantiate(spawn.asset.prefab, this.transform).GetComponent<Unit>();
                     beacon.transform.parent = neutralGEContainer.transform;
+                    beacon.Init();
 
                     beacon.manager = player;
                     beacon.Init(this, spawn.coord);

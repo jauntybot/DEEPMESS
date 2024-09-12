@@ -78,7 +78,7 @@ public class HelpExplaination : MonoBehaviour {
             break;
             case "ENEMIES":
                 str = 
-                "Enemies move and attack on their turn. After a descent, they scatter but don't attack. Hover over enemies to display their HP and movement range, and select them to learn about their actions. Display enemies' turn order by hovering in the top right.";
+                "Enemies move and attack on their turn. Basic enemies take damage on descent. Hover over enemies to display their HP and movement range, and select them to learn about them. Display enemies' turn order by hovering in the top right.";
             break;
             case "FLOORS":
                 str = 

@@ -43,9 +43,9 @@ public class Tooltip : MonoBehaviour {
             }
         }
 
-        if (string.IsNullOrEmpty(content))
+        if (string.IsNullOrEmpty(content)) {
             contentField.transform.parent.gameObject.SetActive(false);
-        else {
+        } else {
             contentField.transform.parent.gameObject.SetActive(true);
             contentField.text = content;
         }
@@ -85,7 +85,7 @@ public class Tooltip : MonoBehaviour {
 
                     Vector2 localAnchor = Vector2.zero;
                     Vector2 sign;
-                    if (position.x < Screen.width * 4/5) {
+                    if (position.x < Screen.width * 7/10) {
                         localAnchor.x = 0;
                         sign.x = 1;
                     } else {
@@ -93,7 +93,7 @@ public class Tooltip : MonoBehaviour {
                         sign.x = -1;
                     }
                     
-                    if (position.y < Screen.height * 4/5) {
+                    if (position.y < Screen.height * 7/10) {
                         localAnchor.y = 0;
                         sign.y = 1;
                     } else {
