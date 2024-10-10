@@ -72,14 +72,14 @@ public class HammerData : GearData {
         hammer.SetActive(true);
         pu.ui.ToggleEquipmentButtons();
         
-        if (nail.nailState == Nail.NailState.Buried) {
-            if (filters.Contains(nail)) filters.Remove(nail);
-            if (targetTypes.Contains(nail)) targetTypes.Remove(nail);
-        }
-        else {
-            if (!filters.Contains(nail)) filters.Add((GridElement)nail);
-            if (!targetTypes.Contains(nail)) targetTypes.Add((GridElement)nail);
-        }
+        // if (nail.nailState == Nail.NailState.Buried) {
+        //     if (filters.Contains(nail)) filters.Remove(nail);
+        //     if (targetTypes.Contains(nail)) targetTypes.Remove(nail);
+        // }
+        // else {
+        //     if (!filters.Contains(nail)) filters.Add((GridElement)nail);
+        //     if (!targetTypes.Contains(nail)) targetTypes.Add((GridElement)nail);
+        // }
             
         List<Vector2> validCoords = EquipmentAdjacency.GetAdjacent(origin, range, this, targetTypes);
         pu.inRangeCoords = new(validCoords);
