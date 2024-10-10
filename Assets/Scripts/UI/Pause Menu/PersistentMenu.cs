@@ -75,8 +75,7 @@ public class PersistentMenu : MonoBehaviour, IUserDataPersistence, IRunDataPersi
             if (resolutions[i].refreshRate == currentRefereshRate &&
                 ((resolutions[i].width % 16 == 0 && resolutions[i].height % 10 == 0) ||
                 (resolutions[i].width % 16 == 0 && resolutions[i].height % 9 == 0) ||
-                (resolutions[i].width % 4 == 0 && resolutions[i].height % 3 == 0)) &&
-                resolutions[i].width <= 1920)
+                (resolutions[i].width % 4 == 0 && resolutions[i].height % 3 == 0)))
                 filteredResolutions.Add(resolutions[i]);
 //                Debug.Log(resolutions[i].width + ", " + resolutions[i].height + ", " + resolutions[i].refreshRate);
         }
