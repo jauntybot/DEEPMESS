@@ -21,7 +21,7 @@ public class ScenarioManager : MonoBehaviour {
 #endregion
 
 // Instanced refs
-    [HideInInspector] public FloorManager floorManager;
+    public FloorManager floorManager;
     [HideInInspector] public UIManager uiManager;
     [HideInInspector] public GameplayOptionalTooltips gpOptional;
     [HideInInspector] public Relics.RelicManager relicManager;
@@ -245,8 +245,9 @@ public class ScenarioManager : MonoBehaviour {
 
 
                     player.StartEndTurn(true);
-                    Beacon be = floorManager.currentFloor.gridElements.Find(ge => ge is Beacon).GetComponent<Beacon>();
-                    if (be != null) {
+                    GridElement ge = floorManager.currentFloor.gridElements.Find(ge => ge is Beacon);
+                    if (ge != null) {
+                        Beacon be = ge.GetComponent<Beacon>();
                         be.GetComponent<Beacon>().EnableSelection(true);
                         be.StartCoroutine(be.RepeatedBark());
                     }
